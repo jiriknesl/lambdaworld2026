@@ -31,6 +31,64 @@ The static export has no evaluation endpoint or credentials. Expose that export,
 not the evaluation server. A 15-second timeout cannot forcibly stop arbitrary code
 that ignores interruption.
 
+## Public preview exposure — checked 2026-10-09
+
+**This preview is public and unauthenticated, including before the conference.**
+URL: [https://haphazard-sanction-pavestone.ngrok-free.dev](https://haphazard-sanction-pavestone.ngrok-free.dev).
+Anyone with the URL can read, download, and redistribute the material. The observed
+`X-Robots-Tag: noindex, nofollow` header is not access control. Neither the
+presenter view nor the speaking draft is private.
+
+The running ngrok agent's `/api/tunnels` reports one tunnel, serving
+`file:///Users/jiriknesl/src/lambdaworld2026/.preview`. The inventory below covers
+all 14 files currently in that directory, including its subdirectory; there are
+no symlinks. Unauthenticated public GETs returned HTTP 200 with byte-for-byte
+matches to the local files, except `/index.html`, which redirects to `/` (301).
+
+| Public path | Exposed content |
+| --- | --- |
+| `/` (also `/index.html` via redirect) | Complete nine-chapter presentation, including the final reveal and book/Rainbow promotion. |
+| `/api/scenes` | 1,883,918-byte replay manifest: all chapter explanations, compact and available expanded Clojure source, all 30 speaking cues and timing targets, demo instructions, transitions, cuts, recovery notes, recorded JVM results and numerical frames, and five parameter comparisons. Rainbow evidence includes check timestamp, commit, checkpoint-relative path, theorem names/hashes, axiom closures and rejection result. No evaluation token is present. |
+| `/presenter.html` | Public script reader and printable complete speaking draft; the word “presenter” does not imply authentication. |
+| `/contingency.html` | 1,251,368-byte standalone fallback page: every demo's code/numerical checkpoint, words to say, failure recovery and claim limits, plus embedded fonts and license. Most of its size is font data. |
+| `/app.js` | Browser application source, replay/evaluation client logic, visualization and navigation controls. The shared local-mode client code references `/api/eval`; that does not provide a public evaluator. |
+| `/stage.js` | Stage rendering and explanation/calculation presentation source. |
+| `/experiments.js` | Parameter-comparison controls and result-display source. |
+| `/ocean.js` | Ocean visualization source. |
+| `/presenter.js` | Speaking-script rendering, printing, timing and same-browser presenter controls. |
+| `/style.css` | Audience presentation styles. |
+| `/presenter.css` | Presenter and printed-script styles. |
+| `/fonts.css` | 1,234,774 bytes of bundled font CSS and embedded WOFF data. |
+| `/font-license.txt` | Font licensing notices. |
+| `/sw.js` | Recovery worker source for retiring the previous app's worker on this reused domain. |
+
+`/api/` also returns an unauthenticated directory listing linking to `scenes`.
+The file tunnel serves its directory, not the Clojure server's route whitelist:
+any additional file placed in `.preview` can become public. Re-exporting updates
+the public material immediately. Presenter controls use same-origin browser
+`BroadcastChannel`; a visitor on another computer cannot control Jiri's audience
+window through those controls.
+
+**Boundary checks:** public GET and an empty POST to `/api/eval` returned 404.
+GETs to `/README.md`, `/.git/config`, `/.env`, `/src/lambda_world/server.clj`,
+`/resources/rainbow-evidence.edn`, `/artifacts/lambda-world-rehearsal.zip`,
+`/lambda-world-speaker-script.pdf` and `/lambda-world-contingency.pdf` returned
+404. The ZIP, PDF files, repository source tree, full book and Rainbow checkout
+are outside the served directory; selected source and proof metadata are exposed
+in the manifest as described above. No credentials were found in the exported
+content reviewed. These are checks of this directory and running configuration,
+not a guarantee about future exports or an exhaustive security audit.
+
+**Pre-conference disclosure concern:** the complete speaking draft, presenter
+cuts/recovery notes, and final reveal are already downloadable through
+`/api/scenes` and the presentation views; fallback wording is also in
+`/contingency.html`. If those are to be held until the talk, they should not be
+public before it. Removing a presenter link alone would not hide them. No
+embargo requirement was previously recorded, and this audit does not decide one
+on Jiri's behalf. The tunnel, its configuration and exported files were left
+unchanged, as requested. Work is parked; the aloud rehearsal belongs to Jiri and
+the venue checks require the room.
+
 ## Stage and presenter views
 
 Click **Present on stage** on the opening screen, or press **S** inside the talk.
