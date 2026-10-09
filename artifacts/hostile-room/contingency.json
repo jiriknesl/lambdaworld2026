@@ -1,0 +1,1326 @@
+{
+  "passed": true,
+  "openedAsLocalFileWithBrowserOffline": true,
+  "demos": 9,
+  "externalRequests": [],
+  "fonts": [
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 22
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 145
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 21
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 98
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 21
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 44
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 92
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 44
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 28
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 181
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 28
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 127
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 37
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 36
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 30
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 44
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 38
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 38
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 40
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 40
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 17
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 39
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 42
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 68
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 101
+    },
+    {
+      "familyName": "Rescue Symbols",
+      "postScriptName": "RescueSymbols",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 18
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 16
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 10
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 9
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 172
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 60
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 38
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 59
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 77
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 85
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 19
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 16
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 12
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 18
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 150
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 76
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 32
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 55
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 72
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 57
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 15
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 9
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 12
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 16
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 11
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 10
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 178
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 63
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 46
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 55
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 72
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 121
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 19
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 2
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 17
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 18
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 25
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 4
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 164
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 81
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 40
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 42
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 71
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 87
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 4
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 9
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 1
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 11
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 9
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 5
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 130
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 80
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 40
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 67
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 49
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 108
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 18
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 21
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 18
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 6
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 72
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 205
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 137
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 42
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 49
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 72
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 120
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 4
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 10
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 7
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 10
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 4
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 10
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 14
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 10
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 147
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 126
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 42
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 49
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 71
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 130
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 29
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 2
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 12
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 1
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 28
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 15
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 27
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 167
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 176
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 19
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 8
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 54
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 13
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 41
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 87
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 80
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 3
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 152
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 69
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 23
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans-Bold",
+      "isCustomFont": true,
+      "glyphCount": 20
+    },
+    {
+      "familyName": "DejaVu Sans Mono",
+      "postScriptName": "DejaVuSansMono",
+      "isCustomFont": true,
+      "glyphCount": 4717
+    },
+    {
+      "familyName": "DejaVu Sans",
+      "postScriptName": "DejaVuSans",
+      "isCustomFont": true,
+      "glyphCount": 143
+    }
+  ],
+  "pdfFonts": {
+    "lambda-world-contingency.pdf": "name                                 type              encoding         emb sub uni object ID\n------------------------------------ ----------------- ---------------- --- --- --- ---------\nAAAAAA+DejaVuSans-Bold               CID TrueType      Identity-H       yes yes yes      4  0\nBAAAAA+DejaVuSans                    CID TrueType      Identity-H       yes yes yes      5  0\nCAAAAA+DejaVuSansMono                CID TrueType      Identity-H       yes yes yes      6  0\nDAAAAA+RescueSymbols                 CID TrueType      Identity-H       yes yes yes      9  0\n",
+    "lambda-world-speaker-script.pdf": "name                                 type              encoding         emb sub uni object ID\n------------------------------------ ----------------- ---------------- --- --- --- ---------\nAAAAAA+DejaVuSans                    CID TrueType      Identity-H       yes yes yes      4  0\nBAAAAA+DejaVuSans-Bold               CID TrueType      Identity-H       yes yes yes      7  0\nCAAAAA+DejaVuSansMono                CID TrueType      Identity-H       yes yes yes      8  0\nDAAAAA+RescueSymbols                 CID TrueType      Identity-H       yes yes yes      9  0\n"
+  }
+}

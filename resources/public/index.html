@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#070d16">
+  <meta name="presentation-build" content="local">
+  <title>The Function Observatory · Lambda World</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23070d16'/%3E%3Cpath d='M18 10h12l17 44h-9l-8-21-11 21h-9l16-31-3-7h-5z' fill='%23b8e4ca'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/fonts.css"><link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <canvas id="universe" aria-label="Interactive visualizations of Clojure computations"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <header>
+    <a class="brand" href="#" id="home"><span class="lambda">λ</span><span>THE FUNCTION<br><strong>OBSERVATORY</strong></span></a>
+    <div class="header-right"><span class="live-dot"></span><span id="connection">CONNECTING TO CLOJURE</span><button id="stage-toggle" aria-pressed="false" title="Stage view (S)">Stage</button><button id="presenter-toggle" title="Open presenter notes (P)">Presenter ↗</button><button id="fullscreen" title="Fullscreen (F)" aria-label="Toggle fullscreen">⛶</button></div>
+  </header>
+
+  <section id="intro" class="intro">
+    <div class="eyebrow">LAMBDA WORLD / JIRI KNESL</div><div class="mayday"><span></span> MAYDAY · A PERSON OVERBOARD</div>
+    <h1>One rescue.<br>Functions, <em>all the way down.</em></h1>
+    <p class="intro-description">Rebuilding Operations Research<br>in Higher Order Functions in Clojure</p>
+    <div class="entry-actions"><button id="enter" class="enter" disabled>Preparing the observatory…</button><button id="enter-stage" class="stage-enter" disabled>Present on stage ↗</button></div><div class="intro-journey"><span>ORGANIZE</span><i>→</i><span>DECIDE</span><i>→</i><span>SEARCH</span><i>→</i><span>EXPLAIN</span></div>
+    <div class="intro-foot">A LIVE COMPUTATION · NOT A SLIDE DECK</div>
+  </section>
+
+  <main id="presentation" hidden>
+    <div id="mission-line" class="mission-line"></div>
+    <section class="narrative" aria-live="polite">
+      <div id="chapter" class="eyebrow"></div>
+      <h1 id="title"></h1>
+      <p id="subtitle"></p>
+      <div id="experiment-bar" hidden>
+        <label for="experiment-choice">CHANGE ONE THING</label>
+        <select id="experiment-choice" aria-label="Compare a Clojure experiment"></select>
+        <span id="experiment-note"></span>
+      </div>
+    </section>
+
+    <section id="focus-card" aria-label="Current explanation">
+      <div class="focus-top"><span>FOLLOW THE FUNCTION</span><span id="cue-count">1 / 4</span></div>
+      <h2 id="focus-title"></h2><p id="focus-text"></p><pre id="focus-code"></pre>
+      <div id="stage-hof"></div>
+      <div class="focus-controls"><button id="cue-back" aria-label="Previous explanation">←</button><button id="focus-trace" aria-pressed="false">One update</button><button id="focus-open-code">Clojure ↗</button><button id="cue-next" aria-label="Next explanation">→</button></div>
+    </section>
+    <div id="belief-layers" class="belief-layers" hidden><span>SHOW</span><button id="layer-predicted" aria-pressed="false">Predicted</button><button id="layer-posterior" aria-pressed="true">Posterior</button><button id="plan-searches" aria-pressed="false">Plan two searches</button></div>
+    <aside id="workbench" class="workbench" aria-label="Explanation, computed steps, and Clojure">
+      <div class="bench-top"><span><i class="live-dot"></i> LIVE CLOJURE</span><span class="runtime">JVM / LOCAL</span></div>
+      <div class="pane-tabs" role="tablist" aria-label="Explore the example">
+        <button role="tab" id="tab-explain" aria-controls="pane-explain" aria-selected="true">Explain</button>
+        <button role="tab" id="tab-inspect" aria-controls="pane-inspect" aria-selected="false">One update</button>
+        <button role="tab" id="tab-code" aria-controls="pane-code" aria-selected="false">Clojure</button>
+      </div>
+      <div id="pane-explain" class="lesson-pane" role="tabpanel" aria-labelledby="tab-explain"></div>
+      <div id="pane-inspect" class="lesson-pane" role="tabpanel" aria-labelledby="tab-inspect" hidden></div>
+      <div id="pane-code" class="code-pane" role="tabpanel" aria-labelledby="tab-code" hidden>
+      <div class="file-bar"><span id="filename">flock.clj</span><div><button id="unfold" title="Load a runnable version with the HOF implementation">Unfold HOF ↗</button><button id="reset" title="Restore the original example">↺ Reset</button></div></div>
+      <div class="editor-wrap"><pre id="highlight" aria-hidden="true"></pre><textarea id="editor" aria-label="Editable Clojure code" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea></div>
+      <div class="run-bar"><span id="eval-status" role="status">Ready</span><button id="run" class="run">Run Clojure <kbd>⌘ ↵</kbd></button></div>
+      <details id="result"><summary id="result-label">REPL result</summary><pre id="output"></pre></details>
+      </div>
+    </aside>
+
+    <section class="scene-caption">
+      <div id="signature" class="signature"></div>
+      <p id="note"></p>
+    </section>
+
+    <div id="transport" class="transport">
+      <button id="play" aria-label="Play computed trajectory" title="Play / pause (Space)">▶</button>
+      <button id="step-back" aria-label="Previous computed step">−</button><button id="step-next" aria-label="Next computed step">+</button>
+      <input id="scrub" type="range" min="0" max="100" value="0" step="0.01" aria-label="Position in computed trajectory">
+      <span id="frame-label">STEP 000</span>
+    </div>
+
+    <footer>
+      <div class="footer-left"><button id="code-toggle" title="Toggle code (C)"><span>〈 〉</span> Notebook</button><button id="help-toggle" title="Keyboard shortcuts (?)">?</button></div>
+      <nav id="chapters" aria-label="Presentation chapters"></nav>
+      <div class="footer-right"><span id="page">01 / 06</span><button id="previous" aria-label="Previous chapter">←</button><button id="next" aria-label="Next chapter">→</button></div>
+    </footer>
+  </main>
+  <div id="toast" role="status"></div>
+  <dialog id="help"><h2>At the controls</h2><p><kbd>←</kbd> <kbd>→</kbd> Travel between chapters</p><p><kbd>Space</kbd> Play / pause the computation</p><p><kbd>C</kbd> Reveal / hide the Clojure</p><p><kbd>F</kbd> Fullscreen</p><p><kbd>S</kbd> Stage view · <kbd>P</kbd> Presenter window</p><p><kbd>T</kbd> Show one calculation on stage</p><p><kbd>↑</kbd> <kbd>↓</kbd> Previous / next explanation cue</p><p><kbd>⌘ Enter</kbd> or <kbd>Ctrl Enter</kbd> Run the cell</p><p><kbd>Esc</kbd> Close this panel / leave the editor</p><p>Drag the timeline to inspect a computed state.<br>Edit a function. Run it. Watch its consequences.</p><button id="close-help">Return to the observatory</button></dialog>
+  <script src="/ocean.js" defer></script>
+  <script src="/stage.js" defer></script>
+  <script src="/experiments.js" defer></script>
+  <script src="/app.js" defer></script>
+</body>
+</html>

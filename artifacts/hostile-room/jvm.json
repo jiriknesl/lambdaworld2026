@@ -1,0 +1,38 @@
+{
+  "recorded_at": "2026-10-09T18:40:25.675348+00:00",
+  "platform": "macOS",
+  "policy": "scripts/no-network.sb",
+  "host_network_settings_changed": false,
+  "socket_probe": {
+    "command": "sandbox-exec -f scripts/no-network.sb python3 -c 'import socket; s=socket.socket(); s.connect((\"127.0.0.1\",7341))'",
+    "expected_exit": 1,
+    "observed_exit": 1,
+    "error": "PermissionError: [Errno 1] Operation not permitted"
+  },
+  "checks": [
+    {
+      "command": "sandbox-exec -f scripts/no-network.sb clojure -M:test",
+      "exit": 0,
+      "tests": 16,
+      "assertions": 256,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "command": "sandbox-exec -f scripts/no-network.sb clojure -M:rainbow",
+      "exit": 0,
+      "declarations_checked": 11,
+      "invalid_proof": "rejected",
+      "evidence": "resources/rainbow-evidence.edn"
+    },
+    {
+      "command": "sandbox-exec -f scripts/no-network.sb clojure -M:export",
+      "exit": 0
+    }
+  ],
+  "prerequisites": [
+    "installed JDK and Clojure CLI",
+    "cached Clojure 1.12.3 dependency",
+    "adjacent Rainbow checkout and checkpoint for optional kernel audit"
+  ]
+}

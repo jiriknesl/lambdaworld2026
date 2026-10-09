@@ -1,0 +1,9 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.12.3"}}
+ :aliases {:present {:main-opts ["-m" "lambda-world.server"]}
+           :export {:main-opts ["-m" "lambda-world.export"]}
+           :rainbow {:extra-paths ["../rainbow/src" "../rainbow/resources"]
+                     :jvm-opts ["-Xmx4g"]
+                     :main-opts ["-m" "lambda-world.rainbow-audit"]}
+           :test {:extra-paths ["test"]
+                  :main-opts ["-m" "lambda-world.test-runner"]}}}

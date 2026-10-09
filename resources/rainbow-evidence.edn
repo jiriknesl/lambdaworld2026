@@ -1,0 +1,69 @@
+{:checked-at "2026-10-09T18:20:21.567487Z",
+ :rainbow-commit "3f411aeb170a998bd9156fb33b49c78395834071",
+ :checkpoint "artifacts/ahof/d63-eligibility-traces/checkpoint.edn.gz",
+ :checkpoint-status :replayed,
+ :checks
+ [{:theorem "optimization/signed-descent-step-unfold",
+   :id
+   "sha256:0dceedad28b6379bdf52fe7940eb05cd07185b266ff21633f988caae3d214c37",
+   :status :checked,
+   :axioms []}
+  {:theorem "optimization/momentum-step-unfold",
+   :id
+   "sha256:12490cf696620e9ba26fbae59a15445d9a222c1cbf46f38374cc5da62a3aed03",
+   :status :checked,
+   :axioms []}
+  {:theorem "optimization/momentum-iterate-successor",
+   :id
+   "sha256:d150558f39e520dbd59e2b019745aeeb71137d3e2421cb227feb9dbe70a5bc2a",
+   :status :checked,
+   :axioms []}
+  {:theorem "ahof-o19/first-position-is-one",
+   :id
+   "sha256:0656b4d8eeb854039687e8bda3741599a74163ca502be43407030bf116816166",
+   :status :checked,
+   :axioms []}
+  {:theorem "ahof-o19/first-velocity-is-one",
+   :id
+   "sha256:d2e9704b7cd77c40bcfbff90f5dfc17a0d33af453d2a04e376c37360a4e95899",
+   :status :checked,
+   :axioms []}
+  {:theorem "penalty/augmented-unfold",
+   :id
+   "sha256:eaa191f8c6b10ed66aa6be1813eb36a70f820465b6fc3b7b6cf650d638b403fd",
+   :status :checked,
+   :axioms []}
+  {:theorem "penalty/feasible-example",
+   :id
+   "sha256:3d8f55785ead26fe01f66458f29f78f31e4198d8a18a041688b69cb5f3fab3e1",
+   :status :checked,
+   :axioms []}
+  {:theorem "optimization/vector-projected-step-in-band",
+   :id
+   "sha256:833cdafcb0f93e5e3d379078d05d754346e993c5fbe3cfca62c64dc4fc12a60d",
+   :status :checked,
+   :axioms []}
+  {:theorem "optimization/vector-projected-step-reprojection",
+   :id
+   "sha256:59f5e11e3c09ea0936b147c2634cc065026cd32a58854c8d0daa86be66a0887a",
+   :status :checked,
+   :axioms []}
+  {:theorem "value/signed-optimality-step-additively-contractive",
+   :id
+   "sha256:7ce8458d97bae15915ea64ecf6587153ba26f3c7da74ed72ce5dcb02011f767c",
+   :status :checked,
+   :axioms []}
+  {:theorem "shap/attribution-unfold",
+   :id
+   "sha256:7c168aa5cfbd7f34d24a366c49c21d8df7631a17a11faf6b339c763e009b74b7",
+   :status :checked,
+   :axioms []}],
+ :negative-check
+ {:attempt
+  "Use the natural number zero as a proof of the momentum recurrence",
+  :status :rejected,
+  :category nil},
+ :momentum-example
+ {:beta 1, :rate 1, :gradient 1, :before [0 2], :after [1 1]},
+ :scope
+ "Exact-rational Rainbow terms. No proof of correspondence to this presentation's floating-point Clojure or renderer."}

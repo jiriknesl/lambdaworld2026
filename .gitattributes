@@ -1,0 +1,7 @@
+# csv.DictWriter uses standard CSV CRLF records.
+*.csv whitespace=cr-at-eol
+# Preserve the upstream font license verbatim, including its embedded copies.
+resources/fonts/LICENSE.txt whitespace=-blank-at-eol
+resources/public/font-license.txt whitespace=-blank-at-eol
+resources/public/contingency.html whitespace=-blank-at-eol
+artifacts/lambda-world-contingency.html whitespace=-blank-at-eol
