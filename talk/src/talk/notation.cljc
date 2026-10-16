@@ -39,18 +39,19 @@
         (/ (double (unsigned-bit-shift-right (bit-xor t (unsigned-bit-shift-right t 14)) 0)) 4294967296.0)))))
 
 (defn random-map
-  "Source text of a new `defmap` form: w × h cells, some birds, one food. Paste it into core.cljs."
-  [{:keys [name w h birds seed] :or {name 'feeding w 12 h 7 birds 5 seed 1}}]
+  "Source text of a new `defmap` form: birds on the near shore, food on the far one,
+  turbines in between. Paste it into core.cljs."
+  [{:keys [name w h birds turbines seed] :or {name 'strait w 14 h 7 birds 3 turbines 5 seed 1}}]
   (let [rand (mulberry32 seed)
-        cells (vec (for [y (range h) x (range w)] [x y]))
-        pick (fn [taken] (first (remove taken (repeatedly #(cells (int (* (rand) (count cells))))))))
-        food (pick #{})
-        flock (loop [taken #{food} out []]
-                (if (= (count out) birds) out
-                    (let [c (pick taken)] (recur (conj taken c) (conj out c)))))
-        glyph (fn [c] (cond (= c food) "🍞" (some #{c} flock) "🐦" :else "·"))]
-    (str "(defmap " name "\n  {· :empty, 🐦 :bird, 🍞 :food}\n"
-         (str/join "\n" (for [y (range h)]
+        pick (fn [xs] (nth xs (int (* (rand) (count xs)))))
+        rows (vec (range h))
+        flock (set (take birds (distinct (repeatedly #(vector 0 (pick rows))))))
+        food [(dec w) (pick rows)]
+        middle (vec (for [x (range 3 (- w 3)) y rows] [x y]))
+        farm (set (take turbines (distinct (repeatedly #(pick middle)))))
+        glyph (fn [c] (cond (= c food) "🍞" (flock c) "🐦" (farm c) "🌀" :else "・"))]
+    (str "(defmap " name "\n  {・ :empty, 🐦 :bird, 🌀 :turbine, 🍞 :food}\n"
+         (str/join "\n" (for [y rows]
                           (str "  [" (str/join " " (for [x (range w)] (glyph [x y]))) "]")))
          ")")))
 

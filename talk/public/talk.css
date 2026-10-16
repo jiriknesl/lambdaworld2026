@@ -14,6 +14,11 @@
   --bad-soft: #f6dcd6;
   --warn: #9a6a00;
   --code-bg: #f3f1ea;
+  --sea: #b9cde0;
+  --land-top: #e6dcc3;
+  --land-side: #cbbd9a;
+  --land-front: #d8cba9;
+  --route-1: #c2410c;
   --c-special: #2f45d6;
   --c-string: #2f7a3d;
   --c-kw: #8a3fb0;
@@ -38,6 +43,11 @@
   --bad-soft: #4a2420;
   --warn: #f0c060;
   --code-bg: #1d2026;
+  --sea: #2c3f55;
+  --land-top: #4a4436;
+  --land-side: #3a3529;
+  --land-front: #423c2f;
+  --route-1: #ff9a5c;
   --c-special: #8ea0ff;
   --c-string: #7fd18b;
   --c-kw: #d6a0f0;
@@ -219,3 +229,26 @@ body.notes #stage { position: static; transform: none !important; width: auto; h
 .n-head, .n-next, .n-keys { color: var(--muted); font-size: 18px; }
 .n-text { white-space: pre-wrap; margin-bottom: 24px; }
 .n-clock { font-family: var(--mono); font-size: 56px; margin: 14px 0; }
+
+/* the strait in 3D */
+svg.scene { display: block; overflow: hidden; }
+svg.scene polygon.sea-fill { fill: var(--sea); opacity: .18; }
+svg.scene line.sea { stroke: var(--sea); stroke-width: 1; }
+svg.scene polygon.land-top { fill: var(--land-top); }
+svg.scene polygon.land-side { fill: var(--land-side); }
+svg.scene polygon.land-front { fill: var(--land-front); }
+svg.scene text.place { fill: var(--muted); font: 18px var(--sans); text-anchor: middle; }
+svg.scene polygon.disc { fill: var(--wash); fill-opacity: .55; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; }
+svg.scene line.tower { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; opacity: .75; }
+svg.scene line.blade { stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+svg.scene circle.hub { fill: var(--ink); }
+svg.scene polyline.route { fill: none; stroke-width: 3; stroke-linejoin: round; }
+svg.scene polyline.shadow { fill: none; stroke: var(--muted); stroke-width: 2; opacity: .3; }
+svg.scene line.drop { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 3; opacity: .6; }
+svg.scene circle.hit { fill: var(--bad); }
+svg.scene .r0 { stroke: var(--accent); }
+svg.scene .r1 { stroke: var(--route-1); }
+svg.scene .r2 { stroke: var(--ok); }
+.race3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.race3 .r-label { font: 600 22px var(--sans); margin-top: 6px; }
+.race3 .r-v { font-size: 20px; }

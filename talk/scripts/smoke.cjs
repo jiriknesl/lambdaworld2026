@@ -21,6 +21,7 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
     page.on('pageerror', e => problems.push(`${w}x${h} page error: ${e.message}`));
     await page.goto(url);
     await page.waitForSelector('.slide .top');
+    await page.waitForFunction(() => window.talkReady === true, null, { timeout: 180000 });
     const total = await page.evaluate(() => parseInt(document.querySelector('.count').textContent.split('/')[1]));
     for (let s = 1; s <= total; s++) {
       if (s > 1) await page.keyboard.press('ArrowDown');
@@ -31,6 +32,7 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
         const scale = stage.width / 1600;
         const over = [];
         for (const el of body.querySelectorAll('*')) {
+          if (el.closest('svg.scene') && el.tagName !== 'svg') continue;
           const r = el.getBoundingClientRect();
           if (r.width === 0 || r.height === 0) continue;
           if (r.right > stage.right + 2 || r.bottom > stage.bottom - 20 * scale + 2) over.push(el.tagName + '.' + el.className.baseVal ?? el.className);

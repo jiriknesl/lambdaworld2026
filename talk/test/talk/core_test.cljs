@@ -6,19 +6,23 @@
 
 (deftest notation
   (testing "defmap turns the drawing into positions"
-    (is (= [12 7] (:size c/feeding)))
-    (is (= 5 (count (:bird c/feeding))))
-    (is (= [[9 3]] (:food c/feeding))))
+    (is (= [14 7] (:size c/strait)))
+    (is (= 3 (count (:bird c/strait))))
+    (is (= 5 (count (:turbine c/strait))))
+    (is (= [[13 3]] (:food c/strait))))
   (testing "src records the definition as typed"
     (is (str/starts-with? (n/source 'c/fixed-point) ";; no source"))   ; registry keys are bare names
     (is (str/starts-with? (n/source 'fixed-point) "(defn fixed-point")))
   (testing "defmodel gives an objective and constraint gaps"
-    (is (= 0 ((:objective c/flock) [[9 3] [9 3]])))
-    (is (= 1 (count (n/violations c/flock [[0 0] [1 0]]))))
-    (is (n/feasible? c/flock [[0 0] [2 0]] 0)))
+    (let [straight (c/as-paths (vec (for [s c/starts x c/between
+                                          :let [f (/ x (first c/food))
+                                                [_ y z] (mapv + s (mapv #(* f %) (mapv - c/food s)))]
+                                          v [y z]] v)))]
+      (is (pos? ((:objective c/crossing) straight)))
+      (is (not (n/feasible? c/crossing straight 0)) "straight routes hit a rotor")))
   (testing "random-map prints a defmap form, the same for the same seed"
     (is (= (n/random-map {:seed 7}) (n/random-map {:seed 7})))
-    (is (str/starts-with? (n/random-map {:seed 7}) "(defmap feeding"))))
+    (is (str/starts-with? (n/random-map {:seed 7}) "(defmap strait"))))
 
 (deftest the-loop
   (is (< (abs (- (peek c/sqrt-run) (js/Math.sqrt 2))) 1e-12))
@@ -27,13 +31,18 @@
     (is (= 6 (count (c/fixed-point inc = 0 :max-steps 5))))))
 
 (deftest optimise
+  (doseq [k [:crowd :plain :momentum :adam]] (c/finish! k))
+  (testing "advance is fixed-point one state at a time"
+    (is (= (c/run-of :crowd)
+           (c/fixed-point (:step (c/run-specs :crowd)) c/settle c/first-guess :max-steps c/max-steps))))
   (let [crowd (c/run-summary :crowd)]
     (is (:settled crowd))
-    (is (< (:closest crowd) 0.01) "without costs every bird ends on the food"))
+    (is (neg? (:closest crowd)) "without costs the routes go through a rotor"))
   (doseq [k [:plain :momentum :adam]]
     (let [s (c/run-summary k)]
       (is (:settled s) (str k " settles"))
-      (is (> (:closest s) 0.8) (str k " keeps the birds apart")))))
+      (is (> (:closest s) 0.2) (str k " keeps clear of the turbines"))
+      (is (= 3 (count (:routes s)))))))
 
 (deftest decide
   (let [policy (c/best-order c/restock (peek c/restock-run))
