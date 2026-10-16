@@ -39,19 +39,21 @@
         (/ (double (unsigned-bit-shift-right (bit-xor t (unsigned-bit-shift-right t 14)) 0)) 4294967296.0)))))
 
 (defn random-map
-  "Source text of a new `defmap` form: birds on the near shore, food on the far one,
-  turbines in between. Paste it into core.cljs."
-  [{:keys [name w h birds turbines seed] :or {name 'strait w 14 h 7 birds 3 turbines 5 seed 1}}]
+  "Source text of a new `defmap` form: turbines on hills, and a flyway that crosses from
+  west to east, two cells per row. Paste it into core.cljs."
+  [{:keys [name w h turbines seed] :or {name 'hills w 12 h 7 turbines 6 seed 1}}]
   (let [rand (mulberry32 seed)
         pick (fn [xs] (nth xs (int (* (rand) (count xs)))))
-        rows (vec (range h))
-        flock (set (take birds (distinct (repeatedly #(vector 0 (pick rows))))))
-        food [(dec w) (pick rows)]
-        middle (vec (for [x (range 3 (- w 3)) y rows] [x y]))
-        farm (set (take turbines (distinct (repeatedly #(pick middle)))))
-        glyph (fn [c] (cond (= c food) "🍞" (flock c) "🐦" (farm c) "🌀" :else "・"))]
-    (str "(defmap " name "\n  {・ :empty, 🐦 :bird, 🌀 :turbine, 🍞 :food}\n"
-         (str/join "\n" (for [y rows]
+        flyway (set (loop [y (pick (range h)) x 0 out []]
+                      (if (>= x w)
+                        out
+                        (recur (max 0 (min (dec h) (+ y (pick [-1 0 1])))) (+ x 2)
+                               (into out (for [dx [0 1] :when (< (+ x dx) w)] [(+ x dx) y]))))))
+        free (vec (for [x (range w) y (range h) :when (not (flyway [x y]))] [x y]))
+        farm (set (take turbines (distinct (repeatedly #(pick free)))))
+        glyph (fn [c] (cond (farm c) "🌀" (flyway c) "🐦" :else "・"))]
+    (str "(defmap " name "\n  {・ :empty, 🌀 :turbine, 🐦 :flyway}\n"
+         (str/join "\n" (for [y (range h)]
                           (str "  [" (str/join " " (for [x (range w)] (glyph [x y]))) "]")))
          ")")))
 
@@ -112,9 +114,42 @@
            (binding [pp/*print-right-margin* 72]
              (with-out-str (pp/with-pprint-dispatch pp/code-dispatch (pp/pprint form)))))))
 
-     (defn- pretty [form]
-       (str/trimr (binding [pp/*print-right-margin* 50]
-                    (with-out-str (pp/with-pprint-dispatch pp/code-dispatch (pp/pprint form))))))
+     (defn- flat
+       "A form on one line, as it would be typed."
+       [x]
+       (cond (and (seq? x) (= 'quote (first x))) (str "'" (flat (second x)))
+             (seq? x) (str "(" (str/join " " (map flat x)) ")")
+             (vector? x) (str "[" (str/join " " (map flat x)) "]")
+             (map? x) (str "{" (str/join ", " (map (fn [[k v]] (str (flat k) " " (flat v))) x)) "}")
+             :else (pr-str x)))
+
+     (defn- layout
+       "A form on one line when it fits in width; otherwise its head and first argument on
+       the first line and the rest below, indented two spaces, as people write Clojure."
+       [x col width]
+       (let [f (flat x)
+             pad (fn [n] (apply str (repeat n " ")))]
+         (cond
+           (or (<= (+ col (count f)) width) (not (coll? x)) (empty? x)
+               (and (seq? x) (= 'quote (first x))))
+           f
+           (map? x)
+           (str "{" (str/join (str ",\n" (pad (inc col)))
+                              (for [[k v] x :let [ks (flat k)]]
+                                (if (<= (+ col 2 (count ks) (count (flat v))) width)
+                                  (str ks " " (flat v))
+                                  (str ks "\n" (pad (+ col 2)) (layout v (+ col 2) width)))))
+                "}")
+           (vector? x)
+           (str "[" (str/join (str "\n" (pad (inc col))) (map #(layout % (inc col) width) x)) "]")
+           :else
+           (let [[h & args] x
+                 hs (flat h)]
+             (str "(" hs " " (layout (first args) (+ col 2 (count hs)) width)
+                  (apply str (for [a (rest args)] (str "\n" (pad (+ col 2)) (layout a (+ col 2) width))))
+                  ")")))))
+
+     (defn- pretty [form] (layout form 0 48))
 
      (defmacro src
        "Define as usual, and record the definition's exact source text for slides."

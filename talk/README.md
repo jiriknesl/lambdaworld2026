@@ -51,11 +51,11 @@ The address bar shows `#s{slide}a{step}`; a refresh returns to the same place. T
 1. Before the talk: `npm run watch`, open `http://localhost:7350`, connect Cursor with Calva
    (*Connect to a running REPL* → shadow-cljs → port 7351 → build `:talk`).
 2. Edit and save `core.cljs`: the slide redraws in about a second. Good candidates:
-   - move a 🌀 turbine or a 🐦 in the `defmap strait` drawing, and watch the routes re-plan;
-   - change `(penalize crossing 20)` or the momentum `0.9`;
+   - move a 🌀 turbine or the 🐦 flyway in the `defmap hills` drawing, and watch tomorrow's plan change;
+   - change the bird `budget`, `(penalize day-plan 100)` or the momentum `0.9`;
    - change `:discount 0.9` or a demand probability in `defbellman restock`;
    - remove `with-shield` from the third controller and watch reachability turn red.
-3. A new random wind farm, from the REPL: `(talk.notation/random-map {:seed 7})`, then paste it.
+3. A new random wind farm and flyway, from the REPL: `(talk.notation/random-map {:seed 7})`, then paste it.
 
 The optimisation runs take a few seconds each. The deck computes them one state per animation
 frame from the moment it opens (about half a minute in all), so they are ready long before the
@@ -71,11 +71,11 @@ open the release build (`public/index.html`) — it needs nothing else.
 |---|---|
 | 1. Rendering kit | hiccup → HTML, Clojure highlighting, formulas rendered from model source, SVG helpers |
 | 2. The shared loop | `fixed-point` (iterate + step + converged?), Newton's √2 |
-| 3. Optimise | `defmap strait`, `defmodel crossing`, `clearance`, `penalize`, `gradient`, `descent-step`, `with-momentum`, `with-adam`; runs computed one state per frame; `project` and `scene` draw the strait in 3D |
+| 3. Optimise | tomorrow's stop plan for a wind farm on Andalusian hills: `defmap hills`, `defmodel day-plan`, `wear`, `penalize`, `gradient`, `descent-step`, `clamped`, `with-momentum`, `with-adam`; runs computed one state per frame; `schedule` draws the plan, `project` and `scene` play it in 3D |
 | 4. Decide | `defbellman restock`, `bellman`, the stopping bound |
 | 5. Verify | `table-decision`, `with-shield`, `tick-controller`, `react-to-detections`, `reachable`, rules (`always`, `implies`, `within`), the worst-case search |
 | 6. Receipt | `defmodel trailers` (RH2EDIN Reto 2), `linear-rows`, `pivot`, `check-receipt`, recorded Rainbow verdicts |
-| 7. Slides | 35 slides with speaker notes |
+| 7. Slides | 36 slides with speaker notes |
 | 8. App | keyboard, URL, notes window, playback, scaling |
 
 ## Timing (40 minutes)

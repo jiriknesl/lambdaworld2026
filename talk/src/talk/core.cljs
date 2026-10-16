@@ -4,7 +4,7 @@
   One namespace, in sections:
     1. Rendering kit        hiccup → HTML, code highlighting, formulas, small SVG helpers
     2. The shared loop      fixed-point = iterate + step + converged?
-    3. Optimise             birds crossing a wind farm, in 3D: gradient, penalize, momentum, Adam
+    3. Optimise             a wind farm's stop plan for tomorrow: gradient, penalize, momentum, Adam
     4. Decide               restocking a hydrogen station: Bellman
     5. Verify               the bird stop controller: reachability and falsification
     6. Receipt              the trailer plan: solver as a fixed point, and a checkable receipt
@@ -109,7 +109,7 @@
 
 (declare fx)
 
-(def ^:private lookups #{'km 'loads 'supply 'need 'p})
+(def ^:private lookups #{'km 'loads 'supply 'need 'p 'value 'exposure 'birds 'run})
 
 (defn- sub-text [e]
   (cond (symbol? e) [:i (name e)]
@@ -247,66 +247,59 @@
 (def sqrt-run (fixed-point (newton-sqrt 2) #(< (abs (- %1 %2)) 1e-12) 1.0))
 
 ;; =============================================================================
-;; 3. Optimise: birds crossing a wind farm
+;; 3. Optimise: tomorrow's stop plan for a wind farm
 ;; =============================================================================
 
-(defmap strait
-  {・ :empty, 🐦 :bird, 🌀 :turbine, 🍞 :food}
-  [・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・]
-  [🐦 ・ ・ ・ 🌀 ・ ・ ・ ・ ・ 🌀 ・ ・ ・]
-  [・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・]
-  [🐦 ・ ・ ・ ・ ・ ・ 🌀 ・ ・ ・ ・ ・ 🍞]
-  [・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・]
-  [🐦 ・ ・ ・ 🌀 ・ ・ ・ ・ ・ 🌀 ・ ・ ・]
-  [・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・])
+(defmap hills
+  {・ :empty, 🌀 :turbine, 🐦 :flyway}
+  [・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・ ・]
+  [🐦 🐦 ・ ・ 🌀 ・ ・ ・ 🌀 ・ ・ ・]
+  [・ ・ 🐦 🐦 ・ ・ ・ ・ ・ ・ ・ ・]
+  [・ ・ ・ ・ 🐦 🐦 ・ 🌀 ・ ・ ・ 🌀]
+  [・ ・ 🌀 ・ ・ ・ 🐦 🐦 ・ ・ ・ ・]
+  [・ ・ ・ 🌀 ・ ・ ・ ・ 🐦 🐦 ・ ・]
+  [・ ・ ・ ・ ・ ・ ・ ・ ・ ・ 🐦 🐦])
 
-(def hub-height 3)  ; turbine hubs, in map cells
-(def rotor 1.6)     ; blade length
-(def turbines (:turbine strait))
-(def food (conj (first (:food strait)) hub-height))   ; on the far cliff
-(def starts (mapv #(conj % hub-height) (:bird strait)))
-(def between (vec (range 1 (first food))))   ; a waypoint at every x between the shores
+(def turbines (:turbine hills))
+(def flyway (vec (sort (:flyway hills))))   ; west to east
 
-(defn dist [[x1 y1 z1] [x2 y2 z2]]
-  (let [dx (- x1 x2) dy (- y1 y2) dz (- z1 z2)]
-    (js/Math.sqrt (+ (* dx dx) (* dy dy) (* dz dz)))))
+(defn dist2 [[x1 y1] [x2 y2]]
+  (let [dx (- x1 x2) dy (- y1 y2)] (+ (* dx dx) (* dy dy))))
 
-(src (defn effort
-       "One leg of a route: its length squared,
-        with climbing counted four times."
-       [[x1 y1 z1] [x2 y2 z2]]
-       (let [dx (- x2 x1) dy (- y2 y1) dz (- z2 z1)]
-         (+ (* dx dx) (* dy dy) (* 4 dz dz)))))
+(defn dist [a b] (js/Math.sqrt (reduce + (map #(let [d (- %1 %2)] (* d d)) a b))))
 
-(src (defn clearance
-       "How far point q is from turbine t: the nearer
-        of the blades' reach and the tower."
-       [[x y z :as q] [tx ty]]
-       (let [hub [tx ty hub-height]
-             blades (- (dist q hub) rotor)
-             tower (if (< z hub-height)
-                     (js/Math.hypot (- x tx) (- y ty))
-                     (dist q hub))]
-         (min blades tower))))
+(defn sq [x] (* x x))
 
-(defn legs [paths] (mapcat #(map vector % (rest %)) paths))
+(def exposure
+  "How much of the flyway passes close to each turbine: a map, so also a function."
+  (into {} (for [t turbines]
+             [t (reduce + (for [f flyway] (js/Math.exp (- (/ (dist2 t f) 2)))))])))
 
-(defn waypoints [paths] (mapcat #(subvec % 1 (dec (count %))) paths))
+;; Tomorrow's forecasts, hour by hour (illustrative numbers). Soaring birds fly on the
+;; midday thermals; Spanish power is cheapest at midday, when the solar farms peak.
+(def hours (vec (range 8 20)))
+(def birds (zipmap hours [0.2 0.5 1.2 2.4 3.6 4 3.6 2.4 1.2 0.5 0.2 0.1]))
+(def value (zipmap hours (map #(* 2 %) [92 85 70 55 42 38 40 48 66 98 120 115])))  ; € per turbine-hour
+(def budget 12)
 
-(defn abreast
-  "Pairs of birds at the same waypoint."
-  [paths]
-  (for [i (range 1 (dec (count (first paths))))
-        pair (pairs (map #(nth % i) paths))]
-    pair))
+(def slots (vec (for [t turbines h hours] [t h])))
 
-(defmodel crossing [paths]
-  (minimize (sum [[a b] (legs paths)] (effort a b)))
+(src (defn wear
+       "Changing speed wears the gearbox: 50 € for a
+        full stop or start, less for less."
+       [run t h]
+       (if-let [later (run [t (inc h)])]
+         (* 50 (sq (- later (run [t h]))))
+         0)))
+
+(defmodel day-plan [run]
+  (minimize (sum [[t h] slots]
+                 (+ (* (value h) (- 1 (run [t h])))
+                    (wear run t h))))
   (subject-to
-   [miss-turbines (for-all [q (waypoints paths) t turbines]
-                           (>= (clearance q t) 0.3))]
-   [keep-apart (for-all [[a b] (abreast paths)]
-                        (>= (dist a b) 1))]))
+   [bird-risk (<= (sum [[t h] slots]
+                    (* (exposure t) (birds h) (run [t h])))
+                  budget)]))
 
 (src (defn penalize
        "Model → Model. Breaking a constraint now costs
@@ -322,7 +315,7 @@
                 :objective #(+ (f %) (* weight (fine %)))
                 :constraints []))))
 
-(def safe-crossing (penalize crossing 20))
+(def safe-plan (penalize day-plan 100))
 
 (src (defn gradient
        "Objective → gradient: nudge each number a little,
@@ -335,30 +328,16 @@
                             (* 2 h)))
                  (range (count xs)))))))
 
-(defn as-paths
-  "The optimiser's flat numbers [y z y z …] → one route per bird, from its start
-  to the food, with a waypoint at each station."
+(defn as-plan
+  "The optimiser's flat numbers → the plan: a map from [turbine hour] to how hard it runs."
   [xs]
-  (mapv (fn [start yz]
-          (vec (concat [start]
-                       (map (fn [x [y z]] [x y z]) between (partition 2 yz))
-                       [food])))
-        starts
-        (partition (* 2 (count between)) xs)))
+  (zipmap slots xs))
 
-(defn on-flat
-  "The model's objective over the optimiser's flat numbers."
-  [model]
-  (comp (:objective model) as-paths))
+(defn on-flat [model] (comp (:objective model) as-plan))
 
 (def first-guess
-  "Towards the food, with a wobble: somewhere to start."
-  {:x (vec (for [[b s] (map-indexed vector starts)
-                 x between
-                 :let [f (/ (- x (first s)) (- (first food) (first s)))
-                       [_ y z] (mapv + s (mapv #(* f %) (mapv - food s)))]
-                 [j v] [[1 y] [2 z]]]
-             (+ v (* 0.9 (js/Math.sin (+ (* 2.3 x) (* 1.7 b) (* 0.9 j)))))))})
+  "Half power everywhere: somewhere to start."
+  {:x (vec (repeat (count slots) 0.5))})
 
 (src (defn descent-step
        "Gradient and rate → Step. A step is State → State."
@@ -368,6 +347,14 @@
            (assoc state
                   :x (mapv - x (mapv #(* rate %) g))
                   :gradient g)))))
+
+(src (defn clamped
+       "Step → Step. Keep every number between lo and hi:
+        a turbine runs between 0% and 100%."
+       [step lo hi]
+       (fn [state]
+         (update (step state) :x
+                 (fn [xs] (mapv #(max lo (min hi %)) xs))))))
 
 (src (defn with-momentum
        "Step → Step. Keep some of the previous move."
@@ -400,7 +387,7 @@
                   :gradient g :m m :v v :t t)))))
 
 (src (defn moved-less-than
-       "converged? for points: nothing moved more than eps."
+       "converged? for numbers: nothing moved more than eps."
        [eps]
        (fn [a b]
          (< (apply max (map #(abs (- %1 %2)) (:x a) (:x b)))
@@ -410,12 +397,12 @@
 (def max-steps 600)
 
 (def run-specs
-  (let [plain (descent-step (gradient (on-flat crossing)) 0.05)
-        safe (descent-step (gradient (on-flat safe-crossing)) 0.01)]
-    {:crowd {:label "plain step, turbines cost nothing" :step plain}
-     :plain {:label "plain gradient step" :step safe}
-     :momentum {:label "with-momentum 0.9" :step (with-momentum safe 0.9)}
-     :adam {:label "with-adam 0.05" :step (with-adam safe 0.05)}}))
+  (let [plain (descent-step (gradient (on-flat day-plan)) 0.0003)
+        safe (descent-step (gradient (on-flat safe-plan)) 0.0001)]
+    {:crowd {:label "plain step, birds cost nothing" :step (clamped plain 0 1)}
+     :plain {:label "plain gradient step" :step (clamped safe 0 1)}
+     :momentum {:label "with-momentum 0.9" :step (clamped (with-momentum safe 0.9) 0 1)}
+     :adam {:label "with-adam 0.02" :step (clamped (with-adam safe 0.02) 0 1)}}))
 
 ;; A run takes seconds, so the deck computes it one state per animation frame and draws
 ;; while it works. advance is the loop of fixed-point, unrolled: the same step, the same
@@ -448,31 +435,65 @@
   [k]
   (if (done? k) (count (run-of k)) (inc max-steps)))
 
-(defn paths-at [k step]
+(defn plan-at [k step]
   (let [run (run-of k)]
-    (as-paths (:x (nth run (min step (dec (count run))))))))
+    (as-plan (:x (nth run (min step (dec (count run))))))))
 
-(defn route
-  "How a bird passes the turbine it comes closest to: over, under or beside."
-  [path]
-  (let [[q [tx ty]] (apply min-key (fn [[q t]] (clearance q t))
-                           (for [q (subvec path 1 (dec (count path))) t turbines] [q t]))
-        [_ _ z] q]
-    (cond (> z (+ hub-height rotor)) "over"
-          (< z (- hub-height rotor)) "under"
-          :else "beside")))
+(defn risk [plan] (reduce + (for [[t h] slots] (* (exposure t) (birds h) (plan [t h])))))
+(defn lost [plan] (reduce + (for [[t h] slots] (* (value h) (- 1 (plan [t h]))))))
+(def full-value (reduce + (for [[_ h] slots] (value h))))
+
+(defn label-of [t] (str "T" (inc (.indexOf turbines t))))
+
+(defn stops
+  "For each turbine that drops below half power: when."
+  [plan]
+  (for [t turbines
+        :let [slow (filter #(< (plan [t %]) 0.5) hours)]
+        :when (seq slow)]
+    (str (label-of t) " " (first slow) ":00–" (inc (last slow)) ":00")))
 
 (defn run-summary [k]
   (let [run (run-of k)
-        end (as-paths (:x (peek run)))]
-    {:steps (dec (count run))
-     :done (done? k)
-     :settled (settled? settle run)
-     :effort ((:objective crossing) end)
-     :closest (apply min (for [q (waypoints end) t turbines] (clearance q t)))
-     :routes (mapv route end)}))
+        plan (as-plan (:x (peek run)))]
+    {:steps (dec (count run)) :done (done? k) :settled (settled? settle run)
+     :lost (lost plan) :risk (risk plan) :stops (stops plan) :plan plan}))
 
-;; ---- The strait in 3D: a camera is a function from points to screen points ----
+;; ---- Tomorrow as a grid: a row per turbine, a column per hour ---------------------
+
+(defn schedule
+  "The plan as a grid, darker where a turbine runs harder, under the two forecasts
+  that drive it. now marks one hour."
+  [plan {:keys [w now] :or {w 660}}]
+  (let [left 120 top 112 cw (/ (- w left 4) (count hours)) ch 36
+        h (+ top (* ch (count turbines)) 34)
+        x-of (fn [i] (+ left (* i cw)))
+        bmax (apply max (vals birds))
+        vmax (apply max (vals value))]
+    (svg w h
+         [:text.small {:x 0 :y 40} "birds passing"]
+         [:text.small {:x 0 :y (- top 6)} "turbine · near flyway"]
+         [:text.small.price {:x 0 :y 70} "power price"]
+         (for [[i hr] (map-indexed vector hours)
+               :let [bh (* 70 (/ (birds hr) bmax))]]
+           [:rect.bird-bar {:x (+ (x-of i) 5) :y (- 92 bh) :width (- cw 10) :height bh}])
+         (polyline (for [[i hr] (map-indexed vector hours)]
+                     [(+ (x-of i) (/ cw 2)) (- 92 (* 70 (/ (value hr) vmax)))])
+                   {:class "price-line"})
+         (for [[r t] (map-indexed vector turbines)
+               :let [y (+ top (* r ch))]]
+           (list [:text.row {:x 0 :y (+ y 25)} (label-of t)]
+                 [:text.small {:x 38 :y (+ y 24)} (fmt (exposure t) 2)]
+                 (for [[i hr] (map-indexed vector hours)]
+                   [:rect.cell {:x (+ (x-of i) 1) :y (+ y 1) :width (- cw 2) :height (- ch 2)
+                                :style {:fill-opacity (.toFixed (+ 0.06 (* 0.94 (plan [t hr]))) 2)}}])))
+         (for [[i hr] (map-indexed vector hours) :when (even? i)]
+           [:text.small {:x (+ (x-of i) 4) :y (- h 8)} (str hr ":00")])
+         (when now
+           (let [i (.indexOf hours now)]
+             [:rect.now {:x (x-of i) :y 8 :width cw :height (- h 30)}])))))
+
+;; ---- The hills in 3D: a camera is a function from points to screen points ---------
 
 (src (defn project
        "Camera → (point → screen point): turn round,
@@ -494,12 +515,35 @@
 
 (defn now-s [] (/ (js/performance.now) 1000))
 
-(defn camera
-  "A camera that sways slowly from side to side, so the depth shows."
-  [t w]
-  (let [[mx my] (:size strait)]
-    {:turn (+ 0.42 (* 0.22 (js/Math.sin (* 0.13 t)))) :tilt 0.55 :distance (* 1.5 mx)
-     :focal (* 0.98 w) :centre [(/ (dec mx) 2) (/ (dec my) 2) 1.2]}))
+(def hub-height 2.2)
+(def rotor 1.1)
+(def seconds-per-hour 1.5)
+
+(defn ground
+  "Height of the hills: a hill under every turbine."
+  [[x y]]
+  (+ 0.2 (reduce + (for [[tx ty] turbines]
+                     (* 1.5 (js/Math.exp (- (/ (+ (sq (- x tx)) (sq (- y ty))) 3))))))))
+
+(defn time-of-day
+  "Where in tomorrow t seconds of playback are: the hour, and how far into it."
+  [t]
+  (let [day (* seconds-per-hour (count hours))
+        within (mod t day)
+        i (js/Math.floor (/ within seconds-per-hour))]
+    {:i i :hour (hours i) :frac (- within (* i seconds-per-hour)) :days (js/Math.floor (/ t day))}))
+
+(defn- spin
+  "Blade angle at time t for a turbine whose run level, hour by hour, is levels."
+  [levels t]
+  (let [{:keys [i frac days]} (time-of-day t)
+        per-day (* seconds-per-hour (reduce + levels))]
+    (* 3 (+ (* days per-day) (* seconds-per-hour (reduce + (take i levels))) (* (levels i) frac)))))
+
+(defn camera [t w]
+  (let [[mx my] (:size hills)]
+    {:turn (+ 0.35 (* 0.2 (js/Math.sin (* 0.11 t)))) :tilt 0.62 :distance (* 1.45 mx)
+     :focal (* 1.15 w) :centre [(/ (dec mx) 2) (/ (dec my) 2) 2.4]}))
 
 (defn- pts [ps] (str/join " " (map (fn [[x y]] (str (n1 x) "," (n1 y))) ps)))
 
@@ -514,53 +558,47 @@
         (recur more ls (- left l))))))
 
 (defn scene
-  "The strait in 3D: sea, two cliffs, turbines with turning blades, each bird's route
-  with its shadow on the sea, and a bird flying it. paths may be nil: just the map."
-  [paths t {:keys [w h] :or {w 660 h 500}}]
-  (let [[mx my] (:size strait)
+  "The hills in 3D, at time t of tomorrow played fast: turbines turn as hard as the plan
+  says (a nil plan runs them all), and birds pass along the flyway as the forecast says."
+  [plan t {:keys [w h] :or {w 660 h 470}}]
+  (let [[mx my] (:size hills)
         P (project (camera t w))
         xy (fn [p] (let [[x y] (P p)] [x y]))
+        on-ground (fn [x y] [x y (ground [x y])])
         poly (fn [cls ps] [:polygon {:class cls :points (pts (map xy ps))}])
         seg (fn [cls a b] (let [[x1 y1] (xy a) [x2 y2] (xy b)]
                             [:line {:class cls :x1 (n1 x1) :y1 (n1 y1) :x2 (n1 x2) :y2 (n1 y2)}]))
-        [y0 y1] [-1.5 (+ my 0.5)]
-        cliff (fn [xa xb face-x]
-                (list (poly "land-side" [[face-x y0 0] [face-x y1 0] [face-x y1 hub-height] [face-x y0 hub-height]])
-                      (poly "land-front" [[xa y1 0] [xb y1 0] [xb y1 hub-height] [xa y1 hub-height]])
-                      (poly "land-top" [[xa y0 hub-height] [xb y0 hub-height] [xb y1 hub-height] [xa y1 hub-height]])))
-        far-first (sort-by #(- (nth (P [(first %) (second %) hub-height]) 2)) turbines)
-        turbine (fn [i [tx ty]]
-                  (let [hub [tx ty hub-height]
-                        spin (+ (* 1.3 t) i)
-                        tip (fn [a] [(+ tx (* rotor (js/Math.sin a))) ty (+ hub-height (* rotor (js/Math.cos a)))])
+        level (fn [t hr] (if plan (plan [t hr]) 1))
+        {:keys [hour]} (time-of-day t)
+        fly-path (mapv (fn [[x y]] [x y (+ (ground [x y]) hub-height)]) flyway)
+        far-first (sort-by #(- (nth (P (on-ground (first %) (second %))) 2)) turbines)
+        turbine (fn [[tx ty :as tb]]
+                  (let [base (on-ground tx ty)
+                        hub (update base 2 + hub-height)
+                        levels (mapv #(level tb %) hours)
+                        a (spin levels t)
+                        stopped (< (level tb hour) 0.15)
+                        tip (fn [a] [(+ tx (* rotor (js/Math.sin a))) ty (+ (hub 2) (* rotor (js/Math.cos a)))])
                         [hx hy] (xy hub)]
                     (list (poly "disc" (map #(tip (* % (/ js/Math.PI 14))) (range 28)))
-                          (seg "tower" [tx ty 0] hub)
-                          (for [k (range 3)] (seg "blade" hub (tip (+ spin (* k 2.0944)))))
-                          [:circle.hub {:cx (n1 hx) :cy (n1 hy) :r 4}])))]
+                          (seg "tower" base hub)
+                          (for [k (range 3)] (seg "blade" hub (tip (+ a (* k 2.0944)))))
+                          [:circle {:class (if stopped "hub stopped" "hub") :cx (n1 hx) :cy (n1 hy) :r (if stopped 7 4)}]
+                          (let [[lx ly] (xy (update base 2 - 0.1))]
+                            [:text.tlabel {:x (n1 lx) :y (n1 (+ ly 20))} (label-of tb)]))))]
     [:svg.scene {:viewBox (str (- (/ w 2)) " " (- (/ h 2)) " " w " " h) :width w :height h
                  :xmlns "http://www.w3.org/2000/svg"}
-     (poly "sea-fill" [[0 y0 0] [(dec mx) y0 0] [(dec mx) y1 0] [0 y1 0]])
-     (for [x (range 0 mx)] (seg "sea" [x y0 0] [x y1 0]))
-     (for [y (range -1 (inc my))] (seg "sea" [0 y 0] [(dec mx) y 0]))
-     (cliff -1 0 0)
-     (cliff (dec mx) mx (dec mx))
-     (let [[x y] (xy [-0.5 (+ my 0.5) 0])] [:text.place {:x x :y (+ y 24)} "Spain"])
-     (let [[x y] (xy [(- mx 0.5) (+ my 0.5) 0])] [:text.place {:x x :y (+ y 24)} "Morocco"])
-     (for [[i p] (map-indexed vector paths)]
-       (list [:polyline.shadow {:points (pts (map #(xy (assoc % 2 0)) p))}]
-             [:polyline {:class (str "route r" i) :points (pts (map xy p))}]))
-     (map-indexed turbine far-first)
-     (for [[i p] (map-indexed vector paths)
-           q (subvec p 1 (dec (count p)))
-           :when (some #(neg? (clearance q %)) turbines)]
-       (let [[x y] (xy q)] [:circle.hit {:cx (n1 x) :cy (n1 y) :r 5}]))
-     (let [[fx' fy'] (xy food)] [:g {:transform (str "translate(" (n1 fx') "," (n1 fy') ") scale(0.8)")} (food-glyph 0 0)])
-     (for [[i p] (map-indexed vector (or paths (map vector starts)))]
-       (let [b (if (= 1 (count p)) (first p) (along p (mod (+ (/ t 7) (/ i 3)) 1)))
-             [x y depth] (P b)]
-         (list (when (next p) (seg "drop" b (assoc b 2 0)))
-               (bird-glyph x y {:cls (str "bird r" i) :scale (/ (* 0.05 w) depth)}))))]))
+     (for [y (range my)] [:polyline.terrain {:points (pts (map #(xy (on-ground % y)) (range -0.5 (- mx 0.4) 0.25)))}])
+     (for [x (range mx)] [:polyline.terrain {:points (pts (map #(xy (on-ground x %)) (range -0.5 (- my 0.4) 0.25)))}])
+     [:polyline.flyway {:points (pts (map xy fly-path))}]
+     (map turbine far-first)
+     (let [n (js/Math.round (* 2.5 (birds hour)))]
+       (for [k (range n)
+             :let [b (mapv + (along fly-path (mod (+ (/ t 5) (/ k n)) 1))
+                           [0 (* 0.35 (js/Math.sin (* 3.1 k))) (* 0.3 (js/Math.cos (* 1.7 k)))])
+                   [x y depth] (P b)]]
+         (bird-glyph x y {:cls "bird flying" :scale (/ (* 0.03 w) depth)})))
+     [:text.clock {:x (n1 (+ (- (/ w 2)) 10)) :y (n1 (+ (- (/ h 2)) 40))} (str hour ":00")]]))
 
 ;; =============================================================================
 ;; 4. Decide: restocking a hydrogen station
@@ -943,25 +981,22 @@
 (defn progress-label [step steps]
   [:div.step-label (str "step " (inc step) " / " steps)])
 
-(defn flock-slide
-  "A slide that replays run k in 3D, next to the code that makes its step."
+(defn plan-slide
+  "A slide that replays run k as tomorrow's schedule, next to the code that makes its step."
   [k title left caption final notes]
-  (let [id (str "live-" (name k))
-        view (fn [step t] (scene (paths-at k step) t {}))]
-    {:section "Optimise" :title title :runs [k] :steps #(steps-for k)
-     :live (fn [step t] {id (view step t)})
-     :render (fn [step]
-               (let [run (run-of k)
-                     i (min step (dec (count run)))]
-                 [:div.two
-                  left
-                  [:div [:div {:id id} (view step (now-s))]
-                   [:div.caption (str caption " · " (if (done? k)
-                                                       (str "state " i " of " (dec (count run)))
-                                                       (str "computing · state " i)))]
-                   (when (and (done? k) (= i (dec (count run))))
-                     (final (run-summary k)))]]))
-     :notes notes}))
+  {:section "Optimise" :title title :runs [k] :steps #(steps-for k)
+   :render (fn [step]
+             (let [run (run-of k)
+                   i (min step (dec (count run)))]
+               [:div.two
+                left
+                [:div (schedule (plan-at k step) {})
+                 [:div.caption (str caption " · " (if (done? k)
+                                                     (str "state " i " of " (dec (count run)))
+                                                     (str "computing · state " i)))]
+                 (when (and (done? k) (= i (dec (count run))))
+                   (final (run-summary k)))]]))
+   :notes notes})
 
 ;; ---- Slide content ---------------------------------------------------------------
 
@@ -1026,31 +1061,32 @@
     :live (fn [step t] (when (= step 2) {"live-map" (scene nil t {})}))
     :render (fn [step]
               [:div.two
-               [:div (code 'strait {:size :small})]
+               [:div (code 'hills {:size :small})]
                [:div
                 (case step
-                  0 [:div.aside [:p "This drawing is source code. The macro " [:code "defmap"] " reads it."]]
+                  0 [:div.aside
+                     [:p "A wind farm on hills in Andalusia, under a route soaring birds take between Europe and Africa."]
+                     [:p "This drawing is source code. The macro " [:code "defmap"] " reads it."]]
                   1 [:div [:div.caption "what defmap returns"]
-                     (code (str "{:bird    " (pr-str (:bird strait))
-                                "\n :turbine " (pr-str (:turbine strait))
-                                "\n :food    " (pr-str (:food strait)) "}") {:size :small})]
-                  [:div [:div.caption "the same drawing in 3D: hubs 3 high, blades 1.6 long"]
+                     (code (str "{:turbine " (pr-str (:turbine hills))
+                                "\n :flyway  " (pr-str (vec (take 6 (:flyway hills)))) "\n          …}") {:size :small})]
+                  [:div [:div.caption "the same drawing in 3D: a turbine on every hilltop, birds along the flyway"]
                    [:div#live-map (scene nil (now-s) {})]])]])
-    :notes "A wind farm on the Strait, drawn as a grid. defmap reads the grid at compile time and returns a map of positions. The third step draws the same data in 3D; the projection is a dozen lines of pure functions. Live: move a turbine in core.cljs and save; the slide redraws. (n/random-map {:seed 7}) prints a new map to paste."}
+    :notes "defmap reads the grid at compile time and returns a map of positions. The third step draws the same data in 3D, playing a day: the clock runs, birds pass along the flyway, thickest at midday when the thermals are strong. The projection is a dozen lines of pure functions. Live: move a turbine in core.cljs and save; the slide redraws and tomorrow's plan is recomputed. (n/random-map {:seed 7}) prints a new map to paste."}
 
    {:section "Why Clojure" :title "The model reads like the maths" :steps 3
     :render (fn [step]
               [:div.two
-               [:div (code 'crossing) (code 'clearance {:size :small})]
+               [:div (code 'day-plan) (code 'wear {:size :small})]
                [:div
                 (case step
                   0 [:div.aside
-                     [:p "The plan is each bird's route: a waypoint above every cell between the shores, with height and sideways position free."]
-                     [:p "The score is effort: each leg's length squared, climbing counted four times."]
-                     [:p "The rules: keep 0.3 clear of every rotor and tower, and 1 apart from the bird alongside."]]
-                  1 [:div [:div.caption "the formula, rendered from the source on the left"] (model-formula crossing)]
-                  [:div [:div.caption "what defmodel expands to"] (code (:expansion crossing) {:size :small})])]])
-    :notes "Operations research keeps two things apart: what a good answer is (the model) and how to find one (the solver). SQL works the same way: you declare the result, the engine finds it. The grammar has four words: minimize or maximize, subject-to, sum, for-all. The expansion shows that sum is reduce + and for-all is a for. The formula is drawn from the model's source, so the two cannot disagree. clearance is ordinary 3D distance: to a ball round the hub, and below the hub to the tower."}
+                     [:p "The plan: how hard each turbine runs in each hour of tomorrow, from 0 to 1. A Clojure map, so also a function: " [:code "(run [t h])"] "."]
+                     [:p "The score: the power we give up, plus wear from changing speed."]
+                     [:p "The rule: bird risk, closeness to the flyway × birds forecast × running, stays within a budget."]]
+                  1 [:div [:div.caption "the formula, rendered from the source on the left"] (model-formula day-plan)]
+                  [:div [:div.caption "what defmodel expands to"] (code (:expansion day-plan) {:size :small})])]])
+    :notes "Operations research keeps two things apart: what a good answer is (the model) and how to find one (the solver). SQL works the same way: you declare the result, the engine finds it. The grammar has four words: minimize or maximize, subject-to, sum, for-all. The expansion shows that sum is reduce +. The formula is drawn from the model's source, so the two cannot disagree. The forecasts are illustrative: birds peak at midday, and Spanish power is cheapest at midday, when the solar farms flood the grid."}
 
    {:section "Why Clojure" :title "Effects at the edges"
     :render (fn [_]
@@ -1088,62 +1124,70 @@
     :notes "This is the pattern of the whole talk. A state, a step from state to state, a test for done. iterate makes the lazy sequence of states. take-while stops it. The max-steps guard is one take, because iterate is lazy. Optimising, deciding and verifying are all this loop with different arguments."}
 
    ;; ---------------------------------------------------------------- Optimise (5 min)
-   (flock-slide :crowd "A step is State → State"
-                [:div (code 'gradient {:size :small}) (code 'descent-step {:size :small})]
-                "plain gradient step, turbines cost nothing"
-                (fn [_] [:p.aside "Every bird flies straight through the rotors. That is what we asked for: the model charges nothing for hitting one."])
-                "gradient nudges each coordinate and watches the score move. That is the derivative, computed the way a developer would. descent-step takes a gradient and a rate and returns a function from state to state. Press Space to play. Red dots are waypoints inside a rotor. The fault is in the model: miss-turbines is a constraint, and this solver reads only the score. The deck computes each run one state per frame, in the browser, the same states fixed-point would return.")
+   (plan-slide :crowd "A step is State → State"
+               [:div (code 'gradient {:size :small}) (code 'descent-step {:size :small})]
+               "plain gradient step, birds cost nothing"
+               (fn [_] [:p.aside "Every turbine runs flat out, through the midday migration. That is what we asked for: the model charges nothing for birds."])
+               "gradient nudges each number and watches the score move. That is the derivative, computed the way a developer would. descent-step takes a gradient and a rate and returns a function from state to state. Each column is an hour, each row a turbine; dark means running. Press Space to play. The fault is in the model: bird-risk is a constraint, and this solver reads only the score. The deck computes each run one state per frame, in the browser: the same states fixed-point would return.")
 
-   (flock-slide :plain "Change the model, keep the solver"
-                [:div (code 'penalize {:size :small}) [:div.caption "(penalize crossing 20)"] (penalized-formula crossing 20)]
-                "the same descent-step, penalized model"
-                (fn [{:keys [closest routes]}]
-                  [:p.aside (str "Routes: " (str/join ", " routes) ". Closest to a turbine: " (fmt closest 2)
-                                 ", against 0.3 asked for. A fine is a soft rule; sometimes paying it is cheaper.")])
-                "penalize takes a model and returns a model. Breaking a rule now costs weight × (how far it is broken)². The solver is unchanged; only its input changed. The routes now bend round the turbines, or climb over a rotor; nobody told the birds which. A soft rule can still be broken a little when the fine is cheap: read the closest approach.")
+   (plan-slide :plain "Change the model, keep the solver"
+               [:div (code 'penalize {:size :small}) [:div.caption "(penalize day-plan 100)"] (penalized-formula day-plan 100)]
+               "the same descent-step, penalized model"
+               (fn [{:keys [stops lost risk]}]
+                 [:p.aside (str "Slows down: " (str/join ", " stops) ". Power given up: €" (fmt lost 0)
+                                " of €" (fmt full-value 0) ". Bird risk " (fmt risk 1) " against a budget of " budget
+                                ": a fine is a soft rule.")])
+               "penalize takes a model and returns a model. Breaking a rule now costs weight × (how far it is broken)². The solver is unchanged; only its input changed. The plan slows the turbines nearest the flyway around midday, when birds peak and power is cheap anyway. Nobody wrote that rule. A soft rule can be broken a little when the fine is cheap: read the risk against the budget.")
 
-   (flock-slide :momentum "Change the step: Step → Step"
-                [:div (code 'with-momentum {:size :small :marks #{"step"}})
-                 [:div.caption "(with-momentum (descent-step grad 0.01) 0.9)"]]
-                "with-momentum 0.9"
-                (fn [{:keys [routes]}] [:p.aside (str "Routes: " (str/join ", " routes) ".")])
-                "with-momentum takes a step and returns a step. It asks the base step where to move, then adds 90% of the previous move. The velocity is stored in the state map, so the step stays pure: same input, same output.")
+   (plan-slide :momentum "Change the step: Step → Step"
+               [:div (code 'with-momentum {:size :small :marks #{"step"}}) (code 'clamped {:size :small :marks #{"step"}})
+                [:div.caption "(clamped (with-momentum step 0.9) 0 1)"]]
+               "with-momentum 0.9, clamped"
+               (fn [{:keys [steps]}] [:p.aside (str "Settled in " steps " steps.")])
+               "with-momentum takes a step and returns a step. It asks the base step where to move, then adds 90% of the previous move. The velocity is stored in the state map, so the step stays pure. clamped is another decorator: it keeps every number between 0 and 1, because a turbine cannot run at minus 20%. Every run today is clamped; decorators compose.")
 
-   (flock-slide :adam "Another decorator: Adam"
-                [:div (code 'with-adam {:size :small :marks #{"step"}})]
-                "(with-adam (descent-step grad 0.01) 0.05)"
-                (fn [{:keys [routes]}] [:p.aside (str "Routes: " (str/join ", " routes) ".")])
-                "Adam reuses the base step's gradient and scales each coordinate by the size of its recent gradients. The optimiser from machine learning has the same shape: Step → Step. Its variant AdamW would pull every coordinate toward zero, which means nothing on a map. Decorators compose. Whether the result makes sense is still your call.")
+   (plan-slide :adam "Another decorator: Adam"
+               [:div (code 'with-adam {:size :small :marks #{"step"}})]
+               "(clamped (with-adam step 0.02) 0 1)"
+               (fn [{:keys [steps]}] [:p.aside (str "Settled in " steps " steps.")])
+               "Adam reuses the base step's gradient and scales each coordinate by the size of its recent gradients. The optimiser from machine learning has the same shape: Step → Step. Its variant AdamW would pull every number toward zero, which here means stopping turbines for no reason. Decorators compose. Whether the result makes sense is still your call.")
 
-   (let [ks [:plain :momentum :adam]
-         id #(str "race-" (name %))
-         view (fn [k t] (scene (paths-at k max-steps) t {:w 470 :h 330}))]
+   (let [ks [:plain :momentum :adam]]
      {:section "Optimise" :title "Same loop, three steps" :runs ks
-      :live (fn [_ t] (into {} (for [k ks] [(id k) (view k t)])))
       :render (fn [_]
                 (let [sums (into {} (for [k ks] [k (run-summary k)]))
                       ready (every? done? ks)
-                      efforts (map #(:effort (sums %)) ks)
-                      agree (and ready (apply = (map #(:routes (sums %)) ks))
-                                 (< (- (apply max efforts) (apply min efforts)) 0.5))
-                      best (apply min-key #(:effort (sums %)) ks)]
+                      plans (map #(:plan (sums %)) ks)
+                      gap (apply max (for [s slots] (- (apply max (map #(% s) plans)) (apply min (map #(% s) plans)))))]
                   [:div
                    [:div.race3
                     (for [k ks
-                          :let [{:keys [steps settled effort routes done]} (sums k)]]
+                          :let [{:keys [steps settled lost done plan]} (sums k)]]
                       [:div
-                       [:div {:id (id k)} (view k (now-s))]
+                       (schedule plan {:w 470})
                        [:div.r-label (:label (run-specs k))]
                        [:div.r-v (if done
-                                   (str steps " steps" (when-not settled " (max-steps)") " · effort " (fmt effort 1))
-                                   (str "computing · state " steps))]
-                       [:div.r-v.muted (str/join ", " routes)]])]
+                                   (str steps " steps" (when-not settled " (max-steps)") " · €" (fmt lost 0) " given up")
+                                   (str "computing · state " steps))]])]
                    [:p.aside
                     (cond (not ready) "Still computing."
-                          agree "Same model, same start, same fixed-point. All three steps found the same routes."
-                          :else (str "Same model, same start, same fixed-point, and they disagree. Lowest effort: "
-                                     (:label (run-specs best)) ". With obstacles there is more than one valley; the step decides which one you reach."))]]))
-      :notes "These numbers are computed in this browser, now. With turbines in the way the problem has several valleys, and each step can settle in a different one: over the rotors, under them, or the other way round a tower. None of these steps promises the best valley. Between the runs one line changed, the decorator. The loop did not change."})
+                          (< gap 0.15) (str "Same model, same start, same fixed-point. All three reach the same plan, to within "
+                                            (fmt gap 2) " in every hour; they differ in how many steps it takes.")
+                          :else "Same model, same start, same fixed-point, and they disagree: more than one valley, and the step decides which one you reach.")]]))
+      :notes "These numbers are computed in this browser, now. Momentum is fastest here; Adam is slowest. Adam is not magic, and on a small smooth problem a tuned plain step does well. Between the runs one line changed, the decorator. The loop did not change. An LP solver would find this plan exactly, with a receipt; the wear term makes it a quadratic programme. We use the loop because the loop is the talk."})
+
+   {:section "Optimise" :title "Tomorrow, played"
+    :runs [:plain]
+    :live (fn [_ t] {"played-3d" (scene (:plan (run-summary :plain)) t {:h 600})
+                     "played-grid" (schedule (:plan (run-summary :plain)) {:w 640 :now (:hour (time-of-day t))})})
+    :render (fn [_]
+              (let [plan (:plan (run-summary :plain))
+                    t (now-s)]
+                [:div.two.even
+                 [:div [:div#played-grid (schedule plan {:w 640 :now (:hour (time-of-day t))})]
+                  [:p.aside "Red hubs are stopped. The plan stops the turbines nearest the flyway while the birds pass, and runs the rest."]]
+                 [:div#played-3d (scene plan t {:h 600})]]))
+    :notes "The plan from the last slides, played fast: a day in eighteen seconds. Watch the clock and the turbines near the flyway around midday. This is the plan made a day ahead. The bird that turns up anyway is the next section's problem: a controller that must stop in time."}
 
    ;; ---------------------------------------------------------------- Decide (5 min)
    {:section "Decide" :title "Ordering stock when demand is random" :steps 3
@@ -1220,7 +1264,7 @@
                [:div
                 (if (zero? step)
                   [:div.aside
-                   [:p "A wind farm on the Strait of Gibraltar, on the main route soaring birds take between Europe and Africa."]
+                   [:p "The same wind farm. The plan says when to slow down; this controller handles the bird that turns up anyway."]
                    [:p "Every 10 minutes a table decides RUN or STOP from season, wind, power price and bird detections."]
                    [:p.muted "Simplified from our RH2EDIN Reto 3 controller. Its bird passages are synthetic."]]
                   [:div (code 'with-shield {:size :small :marks #{"decide"}})
@@ -1304,9 +1348,9 @@
    {:section "Verify" :title "Three ways the loop goes wrong"
     :render (fn [_]
               [:ol.gotchas
-               [:li [:b "It may never settle."] " Set the rate too high and the routes oscillate forever. The guard is "
+               [:li [:b "It may never settle."] " Set the rate too high and the plan oscillates forever. The guard is "
                 [:code "max-steps"] ": one " [:code "take"] ", because " [:code "iterate"] " is lazy."]
-               [:li [:b "Settled is not correct."] " The first run converged perfectly, straight through the rotors."]
+               [:li [:b "Settled is not correct."] " The first run converged perfectly: every turbine flat out through the migration."]
                [:li [:b [:code "converged?"] " is part of the specification."] " Use exact " [:code "="]
                 " for sets and plans, a tolerance for numbers. It is an argument you can read, not a constant buried in a library."]])
     :notes "Three points a developer can defend without any maths."}

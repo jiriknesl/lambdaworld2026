@@ -252,3 +252,17 @@ svg.scene .r2 { stroke: var(--ok); }
 .race3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .race3 .r-label { font: 600 22px var(--sans); margin-top: 6px; }
 .race3 .r-v { font-size: 20px; }
+
+/* tomorrow's plan */
+rect.bird-bar { fill: var(--muted); opacity: .45; }
+polyline.price-line { stroke: var(--warn); stroke-width: 3; fill: none; }
+text.price { fill: var(--warn); }
+rect.cell { fill: var(--accent); }
+text.row { font: 19px var(--sans); fill: var(--ink); }
+rect.now { fill: none; stroke: var(--bad); stroke-width: 3; }
+svg.scene polyline.terrain { fill: none; stroke: var(--land-side); stroke-width: 1.4; }
+svg.scene polyline.flyway { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 6 6; opacity: .7; }
+svg.scene circle.hub.stopped { fill: var(--bad); }
+svg.scene text.tlabel { fill: var(--muted); font: 15px var(--sans); text-anchor: middle; }
+svg.scene text.clock { fill: var(--ink); font: 700 34px var(--mono); }
+svg.scene path.bird.flying { stroke: var(--muted); stroke-width: 3; }
