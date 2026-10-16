@@ -1,0 +1,13 @@
+{
+  "name": "lambda-world-2026-talk",
+  "private": true,
+  "description": "Rebuilding Operations Research in Higher-Order Functions in Clojure — the stage deck",
+  "scripts": {
+    "watch": "shadow-cljs watch talk",
+    "release": "shadow-cljs release talk",
+    "test": "shadow-cljs compile test && node out/test.js"
+  },
+  "devDependencies": {
+    "shadow-cljs": "3.5.7"
+  }
+}

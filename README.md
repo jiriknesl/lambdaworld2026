@@ -1,5 +1,7 @@
 # Lambda World 2026 — The Function Observatory
 
+> **Superseded for the stage.** The talk is now the deck in [`talk/`](talk/README.md) (shadow-cljs, keyboard-driven, offline). This application stays in the repository until the new deck has been rehearsed; the notes below describe the old app only.
+
 A runnable 40-minute presentation for **Rebuilding Operations Research in Higher
 Order Functions in Clojure**, by Jiri Knesl. One rescue connects the examples:
 a person falls overboard, boats organize, currents complicate navigation, the

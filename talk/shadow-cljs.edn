@@ -1,0 +1,17 @@
+;; The stage deck.
+;;   npm run watch     work: http://localhost:7350, hot reload on save, nREPL on 7351 (Calva: shadow-cljs, build :talk)
+;;   npm run release   stage: one public/js/main.js; open public/index.html from disk, no server or network
+;;   npm test          algorithm and notation tests under Node
+{:source-paths ["src" "test"]
+ :dependencies []
+ :dev-http {7350 "public"}
+ :nrepl {:port 7351}
+ :builds
+ {:talk {:target :browser
+         :output-dir "public/js"
+         :asset-path "js"
+         :modules {:main {:init-fn talk.core/init}}
+         :devtools {:after-load talk.core/reload!}}
+  :test {:target :node-test
+         :output-to "out/test.js"
+         :ns-regexp "-test$"}}}
