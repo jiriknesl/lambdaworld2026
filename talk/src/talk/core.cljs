@@ -1164,22 +1164,15 @@
                    [:div#live-map (scene nil (now-s) {})]])]])
     :notes "defmap reads the grid at compile time and returns a map of positions. The third step draws the same data in 3D, playing a day: the clock runs, birds pass along the flyway, thickest at midday when the thermals are strong. The projection is a dozen lines of pure functions. Live: move a turbine in core.cljs and save; the slide redraws and tomorrow's plan is recomputed. (n/random-map {:seed 7}) prints a new map to paste."}
 
-   {:section "Optimise" :title "Birds ↔ electricity" :steps 4
+   {:section "Optimise" :title "Birds ↔ electricity" :steps 2
     :render (fn [frame]
-              (if (= frame 2)
-                [:div
-                 (code (n/defmodel-source) {:size :small :marks #{"defmacro" "minimize" "subject-to" "sense" "constraints"}})
-                 [:p.caption "Actual implementation · talk/notation.cljc"]
-                 [:p.aside "Only " [:code "defmodel"] " is a macro. It reads these lists without calling them."]
-                 [:p.caption [:code "minimize"] " names the objective; " [:code "subject-to"] " introduces the constraint rows."]]
-                [:div.two
+              [:div.two
                [:div
                 (if (= frame 1)
                   [:div (code 'electricity-lost {:size :small}) (code 'bird-risk {:size :small})]
                   [:div
                    [:p.caption "Notation written for this talk. defmodel is the macro."]
-                   (code 'day-plan {:marks #{"defmodel" "minimize" "subject-to"}})])
-                (when (= frame 3) (code (:expansion day-plan) {:size :small}))]
+                   (code 'day-plan {:marks #{"defmodel" "minimize" "subject-to"}})])]
                [:div
                 (case frame
                   0 [:div.equation-stack
@@ -1195,13 +1188,46 @@
                      [:div.equation-part [:span.f-label "Subject to"]
                       [:div "bird risk ≤ " budget]]
                      [:p.caption "Same goal as maximizing generated electricity. Lower the risk limit to prioritize birds."]]
-                  [:div
-                   [:p.aside "The macro returns data containing functions."]
-                   (code "((:objective day-plan) plan)
-;; → electricity lost")
-                   [:p.caption "This describes the problem; it does not solve it."]
-                   [:p.caption "Later, penalize adds a cost for breaking a constraint."]])]]))
-    :notes "Stopping loses electricity; keeping every turbine running increases collision risk. Those goals compete. We choose a bird-risk limit and maximize electricity subject to it, equivalently minimize electricity lost. The risk index is exposure times bird traffic times turbine operation, not a calibrated prediction of birds killed. All forecasts are illustrative. Lowering the limit chooses another tradeoff. The next step shows the two real functions, then shows the actual macro implementation: defmodel is a macro in talk/notation.cljc. minimize and subject-to are marker symbols consumed by that macro, not independently defined functions or macros. In the argument destructuring, sense receives the symbol minimize and objective receives the unevaluated electricity-lost form. The case selects :minimize. In [_ & constraints], the underscore discards the subject-to marker; the remaining constraint rows go through compile-constraint. The marker is positional syntax here, not a function call or separately validated operator. compile-expr and compile-constraint generate the ordinary function forms. The final step shows its actual expansion into objective and constraint functions."}
+                  nil)]])
+    :notes "Stopping loses electricity; keeping every turbine running increases collision risk. Those goals compete. We choose a bird-risk limit and maximize electricity subject to it, equivalently minimize electricity lost. The risk index is exposure times bird traffic times turbine operation, not a calibrated prediction of birds killed. All forecasts are illustrative. Lowering the limit chooses another tradeoff. The next reveal shows the two real functions. The following slide shows the actual macro implementation: defmodel is a macro in talk/notation.cljc. minimize and subject-to are marker symbols consumed by that macro, not independently defined functions or macros. In the argument destructuring, sense receives the symbol minimize and objective receives the unevaluated electricity-lost form. The case selects :minimize. In [_ & constraints], the underscore discards the subject-to marker; the remaining constraint rows go through compile-constraint. The marker is positional syntax here, not a function call or separately validated operator. compile-expr and compile-constraint generate the ordinary function forms. The source slide ends with its actual expansion into objective and constraint functions."}
+
+   {:section "Optimise" :title "Source of the model notation" :steps 4
+    :render (fn [frame]
+              (case frame
+                0 [:div
+                   (code (n/implementation-source defmodel)
+                         {:size :small :marks #{"sense" "minimize" "constraints" "compile-expr" "compile-constraint"}})
+                   [:p.caption "talk/notation.cljc · actual macro source"]
+                   [:p.aside [:code "[sense objective]"] " reads " [:code "(minimize …)"] ". "
+                    [:code "[_ & constraints]"] " reads " [:code "(subject-to …)"] "."]]
+                1 [:div.two
+                   [:div (code (n/implementation-source compile-expr) {:size :small})
+                    [:p.caption "The expression compiler called by defmodel."]]
+                   [:div
+                    [:p.caption "For this objective, the expression is unchanged:"]
+                    (code "(electricity-lost run)")
+                    [:p.caption "defmodel puts it inside a function:"]
+                    (code "(fn [run]
+  (electricity-lost run))")]]
+                2 [:div.two
+                   [:div (code (n/implementation-source compile-constraint) {:size :small})]
+                   [:div
+                    (code (n/implementation-source relations) {:size :small})
+                    (code (n/implementation-source binding-label) {:size :small})
+                    [:p.caption "binding-label handles indexed constraints written with for-all."]
+                    [:p.aside "For our bird constraint:"]
+                    (code "(<= (bird-risk run) budget)
+
+;; generated gap
+(- (bird-risk run) budget)" {:size :small})
+                    [:p.caption "A positive gap exceeds the budget."]]]
+                3 [:div.two.even
+                   [:div [:p.caption "The model we wrote"]
+                    (code 'day-plan {:size :small})]
+                   [:div [:p.caption "The generated functions"]
+                    (code (:expansion day-plan) {:size :small})
+                    [:p.caption "penalize uses these gaps to add a cost for violations."]]]))
+    :notes "This is the source, extracted from the running macro namespace at build time. No handwritten stand-in. First show defmodel: the arguments are unevaluated lists, sense receives minimize, objective receives the expression, and the constraint block is destructured into its rows. The macro constructs a map containing functions. Next show compile-expr: it handles sum notation recursively; electricity-lost is already an ordinary function call, so this expression is unchanged. Next show compile-constraint and its helpers. It recognizes the relation and emits a function returning left-minus-right gaps. A positive gap violates a <= constraint. The for-all branch and binding-label support indexed constraints; this bird-risk example takes the simple branch. Finally put the model next to the actual generated functions. The constraint describes what should hold; it does not enforce itself. The upcoming penalize wrapper turns a positive violation into an extra cost. Keep this source walkthrough brief; the audience can inspect each reveal with the arrow keys."}
 
    {:section "Optimise" :title "Build one update" :steps 4
     :render (fn [frame]

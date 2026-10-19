@@ -10,8 +10,8 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plain-update-20261019).
-Updated 2026-10-19: concrete wording for the gradient update, and an explicit explanation that minimize/subject-to belong to the talk’s own notation. This URL is **public and unauthenticated**;
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=dsl-source-20261019).
+Updated 2026-10-19: a dedicated model-notation source slide shows defmodel, both compiler helpers, supporting definitions and the generated functions. This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, speaker notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
 
@@ -91,7 +91,7 @@ open the release build (`public/index.html`) — it needs nothing else.
 | 4. Decide | `defbellman restock`, `bellman`, the stopping bound |
 | 5. Verify | `table-decision`, `with-shield`, `tick-controller`, `react-to-detections`, `reachable`, rules (`always`, `implies`, `within`), the worst-case search |
 | 6. Receipt | `defmodel trailers` (RH2EDIN Reto 2), `linear-rows`, `pivot`, `check-receipt`, recorded Rainbow verdicts |
-| 7. Slides | 30 slides with speaker notes, following the revised arc below |
+| 7. Slides | 31 slides with speaker notes, following the revised arc below |
 | 8. App | keyboard, URL, notes window, playback, scaling |
 
 ## Talk arc — revised 2026-10-19
@@ -127,19 +127,22 @@ gearbox wear are no longer part of the objective.
 
 `defmodel` is a macro in `src/talk/notation.cljc`. This notation was written for the talk; it is not
 part of Clojure or an imported optimization library. `minimize` and `subject-to` are syntax markers
-consumed by that macro, not standalone functions or macros. Slide 10 shows the real helper
-functions, the actual `defmodel` implementation, and the generated objective/constraint functions.
-The implementation panel is extracted from the macro's source at build time, not a handwritten
-copy. `[sense objective]` reads the objective form: `sense` receives `minimize`, and `case` maps it
+consumed by that macro, not standalone functions or macros. Slide 10 shows the cost and risk
+functions. Slide 11, **Source of the model notation**, has four
+reveals: `defmodel`; `compile-expr`; `compile-constraint` with `relations` and `binding-label`;
+then the original model beside the generated functions. Every implementation panel is extracted
+from `src/talk/notation.cljc`, including the private helpers.
+
+`[sense objective]` reads the objective form: `sense` receives `minimize`, and `case` maps it
 to `:minimize`. `[_ & constraints]` discards the leading `subject-to` symbol and reads its rows.
 The macro receives these lists as unevaluated data, so no functions named `minimize` or
-`subject-to` are called. In this small DSL that marker is positional syntax; it is not independently validated. The helper
-`compile-constraint` turns each row into an ordinary function that computes the constraint gap.
+`subject-to` are called. That marker is positional syntax; it is not independently validated.
+The helper `compile-constraint` turns each row into an ordinary function that computes the constraint gap.
 
 The first run passes only `electricity-lost` to gradient descent. The next wraps it with
 `penalize`: electricity lost + 100 × excess-risk², where excess-risk = max(0, risk − limit).
 The same solver now trades some generation for less risk. The penalty is soft: the displayed
-risk can exceed the limit. Slide 13 shows both objective definitions and a numerical comparison
+risk can exceed the limit. Slide 14 shows both objective definitions and a numerical comparison
 with all turbines running. Formulas use named quantities and separate lines; Bellman's update
 likewise separates outcome return, averaging and action selection.
 
@@ -164,7 +167,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Build one update (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plain-update-20261019#s11).
+Start at [Build one update (slide 12)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=dsl-source-20261019#s12).
 Use **Right** for each reveal, **N** for the fuller explanation. These are the layers:
 
 | Expression | Takes | Returns |
@@ -188,17 +191,17 @@ Subtract rate × slope: `0.5 − 0.0001 × (−84) = 0.5084`. This becomes 50.84
 The code computes **every slope from the same old vector**, then produces all 72 new settings.
 Clamping keeps them between 0 and 1. Repeating that pure step is the algorithm.
 
-Slide 12 animates this electricity-only objective. It eventually runs everything. The `day-plan`
+Slide 13 animates this electricity-only objective. It eventually runs everything. The `day-plan`
 map contains a bird constraint, but gradient descent reads only its objective; the first run
 intentionally demonstrates what happens when that constraint is not yet turned into a cost.
 
-Slide 13 changes the supplied objective to electricity lost + `100 × excess-risk²`. Increasing
+Slide 14 changes the supplied objective to electricity lost + `100 × excess-risk²`. Increasing
 operation now can make the bird penalty grow faster than electricity loss falls, reversing the
 slope. The code finds this by evaluating the new function; the gradient and step algorithms do
 not know what birds are. Both baseline and penalized runs use the same rate (0.0001), bounds
 and stopping test. This is a soft penalty, so it does not enforce the risk cap exactly.
 
-Slide 14 changes the **step**, through `with-momentum`, rather than the objective. Call the old
+Slide 15 changes the **step**, through `with-momentum`, rather than the objective. Call the old
 step, measure its proposed movement, add 90% of the previous velocity, then add this new velocity
 to the old settings. The numerical row below the schedule shows those three quantities for the
 same turbine-hour. Velocity is stored in the returned state; there is no hidden mutable history.
@@ -207,7 +210,7 @@ differ from actual position change at a bound. Momentum is not a convergence gua
 
 ## Reading the decision and validation examples
 
-Slides 16–19 stock a **hydrogen filling station**, in trailer loads. We observe storage, order
+Slides 17–20 stock a **hydrogen filling station**, in trailer loads. We observe storage, order
 before uncertain weekly demand is known, then sell and carry leftovers. Capacity is four loads;
 demand is 0/1/2/3 with probabilities 0.1/0.3/0.4/0.2. Prices/costs are illustrative money units.
 For stock 1/order 2/demand 2: three loads available, two sold, one left. Profit is 20−8−1 = 11.
@@ -219,7 +222,7 @@ order, take the best score, and repeat for every stock level: that is one Bellma
 up to three loads. The generated `q` function is displayed with its weighted `reduce`, followed
 by the HOF that accepts this model and returns the value-table update.
 
-Slides 20–22 validate a controller command: **a confident detection requires STOP within the same
+Slides 21–23 validate a controller command: **a confident detection requires STOP within the same
 modeled minute**. A timer-only controller can keep running for nine minutes. Reacting immediately
 fixes that delay, but an unseen context has no row in the decision table and defaults to never
 stopping. The shield delegates known contexts and stops on any detection in unseen contexts.
@@ -233,7 +236,7 @@ not model physical braking, sensor failure or bird survival, and is not a Rainbo
 
 ## The proof examples and their limits
 
-Slide 25 shows actual Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
+Slide 26 shows actual Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
 function composition for arbitrary propositions P, Q, R: given `f : P → Q`, `g : Q → R` and `p : P`,
 `g(f(p))` proves R. `:forall` binds propositions, `:->` is implication, `:fn` binds arguments and
 `:app` applies a term. The containing `:type`/`:value` map is the checker script's input.
@@ -251,7 +254,7 @@ clojure -Sdeps '{:paths ["../rainbow/rainbow/src"]}' -M talk/scripts/check-proof
 The build embeds the exact checked file and fails if it differs from the receipt. This small
 proof teaches the syntax; it is not presented as a proof of the optimization or Bellman code.
 
-Slides 26–28 return to the **Bellman contraction bound**: if two value functions are pointwise
+Slides 27–29 return to the **Bellman contraction bound**: if two value functions are pointwise
 within ε, one update puts them within γ × ε. The four-step mathematical outline cancels identical
 rewards, averages bounded future differences with normalized nonnegative probabilities, takes
 max over the same nonempty action sets, then swaps V/W for the reverse inequality. Strict
@@ -273,11 +276,16 @@ faces are used, with browser-synthesized bold. Bundled DejaVu remains for missin
 its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
 
 Visible text is intentionally brief; fuller explanations and proof assumptions remain in
-speaker notes. OR's opening slide does not reveal the concrete examples. Slide 29 reserves a
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 30 reserves a
 390 × 520 area for the book photograph; replace its `.book-photo` placeholder with the supplied
 image when available.
 
 ## Before the talk
+
+DSL source revision (2026-10-19): 12 tests / 450 assertions passed. The dedicated source slide
+and neighbouring model/update slides were checked across 30 frames at 1600×900, 1920×1080 and
+1024×768 with networking disabled. The release built without warnings; the published source
+panels and generated functions were checked through the ngrok URL.
 
 Lazy-sequence/macro revision (2026-10-19): 12 tests / 450 assertions passed, including an exact
 12-step evaluation-count check with a 10,000-update cap. The edited slides (iterate, fixed-point

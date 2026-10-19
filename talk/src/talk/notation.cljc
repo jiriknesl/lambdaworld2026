@@ -198,7 +198,8 @@
        (cond
          (and (seq? e) (= 'sum (first e)))
          (let [[_ bindings body] e]
-           (list 'reduce '+ 0 (list 'for bindings (compile-expr body))))
+           (list 'reduce '+ 0
+                 (list 'for bindings (compile-expr body))))
          (seq? e) (apply list (map compile-expr e))
          (vector? e) (mapv compile-expr e)
          :else e))
@@ -206,21 +207,37 @@
      (def ^:private relations {'<= :<=, '>= :>=, '= :=})
 
      (defn- binding-label [bindings]
-       (let [names (take-nth 2 (remove #{:when :let :while} bindings))]
-         (if (= 1 (count names)) (first names) (vec names))))
+       (let [names
+             (take-nth 2
+                       (remove #{:when :let :while}
+                               bindings))]
+         (if (= 1 (count names))
+           (first names)
+           (vec names))))
 
      (defn- compile-constraint
-       "A constraint becomes {:rel r :gaps (fn [plan] [{:at binding :gap (- lhs rhs)} ...])}."
+       "Constraint row → a function computing its gaps."
        [param [cname c]]
-       (let [[forall? bindings cmp] (if (and (seq? c) (= 'for-all (first c))) [true (second c) (nth c 2)] [false nil c])
+       (let [[forall? bindings cmp]
+             (if (and (seq? c) (= 'for-all (first c)))
+               [true (second c) (nth c 2)]
+               [false nil c])
              [rel lhs rhs] cmp
-             r (or (relations rel) (throw (ex-info (str "defmodel: constraint " cname " must be <=, >= or =, got " rel) {})))
-             gap (list '- (compile-expr lhs) (compile-expr rhs))]
+             r (or (relations rel)
+                   (throw (ex-info
+                           (str "defmodel: constraint " cname
+                                " must be <=, >= or =, got " rel)
+                           {})))
+             gap (list '- (compile-expr lhs)
+                         (compile-expr rhs))]
          {:name (list 'quote cname)
           :rel r
           :gaps (list 'fn [param]
                       (if forall?
-                        (list 'vec (list 'for bindings {:at (binding-label bindings) :gap gap}))
+                        (list 'vec
+                              (list 'for bindings
+                                    {:at (binding-label bindings)
+                                     :gap gap}))
                         [{:at nil :gap gap}]))}))
 
      (defmacro defmodel
@@ -241,10 +258,11 @@
               (swap! sources assoc '~name ~(form-text &form))
               (var ~name))))
 
-     (defmacro defmodel-source []
+     (defmacro implementation-source [name]
        ;; Include the implementation itself, not a second illustrative copy.
-       (let [text (repl/source-fn 'talk.notation/defmodel)]
-         (assert text "Cannot find the defmodel implementation")
+       (let [sym (symbol "talk.notation" (str name))
+             text (repl/source-fn sym)]
+         (assert text (str "Cannot find the implementation of " sym))
          (str/replace text #"(?m)^     " "")))
 
      ;; ---- defbellman -----------------------------------------------------

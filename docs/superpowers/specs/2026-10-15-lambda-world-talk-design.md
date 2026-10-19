@@ -88,7 +88,7 @@ doubles). Kernel-checked results are shown as recorded Rainbow output.
 | Book / close | 1 | Three areas in the book; return to the HOF takeaway. |
 | Questions | 2 | Discussion. |
 
-The revised deck has 30 slides. HOFs are the subject throughout. Each example must say which
+The revised deck has 31 slides. HOFs are the subject throughout. Each example must say which
 function is passed or returned and show the resulting computation. The macro is a way to describe
 the optimisation problem, not a separate introduction to Lisp. Adam, falsification, trailer LP,
 proof-size metrics and product catalogues are outside this spoken arc. Supporting code can stay.
@@ -167,3 +167,8 @@ explains the failed rule. Name iterate explicitly in the shared-structure slide.
 
 Link Rainbow to https://flexiana.com/rainbow. Close with Thank you and jiri@flexiana.com; remove
 the old state/step/converged slogan. Fuller learning explanations live in talk/README.md and notes.
+
+The model-notation source now has its own slide after the problem definition: defmodel, the
+expression compiler, the constraint compiler with its helpers, and the generated functions.
+Source is extracted from the implementation at build time. Keep this walkthrough brief so the
+optimization block stays within its eight-minute target.
