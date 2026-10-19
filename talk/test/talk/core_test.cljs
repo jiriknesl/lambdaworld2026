@@ -24,7 +24,14 @@
   (is (< (abs (- (peek c/sqrt-run) (js/Math.sqrt 2))) 1e-12))
   (is (c/settled? #(< (abs (- %1 %2)) 1e-12) c/sqrt-run))
   (testing "max-steps stops a run that never settles"
-    (is (= 6 (count (c/fixed-point inc = 0 :max-steps 5))))))
+    (is (= 6 (count (c/fixed-point inc = 0 :max-steps 5)))))
+  (testing "a large cap does not eagerly run all steps"
+    (let [calls (atom 0)
+          step (fn [x] (swap! calls inc) (inc x))
+          result (c/fixed-point step (fn [_ b] (= b 12)) 0
+                                :max-steps 10000)]
+      (is (= 12 @calls))
+      (is (= (vec (range 13)) result)))))
 
 (deftest electricity-and-birds
   (let [off (zipmap c/slots (repeat 0))

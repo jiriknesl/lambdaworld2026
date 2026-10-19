@@ -10,8 +10,8 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=inside-the-functions-20261019).
-Updated 2026-10-19: numerical optimization walk-through, explicit hydrogen inventory model, visible shield behaviour and a literal Rainbow proof. This URL is **public and unauthenticated**;
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=lazy-and-macros-20261019).
+Updated 2026-10-19: removed iterate captions, exposed the actual defmodel macro, and checked early stopping under a large iteration cap. This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, speaker notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
 
@@ -127,7 +127,12 @@ gearbox wear are no longer part of the objective.
 
 `defmodel` is a macro in `src/talk/notation.cljc`. `minimize` and `subject-to` are syntax markers
 consumed by that macro, not standalone functions or macros. Slide 10 shows the real helper
-functions, explains the markers, and shows the generated objective/constraint functions.
+functions, the actual `defmodel` implementation, and the generated objective/constraint functions.
+The implementation panel is extracted from the macro's source at build time, not a handwritten
+copy. `[sense objective]` reads the objective form: `sense` receives `minimize`, and `case` maps it
+to `:minimize`. `[_ & constraints]` discards the leading `subject-to` symbol and reads its rows.
+In this small DSL that marker is positional syntax; it is not independently validated. The helper
+`compile-constraint` turns each row into an ordinary function that computes the constraint gap.
 
 The first run passes only `electricity-lost` to gradient descent. The next wraps it with
 `penalize`: electricity lost + 100 × excess-risk², where excess-risk = max(0, risk − limit).
@@ -141,9 +146,23 @@ coordinates. Tests now compare their objectives with an independent convex lower
 gap must be below 1% of total available energy. Additional checks verify off/on/half-power energy
 and risk directly. This is numerical validation, not a Rainbow certificate.
 
+## Does fixed-point compute the whole limit?
+
+No. `take` is lazy: `(take 10001 (iterate step start))` puts a ceiling on a sequence, without
+asking for all its elements. `map` and `take-while` are lazy too. `count` eagerly consumes only
+the prefix that `take-while` yields, stopping when it encounters the first converged pair.
+The final `vec` is eager, but collects just the required states from the already-realized,
+cached sequence; it does not rerun `step`.
+
+A counter-instrumented check with `max-steps` 10000 and convergence on update 12 produces exactly
+12 calls and 13 returned states (the starting state plus twelve updates), in both Clojure and
+the deck's ClojureScript. The default cap in the displayed function is 1000 updates. Exact
+realization counts are specific to this pipeline; lazy operations over chunked inputs can
+realize ahead, but the `iterate` pipeline here does not batch thousands of updates.
+
 ## Learning the optimization example
 
-Start at [Build one update (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=inside-the-functions-20261019#s11).
+Start at [Build one update (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=lazy-and-macros-20261019#s11).
 Use **Right** for each reveal, **N** for the fuller explanation. These are the layers:
 
 | Expression | Takes | Returns |
@@ -258,7 +277,12 @@ image when available.
 
 ## Before the talk
 
-Mechanics revision checks (2026-10-19): 12 tests / 448 assertions passed; the new checks cover
+Lazy-sequence/macro revision (2026-10-19): 12 tests / 450 assertions passed, including an exact
+12-step evaluation-count check with a 10,000-update cap. The edited slides (iterate, fixed-point
+and all four model reveals) were checked offline at all three sizes. The model implementation
+is shown directly from the macro source. The public preview was refreshed and checked.
+
+Mechanics revision checks (2026-10-19): 12 tests / 448 assertions passed; the checks cover
 the displayed gradient update, momentum history, all restocking outcome decompositions and the
 shield's same-event comparison. The Rainbow composition proof was accepted and its wrong-result
 variant rejected. The release built without warnings. Chromium checked 261 frames across

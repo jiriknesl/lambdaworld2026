@@ -1116,9 +1116,7 @@
                 (for [[i x] (map-indexed vector (take (inc step) sqrt-run))]
                   [:div.state-node [:span.caption (str "state " i)]
                    [:strong (fmt x 6)]
-                   [:span.caption (if (zero? i) "initial guess" "step(previous)")]])]
-               [:p.aside "Same function. Successive states."]
-               [:p.callout "A lazy sequence. No stopping rule."]])
+                   [:span.caption (if (zero? i) "initial guess" "step(previous)")]])]])
     :notes "90 seconds. Press Right one state at a time. Say: input, call, output; the output becomes the next input. This is a trace we can replay, plot or inspect. take asks for five states. It does not claim that five is enough. Next we must choose what done means."}
 
    {:section "HOFs" :title "A fixed point stays the same" :steps 2
@@ -1147,7 +1145,7 @@
                                 [:tr [:td.k (str "x" i)] [:td.v (.toFixed x 12)]])]
                 (when (= step (dec (count sqrt-run)))
                   [:p.aside "Change < 10⁻¹². Stop."])]])
-    :notes "This is the pattern of the whole talk. A state, a step from state to state, a test for done. iterate makes the lazy sequence of states. take-while stops it. The max-steps guard is one take, because iterate is lazy. Optimising, deciding and verifying are all this loop with different arguments."}
+    :notes "This is the pattern of the whole talk. A state, a step from state to state, a test for done. iterate makes the lazy sequence of states. take-while stops it. take and take-while are lazy. count eagerly walks only the non-converged prefix; it must inspect the first converged pair to stop. vec collects the retained states, including both states of that pair, from the already realized sequence without rerunning step. The default cap is 1000 updates, not a request to perform them all. A checked example with max-steps 10000 converges after 12 calls and returns 13 states including the start. Optimising, deciding and verifying are all this loop with different arguments."}
 
    {:section "Optimise" :title "Draw the problem" :steps 3
     :live (fn [step t] (when (= step 2) {"live-map" (scene nil t {})}))
@@ -1168,7 +1166,13 @@
 
    {:section "Optimise" :title "Birds ↔ electricity" :steps 4
     :render (fn [frame]
-              [:div.two
+              (if (= frame 2)
+                [:div
+                 (code (n/defmodel-source) {:size :small :marks #{"defmacro" "minimize" "subject-to" "sense" "constraints"}})
+                 [:p.caption "Actual implementation · talk/notation.cljc"]
+                 [:p.aside [:code "minimize"] " selects the sense. "
+                  [:code "[_ & constraints]"] " skips the " [:code "subject-to"] " marker."]]
+                [:div.two
                [:div
                 (if (= frame 1)
                   [:div (code 'electricity-lost {:size :small}) (code 'bird-risk {:size :small})]
@@ -1189,19 +1193,12 @@
                      [:div.equation-part [:span.f-label "Subject to"]
                       [:div "bird risk ≤ " budget]]
                      [:p.caption "Same goal as maximizing generated electricity. Lower the risk limit to prioritize birds."]]
-                  2 [:div
-                     [:p.aside [:code "defmodel"] " is the macro."]
-                     [:table.kv
-                      [:tr [:th "minimize"] [:td "objective marker"]]
-                      [:tr [:th "subject-to"] [:td "constraint marker"]]]
-                     [:p.aside "These markers are syntax, not function calls."]
-                     [:p.caption "Implemented in talk/notation.cljc. → See the expansion."]]
                   [:div
                    [:p.aside "The macro returns data containing functions."]
                    (code "((:objective day-plan) plan)
 ;; → electricity lost")
-                   [:p.caption "The solver receives an ordinary function."]])]])
-    :notes "Stopping loses electricity; keeping every turbine running increases collision risk. Those goals compete. We choose a bird-risk limit and maximize electricity subject to it, equivalently minimize electricity lost. The risk index is exposure times bird traffic times turbine operation, not a calibrated prediction of birds killed. All forecasts are illustrative. Lowering the limit chooses another tradeoff. The next step shows the two real functions, then explains the mini-language: defmodel is a macro in talk/notation.cljc. minimize and subject-to are marker symbols consumed by that macro, not independently defined functions or macros. The final step shows its actual expansion into objective and constraint functions."}
+                   [:p.caption "The solver receives an ordinary function."]])]]))
+    :notes "Stopping loses electricity; keeping every turbine running increases collision risk. Those goals compete. We choose a bird-risk limit and maximize electricity subject to it, equivalently minimize electricity lost. The risk index is exposure times bird traffic times turbine operation, not a calibrated prediction of birds killed. All forecasts are illustrative. Lowering the limit chooses another tradeoff. The next step shows the two real functions, then shows the actual macro implementation: defmodel is a macro in talk/notation.cljc. minimize and subject-to are marker symbols consumed by that macro, not independently defined functions or macros. In the argument destructuring, sense receives the symbol minimize and objective receives the unevaluated electricity-lost form. The case selects :minimize. In [_ & constraints], the underscore discards the subject-to marker; the remaining constraint rows go through compile-constraint. The marker is positional syntax here, not a function call or separately validated operator. compile-expr and compile-constraint generate the ordinary function forms. The final step shows its actual expansion into objective and constraint functions."}
 
    {:section "Optimise" :title "Build one update" :steps 4
     :render (fn [frame]

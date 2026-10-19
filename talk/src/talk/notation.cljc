@@ -9,6 +9,7 @@
   (:require [clojure.string :as str]
             #?(:clj [clojure.pprint :as pp])
             #?(:clj [clojure.edn :as edn])
+            #?(:clj [clojure.repl :as repl])
             #?(:clj [clojure.java.io :as io]))
   #?(:cljs (:require-macros [talk.notation])))
 
@@ -239,6 +240,12 @@
                         :expansion ~(pretty (assoc expansion :sense sense-k))}))
               (swap! sources assoc '~name ~(form-text &form))
               (var ~name))))
+
+     (defmacro defmodel-source []
+       ;; Include the implementation itself, not a second illustrative copy.
+       (let [text (repl/source-fn 'talk.notation/defmodel)]
+         (assert text "Cannot find the defmodel implementation")
+         (str/replace text #"(?m)^     " "")))
 
      ;; ---- defbellman -----------------------------------------------------
 
