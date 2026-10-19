@@ -10,8 +10,8 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=61750f0).
-Published 2026-10-19 from revision `61750f0`. This URL is **public and unauthenticated**;
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=aeonik-20261019).
+Updated 2026-10-19: shorter slide text, revised biography, book-photo space and Aeonik typography. This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, speaker notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
 
@@ -102,8 +102,8 @@ Each example shows its problem, supplied function, visible updates and resulting
 
 | Block | Minutes | What the audience sees |
 | --- | ---: | --- |
-| Briefly about Jiri | 1 | Work, book and Rainbow; a short introduction. |
-| What OR is | 2 | Choices, objectives, constraints and uncertainty; the three questions for today. |
+| Briefly about Jiri | 1 | Lifelong developer, economist by education; started Barcelona Meetup Group 13 years ago. |
+| What OR is | 2 | Choices, objectives, constraints; three questions, with concrete examples kept as surprises. |
 | Why Clojure | 2 | Functions as values, immutable states, the REPL and code as data. |
 | HOFs → iterate → fixed point | 6 | A function returned by `newton-sqrt`, passed to `map`, then to `iterate`; reveal the state chain; distinguish an exact fixed point, a tolerance and a work limit. |
 | One optimisation example | 8 | Wind-farm settings: map → model → gradient step → penalty → momentum; computed schedule and 3D playback. |
@@ -138,15 +138,29 @@ Gradient and momentum have no convergence guarantee here. The controller result 
 its encoded finite model, not all physical turbine behaviour, and is not a kernel proof.
 The Reto 3 inspiration uses synthetic bird passages. Illustrative forecasts remain illustrative.
 
+## Typography and slide copy
+
+Aeonik and Aeonik Mono were copied from `../flexiana-web/site/public/fonts/` at Jiri's request.
+The original WOFF2 files are in `fonts/`; `public/fonts.css` embeds them as data URLs for offline
+use. Body/headings use Aeonik; code and numeric traces use Aeonik Mono. The available regular
+faces are used, with browser-synthesized bold. Bundled DejaVu remains for missing glyphs;
+its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
+
+Visible text is intentionally brief; fuller explanations and proof assumptions remain in
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 28 reserves a
+390 × 520 area for the book photograph; replace its `.book-photo` placeholder with the supplied
+image when available.
+
 ## Before the talk
 
-Revision checks (2026-10-19): release build completed without warnings; 8 tests / 356 assertions
-passed. The browser check exercised 237 frames across 1600×900, 1920×1080 and 1024×768,
+Typography/copy revision checks (2026-10-19): release build completed without warnings.
+Chromium's rendered-font inspection confirmed embedded Aeonik and Aeonik Mono. The browser
+check exercised 237 frames across 1600×900, 1920×1080 and 1024×768,
 including every short reveal and sampled long traces. No render errors, clipped code panels or
 overflow remained; hash restore, navigation, playback, theme and presenter controls passed.
 The release loaded from disk with no external requests. This does not replace the spoken or
 physical-projector rehearsal, and the old app's hostile-room audit does not certify this new deck.
 
-- Confirm the wording of the short personal introduction.
+- Replace the book-photo placeholder when Jiri supplies the photograph.
 - Emoji in the `defmap` source are drawn by the system emoji font; check alignment in Cursor's font.
 - A timed spoken rehearsal and a projector check remain.

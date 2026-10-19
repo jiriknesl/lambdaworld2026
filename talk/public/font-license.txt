@@ -1,3 +1,10 @@
+Aeonik and Aeonik Mono
+Copied at Jiri’s request from flexiana-web/site/public/fonts on 2026-10-19.
+These are proprietary font assets; the DejaVu license below does not apply to them.
+The original WOFF2 files are retained in talk/fonts/.
+
+DejaVu (fallback glyph coverage)
+
 Fonts are (c) Bitstream (see below). DejaVu changes are in public domain.
 Glyphs imported from Arev fonts are (c) Tavmjong Bah (see below)
 

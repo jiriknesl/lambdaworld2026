@@ -25,8 +25,8 @@
   --c-num: #b05a00;
   --c-comment: #7d858c;
   --c-paren: #8d949a;
-  --sans: "Talk Sans", "DejaVu Sans", sans-serif;
-  --mono: "Talk Mono", "DejaVu Sans Mono", monospace;
+  --sans: "Aeonik", "Talk Sans";
+  --mono: "Aeonik Mono", "Talk Mono";
 }
 
 :root[data-theme="dark"] {
@@ -279,3 +279,8 @@ svg.scene circle.hub.stopped { fill: var(--bad); }
 svg.scene text.tlabel { fill: var(--muted); font: 15px var(--sans); text-anchor: middle; }
 svg.scene text.clock { fill: var(--ink); font: 700 34px var(--mono); }
 svg.scene path.bird.flying { stroke: var(--muted); stroke-width: 3; }
+
+/* Reserved until Jiri supplies the book photograph. */
+.book-photo { width: 390px; height: 520px; margin: 12px auto; display: grid; place-items: center;
+  border: 2px dashed var(--line); border-radius: 8px; background: var(--wash); color: var(--muted); font-size: 22px; }
+.book-photo img { width: 100%; height: 100%; object-fit: contain; }

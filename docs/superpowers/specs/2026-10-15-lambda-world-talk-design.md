@@ -46,7 +46,7 @@ Space: play/pause the steps. Home/End: first/last step. `N`: notes window. `F`: 
 **Location.** `#s{slide}a{step}` (slides and steps from 1). A refresh restores slide and step.
 
 **Stage.** A fixed 1600×900 canvas, scaled to the window and letterboxed, so the layout is identical on
-16:9 and 4:3 projectors. Fonts (DejaVu Sans, Sans Mono) are embedded; no network requests.
+16:9 and 4:3 projectors. Aeonik and Aeonik Mono from flexiana-web are embedded; DejaVu covers missing glyphs. No font network requests.
 
 **Working mode.** `npx shadow-cljs watch talk`: save `core.cljs`, the page hot-reloads and keeps slide
 and step (state in a `defonce` atom). shadow-cljs's nREPL lets Cursor (Calva) evaluate forms in the page.
@@ -127,3 +127,11 @@ no overflow at 1600×900, 1920×1080 and 1024×768, no external requests, releas
 
 The "Function Observatory" app stays untouched until the new talk passes its checks. `prototypes/` is
 throwaway and is removed when the new talk is complete.
+
+## Editorial update — 2026-10-19
+
+Jiri's introduction: lifelong software developer, economist by education, started Barcelona Meetup
+Group 13 years ago. OR's opening gives the questions without revealing the example problems.
+Why Clojure has four points: simple and functional language; immutable data; the REPL; code is data.
+Keep titles and visible prose short, with explanation in speaker notes. The book slide reserves
+space for Jiri's forthcoming photograph. Use Aeonik for text and Aeonik Mono for code.
