@@ -8,6 +8,21 @@ labelled separately; Rainbow verdicts are recorded evidence, not browser kernel 
 
 Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-design.md`.
 
+## Public preview
+
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=61750f0).
+Published 2026-10-19 from revision `61750f0`. This URL is **public and unauthenticated**;
+the compiled deck includes all slides, displayed source, speaker notes and recorded proof evidence.
+It now serves this deck, replacing the old Function Observatory preview at the same URL.
+
+The detached tmux session `lambdaworld-preview` serves
+`artifacts/preview/talk-release/` through ngrok's file server. Its six files are
+`index.html`, `talk.css`, `fonts.css`, `font-license.txt`, `js/main.js` and the old-origin
+recovery worker `sw.js`. The release was copied explicitly to exclude leftover development
+runtime files and source maps. There is no REPL or evaluation server behind this tunnel.
+The ngrok inspector is on loopback port 4041; another project's tunnel on 4040 is unchanged.
+Rebuilding `talk/public` alone does not refresh this copied preview.
+
 ## Run
 
 Node and a JDK are needed to build. Presenting the release build needs only a browser.
