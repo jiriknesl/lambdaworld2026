@@ -10,8 +10,8 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=clearer-model-20261019).
-Updated 2026-10-19: clearer fixed points, macro explanation, electricity/risk tradeoff and before/after objectives. This URL is **public and unauthenticated**;
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=inside-the-functions-20261019).
+Updated 2026-10-19: numerical optimization walk-through, explicit hydrogen inventory model, visible shield behaviour and a literal Rainbow proof. This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, speaker notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
 
@@ -91,7 +91,7 @@ open the release build (`public/index.html`) — it needs nothing else.
 | 4. Decide | `defbellman restock`, `bellman`, the stopping bound |
 | 5. Verify | `table-decision`, `with-shield`, `tick-controller`, `react-to-detections`, `reachable`, rules (`always`, `implies`, `within`), the worst-case search |
 | 6. Receipt | `defmodel trailers` (RH2EDIN Reto 2), `linear-rows`, `pivot`, `check-receipt`, recorded Rainbow verdicts |
-| 7. Slides | 29 slides with speaker notes, following the revised arc below |
+| 7. Slides | 30 slides with speaker notes, following the revised arc below |
 | 8. App | keyboard, URL, notes window, playback, scaling |
 
 ## Talk arc — revised 2026-10-19
@@ -106,10 +106,10 @@ Each example shows its problem, supplied function, visible updates and resulting
 | What OR is | 2 | Choices, objectives, constraints; three questions, with concrete examples kept as surprises. |
 | Why Clojure | 2 | Functions as values, immutable states, the REPL and code as data. |
 | HOFs → iterate → fixed point | 6 | A function returned by `newton-sqrt`, passed to `map`, then to `iterate`; reveal the state chain; distinguish an exact fixed point, a tolerance and a work limit. |
-| One optimisation example | 8 | Wind-farm settings: map → model → gradient step → penalty → momentum; computed schedule and 3D playback. |
+| One optimisation example | 8 | Wind-farm settings: map → model → one numerical update → penalty → momentum; computed schedule and 3D playback. |
 | One decision-making example | 6 | Restocking: score each order, average possible demand, select the best; animate Bellman value tables and the resulting policy. |
 | One validation example | 5 | Bird-stop controller: supply successors to reachability, watch the set grow, read a counterexample, inspect the shielded result. Close with the shared HOF structure. |
-| Rainbow and a proof | 7 | Introduce statement/term/kernel, return to Bellman, walk through its contraction argument, show recorded evidence and a rejected fake proof. |
+| Rainbow and a proof | 7 | Introduce statement/term/kernel; read a checked composition proof and rejected variant; return to Bellman’s contraction argument and recorded evidence. |
 | Book and closing | 1 | Connect the three examples to *Applied Higher-Order Functions*. |
 | Questions | 2 | Discussion. |
 
@@ -132,7 +132,7 @@ functions, explains the markers, and shows the generated objective/constraint fu
 The first run passes only `electricity-lost` to gradient descent. The next wraps it with
 `penalize`: electricity lost + 100 × excess-risk², where excess-risk = max(0, risk − limit).
 The same solver now trades some generation for less risk. The penalty is soft: the displayed
-risk can exceed the limit. Slide 12 shows both objective definitions and a numerical comparison
+risk can exceed the limit. Slide 13 shows both objective definitions and a numerical comparison
 with all turbines running. Formulas use named quantities and separate lines; Bellman's update
 likewise separates outcome return, averaging and action selection.
 
@@ -141,26 +141,107 @@ coordinates. Tests now compare their objectives with an independent convex lower
 gap must be below 1% of total available energy. Additional checks verify off/on/half-power energy
 and risk directly. This is numerical validation, not a Rainbow certificate.
 
-## The proof example and its limits
+## Learning the optimization example
 
-The Rainbow example is **the Bellman contraction bound from the decision-making demo**:
-if two value functions are pointwise within ε, one update puts them within γ × ε.
-The proof is revealed in four steps: cancel identical rewards; average bounded future differences
-with normalized nonnegative probabilities; take the maximum over the same admissible actions;
-swap the two functions for the reverse inequality. Nonempty admissible actions and the finite
-model assumptions are explicit. Strict contraction additionally requires 0 ≤ γ < 1.
+Start at [Build one update (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=inside-the-functions-20261019#s11).
+Use **Right** for each reveal, **N** for the fuller explanation. These are the layers:
 
-The numerical 10 → 9 illustration runs the deck's Bellman function on two tables. It is not the
-proof. The four-step explanation is readable mathematics, not literal Rainbow syntax. The
-kernel receipt comes from `../resources/rainbow-evidence.edn`, recorded 2026-10-09 against
-Rainbow commit `3f411ae`: `value/signed-optimality-step-additively-contractive`, checked with
-empty axiom closure. That proves a claim about exact terms. No correspondence proof to the
-floating-point ClojureScript implementation is asserted, and this revision does not rerun the
-kernel. The fake-proof rejection is also the existing recorded momentum check, labelled as such.
+| Expression | Takes | Returns |
+| --- | --- | --- |
+| `on-flat` | model containing an objective | a function from 72 settings to one cost |
+| `gradient` | that cost function | a function from settings to 72 slopes |
+| `descent-step` | gradient function and learning rate | a function from state to next state |
+| `clamped` | step function and bounds | a step that keeps settings in 0…1 |
+| `penalize` | model and penalty weight | a model with a new objective function |
+| `with-momentum` | step function and carry factor | a step that also carries velocity in its state |
+| `iterate` | step function and initial state | a lazy sequence of successive states |
 
-Gradient and momentum have no convergence guarantee here. The controller result exhausts only
-its encoded finite model, not all physical turbine behaviour, and is not a kernel proof.
-The Reto 3 inspiration uses synthetic bird passages. Illustrative forecasts remain illustrative.
+A state initially looks like `{:x [0.5 0.5 …]}`: six turbines × twelve hours = 72 numbers.
+A number is the fraction of operation for one turbine-hour. `as-plan` gives those numbers their
+`[turbine hour]` keys. The objective scores the **whole day**, not just the selected turbine.
+
+The numerical walk-through holds 71 settings fixed and changes turbine 1 at noon by ±0.00001.
+At 50% everywhere, electricity lost is 5214 kWh. Nudging this coordinate down gives 5214.00084;
+nudging up gives 5213.99916. The central difference is −84: more operation loses less electricity.
+Subtract rate × slope: `0.5 − 0.0001 × (−84) = 0.5084`. This becomes 50.84% operation.
+The code computes **every slope from the same old vector**, then produces all 72 new settings.
+Clamping keeps them between 0 and 1. Repeating that pure step is the algorithm.
+
+Slide 12 animates this electricity-only objective. It eventually runs everything. The `day-plan`
+map contains a bird constraint, but gradient descent reads only its objective; the first run
+intentionally demonstrates what happens when that constraint is not yet turned into a cost.
+
+Slide 13 changes the supplied objective to electricity lost + `100 × excess-risk²`. Increasing
+operation now can make the bird penalty grow faster than electricity loss falls, reversing the
+slope. The code finds this by evaluating the new function; the gradient and step algorithms do
+not know what birds are. Both baseline and penalized runs use the same rate (0.0001), bounds
+and stopping test. This is a soft penalty, so it does not enforce the risk cap exactly.
+
+Slide 14 changes the **step**, through `with-momentum`, rather than the objective. Call the old
+step, measure its proposed movement, add 90% of the previous velocity, then add this new velocity
+to the old settings. The numerical row below the schedule shows those three quantities for the
+same turbine-hour. Velocity is stored in the returned state; there is no hidden mutable history.
+The outer clamp clips position but does not reset velocity. Consequently stored velocity can
+differ from actual position change at a bound. Momentum is not a convergence guarantee.
+
+## Reading the decision and validation examples
+
+Slides 16–19 stock a **hydrogen filling station**, in trailer loads. We observe storage, order
+before uncertain weekly demand is known, then sell and carry leftovers. Capacity is four loads;
+demand is 0/1/2/3 with probabilities 0.1/0.3/0.4/0.2. Prices/costs are illustrative money units.
+For stock 1/order 2/demand 2: three loads available, two sold, one left. Profit is 20−8−1 = 11.
+
+The score for an order averages `profit + 0.9 × V(leftovers)` across all four demand outcomes.
+With `V = 0`, ordering two has profits −11/0/11/22 and expected profit 7.7. Compare every feasible
+order, take the best score, and repeat for every stock level: that is one Bellman update.
+**Iterations improve value estimates; they are not simulated weeks.** The eventual policy orders
+up to three loads. The generated `q` function is displayed with its weighted `reduce`, followed
+by the HOF that accepts this model and returns the value-table update.
+
+Slides 20–22 validate a controller command: **a confident detection requires STOP within the same
+modeled minute**. A timer-only controller can keep running for nine minutes. Reacting immediately
+fixes that delay, but an unseen context has no row in the decision table and defaults to never
+stopping. The shield delegates known contexts and stops on any detection in unseen contexts.
+The slide shows its actual definition and both controllers' outputs for the same event.
+
+Reachability then tries every modeled next event from every reached state, unions in the results,
+and repeats until the set stops growing. Any reached state with confident detection + RUN is a
+failure. The counterexample slide earns its place by turning the failed check into a **reproducible
+bug report**: the path explains whether to fix timing or the decision rule. This finite check does
+not model physical braking, sensor failure or bird survival, and is not a Rainbow kernel proof.
+
+## The proof examples and their limits
+
+Slide 25 shows actual Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
+function composition for arbitrary propositions P, Q, R: given `f : P → Q`, `g : Q → R` and `p : P`,
+`g(f(p))` proves R. `:forall` binds propositions, `:->` is implication, `:fn` binds arguments and
+`:app` applies a term. The containing `:type`/`:value` map is the checker script's input.
+
+`src/talk/composition-check.edn` records a fresh kernel check against the clean Rainbow revision
+`d9080c7285c7cd28a81e2d184b25ecae333510fd`, in an empty environment with no axioms. Returning only
+`f(p)` is rejected because Q does not establish R. Both proof terms are elaborated and checked;
+these verdicts are recorded in the deck, not executed by a browser kernel. Reproduce from the
+**repository root** (requires the local Rainbow checkout):
+
+```sh
+clojure -Sdeps '{:paths ["../rainbow/rainbow/src"]}' -M talk/scripts/check-proof.clj
+```
+
+The build embeds the exact checked file and fails if it differs from the receipt. This small
+proof teaches the syntax; it is not presented as a proof of the optimization or Bellman code.
+
+Slides 26–28 return to the **Bellman contraction bound**: if two value functions are pointwise
+within ε, one update puts them within γ × ε. The four-step mathematical outline cancels identical
+rewards, averages bounded future differences with normalized nonnegative probabilities, takes
+max over the same nonempty action sets, then swaps V/W for the reverse inequality. Strict
+contraction additionally requires 0 ≤ γ < 1. The numerical 10 → 9 example runs the browser's
+Bellman function; it is an illustration, not a proof for every input.
+
+The Bellman receipt is the existing `../resources/rainbow-evidence.edn`, recorded 2026-10-09 at
+Rainbow `3f411ae`: `value/signed-optimality-step-additively-contractive`, with empty axiom closure.
+That exact-term theorem was **not rerun in this revision**. No correspondence proof to the
+floating-point ClojureScript implementation is asserted. Gradient and momentum have no general
+convergence guarantee here. Illustrative forecasts and synthetic bird data remain illustrative.
 
 ## Typography and slide copy
 
@@ -171,19 +252,22 @@ faces are used, with browser-synthesized bold. Bundled DejaVu remains for missin
 its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
 
 Visible text is intentionally brief; fuller explanations and proof assumptions remain in
-speaker notes. OR's opening slide does not reveal the concrete examples. Slide 28 reserves a
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 29 reserves a
 390 × 520 area for the book photograph; replace its `.book-photo` placeholder with the supplied
 image when available.
 
 ## Before the talk
 
-Clarity/model revision checks (2026-10-19): release built without warnings; 9 tests / 364 assertions passed.
-Chromium's rendered-font inspection confirmed embedded Aeonik and Aeonik Mono. The browser
-check exercised 243 frames across 1600×900, 1920×1080 and 1024×768, including every short
-reveal and sampled long traces. No render errors, clipped code panels or
-overflow remained; hash restore, navigation, playback, theme and presenter controls passed.
-The release loaded from disk with no external requests. This does not replace the spoken or
-physical-projector rehearsal, and the old app's hostile-room audit does not certify this new deck.
+Mechanics revision checks (2026-10-19): 12 tests / 448 assertions passed; the new checks cover
+the displayed gradient update, momentum history, all restocking outcome decompositions and the
+shield's same-event comparison. The Rainbow composition proof was accepted and its wrong-result
+variant rejected. The release built without warnings. Chromium checked 261 frames across
+1600×900, 1920×1080 and 1024×768: no overflow, clipped code, render errors or external requests;
+navigation, playback, hash restore, theme and presenter controls passed. A separate browser
+context with networking disabled completed every demo computation and checked the new numerical
+walk-through, shield results and proof reveals. The refreshed public ngrok edition was checked
+for the same content and working Rainbow/email links. These checks do not replace speaking the
+talk aloud or testing the venue projector.
 
 - Replace the book-photo placeholder when Jiri supplies the photograph.
 - Emoji in the `defmap` source are drawn by the system emoji font; check alignment in Cursor's font.

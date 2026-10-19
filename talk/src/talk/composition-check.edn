@@ -1,0 +1,13 @@
+{:checked-at "2026-10-19T09:10:29.258956Z",
+ :negative-proof
+ [:fn
+  [[P Prop] [Q Prop] [R Prop] [f [:-> P Q]] [g [:-> Q R]] [p P]]
+  [:app f p]],
+ :negative-message "Term does not inhabit expected type",
+ :source
+ "{:type\n [:forall [[P Prop] [Q Prop] [R Prop]]\n  [:-> [:-> P Q] [:-> Q R] P R]]\n\n :value\n [:fn [[P Prop] [Q Prop] [R Prop]\n       [f [:-> P Q]] [g [:-> Q R]] [p P]]\n  [:app g [:app f p]]]}\n",
+ :axioms [],
+ :status :checked,
+ :rainbow-revision "d9080c7285c7cd28a81e2d184b25ecae333510fd",
+ :negative-status :rejected,
+ :environment :empty}

@@ -84,11 +84,11 @@ doubles). Kernel-checked results are shown as recorded Rainbow output.
 | Optimisation | 8 | One wind-farm planning example: problem, model, step, penalty, momentum, schedule and 3D result. |
 | Decision-making | 6 | One restocking example: possible orders, expected scores, Bellman updates, policy. |
 | Validation | 5 | One bird-controller example: successors → growing reachable set → counterexample → shielded result. Summarise what changes inside the same HOF structure. |
-| Rainbow and proof | 7 | Introduce theorem prover and kernel; return to Bellman; show the contraction proof, recorded check and a refused fake proof. |
+| Rainbow and proof | 7 | Introduce theorem prover and kernel; return to Bellman; show a literal composition proof and rejected variant, then the Bellman contraction argument and recorded check. |
 | Book / close | 1 | Three areas in the book; return to the HOF takeaway. |
 | Questions | 2 | Discussion. |
 
-The revised deck has 29 slides. HOFs are the subject throughout. Each example must say which
+The revised deck has 30 slides. HOFs are the subject throughout. Each example must say which
 function is passed or returned and show the resulting computation. The macro is a way to describe
 the optimisation problem, not a separate introduction to Lisp. Adam, falsification, trailer LP,
 proof-size metrics and product catalogues are outside this spoken arc. Supporting code can stay.
@@ -110,10 +110,13 @@ proof-size metrics and product catalogues are outside this spoken arc. Supportin
   illustrate a 10-to-9 value gap using the actual browser function, then prove the general bound:
   identical rewards cancel; nonnegative normalized outcome averaging preserves γ ε; the maximum
   preserves the one-sided bound; swap V and W. Explicit model/action/discount assumptions.
-- The proof explanation is mathematical prose, not kernel syntax. Recorded evidence for
-  `value/signed-optimality-step-additively-contractive` comes from the 2026-10-09 checked export,
-  empty axiom closure, commit `3f411ae`. No proof of floating-point browser correspondence.
-  The rejection of zero as a momentum proof is recorded evidence too. No new audit is implied.
+- A small composition proof is shown in literal Rainbow syntax, from a checked EDN file. Its
+  successful kernel check and wrong-result rejection are recorded against clean revision
+  `d9080c7`; the build verifies the displayed source matches its receipt. This introduces syntax
+  before the larger Bellman argument. The Bellman outline remains mathematical prose. Its
+  `value/signed-optimality-step-additively-contractive` receipt is the 2026-10-09 export at
+  `3f411ae`, with empty axiom closure; it was not rechecked in this revision. Neither example
+  claims a proof of floating-point browser correspondence.
 
 ## 6. Testing
 
@@ -145,3 +148,22 @@ and wear from the objective, label illustrative energy in kWh and bird risk as a
 minimize/subject-to as markers in defmodel, with its actual generated functions visible. The
 penalty slide must show before/after objectives and electricity/risk numbers; replace long
 expanded sums with separate, named quantities.
+
+## Mechanics update — 2026-10-19
+
+Before animating optimization, trace one coordinate: state → whole-plan cost → numerical slope →
+gradient update → clamp → iterate. At noon, 50% becomes 50.84% under the electricity-only objective.
+Keep both baseline and penalized learning rates identical. The momentum replay shows the base
+movement, carried velocity and their sum. The outer clamp changes position, not stored velocity.
+
+Restocking must name the commodity (hydrogen), units (trailer loads), timing (order before demand),
+and uncertainty (weekly customer demand). Show one profit calculation and its weighted outcome
+sum before maximizing over orders. Split the Bellman equation into return, average and maximum.
+
+Validation must put its rule on screen: confident detection requires STOP in the same modeled
+minute. Show the actual shield definition and run the same unseen-context detection with/without
+it. Then exhaust the finite state space. The counterexample is a reproducible bug report that
+explains the failed rule. Name iterate explicitly in the shared-structure slide.
+
+Link Rainbow to https://flexiana.com/rainbow. Close with Thank you and jiri@flexiana.com; remove
+the old state/step/converged slogan. Fuller learning explanations live in talk/README.md and notes.

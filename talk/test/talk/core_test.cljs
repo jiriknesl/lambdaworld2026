@@ -69,6 +69,53 @@
           (is (< (- score lower) (* 0.01 c/full-energy))
               (str "objective gap to lower bound: " (- score lower))))))))
 
+(deftest optimization-walkthrough
+  (let [{:keys [x low high h slope move next]} (c/coordinate-update c/day-plan)]
+    (is (= 0.5 x))
+    (is (< (abs (- slope -84)) 1e-5))
+    (is (< (abs (- slope (/ (- high low) (* 2 h)))) 1e-8))
+    (is (< (abs (- next 0.5084)) 1e-8))
+    (is (< (abs (- next (+ x move))) 1e-8)))
+  (testing "momentum carries previous movement; the wrapper remains a pure step"
+    (let [base (c/descent-step (fn [[x]] [(* 2 x)]) 0.1)
+          step (c/with-momentum base 0.9)
+          start {:x [10]}
+          a (step start)
+          b (step a)]
+      (is (= [8] (:x a)))
+      (is (= [-2] (:velocity a)))
+      (is (< (abs (- 4.6 (first (:x b)))) 1e-10))
+      (is (= a (step start)))
+      (is (= [0] (:x ((c/clamped step 0 1) {:x [0.2] :velocity [-1]})))))))
+
+(deftest restock-walkthrough
+  (let [zero-V (zipmap (:states c/restock) (repeat 0))
+        outcomes (c/demand-outcomes zero-V 1 2)]
+    (is (= [3 2 1 0] (mapv :left outcomes)))
+    (is (= [-11 0 11 22] (mapv :reward outcomes)))
+    (is (< (abs (- 7.7 (reduce + (map :weighted outcomes)))) 1e-10)))
+  (testing "the displayed outcome decomposition matches q for every feasible action"
+    (doseq [V [(first c/restock-run) (second c/restock-run) (peek c/restock-run)]
+            stock (:states c/restock)
+            order ((:actions c/restock) stock)]
+      (is (< (abs (- ((:q c/restock) V stock order)
+                     (reduce + (map :weighted (c/demand-outcomes V stock order)))))
+             1e-10)))))
+
+(deftest shield-walkthrough
+  (is (= :run (get-in c/shield-comparison [:reacting :action])))
+  (is (= :stop (get-in c/shield-comparison [:shielded :action])))
+  (is (= 2 (get-in c/shield-comparison [:shielded :det])))
+  (is (c/unanswered? (:reacting c/shield-comparison)))
+  (is (not (c/unanswered? (:shielded c/shield-comparison))))
+  (testing "the displayed event is in the exhaustive model"
+    (doseq [{:keys [id controller]} c/controllers
+            :let [before c/shield-input
+                  after (id c/shield-comparison)]]
+      (is (some #(= (select-keys after [:ctx :det :u :action])
+                    (select-keys % [:ctx :det :u :action]))
+                ((c/one-minute controller) before))))))
+
 
 (deftest decide
   (let [policy (c/best-order c/restock (peek c/restock-run))

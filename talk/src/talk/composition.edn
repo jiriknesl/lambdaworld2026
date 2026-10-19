@@ -1,0 +1,8 @@
+{:type
+ [:forall [[P Prop] [Q Prop] [R Prop]]
+  [:-> [:-> P Q] [:-> Q R] P R]]
+
+ :value
+ [:fn [[P Prop] [Q Prop] [R Prop]
+       [f [:-> P Q]] [g [:-> Q R]] [p P]]
+  [:app g [:app f p]]]}

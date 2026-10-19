@@ -323,12 +323,13 @@
                             (* 2 h)))
                  (range (count xs)))))))
 
-(defn as-plan
-  "The optimiser's flat numbers → the plan: a map from [turbine hour] to how hard it runs."
+(src (defn as-plan
+  "72 numbers → settings keyed by [turbine hour]."
   [xs]
-  (zipmap slots xs))
+  (zipmap slots xs)))
 
-(defn on-flat [model] (comp (:objective model) as-plan))
+(src (defn on-flat [model]
+       (comp (:objective model) as-plan)))
 
 (def first-guess
   "Half power everywhere: somewhere to start."
@@ -391,11 +392,25 @@
 (def settle (moved-less-than 1e-3))
 (def max-steps 600)
 
+(src (defn solver-step [model]
+       (clamped
+        (descent-step (gradient (on-flat model)) 0.0001)
+        0 1)))
+
+(defn coordinate-update [model]
+  (let [i 4 x (:x first-guess) f (on-flat model)
+        h 1e-5 g ((gradient f) x)
+        next ((solver-step model) first-guess)]
+    {:index i :slot (slots i) :x (x i) :h h
+     :low (f (update x i - h)) :high (f (update x i + h))
+     :slope (g i) :move (* -0.0001 (g i))
+     :next (get-in next [:x i])}))
+
 (def run-specs
-  (let [plain (descent-step (gradient (on-flat day-plan)) 0.0003)
+  (let [plain (solver-step day-plan)
         safe (descent-step (gradient (on-flat safe-plan)) 0.0001)]
-    {:crowd {:label "plain step, birds cost nothing" :step (clamped plain 0 1)}
-     :plain {:label "plain gradient step" :step (clamped safe 0 1)}
+    {:crowd {:label "plain step, birds cost nothing" :step plain}
+     :plain {:label "plain gradient step" :step (solver-step safe-plan)}
      :momentum {:label "with-momentum 0.9" :step (clamped (with-momentum safe 0.9) 0 1)}
      :adam {:label "with-adam 0.02" :step (clamped (with-adam safe 0.02) 0 1)}}))
 
@@ -604,15 +619,32 @@
 (def unit-cost 4)  ; cost per load ordered
 (def holding 1)    ; cost per load left over for a week
 
+(src (defn remaining-stock [stock order demand]
+       (max 0 (- (+ stock order) demand))))
+
+(src (defn weekly-profit [stock order demand]
+       (let [sold (min demand (+ stock order))
+             left (remaining-stock stock order demand)]
+         (- (* price sold)
+            (* unit-cost order)
+            (* holding left)))))
+
 (defbellman restock
   [stock (range 0 (inc capacity))]
   [order (range 0 (inc (- capacity stock)))]
   [demand {0 0.1, 1 0.3, 2 0.4, 3 0.2}]
-  :reward (- (* price (min demand (+ stock order)))
-             (* unit-cost order)
-             (* holding (max 0 (- (+ stock order) demand))))
-  :next (max 0 (- (+ stock order) demand))
+  :reward (weekly-profit stock order demand)
+  :next (remaining-stock stock order demand)
   :discount 0.9)
+
+(defn demand-outcomes [V stock order]
+  (for [[demand probability] (:outcomes restock)
+        :let [left (remaining-stock stock order demand)
+              reward (weekly-profit stock order demand)
+              future (* (:discount restock) (V left))]]
+    {:demand demand :probability probability :left left
+     :reward reward :future future
+     :weighted (* probability (+ reward future))}))
 
 (src (defn bellman
        "Problem → (Values → Values).
@@ -693,7 +725,8 @@
              after)))))
 
 (def decide-by-table (table-decision stop-table))
-(def shielded-decision (with-shield decide-by-table stop-table))
+(src (def shielded-decision
+       (with-shield decide-by-table stop-table)))
 
 (def controllers
   [{:id :tick-only :label "decides every 10 minutes"
@@ -703,8 +736,16 @@
     :code "(react-to-detections\n  (tick-controller decide-by-table)\n  decide-by-table)"
     :controller (react-to-detections (tick-controller decide-by-table) decide-by-table)}
    {:id :shielded :label "+ shield for unseen situations"
-    :code "(react-to-detections\n  (tick-controller shielded-decision)\n  shielded-decision)\n;; shielded-decision =\n;;   (with-shield decide-by-table stop-table)"
+    :code "(react-to-detections\n  (tick-controller shielded-decision)\n  shielded-decision)"
     :controller (react-to-detections (tick-controller shielded-decision) shielded-decision)}])
+
+(def shield-input
+  {:ctx :unseen :det 0 :u 0.3
+   :action :run :minute 1 :waiting nil})
+(def shield-event {:type :detect :level 2})
+(def shield-comparison
+  (into {} (for [{:keys [id controller]} controllers]
+             [id (controller shield-input shield-event)])))
 
 (defn unanswered? [{:keys [det action]}] (and (= 2 det) (= :run action)))
 
@@ -996,6 +1037,17 @@
                       [:tr [:th "plan"] [:th "generated kWh"] [:th "bird risk"]]
                       [:tr [:td "all running"] [:td (fmt full-energy 0)] [:td (fmt (risk all-on) 1)]]
                       [:tr [:td "this state"] [:td (fmt (- full-energy (lost plan)) 0)] [:td (fmt (risk plan) 1)]]]))
+                 (when (and (= k :momentum) (pos? i))
+                   (let [previous (nth run (dec i))
+                         base (descent-step (gradient (on-flat safe-plan)) 0.0001)
+                         move (- (get-in (base previous) [:x 4]) (get-in previous [:x 4]))
+                         carry (* 0.9 (get-in previous [:velocity 4] 0))]
+                     [:div
+                      [:div.caption "Turbine 1, noon · one coordinate of this update"]
+                      [:table.comparison
+                       [:tr [:th "base move"] [:th "+ 90% of old velocity"] [:th "= new velocity"]]
+                       [:tr [:td (fmt move 4)] [:td (fmt carry 4)] [:td (fmt (+ move carry) 4)]]]
+                      [:p.caption "Add velocity to the old setting; clamp the result to 0…1."]]))
                  (when (and (done? k) (= i (dec (count run))))
                    (final (run-summary k)))]]))
    :notes notes})
@@ -1004,7 +1056,7 @@
 
 (defn bullets [& items] [:ul.bullets (for [i items] [:li i])])
 
-(def section-order ["Hello" "OR" "Clojure" "HOFs" "Optimise" "Decide" "Validate" "Rainbow" "The book" "Questions"])
+(def section-order ["Hello" "OR" "Clojure" "HOFs" "Optimise" "Decide" "Validate" "Rainbow" "The book" "Thank you"])
 
 (def slides
   [
@@ -1151,6 +1203,39 @@
                    [:p.caption "The solver receives an ordinary function."]])]])
     :notes "Stopping loses electricity; keeping every turbine running increases collision risk. Those goals compete. We choose a bird-risk limit and maximize electricity subject to it, equivalently minimize electricity lost. The risk index is exposure times bird traffic times turbine operation, not a calibrated prediction of birds killed. All forecasts are illustrative. Lowering the limit chooses another tradeoff. The next step shows the two real functions, then explains the mini-language: defmodel is a macro in talk/notation.cljc. minimize and subject-to are marker symbols consumed by that macro, not independently defined functions or macros. The final step shows its actual expansion into objective and constraint functions."}
 
+   {:section "Optimise" :title "Build one update" :steps 4
+    :render (fn [frame]
+              (let [{:keys [x h low high slope move next]}
+                    (coordinate-update day-plan)
+                    panels ['electricity-lost 'gradient
+                            'descent-step 'solver-step]
+                    rows [["1 · state → score" "72 settings → one cost"
+                           "One setting: turbine 1, noon. Start at 50%."]
+                          ["2 · objective → gradient"
+                           (str "slope = " (fmt slope 2))
+                           (str "Cost at x−h: " (fmt low 6)
+                                " · at x+h: " (fmt high 6))]
+                          ["3 · gradient → step"
+                           (str (fmt x) " − 0.0001 × (" (fmt slope 2)
+                                ") = " (fmt (+ x move) 4))
+                           "Negative slope: more power reduces the cost."]
+                          ["4 · wrap, then repeat"
+                           (str "50% → " (fmt (* 100 next) 2) "%")
+                           "Clamp to 0…1. Repeat for all 72 settings."]]]
+                [:div.two.even
+                 [:div (code (panels frame) {:size :small})
+                  (when (= frame 0) (code 'on-flat {:size :small}))
+                  (when (= frame 1)
+                    [:p.caption "h = 0.00001 · slope = (cost(x+h) − cost(x−h)) / (2h)"])
+                  (when (= frame 3)
+                    (code "(iterate (solver-step day-plan) first-guess)" {:size :small}))]
+                 [:div.update-flow
+                  (for [[i [label value explanation]] (map-indexed vector rows)]
+                    [:div.update-card {:class (when (> i frame) "pending")}
+                     [:div.caption label] [:strong value]
+                     [:p.caption explanation]])]]))
+    :notes "Take this slowly. A state contains 72 fractions: six turbines times twelve hours. x=0.5 means half power for that turbine during that hour. on-flat turns the vector into the map the objective expects. One score evaluates the whole day. To estimate one slope, hold the other 71 settings fixed; nudge this one down and up by h and divide the score difference by 2h. At noon the slope is -84 kWh per unit of operation. descent-step subtracts rate times slope, so 0.5 becomes 0.5084. It computes all 72 slopes from the OLD vector, then returns a NEW vector. clamped enforces the physical 0 to 1 range. solver-step composes these HOFs; iterate repeatedly applies the returned state function. So far the score includes electricity only. The next model adds the bird penalty to that same score."}
+
    (plan-slide :crowd "A step is State → State"
                [:div (code 'gradient {:size :small}) (code 'descent-step {:size :small})]
                "gradient step · no bird cost"
@@ -1163,7 +1248,7 @@
                  [:div [:b "Before  "] "electricity lost"]
                  [:div [:b "After   "] "electricity lost + bird penalty"]]
                 (code 'penalize {:size :small})
-                [:div.caption "(penalize day-plan 100)"]
+                (code "(solver-step (penalize day-plan 100))" {:size :small})
                 [:div.penalty-equation "penalty = 100 × excess risk²"]
                 [:p.caption "excess risk = max(0, bird risk − limit)"]]
                "same gradient-descent solver"
@@ -1175,7 +1260,7 @@
                 [:div.caption "(clamped (with-momentum step 0.9) 0 1)"]]
                "with-momentum 0.9, clamped"
                (fn [{:keys [steps]}] [:p.aside (str "Settled in " steps " steps.")])
-               "with-momentum takes a step and returns a step. It asks the base step where to move, then adds 90% of the previous move. The velocity is stored in the state map, so the step stays pure. clamped is another decorator: it keeps every number between 0 and 1, because a turbine cannot run at minus 20%. Every run today is clamped; decorators compose.")
+               "with-momentum takes a step and returns a step. It asks the base step where to move, then adds 90% of the previous velocity. The velocity is stored in the state map, so the step stays pure. clamped is another decorator: it keeps every number between 0 and 1, because a turbine cannot run at minus 20%. Every run today is clamped; decorators compose. The outer clamp clips position without resetting the stored velocity, so velocity can differ from actual movement at a bound. The row under the schedule shows the base proposal, carried velocity and new velocity for turbine 1 at noon.")
 
    {:section "Optimise" :title "Tomorrow, played"
     :runs [:plain]
@@ -1191,39 +1276,79 @@
     :notes "The plan from the last slides, played fast: a day in eighteen seconds. Watch the clock and the turbines near the flyway around midday. This is the plan made a day ahead. We chose a plan by transforming a step. Next, decisions under uncertainty: the state of our iteration will be a value function."}
 
    ;; ---------------------------------------------------------------- Decide (5 min)
-   {:section "Decide" :title "Restock under uncertainty" :steps 3
+   {:section "Decide" :title "Restock a hydrogen station" :steps 3
     :render (fn [step]
-              [:div.two
-               [:div (code 'restock {:size :small})]
+              [:div.two.even
                [:div
                 (case step
-                  0 [:div.aside
-                     [:p "Capacity: 4 loads. Weekly demand: uncertain."]
-                     [:p "Too little: lost sales. Too much: storage cost."]]
-                  1 [:div [:div.caption "the Bellman equation"] (bellman-formula restock)]
-                  [:div [:div.caption "macro expansion"] (code (:expansion restock) {:size :small})])]])
-    :notes "A policy is a function from state to action. Bellman's equation says what a stock level is worth: take the best order, then average over demand this week's money plus 0.9 × next week's value. defbellman writes the equation; the expansion is a reduce over outcomes. Prices and costs are made up."}
+                  0 [:div.equation-stack
+                     [:div.equation-part [:span.f-label "State"] "Hydrogen in storage: 0–4 trailer loads."]
+                     [:div.equation-part [:span.f-label "Decision"] "How many loads to order this week?"]
+                     [:div.equation-part [:span.f-label "Uncertainty"] "Customers may buy 0, 1, 2 or 3 loads."]]
+                  1 [:div (code 'weekly-profit {:size :small})
+                     (code 'remaining-stock {:size :small})
+                     [:p.caption "Per load: sell for 10 · buy for 4 · store for 1."]]
+                  (code 'restock {:size :small}))]
+               [:div
+                (case step
+                  0 [:div
+                     [:div.inventory-flow
+                      [:div [:span.caption "Already stored"] [:strong "1 load"]]
+                      [:span "＋"]
+                      [:div [:span.caption "Order arrives"] [:strong "2 loads"]]
+                      [:span "→"]
+                      [:div [:span.caption "Available"] [:strong "3 loads"]]]
+                     [:p.aside "Choose the order before demand is known."]
+                     (kv-table [["demand" "0 / 1 / 2 / 3"]
+                                ["probability" "10% / 30% / 40% / 20%"]])
+                     [:p.caption "Unsold hydrogen stays. Unmet demand is lost sales."]]
+                  1 [:div.equation-stack
+                     [:div.equation-part [:span.f-label "Example: demand = 2 loads"]
+                      [:div "3 available → 2 sold → 1 left"]]
+                     [:div.equation-part [:span.f-label "This week’s profit"]
+                      [:div "20 − 8 − 1 = 11"]]
+                     [:div.equation-part [:span.f-label "Next week starts with"]
+                      [:div "1 load in storage"]]]
+                  [:div (bellman-formula restock)
+                   [:p.caption "V(stock): estimated discounted profit from that stock onward."]])]])
+    :notes "We stock hydrogen at a filling station, measured in trailer loads. Capacity four. At the start of each week, observe stock and choose an order that fits the tank. It arrives before customers buy. Demand is a random load count with the four displayed probabilities; these illustrative probabilities stay the same each week. We cannot choose after seeing demand. Sell at most the available stock; unmet demand disappears, leftovers carry into the next week. Units of money are illustrative. With stock one, order two and demand two: sell two for 20, pay 8 for the order and 1 for holding the leftover, profit 11. Our action should maximize expected discounted profit over future weeks, not just this week's profit. The last reveal defines the model and separates return, average, max. V is a function from stock to estimated future profit, supplied to the backup."}
 
-   {:section "Decide" :title "Score. Average. Choose." :steps 3
+   {:section "Decide" :title "Average demand, then choose an order" :steps 3
     :render (fn [step]
-              (let [V (nth restock-run step)
-                    stock 1
+              (let [V (nth restock-run (max 0 (dec step)))
+                    stock 1 order 2
+                    outcomes (demand-outcomes V stock order)
                     orders ((:actions restock) stock)
                     scores (mapv #((:q restock) V stock %) orders)
                     best (apply max scores)]
                 [:div.two.even
-                 [:div (code 'bellman {:size :small :marks #{"fn" "map" "max"}})
-                  [:p.aside "Stock: 1. Score each order using V."]
-                  [:p.callout "Average reward + discounted future over demand."]]
                  [:div
-                  [:div.caption (str "V from iteration " step " · new value for stock 1")]
-                  [:table.levels
-                   [:tr [:th "order"] [:th "expected value"]]
-                   (for [[order score] (map vector orders scores)]
-                     [:tr [:td order] [:td {:class (when (= score best) "ok")} (fmt score 3)]])]
-                  [:p.aside (str "max → " (fmt best 3))]
-                  [:p.caption "Repeat for each stock level → new values."]]]))
-    :notes "One minute. Step through three iterations. map calls q for each order, q folds the demand outcomes, max selects a value. The next slide does this for every stock level at once. We pass a value function into the scoring function: the future is an argument, not a global variable."}
+                  (if (zero? step)
+                    [:div (code (:expansion restock) {:size :small :marks #{"reduce" "for" "V"}})
+                     [:p.caption "The q function generated by defbellman."]
+                     [:p.aside "Stock 1. Try ordering 2."]
+                     [:p.caption "Start with V = 0: no future value yet."]
+                     [:p.callout "Score = sum of the weighted returns."]]
+                    [:div (code 'bellman {:size :small :marks #{"fn" "map" "max"}})
+                     [:p.aside "Stock 1. Try every feasible order."]
+                     [:p.caption "q averages the demand outcomes for one order."]])]
+                 [:div
+                  (if (zero? step)
+                    [:div
+                     [:table.levels
+                      [:tr [:th "demand"] [:th "p"] [:th "profit"] [:th "p × profit"]]
+                      (for [{:keys [demand probability reward weighted]} outcomes]
+                        [:tr [:td demand] [:td (fmt probability)] [:td reward] [:td (fmt weighted)]])]
+                     [:p.aside (str "Order 2 scores " (fmt (reduce + (map :weighted outcomes))) ".")]]
+                    [:div
+                     [:div.caption (str "using V from iteration " (dec step))]
+                     [:table.levels
+                      [:tr [:th "order"] [:th "expected return"]]
+                      (for [[order score] (map vector orders scores)]
+                        [:tr [:td order] [:td {:class (when (= score best) "ok")} (fmt score 3)]])]
+                     [:p.aside (str "New V(1) = " (fmt best 3))]
+                     [:p.caption "Do this for every stock level → a new value table."]])]]))
+    :notes "First reveal unpacks q for one action. With V zero, the four profits for stock one/order two are -11, 0, 11, 22. Weighted by demand probabilities, they sum to 7.7. The next reveal compares all orders, still using V zero. Order one wins this first, short-sighted backup. Then use V from one Bellman update: each outcome also contributes 0.9 times V(remaining stock). The best order can change because inventory left over now has a future value. map scores actions, max chooses, zipmap builds the next value table. No customer is being simulated here: iterate improves estimates of future value; it does not advance calendar weeks."}
 
    {:section "Decide" :title "Bellman: Values → Values" :steps (count restock-run)
     :render (fn [step]
@@ -1278,19 +1403,39 @@
     :notes "Read the policy first: order up to three. Then point at the residual crossing the threshold. converged? is the function we supplied; it decides when this run ends. A small numerical change is an observation. We will ask what can be proved about the operator after the validation example."}
 
    ;; ---------------------------------------------------------------- Verify (5 min)
-   {:section "Validate" :title "Stop for birds" :steps 2
+   {:section "Validate" :title "Can a detected bird be left unprotected?" :steps 3
     :render (fn [step]
-              [:div.two
-               [:div (code 'tick-controller {:size :small}) (code 'react-to-detections {:size :small :marks #{"controller"}})]
+              [:div.two.even
                [:div
-                (if (zero? step)
-                  [:div.aside
-                   [:p "A bird arrives outside the forecast."]
-                   [:p "The controller decides RUN or STOP every 10 minutes."]
-                   [:p.muted "Simplified controller · synthetic bird data."]]
+                (case step
+                  0 (code 'tick-controller {:size :small})
+                  1 [:div (code 'table-decision {:size :small})
+                     (code 'react-to-detections {:size :small})]
                   [:div (code 'with-shield {:size :small :marks #{"decide"}})
-                   [:p.aside "Safety as a function wrapper."]])]])
-    :notes "Verification asks one question: can the system ever reach a bad state? The rule here: when the radar is confident a bird is there, the turbine stops within the same minute. Three versions, built by composition: decide on the tick only; also react to detections; add a shield for situations the table has never seen."}
+                   (code 'shielded-decision {:size :small})])]
+               [:div
+                [:div.callout "Rule: confident detection → STOP in the same minute."]
+                (case step
+                  0 [:div
+                     [:p.aside "The timer decides every 10 minutes."]
+                     [:div.proof-flow [:div "minute 1: confident detection"]
+                      [:span "↓ controller only records it"] [:div.bad "still running"]]
+                     [:p.caption "The rule concerns the controller’s command; no physical braking model."]]
+                  1 [:div
+                     [:p.aside "React immediately. But what does the table say?"]
+                     (kv-table [["known situation + confident bird" "stop probability 1"]
+                                ["unknown situation" "missing row → probability 0"]])
+                     [:p.caption "An immediate decision can still be the wrong decision."]]
+                  [:div
+                   [:p.aside "Same unseen situation. Same confident bird."]
+                   (code "{:ctx :unseen :det 2 :u 0.3}" {:size :small})
+                   [:div.shield-results
+                    [:div [:span.caption "Reacting, no shield"]
+                     [:strong.bad (name (:action (:reacting shield-comparison)))]]
+                    [:div [:span.caption "Reacting + shield"]
+                     [:strong.ok (name (:action (:shielded shield-comparison)))]]]
+                   [:p.caption "Computed by both controllers from the same detection event."]])]])
+    :notes "Name the safety rule first, and what we validate: controller commands in a finite model. It is not a proof of bird survival or turbine braking physics. The original controller records detection but changes action only at a ten-minute tick. react-to-detections is a HOF that returns a controller which also decides on stronger detections. Still insufficient: the learned table has no row for an unseen context, defaults to probability zero, and keeps running. with-shield wraps the decision function. For known contexts it delegates; for unseen contexts it stops on any detection. The final reveal shows the exact definition of shielded-decision and executes the same confident detection through both controllers. The following exhaustive search checks that this holds throughout the modeled state space, not just in one hand-picked example."}
 
    {:section "Validate" :title "Reachability: grow a set" :steps (* 3 4)
     :render (fn [step]
@@ -1304,7 +1449,12 @@
                     cells (group-by (juxt :minute :waiting) states)
                     cw 50 ch 26]
                 [:div.two
-                 [:div (code 'reachable {:size :small :marks #{"="}}) (code 'one-minute {:size :small})]
+                 [:div (code 'reachable {:size :small :marks #{"=" "mapcat"}})
+                  [:p.aside "From every state, try every possible next event."]
+                  [:p.caption "No bird · uncertain detection · confident detection"]
+                  (if (= id :shielded)
+                    (code 'shielded-decision {:size :small})
+                    [:p.callout "Any reached state with a confident bird + RUN breaks the rule."])]
                  [:div
                   [:div.caption [:b label]]
                   (code composed {:size :small})
@@ -1322,12 +1472,12 @@
                   [:div.legend "columns: minute · rows: detection waiting time"]]]))
     :notes "The step adds every state reachable in one more minute. converged? is plain =: the set stopped growing. There are finitely many states, so it must stop. Right arrow walks the rounds for each controller. Tick-only shows a red diagonal: a bird can wait 9 minutes. Reacting fixes known situations; unseen ones never stop. With the shield the set closes with nothing red. This is an exhaustive check by our code, not a kernel proof."}
 
-   {:section "Validate" :title "Read the counterexample" :steps 2
+   {:section "Validate" :title "Turn a failed check into a bug report" :steps 2
     :render (fn [step]
               (let [id (if (zero? step) :tick-only :reacting)
                     path (counterexamples id)]
                 [:div
-                 [:div.caption [:b (:label (first (filter #(= id (:id %)) controllers)))] " · the longest path found"]
+                 [:div.caption [:b (:label (first (filter #(= id (:id %)) controllers)))] " · one reachable failure"]
                  [:div.timeline
                   (for [s path]
                     [:div.tl {:class (if (:waiting s) "tl-bad" "tl-ok")}
@@ -1337,11 +1487,12 @@
                      [:div.tl-a (name (:action s))]])]
                  [:p.aside (if (zero? step)
                              "Detection after a tick → 9 minutes still running."
-                             "Unseen situation → no stop. Add the shield.")]]))
-    :notes "The search returns a path, so the failure is a story you can debug. Tick-only: detection at minute 0, decision at minute 10. Reacting without the shield: the unseen situation has no row in the table, so its stop probability is 0."}
+                             "Unseen situation → no stop. Add the shield.")]
+                 [:p.caption "A reachable failure becomes a reproducible test case."]]))
+    :notes "This slide explains why validation is useful: it returns a reproducible failure rather than just a red count. One reachable bad state disproves the rule; a path tells us how to reproduce it. The search returns a path, so the failure is a story you can debug. Tick-only: detection at minute 0, decision at minute 10. Reacting without the shield: the unseen situation has no row in the table, so its stop probability is 0."}
 
 
-   {:section "Validate" :title "Three examples. One structure."
+   {:section "Validate" :title "iterate underneath all three"
     :render (fn [_]
               [:div
                [:table.levels
@@ -1349,8 +1500,8 @@
                 [:tr [:td "optimise"] [:td "plan + velocity"] [:td "wrapped gradient step"] [:td "small movement"]]
                 [:tr [:td "decide"] [:td "value function"] [:td "Bellman operator"] [:td "small value change"]]
                 [:tr [:td "validate"] [:td "set of reached states"] [:td "expand with successors"] [:td "set equality"]]]
-               [:div.promise "(fixed-point step converged? start)"]
-               [:p.aside "Now, prove a claim about the function."]])
+               [:div.promise "(iterate step start)"]
+               [:p.caption "fixed-point takes this sequence until the supplied stopping test passes."]])
     :notes "One minute. This is the payoff. Point back to each animation: a schedule, values and actions, a growing set. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. That is the bridge to Rainbow: write down a precise claim, then check a proof of it."}
 
    {:section "Rainbow" :title "Rainbow"
@@ -1358,13 +1509,30 @@
               [:div.two.even
                [:div (bullets "A theorem prover in Clojure."
                               "Statement: type. Proof: term."
-                              "Propose a proof. The kernel checks it.")]
+                              "Propose a proof. The kernel checks it.")
+                [:p.aside [:a {:href "https://flexiana.com/rainbow"} "flexiana.com/rainbow"]]]
                [:div
                 [:div.proof-flow [:div "statement + proposed proof"] [:span "↓ kernel checks the term"]
                  [:div "accepted or rejected"]]
                 [:p.aside "Type-checking mathematical claims."]
                 [:p.muted "Recorded checks · no browser kernel."]]])
     :notes "90 seconds. Introduce what Rainbow is before displaying theorem identifiers. For developers: checking a proof resembles type-checking a program; the term must inhabit the type we asked for. For the Lean people: this is the familiar separation between proof construction and the kernel. The interesting claim for today is about our function-transforming function, Bellman."}
+
+   {:section "Rainbow" :title "A proof is a function" :steps 2
+    :render (fn [step]
+              (let [receipt (n/checked-composition)]
+                [:div.two.even
+                 [:div (code (:source receipt) {:size :small})
+                  [:p.caption "Rainbow explicit term syntax · checked from this exact source."]]
+                 [:div
+                  [:div.proof-flow [:div "p : P"] [:span "↓ f : P → Q"]
+                   [:div "f(p) : Q"] [:span "↓ g : Q → R"] [:div "g(f(p)) : R"]]
+                  (if (zero? step)
+                    [:p.aside [:span.ok (name (:status receipt))] " · no axioms"]
+                    [:div
+                     (code "[:app f p]" {:size :small})
+                     [:p.aside [:span.bad (name (:negative-status receipt))] " · Q is not R"]])]]))
+    :notes "This is actual Rainbow explicit term syntax, not Clojure pseudocode or a tactic sketch. P, Q and R are arbitrary propositions. The type says: given a proof-transformer f from P to Q, a proof-transformer g from Q to R, and a proof p of P, produce a proof of R. forall binds propositions; the arrow is implication; fn binds the proof's arguments; app applies one proof term to another. The body applies f to p, then g to that result: function composition. The kernel checked this exact file in an empty environment, with no axioms. On the second reveal propose only f(p); it has type Q, not R, and the same kernel rejects it. Both verdicts were recorded by talk/scripts/check-proof.clj, not computed in the browser. This small proof teaches the syntax; the following Bellman theorem is the larger OR application."}
 
    {:section "Rainbow" :title "Bellman shrinks disagreement" :steps 2
     :render (fn [step]
@@ -1409,16 +1577,6 @@
                 [:p "Stopping ≠ correctness."]]])
     :notes "One minute. The recorded check is the signed Bellman additive-closeness theorem with empty axiom closure. We did not check the JavaScript program against it. Point to that boundary rather than implying that a theorem name certifies a renderer. The epsilon-to-gamma-epsilon statement is what is checked; fixed-point existence, convergence and a run-level stopping certificate need their own premises and proofs."}
 
-   {:section "Rainbow" :title "A rejected proof"
-    :render (fn [_]
-              [:div.two.even
-               [:div (code ";; Earlier: the momentum step\n;; Proposed proof of its recurrence:\n0")]
-               [:div (kv-table [["kernel result" [:span.bad (name (:status kernel-rejection))]]
-                                ["recorded check" (:checked-at kernel-rejection)]])
-                [:p.aside "Wrong type. Not a proof."]
-                [:p.muted "Recorded kernel rejection."]]])
-    :notes "30 seconds. Connect back to momentum, which the audience has seen. The kernel is not persuaded by a label or a plausible result. Our audit replaced the proof term with zero, and the check rejected it. Then close on the broader idea: functions describe computation; proof terms justify precise claims."}
-
    ;; ---------------------------------------------------------------- The book (2 min)
    {:section "The book" :title "Applied Higher-Order Functions"
     :render (fn [_]
@@ -1432,13 +1590,13 @@
                 [:p.goal "flexiana.com/book"]]])
     :notes "The book follows these three areas. Every listing runs with the companion library orhof. Book text: CC BY-SA 4.0; library: MIT. Replace the reserved photo area with Jiri's supplied book photograph."}
 
-   ;; ---------------------------------------------------------------- Questions
-   {:section "Questions" :title "Thank you"
+   ;; ---------------------------------------------------------------- Closing
+   {:section "Thank you" :title "Thank you"
     :render (fn [_]
               [:div.title-slide
-               [:div.promise "state · step · converged?"]
-               [:div.sub "Write the step. Supply the stopping test."]
-               [:div.byline "Jiri Knesl · flexiana.com/book · github.com/flexiana/rainbow"]])
+               [:h1.big "Thank you"]
+               [:div.byline [:a {:href "mailto:jiri@flexiana.com"} "jiri@flexiana.com"]]
+               [:p.aside [:a {:href "https://flexiana.com/rainbow"} "flexiana.com/rainbow"]]])
     :notes "Questions. Likely ones: Why not Haskell? (Types would help. I chose Clojure for code as data and the REPL.) Does momentum always help? (No.) Is the browser program proved? (No; the Rainbow result is about exact mathematical terms.)"}])
 
 ;; =============================================================================
@@ -1461,8 +1619,8 @@
      [:div.top
       [:div.sections (for [s section-order] [:span {:class (when (= s section) "on")} s])]
       [:div.count (str (inc slide) " / " (count slides))]]
-     (when-not (#{"Hello" "Questions"} section) [:h2.title title])
-     (when (and (#{"Hello" "Questions"} section) (pos? slide) (< slide (dec (count slides)))) [:h2.title title])
+     (when-not (#{"Hello" "Thank you"} section) [:h2.title title])
+     (when (and (#{"Hello" "Thank you"} section) (pos? slide) (< slide (dec (count slides)))) [:h2.title title])
      [:div.body (try (render step)
                      (catch :default e [:pre.error (str "This slide failed to render:\n" (.-message e))]))]
      (when (> steps 1)

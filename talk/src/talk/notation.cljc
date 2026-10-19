@@ -8,6 +8,7 @@
     defbellman write a decision problem as its Bellman equation"
   (:require [clojure.string :as str]
             #?(:clj [clojure.pprint :as pp])
+            #?(:clj [clojure.edn :as edn])
             #?(:clj [clojure.java.io :as io]))
   #?(:cljs (:require-macros [talk.notation])))
 
@@ -80,6 +81,14 @@
 
 #?(:clj
    (do
+     (defmacro checked-composition []
+       (let [source (slurp (io/resource "talk/composition.edn"))
+             receipt (edn/read-string
+                      (slurp (io/resource "talk/composition-check.edn")))]
+         (assert (= source (:source receipt))
+                 "Recheck the edited proof before building the deck")
+         (list 'quote receipt)))
+
      (defn- current-file []
        (some-> (find-ns 'cljs.analyzer) (ns-resolve '*cljs-file*) deref str))
 
