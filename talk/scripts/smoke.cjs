@@ -1,7 +1,7 @@
 // Browser check for the deck.
 //   node scripts/smoke.cjs /path/to/node_modules/playwright [url] [--shots dir]
 // Default url: the release build from disk (file://…/public/index.html), so it also proves offline use.
-// Visits every slide and step, fails on render errors, overflow, external requests or a broken hash restore.
+// Visits every slide, every short reveal and sampled long traces; fails on render errors, overflow, external requests or a broken hash restore.
 const path = require('path');
 const fs = require('fs');
 
@@ -15,6 +15,8 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
   const browser = await pw.chromium.launch();
   const problems = [];
   const external = [];
+  let traceSlide = null;
+  let checkedFrames = 0;
   for (const [w, h] of [[1600, 900], [1920, 1080], [1024, 768]]) {
     const page = await browser.newPage({ viewport: { width: w, height: h } });
     page.on('request', r => { const u = r.url(); if (!u.startsWith('file:') && !u.startsWith('data:') && !u.includes('localhost') && !u.includes('127.0.0.1')) external.push(u); });
@@ -26,33 +28,47 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
     for (let s = 1; s <= total; s++) {
       if (s > 1) await page.keyboard.press('ArrowDown');
       await page.keyboard.press('End');
-      const info = await page.evaluate(() => {
-        const body = document.querySelector('.slide .body');
-        const stage = document.getElementById('stage').getBoundingClientRect();
-        const scale = stage.width / 1600;
-        const over = [];
-        for (const el of body.querySelectorAll('*')) {
-          if (el.closest('svg.scene') && el.tagName !== 'svg') continue;
-          const r = el.getBoundingClientRect();
-          if (r.width === 0 || r.height === 0) continue;
-          if (r.right > stage.right + 2 || r.bottom > stage.bottom - 20 * scale + 2) over.push(el.tagName + '.' + el.className.baseVal ?? el.className);
-        }
-        for (const pre of body.querySelectorAll('pre')) if (pre.scrollWidth > pre.clientWidth + 2 || pre.scrollHeight > pre.clientHeight + 2) over.push('pre clipped');
-        return { title: (document.querySelector('.title') || {}).textContent || document.title, error: !!body.querySelector('.error'),
-                 over: [...new Set(over)].slice(0, 4), hash: location.hash };
+      const steps = await page.evaluate(() => {
+        const label = document.querySelector('.steps-text');
+        return label ? parseInt(label.textContent.split('/')[1]) : 1;
       });
-      if (info.error) problems.push(`${w}x${h} slide ${s}: render error`);
-      if (info.over.length) problems.push(`${w}x${h} slide ${s} (${info.title}): overflow ${info.over.join(', ')}`);
+      if (!Number.isInteger(steps) || steps < 1) throw Error(`Invalid step count on slide ${s}`);
+      const frames = steps <= 12 ? Array.from({length: steps}, (_, i) => i + 1)
+        : [...new Set([1, 2, Math.ceil(steps / 2), steps])];
+      for (const frame of frames) {
+        await page.keyboard.press('Home');
+        for (let n = 1; n < frame; n++) await page.keyboard.press('ArrowRight');
+        const info = await page.evaluate(() => {
+          const body = document.querySelector('.slide .body');
+          const stage = document.getElementById('stage').getBoundingClientRect();
+          const scale = stage.width / 1600;
+          const over = [];
+          for (const el of body.querySelectorAll('*')) {
+            if (el.closest('svg.scene') && el.tagName !== 'svg') continue;
+            const r = el.getBoundingClientRect();
+            if (r.width === 0 || r.height === 0) continue;
+            if (r.right > stage.right + 2 || r.bottom > stage.bottom - 20 * scale + 2) over.push(el.tagName + '.' + (el.className.baseVal ?? el.className));
+          }
+          for (const pre of body.querySelectorAll('pre')) if (pre.scrollWidth > pre.clientWidth + 2 || pre.scrollHeight > pre.clientHeight + 2) over.push('pre clipped');
+          return { title: (document.querySelector('.title') || {}).textContent || document.title, error: !!body.querySelector('.error'),
+                   over: [...new Set(over)].slice(0, 4), hash: location.hash };
+        });
+        checkedFrames++;
+        if (info.title === 'A step is State → State') traceSlide = s;
+        if (info.error) problems.push(`${w}x${h} slide ${s}: render error`);
+        if (info.over.length) problems.push(`${w}x${h} slide ${s} (${info.title}): overflow ${info.over.join(', ')}`);
+      }
       if (shots && w === 1600) {
         fs.mkdirSync(shots, { recursive: true });
         await page.screenshot({ path: path.join(shots, `s${String(s).padStart(2, '0')}.png`) });
       }
     }
+    if (traceSlide === null) throw Error('Cannot find the optimisation trace for control checks');
     // hash restore
-    await page.goto(url.split('#')[0] + '#s12a5');
+    await page.goto(url.split('#')[0] + `#s${traceSlide}a5`);
     await page.waitForSelector('.slide .top');
     const restored = await page.evaluate(() => [document.querySelector('.count').textContent.trim(), location.hash]);
-    if (!restored[0].startsWith('12 ') || restored[1] !== '#s12a5') problems.push(`${w}x${h} hash restore failed: ${restored}`);
+    if (!restored[0].startsWith(traceSlide + ' ') || restored[1] !== `#s${traceSlide}a5`) problems.push(`${w}x${h} hash restore failed: ${restored}`);
     await page.close();
   }
   // controls: steps, playback, theme, notes window following the stage
@@ -60,23 +76,24 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
     const context = await browser.newContext({ viewport: { width: 1600, height: 900 } });
     const page = await context.newPage();
     const hash = () => page.evaluate(() => location.hash);
-    await page.goto(url.split('#')[0] + '#s10');
+    await page.goto(url.split('#')[0] + `#s${traceSlide}`);
     await page.waitForSelector('.slide .top');
+    await page.waitForFunction(() => window.talkReady === true, null, { timeout: 180000 });
     await page.keyboard.press('ArrowRight');
-    if (await hash() !== '#s10a2') problems.push('ArrowRight did not advance the step: ' + await hash());
+    if (await hash() !== `#s${traceSlide}a2`) problems.push('ArrowRight did not advance the step: ' + await hash());
     await page.keyboard.press('Shift+ArrowRight');
-    if (await hash() !== '#s10a12') problems.push('Shift+ArrowRight did not jump 10 steps: ' + await hash());
+    if (await hash() !== `#s${traceSlide}a12`) problems.push('Shift+ArrowRight did not jump 10 steps: ' + await hash());
     await page.keyboard.press('ArrowLeft');
-    if (await hash() !== '#s10a11') problems.push('ArrowLeft did not go back: ' + await hash());
+    if (await hash() !== `#s${traceSlide}a11`) problems.push('ArrowLeft did not go back: ' + await hash());
     await page.keyboard.press('Space');
     await page.waitForTimeout(600);
     await page.keyboard.press('Space');
     const played = parseInt((await hash()).split('a')[1]);
     if (!(played > 13)) problems.push('Space did not play the steps: ' + await hash());
     await page.keyboard.press('ArrowDown');
-    if (await hash() !== '#s11') problems.push('ArrowDown did not go to the next slide: ' + await hash());
+    if (await hash() !== `#s${traceSlide + 1}`) problems.push('ArrowDown did not go to the next slide: ' + await hash());
     await page.keyboard.press('ArrowUp');
-    if (!(await hash()).startsWith('#s10a')) problems.push('ArrowUp did not go back a slide: ' + await hash());
+    if (!(await hash()).startsWith(`#s${traceSlide}a`)) problems.push('ArrowUp did not go back a slide: ' + await hash());
     await page.keyboard.press('d');
     if (await page.evaluate(() => document.documentElement.dataset.theme) !== 'dark') problems.push('D did not switch to dark');
     await page.keyboard.press('d');
@@ -95,6 +112,6 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
   }
   await browser.close();
   if (external.length) problems.push('external requests: ' + [...new Set(external)].join(', '));
-  console.log(problems.length ? problems.join('\n') : 'OK: every slide and step rendered, no overflow, hash restore works, no external requests');
+  console.log(problems.length ? problems.join('\n') : `OK: ${checkedFrames} frames checked at three sizes; all slides and short reveals, sampled long traces; no overflow, hash restore works, no external requests`);
   process.exit(problems.length ? 1 : 0);
 })();

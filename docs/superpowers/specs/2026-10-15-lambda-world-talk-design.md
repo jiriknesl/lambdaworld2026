@@ -1,8 +1,9 @@
 # Lambda World 2026 talk: design
 
 Talk: **Rebuilding Operations Research in Higher-Order Functions in Clojure**, Jiri Knesl, 40 minutes.
-Status: agreed in conversation on 2026-10-15 (revision 2). Replaces the "Function Observatory"
-presentation as the stage version.
+Status: revision 3, implementing Jiri's revised arc from 2026-10-19. Replaces the "Function
+Observatory" as the stage version. The outline below supersedes revision 2's macro-first opening
+and long LP/proof catalogue.
 
 ## 1. Goal and audience
 
@@ -74,52 +75,52 @@ doubles). Kernel-checked results are shown as recorded Rainbow output.
 
 ## 4. Talk outline (40 minutes)
 
-| Block | Min | Slides |
-|---|---|---|
-| About me | 3 | title; who I am and why OR + FP |
-| Why Clojure | 5 | code is data; `defmap` (source → data → picture); `defmodel` (source → formula → expansion); effects at the edges |
-| The shared loop | 3 | maths-to-code dictionary; `fixed-point` = `iterate` + step + `converged?`, warm-up √2 |
-| Optimise: birds and food | 5 | model; plain gradient step, birds pile up; `penalize`; `with-momentum`; `with-adam`; race of the three steps |
-| Decide: restocking | 5 | `defbellman`; value iteration frames (values, policy, residual); order-up-to policy |
-| Verify: bird stop controller | 5 | controller as decorators; reachability as a fixed point (naive → reacting → shielded); the 9-minute counterexample; falsification search with a robustness rule |
-| Gotchas | 1 | may never settle; settled ≠ correct; `converged?` is part of the spec |
-| Rainbow | 9 | who checks the checker; trailer model + solver as a fixed point; the receipt and checker; a theorem is a function type + kernel verdict; `converged?` with a guarantee; refused fake proof; what is not proved (maturity levels); open core vs Pro; the goal |
-| The book | 2 | *Applied Higher-Order Functions*: parts mirror the talk |
-| Questions | 2+ | closing card |
+| Block | Min | Purpose |
+| --- | ---: | --- |
+| About Jiri | 1 | Brief work/book/Rainbow introduction. |
+| Operations research | 2 | Define choices, objectives, constraints and uncertainty before algorithms. |
+| Why Clojure | 2 | Explain the choice through functions, immutable data, REPL and macros. |
+| Higher-order functions | 6 | Accept/return functions; map vs iterate; visible state chain; exact fixed point vs tolerance; fixed-point takes step and converged?. |
+| Optimisation | 8 | One wind-farm planning example: problem, model, step, penalty, momentum, schedule and 3D result. |
+| Decision-making | 6 | One restocking example: possible orders, expected scores, Bellman updates, policy. |
+| Validation | 5 | One bird-controller example: successors → growing reachable set → counterexample → shielded result. Summarise what changes inside the same HOF structure. |
+| Rainbow and proof | 7 | Introduce theorem prover and kernel; return to Bellman; show the contraction proof, recorded check and a refused fake proof. |
+| Book / close | 1 | Three areas in the book; return to the HOF takeaway. |
+| Questions | 2 | Discussion. |
 
-## 5. Demos
+The revised deck has 29 slides. HOFs are the subject throughout. Each example must say which
+function is passed or returned and show the resulting computation. The macro is a way to describe
+the optimisation problem, not a separate introduction to Lisp. Adam, falsification, trailer LP,
+proof-size metrics and product catalogues are outside this spoken arc. Supporting code can stay.
 
-**Birds and food (optimise).** Drawn with `defmap`. Model: minimise Σ ‖b − food‖² subject to
-∀ pairs ‖a − b‖ ≥ 1.2. Plain gradient steps pile the birds on the food (the model never said "keep
-apart" as a cost); `(penalize model w)` spreads them. Steps are decorators `Step → Step`:
-`with-momentum`, `with-adam`. A race compares steps-to-converge. Not claimed: convergence proofs.
+## 5. Visuals and proof walkthrough
 
-**Restocking (decide).** A station holds up to 4 trailer loads; random weekly demand; revenue, order and
-holding costs; discount 0.9. Value iteration with `converged?` = largest change < ε. Frames show values,
-the policy (order up to a level) and the residual against ε. The final frame quotes the stopping bound
-ε/(1 − γ) from Rainbow's theorem, labelled as a theorem about exact rationals, not a check of this run.
-
-**Bird stop controller (verify).** Simplified from `wildlife.edge` (Reto 3): 10-minute slots, detection
-levels none/low/high, a stop-probability table with one draw per slot, and a fallback for contexts the
-table has never seen. Controllers are composed: `table-controller`, `react-to-detections`, `with-shield`.
-Rule: a high-confidence detection is answered by STOP within the same minute. Reachability (`fixed-point`
-over sets of states, `converged?` = `=`) finds the 9-minute gap in the tick-only controller, a
-never-stopping gap without the shield, and nothing for the full composition. Falsification: a search over
-detection times, scored by the rule's robustness (seconds to spare), converges to "just after a tick".
-Bird data in Reto 3 is synthetic; the slide says so.
-
-**Trailer plan (Rainbow section).** The RH2EDIN Reto 2 instance in `defmodel`; LP coefficients read from
-the model; simplex as `fixed-point` of a pivot (objective 0, 0, 56, 94, 127); the receipt
-15·8 + 2·19 + 1·33 − 8·8 = 127 built term by term; the checker accepts it and refuses a tampered price.
-Kernel verdict from `rainbow-results.edn`: certified, axioms `#{}`. Proof size is described as measured:
-about 620 distinct subterms from 26 lemmas.
+- `newton-sqrt` returns an update function. `map` calls it on independent guesses; `iterate`
+  connects the calls. Reveal five computed states before introducing a stopping test.
+- Wind-farm plan: a source grid becomes positions and the 3D scene. A schedule shows each turbine's
+  setting by hour. The plain objective ignores birds; the penalty changes the objective; momentum
+  wraps the step. No claim that the soft penalty ensures feasibility or momentum always helps.
+- Restocking: fix stock at one load and show the actual Q score for every allowed order. The q
+  function folds uncertain demand; max selects the new value. Then animate all stock values and
+  the policy. The future value function is an argument to the update.
+- Controller: `reachable` receives a successor function; mapcat expands states and into unions
+  them. Show reached states and rule violations, then a readable counterexample. Compare the
+  same finite model under tick-only, reacting and shielded controllers. Set equality stops it.
+- Rainbow: statement + proof term → kernel → acceptance/rejection. State the Bellman bound,
+  illustrate a 10-to-9 value gap using the actual browser function, then prove the general bound:
+  identical rewards cancel; nonnegative normalized outcome averaging preserves γ ε; the maximum
+  preserves the one-sided bound; swap V and W. Explicit model/action/discount assumptions.
+- The proof explanation is mathematical prose, not kernel syntax. Recorded evidence for
+  `value/signed-optimality-step-additively-contractive` comes from the 2026-10-09 checked export,
+  empty axiom closure, commit `3f411ae`. No proof of floating-point browser correspondence.
+  The rejection of zero as a momentum proof is recorded evidence too. No new audit is implied.
 
 ## 6. Testing
 
 Node tests: `defmap`/`defmodel`/`defbellman` expansions; flock converges, penalty spreads, Adam/momentum
 run; restocking policy order-up-to and residual stop; reachability finds violations for the naive and
 unshielded controllers and none for the full one; falsification finds the near-tick time; LP gives 127,
-prices balance, tampered receipt refused. Browser check: every slide and step reachable, hash restore,
+prices balance, tampered receipt refused. Browser check: every slide and short reveal, sampled long traces, hash restore,
 no overflow at 1600×900, 1920×1080 and 1024×768, no external requests, release build from `file://`.
 
 ## 7. Existing presentation and prototypes

@@ -1,9 +1,10 @@
 # Rebuilding Operations Research in Higher-Order Functions — the deck
 
 Lambda World 2026, Jiri Knesl. One ClojureScript namespace (`src/talk/core.cljs`) holds the slides,
-the algorithms they show and the drawing code; `src/talk/notation.cljc` holds the macros. Every number
-on a slide is computed by that code, and every code panel shows the exact source text of the running
-definition (captured at compile time by the `src` macro), so slides cannot drift from what runs.
+the algorithms they show and the drawing code; `src/talk/notation.cljc` holds the macros.
+Demo values are computed by that code. Definition panels use the exact source of the running
+function (captured at compile time by `src`). Explanatory calls and mathematical proof steps are
+labelled separately; Rainbow verdicts are recorded evidence, not browser kernel execution.
 
 Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-design.md`.
 
@@ -25,7 +26,7 @@ npm run watch          # http://localhost:7350 — save core.cljs and the page h
 npm test               # algorithms, notation, number formatting, and a 60-character limit
                        # on every line of code shown on a slide
 node scripts/smoke.cjs /path/to/node_modules/playwright
-                       # every slide and step at 1600×900, 1920×1080 and 1024×768: render errors,
+                       # every slide, all short reveals and sampled long traces at three projector sizes:
                        # overflow, hash restore, external requests, keys, notes window
 ```
 
@@ -75,26 +76,62 @@ open the release build (`public/index.html`) — it needs nothing else.
 | 4. Decide | `defbellman restock`, `bellman`, the stopping bound |
 | 5. Verify | `table-decision`, `with-shield`, `tick-controller`, `react-to-detections`, `reachable`, rules (`always`, `implies`, `within`), the worst-case search |
 | 6. Receipt | `defmodel trailers` (RH2EDIN Reto 2), `linear-rows`, `pivot`, `check-receipt`, recorded Rainbow verdicts |
-| 7. Slides | 36 slides with speaker notes |
+| 7. Slides | 29 slides with speaker notes, following the revised arc below |
 | 8. App | keyboard, URL, notes window, playback, scaling |
 
-## Timing (40 minutes)
+## Talk arc — revised 2026-10-19
 
-Hello 3 · Why Clojure 5 · The loop 3 · Optimise 5 · Decide 5 · Verify 5 · Rainbow 9 · The book 2 ·
-Questions. These are targets; a spoken rehearsal will tell.
+The central question is **which function do we supply, and what does it change?**
+The audience meets OR before Clojure, and higher-order functions before the examples.
+Each example shows its problem, supplied function, visible updates and resulting behaviour.
 
-## What the slides claim, and what they don't
+| Block | Minutes | What the audience sees |
+| --- | ---: | --- |
+| Briefly about Jiri | 1 | Work, book and Rainbow; a short introduction. |
+| What OR is | 2 | Choices, objectives, constraints and uncertainty; the three questions for today. |
+| Why Clojure | 2 | Functions as values, immutable states, the REPL and code as data. |
+| HOFs → iterate → fixed point | 6 | A function returned by `newton-sqrt`, passed to `map`, then to `iterate`; reveal the state chain; distinguish an exact fixed point, a tolerance and a work limit. |
+| One optimisation example | 8 | Wind-farm settings: map → model → gradient step → penalty → momentum; computed schedule and 3D playback. |
+| One decision-making example | 6 | Restocking: score each order, average possible demand, select the best; animate Bellman value tables and the resulting policy. |
+| One validation example | 5 | Bird-stop controller: supply successors to reachability, watch the set grow, read a counterexample, inspect the shielded result. Close with the shared HOF structure. |
+| Rainbow and a proof | 7 | Introduce statement/term/kernel, return to Bellman, walk through its contraction argument, show recorded evidence and a rejected fake proof. |
+| Book and closing | 1 | Connect the three examples to *Applied Higher-Order Functions*. |
+| Questions | 2 | Discussion. |
 
-- The trailer plan's optimality (127) was certified by Rainbow's kernel for RH2EDIN, axioms `#{}`;
-  the slide shows that recorded result. The browser checks the same receipt with arithmetic.
-- The restocking stop rule quotes Rainbow's stopping-certificate theorem (for all inputs). The browser
-  run is floating point and has not been kernel-checked; the slide says so.
-- Gradient descent, momentum and Adam have no convergence proof here; the bird controller is checked
-  exhaustively by this code, not by a kernel. The "What is proved" slide lists this.
-- Reto 3 bird passages are synthetic; the controller is simplified from `wildlife.edge`.
+These sum to 40 minutes; they are targets, not measured speaking duration. The old long macro
+introduction, Adam race, falsification demo, trailer/simplex/LP detour and open-core/Pro catalogue
+are outside the spoken arc. Their supporting algorithms remain in the source and tests.
+
+## The proof example and its limits
+
+The Rainbow example is **the Bellman contraction bound from the decision-making demo**:
+if two value functions are pointwise within ε, one update puts them within γ × ε.
+The proof is revealed in four steps: cancel identical rewards; average bounded future differences
+with normalized nonnegative probabilities; take the maximum over the same admissible actions;
+swap the two functions for the reverse inequality. Nonempty admissible actions and the finite
+model assumptions are explicit. Strict contraction additionally requires 0 ≤ γ < 1.
+
+The numerical 10 → 9 illustration runs the deck's Bellman function on two tables. It is not the
+proof. The four-step explanation is readable mathematics, not literal Rainbow syntax. The
+kernel receipt comes from `../resources/rainbow-evidence.edn`, recorded 2026-10-09 against
+Rainbow commit `3f411ae`: `value/signed-optimality-step-additively-contractive`, checked with
+empty axiom closure. That proves a claim about exact terms. No correspondence proof to the
+floating-point ClojureScript implementation is asserted, and this revision does not rerun the
+kernel. The fake-proof rejection is also the existing recorded momentum check, labelled as such.
+
+Gradient and momentum have no convergence guarantee here. The controller result exhausts only
+its encoded finite model, not all physical turbine behaviour, and is not a kernel proof.
+The Reto 3 inspiration uses synthetic bird passages. Illustrative forecasts remain illustrative.
 
 ## Before the talk
 
-- The "Who I am" slide is a sketch; personalise it.
+Revision checks (2026-10-19): release build completed without warnings; 8 tests / 356 assertions
+passed. The browser check exercised 237 frames across 1600×900, 1920×1080 and 1024×768,
+including every short reveal and sampled long traces. No render errors, clipped code panels or
+overflow remained; hash restore, navigation, playback, theme and presenter controls passed.
+The release loaded from disk with no external requests. This does not replace the spoken or
+physical-projector rehearsal, and the old app's hostile-room audit does not certify this new deck.
+
+- Confirm the wording of the short personal introduction.
 - Emoji in the `defmap` source are drawn by the system emoji font; check alignment in Cursor's font.
 - A timed spoken rehearsal and a projector check remain.

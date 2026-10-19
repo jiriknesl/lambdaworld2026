@@ -90,6 +90,19 @@ p.aside { margin: 14px 0 0; }
 .legend { font-size: 17px; color: var(--muted); margin-top: 6px; }
 .callout { margin-top: 14px; padding: 16px 20px; background: var(--accent-soft); border-left: 6px solid var(--accent); font-size: 23px; }
 .callout p { margin: 0 0 8px; }
+.state-chain { display: flex; gap: 24px; margin: 52px 0; }
+.state-node { position: relative; display: flex; flex-direction: column; gap: 16px; flex: 1;
+  padding: 24px 16px; border: 2px solid var(--accent); border-radius: 8px; text-align: center; }
+.state-node + .state-node::before { content: "→"; position: absolute; left: -27px; top: 56px; color: var(--accent); }
+.state-node strong { font-family: var(--mono); font-size: 28px; }
+.proof-flow { display: flex; flex-direction: column; gap: 24px; margin: 22px 0; text-align: center; }
+.proof-flow div { border: 2px solid var(--accent); background: var(--accent-soft); padding: 24px; border-radius: 8px; }
+.proof-flow span { font-size: 21px; color: var(--muted); }
+.proof-steps { display: grid; gap: 14px; }
+.proof-row { display: grid; grid-template-columns: 400px 1fr; gap: 28px; padding: 18px 24px;
+  border-left: 5px solid var(--accent); background: var(--wash); font-size: 24px; }
+.proof-row p { margin: 8px 0 0; color: var(--muted); font-size: 21px; }
+.proof-row.pending { visibility: hidden; }
 .ok { color: var(--ok); font-weight: 700; }
 .bad { color: var(--bad); font-weight: 700; }
 .warn { color: var(--warn); font-weight: 700; }

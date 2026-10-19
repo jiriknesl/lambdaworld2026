@@ -11,8 +11,8 @@
     7. Slides               the talk, slide by slide, with speaker notes
     8. App                  keyboard, URL, notes window, scaling
 
-  Every number on a slide is computed by the code in this file; every code panel shows the
-  exact source text of a definition wrapped in `src`."
+  Demo values are computed here. Definition panels use source captured by `src`;
+  illustrative calls, proof explanations and recorded kernel evidence are labelled separately."
   (:require [clojure.string :as str]
             [talk.notation :as n :refer [src defmap defmodel defbellman pairs violations]]))
 
@@ -1002,62 +1002,104 @@
 
 (defn bullets [& items] [:ul.bullets (for [i items] [:li i])])
 
-(def section-order ["Hello" "Why Clojure" "The loop" "Optimise" "Decide" "Verify" "Rainbow" "The book" "Questions"])
+(def section-order ["Hello" "OR" "Clojure" "HOFs" "Optimise" "Decide" "Validate" "Rainbow" "The book" "Questions"])
 
 (def slides
-  [;; ---------------------------------------------------------------- Hello (3 min)
+  [
    {:section "Hello" :title "Rebuilding Operations Research in Higher-Order Functions"
     :render (fn [_]
               [:div.title-slide
                [:div.kicker "Lambda World 2026"]
                [:h1.big "Rebuilding Operations Research" [:br] "in Higher-Order Functions"]
-               [:div.sub "Three problems, one loop, in Clojure"]
+               [:div.sub "Optimise a plan. Make a decision. Validate a system."]
                [:div.byline "Jiri Knesl · Flexiana"]])
-    :notes "Pause. Let them read the title."}
+    :notes "15 seconds. Today I want to show you what higher-order functions let us do inside operations research."}
 
-   {:section "Hello" :title "Who I am"
+   {:section "Hello" :title "A little about me"
     :render (fn [_]
               [:div.two.even
-               [:div
-                (bullets "Developer. I founded Flexiana, a software and applied-mathematics company."
-                         "I live in Gibraltar, on the Bay of Algeciras."
-                         "I wrote Applied Higher-Order Functions."
-                         "I am building Rainbow, a theorem prover in Clojure.")]
-               [:div.aside
-                [:p "I am not a mathematician."]
-                [:p "You could write every line of code in this talk on Monday."]]])
-    :notes "Two minutes. Say you are a developer, not a mathematician. People ask more questions when they know. Add your own story here."}
+               [:div (bullets "Jiri Knesl · founder of Flexiana"
+                              "Applied Higher-Order Functions · author"
+                              "Rainbow · building a theorem prover in Clojure")]
+               [:div.aside [:p "I work on software that makes decisions."]
+                [:p "I want the algorithms to be readable, composable, and open to inspection."]]])
+    :notes "45 seconds. Briefly introduce your work, the book and Rainbow. No biography detour. Transition: what are the decisions we are trying to make?"}
 
-   {:section "Hello" :title "Software already makes these decisions"
+   {:section "OR" :title "Operations research: decisions with a model"
     :render (fn [_]
               [:div
-               (bullets "Which trailer goes to which station. When to restock. When a wind turbine stops for a bird."
-                        "We write the code around the solver and never open it."
-                        "Today we open it. Inside are a few higher-order functions you already use.")
-               [:div.promise "state · step · converged?  →  " [:code "iterate"]]])
-    :notes "Every example today has three parts: a state, a step that improves it, and a test that says when to stop. iterate runs them. All three come from our work on the Bay of Algeciras: hydrogen trailers, hydrogen stations, and a wind farm on a bird migration route."}
+               [:p.aside "Describe the choices, what makes a choice good, and the limits it must respect."]
+               [:table.levels
+                [:tr [:th "question"] [:th "our example"]]
+                [:tr [:td "Which plan should we choose?"] [:td "Run a wind farm while limiting risk to birds."]]
+                [:tr [:td "What should we do when the future is uncertain?"] [:td "Restock a station before demand is known."]]
+                [:tr [:td "Does the system obey its rule?"] [:td "Check whether a turbine can miss a stop deadline."]]]
+               [:p.callout "The model says what we want. The algorithm searches, decides, or checks."]])
+    :notes "Two minutes. Define OR before naming algorithms. A plan is a choice; an objective scores it; constraints limit it. Uncertainty changes what a good decision means. Validation asks whether the resulting controller meets its specification. Our forecasts and controllers are deliberately small models. Keep the distinction between a model and the world explicit."}
 
-   ;; ---------------------------------------------------------------- Why Clojure (5 min)
-   {:section "Why Clojure" :title "Code is data" :steps 4
+   {:section "Clojure" :title "Why I picked Clojure for this"
+    :render (fn [_]
+              [:div.two.even
+               [:div (bullets "Functions are ordinary values: pass a model, return a step, wrap a solver."
+                              "Immutable data keeps each intermediate state available."
+                              "The REPL lets me change one function and inspect the effect.")]
+               [:div.aside
+                [:p "Code is data too. A small macro can turn a drawing or a model into ordinary functions."]
+                [:p "That makes the route from problem → code → picture short."]
+                [:p.muted "The higher-order patterns also work in Haskell, Elixir and other languages."]]])
+    :notes "Two minutes. This is why I chose Clojure, not a claim that these ideas require it. Connect each feature to the work: replace the scoring function, keep the old state for inspection, try a different step in the REPL, and build small notation for the problem. We will see one drawing macro inside the optimisation example. Now put functions, rather than syntax, at the centre."}
+
+   {:section "HOFs" :title "A function can be an argument — or the result" :steps 3
     :render (fn [step]
-              (let [form '(+ 1 2)
-                    rows [["(+ 1 2)" (str (apply + (rest form)))]
-                          ["'(+ 1 2)" (pr-str form)]
-                          ["(first '(+ 1 2))" (pr-str (first form))]
-                          ["(map number? '(+ 1 2))" (pr-str (map number? form))]]]
-                [:div.two
-                 [:div [:table.repl (for [[i [in out]] (map-indexed vector rows) :when (<= i step)]
-                                      [:tr [:td.in (highlight in)] [:td.arrow "⇒"] [:td.out out]])]]
-                 [:div.aside
-                  (case step
-                    0 [:p "Evaluated, the list is a function call."]
-                    1 [:p "Quoted, the same list is data."]
-                    2 [:p "You can take it apart like any other list."]
-                    [:p "Programs read and write programs as easily as they read JSON. A " [:b "macro"]
-                     " is a function that does it at compile time."])]]))
-    :notes "Clojure code is written in lists, vectors and maps, the same structures programs use for data. A macro runs at compile time. It receives code as data and returns code. Think of a Babel plugin written as one ordinary function."}
+              [:div.two
+               [:div (code 'newton-sqrt {:marks #{"fn"}})
+                (code "(map (newton-sqrt 2) [1 2 4])")]
+               [:div
+                [:p.aside "newton-sqrt receives a number and returns a function: one update of a guess."]
+                (when (>= step 1)
+                  [:div.callout [:p "map receives that function and applies it independently."]
+                   [:p (pr-str (mapv (newton-sqrt 2) [1 2 4]))]])
+                (when (= step 2)
+                  [:p.aside "Now use the output as the next input. That is iterate."])]] )
+    :notes "90 seconds. First show the returned fn; then map calls it on three guesses. These numbers are evaluated by the displayed function. A higher-order function accepts a function or returns one. map makes independent calls. iterate connects the calls, carrying the result forward. That distinction prepares the rest of the talk."}
 
-   {:section "Why Clojure" :title "Draw the problem" :steps 3
+   {:section "HOFs" :title "iterate exposes the whole trajectory" :steps 5
+    :render (fn [step]
+              [:div
+               (code "(take 5 (iterate (newton-sqrt 2) 1.0))" {:marks #{"iterate"}})
+               [:div.state-chain
+                (for [[i x] (map-indexed vector (take (inc step) sqrt-run))]
+                  [:div.state-node [:span.caption (str "state " i)]
+                   [:strong (fmt x 6)]
+                   [:span.caption (if (zero? i) "initial guess" "step(previous)")]])]
+               [:p.aside "The initial value is first. Each arrow is the same function."]
+               [:p.callout "iterate chooses no stopping rule. It returns a lazy sequence of states."]])
+    :notes "90 seconds. Press Right one state at a time. Say: input, call, output; the output becomes the next input. This is a trace we can replay, plot or inspect. take asks for five states. It does not claim that five is enough. Next we must choose what done means."}
+
+   {:section "HOFs" :title "A fixed point: another step changes nothing"
+    :render (fn [_]
+              [:div.two.even
+               [:div [:pre.sig "step(x*) = x*\n\nstate → step → state → …"]
+                [:p.aside "A fixed point is a property of a value and a function."]]
+               [:div (bullets "Exact sets: stop when the next set equals the old set."
+                              "Numerical guesses: stop when the change is small enough."
+                              "A step limit bounds the work if neither happens.")
+                [:p.callout "The stopping test is another function we supply."]]])
+    :notes "One minute. Distinguish the mathematical fixed point from our routine named fixed-point. A tolerance is an approximate stop; a guard may stop an unsettled run. Not every step converges. The useful abstraction is that both step and stopping test are arguments."}
+
+   {:section "HOFs" :title "One loop: state, step, converged?" :steps (count sqrt-run)
+    :render (fn [step]
+              [:div.two
+               [:div (code 'fixed-point {:marks #{"iterate" "converged?"}}) (code 'newton-sqrt {:size :small})]
+               [:div
+                [:div.caption "(fixed-point (newton-sqrt 2) close-enough? 1.0)"]
+                [:table.trace (for [[i x] (map-indexed vector sqrt-run) :when (<= i step)]
+                                [:tr [:td.k (str "x" i)] [:td.v (.toFixed x 12)]])]
+                (when (= step (dec (count sqrt-run)))
+                  [:p.aside "Two successive guesses differ by less than 10⁻¹², so this run stops. √2 = 1.414213562373…"])]])
+    :notes "This is the pattern of the whole talk. A state, a step from state to state, a test for done. iterate makes the lazy sequence of states. take-while stops it. The max-steps guard is one take, because iterate is lazy. Optimising, deciding and verifying are all this loop with different arguments."}
+
+   {:section "Optimise" :title "Draw the problem" :steps 3
     :live (fn [step t] (when (= step 2) {"live-map" (scene nil t {})}))
     :render (fn [step]
               [:div.two
@@ -1074,7 +1116,7 @@
                    [:div#live-map (scene nil (now-s) {})]])]])
     :notes "defmap reads the grid at compile time and returns a map of positions. The third step draws the same data in 3D, playing a day: the clock runs, birds pass along the flyway, thickest at midday when the thermals are strong. The projection is a dozen lines of pure functions. Live: move a turbine in core.cljs and save; the slide redraws and tomorrow's plan is recomputed. (n/random-map {:seed 7}) prints a new map to paste."}
 
-   {:section "Why Clojure" :title "The model reads like the maths" :steps 3
+   {:section "Optimise" :title "Optimisation: choose tomorrow’s turbine settings" :steps 3
     :render (fn [step]
               [:div.two
                [:div (code 'day-plan) (code 'wear {:size :small})]
@@ -1088,42 +1130,6 @@
                   [:div [:div.caption "what defmodel expands to"] (code (:expansion day-plan) {:size :small})])]])
     :notes "Operations research keeps two things apart: what a good answer is (the model) and how to find one (the solver). SQL works the same way: you declare the result, the engine finds it. The grammar has four words: minimize or maximize, subject-to, sum, for-all. The expansion shows that sum is reduce +. The formula is drawn from the model's source, so the two cannot disagree. The forecasts are illustrative: birds peak at midday, and Spanish power is cheapest at midday, when the solar farms flood the grid."}
 
-   {:section "Why Clojure" :title "Effects at the edges"
-    :render (fn [_]
-              [:div.two
-               [:div (code 'state {:size :small}) (code 'render! {:size :small :marks #{"html" "slide-view" "notes-view"}})
-                [:p.caption "slide-view and notes-view are pure: state in, hiccup out"]]
-               [:div.aside
-                [:p "Every function you will see today is pure and works on immutable data."]
-                [:p "This deck has two atoms, both at the edge: where you are, and how far each run has got."]
-                [:p.muted "Haskell puts effects in the type. Clojure relies on convention and immutable data. Each choice has a cost."]]])
-    :notes "Tell the Haskell people plainly: Clojure has no effect types. Purity is a habit, helped by immutable data. Because every state is a value, every run today can be replayed frame by frame."}
-
-   ;; ---------------------------------------------------------------- The loop (3 min)
-   {:section "The loop" :title "Reading maths as code"
-    :render (fn [_]
-              [:table.dict
-               [:tr [:th "maths"] [:th "you write"]]
-               [:tr [:td.m "Σ" [:sub "b ∈ birds"] " f(b)"] [:td (highlight "(reduce + (map f birds))")]]
-               [:tr [:td.m "∀ b ∈ birds: ok(b)"] [:td (highlight "(every? ok birds)")]]
-               [:tr [:td.m "max" [:sub "a"] " q(a)"] [:td (highlight "(apply max (map q actions))")]]
-               [:tr [:td.m "argmin" [:sub "a"] " cost(a)"] [:td (highlight "(apply min-key cost actions)")]]
-               [:tr [:td.m "x" [:sub "k+1"] " = step(x" [:sub "k"] ")"] [:td (highlight "(iterate step x0)")]]])
-    :notes "Most of the frightening notation is folds. Σ is reduce +. ∀ is every?. 'max over a' is apply max. The last row is what this talk is about."}
-
-   {:section "The loop" :title "One loop: state, step, converged?" :steps (count sqrt-run)
-    :render (fn [step]
-              [:div.two
-               [:div (code 'fixed-point {:marks #{"iterate" "converged?"}}) (code 'newton-sqrt {:size :small})]
-               [:div
-                [:div.caption "(fixed-point (newton-sqrt 2) close-enough? 1.0)"]
-                [:table.trace (for [[i x] (map-indexed vector sqrt-run) :when (<= i step)]
-                                [:tr [:td.k (str "x" i)] [:td.v (.toFixed x 12)]])]
-                (when (= step (dec (count sqrt-run)))
-                  [:p.aside "Two states in a row agree, so the loop stops. √2 = 1.414213562373…"])]])
-    :notes "This is the pattern of the whole talk. A state, a step from state to state, a test for done. iterate makes the lazy sequence of states. take-while stops it. The max-steps guard is one take, because iterate is lazy. Optimising, deciding and verifying are all this loop with different arguments."}
-
-   ;; ---------------------------------------------------------------- Optimise (5 min)
    (plan-slide :crowd "A step is State → State"
                [:div (code 'gradient {:size :small}) (code 'descent-step {:size :small})]
                "plain gradient step, birds cost nothing"
@@ -1146,36 +1152,6 @@
                (fn [{:keys [steps]}] [:p.aside (str "Settled in " steps " steps.")])
                "with-momentum takes a step and returns a step. It asks the base step where to move, then adds 90% of the previous move. The velocity is stored in the state map, so the step stays pure. clamped is another decorator: it keeps every number between 0 and 1, because a turbine cannot run at minus 20%. Every run today is clamped; decorators compose.")
 
-   (plan-slide :adam "Another decorator: Adam"
-               [:div (code 'with-adam {:size :small :marks #{"step"}})]
-               "(clamped (with-adam step 0.02) 0 1)"
-               (fn [{:keys [steps]}] [:p.aside (str "Settled in " steps " steps.")])
-               "Adam reuses the base step's gradient and scales each coordinate by the size of its recent gradients. The optimiser from machine learning has the same shape: Step → Step. Its variant AdamW would pull every number toward zero, which here means stopping turbines for no reason. Decorators compose. Whether the result makes sense is still your call.")
-
-   (let [ks [:plain :momentum :adam]]
-     {:section "Optimise" :title "Same loop, three steps" :runs ks
-      :render (fn [_]
-                (let [sums (into {} (for [k ks] [k (run-summary k)]))
-                      ready (every? done? ks)
-                      plans (map #(:plan (sums %)) ks)
-                      gap (apply max (for [s slots] (- (apply max (map #(% s) plans)) (apply min (map #(% s) plans)))))]
-                  [:div
-                   [:div.race3
-                    (for [k ks
-                          :let [{:keys [steps settled lost done plan]} (sums k)]]
-                      [:div
-                       (schedule plan {:w 470})
-                       [:div.r-label (:label (run-specs k))]
-                       [:div.r-v (if done
-                                   (str steps " steps" (when-not settled " (max-steps)") " · €" (fmt lost 0) " given up")
-                                   (str "computing · state " steps))]])]
-                   [:p.aside
-                    (cond (not ready) "Still computing."
-                          (< gap 0.15) (str "Same model, same start, same fixed-point. All three reach the same plan, to within "
-                                            (fmt gap 2) " in every hour; they differ in how many steps it takes.")
-                          :else "Same model, same start, same fixed-point, and they disagree: more than one valley, and the step decides which one you reach.")]]))
-      :notes "These numbers are computed in this browser, now. Momentum is fastest here; Adam is slowest. Adam is not magic, and on a small smooth problem a tuned plain step does well. Between the runs one line changed, the decorator. The loop did not change. An LP solver would find this plan exactly, with a receipt; the wear term makes it a quadratic programme. We use the loop because the loop is the talk."})
-
    {:section "Optimise" :title "Tomorrow, played"
     :runs [:plain]
     :live (fn [_ t] {"played-3d" (scene (:plan (run-summary :plain)) t {:h 600})
@@ -1187,7 +1163,7 @@
                  [:div [:div#played-grid (schedule plan {:w 640 :now (:hour (time-of-day t))})]
                   [:p.aside "Red hubs are stopped. The plan stops the turbines nearest the flyway while the birds pass, and runs the rest."]]
                  [:div#played-3d (scene plan t {:h 600})]]))
-    :notes "The plan from the last slides, played fast: a day in eighteen seconds. Watch the clock and the turbines near the flyway around midday. This is the plan made a day ahead. The bird that turns up anyway is the next section's problem: a controller that must stop in time."}
+    :notes "The plan from the last slides, played fast: a day in eighteen seconds. Watch the clock and the turbines near the flyway around midday. This is the plan made a day ahead. We chose a plan by transforming a step. Next, decisions under uncertainty: the state of our iteration will be a value function."}
 
    ;; ---------------------------------------------------------------- Decide (5 min)
    {:section "Decide" :title "Ordering stock when demand is random" :steps 3
@@ -1202,6 +1178,27 @@
                   1 [:div [:div.caption "the Bellman equation, rendered from the source"] (bellman-formula restock)]
                   [:div [:div.caption "what defbellman expands to"] (code (:expansion restock) {:size :small})])]])
     :notes "A policy is a function from state to action. Bellman's equation says what a stock level is worth: take the best order, then average over demand this week's money plus 0.9 × next week's value. defbellman writes the equation; the expansion is a reduce over outcomes. Prices and costs are made up."}
+
+   {:section "Decide" :title "Inside one update: score, then choose" :steps 3
+    :render (fn [step]
+              (let [V (nth restock-run step)
+                    stock 1
+                    orders ((:actions restock) stock)
+                    scores (mapv #((:q restock) V stock %) orders)
+                    best (apply max scores)]
+                [:div.two.even
+                 [:div (code 'bellman {:size :small :marks #{"fn" "map" "max"}})
+                  [:p.aside "Fix stock at one load. Score every allowed order using the same old value function V."]
+                  [:p.callout "Each score averages reward + discounted future value over possible demands."]]
+                 [:div
+                  [:div.caption (str "V from iteration " step " · new value for stock 1")]
+                  [:table.levels
+                   [:tr [:th "order"] [:th "expected value"]]
+                   (for [[order score] (map vector orders scores)]
+                     [:tr [:td order] [:td {:class (when (= score best) "ok")} (fmt score 3)]])]
+                  [:p.aside (str "max → " (fmt best 3))]
+                  [:p.caption "Repeat for every stock level: those results form the next value table."]]]))
+    :notes "One minute. Step through three iterations. map calls q for each order, q folds the demand outcomes, max selects a value. The next slide does this for every stock level at once. We pass a value function into the scoring function: the future is an argument, not a global variable."}
 
    {:section "Decide" :title "Bellman is Values → Values" :steps (count restock-run)
     :render (fn [step]
@@ -1252,12 +1249,11 @@
                   (when (= step 1)
                     [:div.callout
                      [:p (str "Stopped after " updates " updates: largest change " (.toPrecision residual 3) " < ε = 0.001.")]
-                     [:p "Theorem (Rainbow, open core): then every value is within "
-                      [:b (str "change / (1 − 0.9) = " (fmt bound 4))] " of the best possible."]])]]))
-    :notes "Each update shrinks the error by at least the discount, 0.9, so on a log scale the change falls in a straight line. The stopping rule is converged?. Rainbow has a theorem that turns 'the last change was below r' into 'every value is within r / (1 − γ) of the best'. The theorem is about exact rationals. This browser run uses floating point, and the kernel has not checked it."}
+                     [:p "This is a stopping test, not yet a proof about the browser run. We will return to the Bellman operator when we meet Rainbow."]])]]))
+    :notes "Read the policy first: order up to three. Then point at the residual crossing the threshold. converged? is the function we supplied; it decides when this run ends. A small numerical change is an observation. We will ask what can be proved about the operator after the validation example."}
 
    ;; ---------------------------------------------------------------- Verify (5 min)
-   {:section "Verify" :title "A controller that must stop for birds" :steps 2
+   {:section "Validate" :title "A controller that must stop for birds" :steps 2
     :render (fn [step]
               [:div.two
                [:div (code 'tick-controller {:size :small}) (code 'react-to-detections {:size :small :marks #{"controller"}})]
@@ -1271,7 +1267,7 @@
                    [:p.aside "A controller is a function, so a safety feature can be a decorator."]])]])
     :notes "Verification asks one question: can the system ever reach a bad state? The rule here: when the radar is confident a bird is there, the turbine stops within the same minute. Three versions, built by composition: decide on the tick only; also react to detections; add a shield for situations the table has never seen."}
 
-   {:section "Verify" :title "Reachability is a fixed point too" :steps (* 3 4)
+   {:section "Validate" :title "Reachability is a fixed point too" :steps (* 3 4)
     :render (fn [step]
               (let [ci (quot step 4)
                     sub (mod step 4)
@@ -1301,7 +1297,7 @@
                   [:div.legend "columns: minute in the slot · rows: minutes a confident detection has waited while running"]]]))
     :notes "The step adds every state reachable in one more minute. converged? is plain =: the set stopped growing. There are finitely many states, so it must stop. Right arrow walks the rounds for each controller. Tick-only shows a red diagonal: a bird can wait 9 minutes. Reacting fixes known situations; unseen ones never stop. With the shield the set closes with nothing red. This is an exhaustive check by our code, not a kernel proof."}
 
-   {:section "Verify" :title "The counterexample is a path you can read" :steps 2
+   {:section "Validate" :title "The counterexample is a path you can read" :steps 2
     :render (fn [step]
               (let [id (if (zero? step) :tick-only :reacting)
                     path (counterexamples id)]
@@ -1319,208 +1315,84 @@
                              "Reacting fixes known situations. In a situation the table has never seen, it never stops. The shield is for that.")]]))
     :notes "The search returns a path, so the failure is a story you can debug. Tick-only: detection at minute 0, decision at minute 10. Reacting without the shield: the unseen situation has no row in the table, so its stop probability is 0."}
 
-   {:section "Verify" :title "Too many states to list: search for the worst" :steps (count (:tick-only falsify-runs))
-    :render (fn [step]
-              (let [run (:tick-only falsify-runs)
-                    s (nth run step)
-                    w 600 h 260 pad 24
-                    px (fn [t] (+ pad (* w (/ t 600))))
-                    py (fn [score] (+ pad (* h (/ (- 60 score) 660))))]
-                [:div.two
-                 [:div (code 'bird-rule) (code 'within {:size :small})
-                  [:p.aside "The rule returns seconds to spare. Negative means it was broken."]]
-                 [:div
-                  (svg (+ w (* 2 pad)) (+ h 70)
-                       [:line.axis {:x1 pad :y1 (py 0) :x2 (+ pad w) :y2 (py 0)}]
-                       [:text.small {:x (+ pad 4) :y (- (py 0) 6)} "0 s to spare"]
-                       (polyline (for [t (range 1 600 6)] [(px t) (py (bird-rule (slot-trace (:controller (first controllers)) t)))])
-                                 {:class "curve-muted"})
-                       (for [p (take (inc step) run)] [:circle.probe {:cx (px (:t p)) :cy (py (:score p)) :r 6}])
-                       [:circle.probe-now {:cx (px (:t s)) :cy (py (:score s)) :r 10}]
-                       [:text.small {:x pad :y (+ h 60)} "detection time in the slot, 0–600 s → · higher: more time to spare"])
-                  [:div.caption (str "try t = " (fmt (:t s) 1) " s · spare " (fmt (:score s) 1) " s · step size " (fmt (:delta s) 1) " s")]
-                  (when (= step (dec (count run)))
-                    [:p.aside (str "Worst case: detection " (fmt (:t s) 1) " s after a tick, answered "
-                                   (fmt (- 60 (:score s)) 0) " s later. On the shielded controller the same search finds "
-                                   (fmt (:score (peek (:shielded falsify-runs))) 0) " s to spare everywhere. Finding nothing proves nothing.")])]]))
-    :notes "Falsification: aim an optimiser at the rule. always, implies and within are higher-order functions over a trace, and the rule returns seconds to spare. The search is fixed-point again: try earlier and later, keep the worse case, otherwise halve the step. It stops when the step is under half a second. Finding nothing is not a proof. Rainbow exists for that gap."}
 
-   {:section "Verify" :title "Three ways the loop goes wrong"
-    :render (fn [_]
-              [:ol.gotchas
-               [:li [:b "It may never settle."] " Set the rate too high and the plan oscillates forever. The guard is "
-                [:code "max-steps"] ": one " [:code "take"] ", because " [:code "iterate"] " is lazy."]
-               [:li [:b "Settled is not correct."] " The first run converged perfectly: every turbine flat out through the migration."]
-               [:li [:b [:code "converged?"] " is part of the specification."] " Use exact " [:code "="]
-                " for sets and plans, a tolerance for numbers. It is an argument you can read, not a constant buried in a library."]])
-    :notes "Three points a developer can defend without any maths."}
-
-   ;; ---------------------------------------------------------------- Rainbow (9 min)
-   {:section "Rainbow" :title "Who checks the checker?"
-    :render (fn [_]
-              [:div.two
-               [:div (code "{:name  'nnrat/add-zero-right\n :type  (forall [[value nnrat]]\n          (equivalent (add value zero) value))\n :value (lam [[value nnrat]] ...)}")
-                [:p.caption "a theorem in Rainbow is a map: :type is the statement, :value the proof"]]
-               [:div.aside
-                [:p "Rainbow is a theorem prover written in Clojure. Proofs are plain EDN, immutable and addressed by content hash."]
-                [:p "A kernel of about 1,200 lines, in four files, decides. Search, tactics and generators only propose."]
-                [:p "What we have checked by testing so far, Rainbow can check by proof, where it has the theorem."]]])
-    :notes "A theorem is data. The statement is a type, the proof is a value of that type, and a small kernel type-checks it. Lean people know this already. For everyone else: the kernel refuses a fake proof the way a compiler refuses a badly typed program."}
-
-   {:section "Rainbow" :title "Trailers on the Bay of Algeciras" :steps 2
-    :render (fn [step]
-              [:div.two
-               [:div (if (zero? step) (code 'trailers) (code 'linear-rows {:size :small}))]
-               [:div [:div.caption "drawn from the source"] (model-formula trailers)
-                (if (zero? step)
-                  [:p.aside "Two hydrogen sources, three stations, loads per week. From our RH2EDIN Reto 2 entry."]
-                  [:p.aside "A linear function is fixed by what it does to each one-load plan. Call it, and subtract."])]])
-    :notes "Same defmodel grammar, real data. Linear means the score and every rule are sums of quantity × number. That restriction makes solvers fast and receipts possible. linear-rows reads the coefficients by calling the model on one-load plans."}
-
-   {:section "Rainbow" :title "The solver is a fixed point" :steps (count solve-run)
-    :render (fn [step]
-              (let [t (nth solve-run step)
-                    vars (:variables lp) rows (:rows lp)
-                    nm (fn [i] (if (< i (count rows)) (row-label (rows i)) (label (vars (- i (count rows))))))]
-                [:div.two
-                 [:div (code 'pivot {:size :small})
-                  [:div.caption "(fixed-point pivot = (tableau lp))"]]
-                 [:div
-                  [:table.pivots
-                   [:tr [:th "pivot"] [:th "best total so far"] [:th "what changed"]]
-                   (for [[i s] (map-indexed vector solve-run) :when (<= i step)]
-                     [:tr [:td.k i]
-                      [:td.v (fmt (:value s) 2)]
-                      [:td (cond (zero? i) "start: every price 0"
-                                 (identical? s (nth solve-run (dec i))) [:b "nothing: fixed point"]
-                                 :else (str "now priced: " (nm (:entered s))))]])]
-                  (when (= step (dec (count solve-run)))
-                    [:p.aside "A pivot that changes nothing is a fixed point. converged? is =."])]]))
-    :notes "Skip the simplex method. It is a step on a table of numbers, and it stops when a step returns its input unchanged. It works on prices, because all-zero prices are a valid place to start. The numbers are the best total trailer-km found so far."}
-
-   {:section "Rainbow" :title "The plan comes with a receipt" :steps 6
-    :render (fn [step]
-              (let [{:keys [plan prices]} answer
-                    rows (:rows lp)
-                    terms (sort-by #(neg? (:rhs (first %)))
-                                   (for [[r y] (map vector rows prices) :when (pos? y)] [r y]))]
-                [:div.two
-                 [:div
-                  [:table.kv
-                   [:tr [:th "route"] [:th "km per load"] [:th "loads"]]
-                   (for [[r x] (map vector routes plan)]
-                     [:tr {:class (when (pos? x) "hot")} [:td (label r)] [:td (km r)] [:td x]])]
-                  [:p.caption (str "total: " (:plan-costs receipt) " trailer-km")]]
-                 [:div
-                  (when (>= step 1)
-                    [:div [:div.caption "prices from the solver: what one load is worth"]
-                     [:table.kv (for [[r y] terms] [:tr [:td (row-label r)] [:td (if (neg? (:rhs r)) (str y " off per load, at most " (abs (:rhs r)) " loads") y)]])]])
-                  (when (>= step 2)
-                    [:div.receipt
-                     (for [[i [r y]] (map-indexed vector terms) :when (<= i (- step 2))]
-                       [:span (when (pos? i) (if (neg? (:rhs r)) " − " " + ")) (str (abs (:rhs r)) " × " y)])
-                     (when (>= step 5) [:span " = " [:b (:no-plan-costs-less-than receipt)]])])
-                  (when (>= step 5)
-                    [:p.aside "Each load delivered to a station is worth its price. The electrolyser takes 8 off each load, for at most 8 loads. No route costs less than that. So every valid plan costs at least 127. Ours costs 127."])]]))
-    :notes "This argument must be airtight, and it does not need the word duality. Each load delivered is worth its station's price: port 8, Sotogrande 19, Tarifa 33. The electrolyser takes 8 off each load, for at most 8 loads. No route costs less than its station price minus that discount. So any plan costs at least 15×8 + 2×19 + 1×33 − 8×8 = 127. Ours costs 127. Finding the plan is hard. Checking it is arithmetic, like checking a sudoku."}
-
-   {:section "Rainbow" :title "You check the receipt, not the solver" :steps 2
-    :render (fn [step]
-              (let [r (if (zero? step) receipt tampered)]
-                [:div.two
-                 [:div (code 'check-receipt {:size :small})]
-                 [:div
-                  [:div.caption (if (zero? step) "the solver's receipt" "the same receipt, Tarifa's price raised by 1")]
-                  (kv-table [["plan is valid" (check-mark (:plan-is-valid r))]
-                             ["prices are fair" (check-mark (:prices-are-fair r))]
-                             ["plan costs" (:plan-costs r)]
-                             ["no plan costs less than" (:no-plan-costs-less-than r)]])
-                  (if (receipt-ok? r)
-                    [:p.ok-big "accepted: 127 is the minimum"]
-                    [:p.bad-big "refused: one price is too high"])]]))
-    :notes "The solver returns the prices. You need not trust how it found them, because this function checks them. Linear problems always have a receipt. A receipt that claims a higher bound must overcharge some route, and the check catches it."}
-
-   {:section "Rainbow" :title "A theorem is a function type"
-    :render (fn [_]
-              [:div.two
-               [:div
-                [:pre.sig "lp-optimality-certificate :\n  (plan x, prices y,\n   x is valid, y is fair,\n   x ≥ 0, y ≥ 0,\n   cost(x) = bound(y),\n   any plan z, z is valid, z ≥ 0)\n  → cost(z) ≥ cost(x)"]
-                [:p.caption "readable rendering of optimization/signed-lp-optimality-certificate-on (Rainbow open core, math/rational/signed/lp_duality_on.clj); proved once, for every LP"]]
-               [:div
-                [:div.caption "the 127 plan, checked by the kernel (recorded for RH2EDIN)"]
-                (kv-table [["theorem" (:theorem kernel-verdict)]
-                           ["status" (name (:status kernel-verdict))]
-                           ["axioms" "#{ } — none"]
-                           ["kernel time" (str (fmt (:seconds kernel-verdict) 0) " s")]
-                           ["id" [:span.hash (subs (:hash kernel-verdict) 0 23) "…"]]])
-                [:p.aside "You read the statement. The kernel reads the proof: generated data, about 620 distinct pieces from 26 lemmas."]]])
-    :notes "Curry–Howard for developers: a theorem is a function type, and a proof is a function of that type. Hand it the evidence and it returns the conclusion. The kernel certified the 127 plan using no axioms. If asked about proof size: the bundle file is large because it is stored without sharing. The proof itself has about 620 distinct pieces from 26 lemmas. Compact storage is in progress."}
-
-   {:section "Rainbow" :title "converged? with a guarantee"
-    :render (fn [_]
-              (let [{:keys [updates residual bound epsilon-bound]} restock-certificate]
-                [:div.two
-                 [:div
-                  [:pre.sig "stopping-certificate :\n  (values V, discount γ < 1, threshold ε,\n   one more Bellman update moves V\n   by at most ε)\n  → V is within ε / (1 − γ)\n    of the optimal values"]
-                  [:p.caption "readable rendering of value/nnrat-optimality-fixed-point-stopping-certificate (math/finite/bellman_residual_certificate.clj; signed variant in bellman_signed_residual_certificate.clj): for all inputs, axiom-free"]]
-                 [:div
-                  [:div.caption "applied to the restocking run"]
-                  (kv-table [["updates" updates]
-                             ["last change" (.toPrecision residual 3)]
-                             ["ε" epsilon]
-                             ["guarantee" (str "within " (fmt bound 4) " (ε rule: " (fmt epsilon-bound 3) ")")]])
-                  [:p.muted "The theorem is about exact rationals. This run uses floating point. Having the kernel check it is the next step."]]]))
-    :notes "Here the loop meets the proof. converged? plus this theorem gives a distance to the best answer, where before we only knew the loop had stopped. Be exact: Rainbow proves the theorem for all inputs. It has not checked this floating-point run."}
-
-   {:section "Rainbow" :title "A wrong proof is refused"
-    :render (fn [_]
-              [:div.two
-               [:div (code "momentum-recurrence : v′ = β·v − α·∇f(x),  x′ = x + v′\n\n;; offered proof:\n0")]
-               [:div
-                (kv-table [["attempt" (:attempt kernel-rejection)]
-                           ["kernel" [:span.bad (name (:status kernel-rejection))]]
-                           ["recorded" (:checked-at kernel-rejection)]])
-                [:p.aside "A theorem's name earns nothing. The term must have the type."]]])
-    :notes "This is recorded kernel output; no kernel runs in the browser. Replace a proof with the number zero and the kernel rejects it, as a type checker rejects a value of the wrong type."}
-
-   {:section "Rainbow" :title "What is proved, and what is not"
+   {:section "Validate" :title "Three examples. The functions changed."
     :render (fn [_]
               [:div
                [:table.levels
-                [:tr [:th "today's example"] [:th "status"]]
-                [:tr [:td "trailer plan (127)"] [:td [:span.ok "kernel-checked instance"] " of a theorem proved for every LP"]]
-                [:tr [:td "restocking stop rule"] [:td [:span.ok "theorem for all inputs"] "; this run not yet checked"]]
-                [:tr [:td "gradient, momentum, Adam"] [:td [:span.warn "update formulas and worked examples only"] "; no convergence proof"]]
-                [:tr [:td "bird controller"] [:td [:span.warn "exhaustive check by our code"] "; no kernel proof"]]]
-               [:p.aside "Rainbow labels every theorem " [:b "for all inputs"] " or " [:b "worked instance"]
-                ", and every result with a maturity level set by its weakest link. A theorem about a model is not a guarantee about the program."]])
-    :notes "Say this plainly. Adam does not converge in general (Reddi et al., 2018). Tests never count as a link. Levels: 3 is a theorem about a model; 5 is a program proved to implement its specification; 6 is every link machine-checked, down to a stated trusted base."}
+                [:tr [:th "example"] [:th "state"] [:th "supplied step"] [:th "stop test"]]
+                [:tr [:td "optimise"] [:td "plan + velocity"] [:td "wrapped gradient step"] [:td "small movement"]]
+                [:tr [:td "decide"] [:td "value function"] [:td "Bellman operator"] [:td "small value change"]]
+                [:tr [:td "validate"] [:td "set of reached states"] [:td "expand with successors"] [:td "set equality"]]]
+               [:div.promise "(fixed-point step converged? start)"]
+               [:p.aside "We can inspect the computation. What would it take to prove a claim about the function?"]])
+    :notes "One minute. This is the payoff. Point back to each animation: a schedule, values and actions, a growing set. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. That is the bridge to Rainbow: write down a precise claim, then check a proof of it."}
 
-   {:section "Rainbow" :title "Open core and Pro"
+   {:section "Rainbow" :title "Rainbow checks proofs expressed as data"
+    :render (fn [_]
+              [:div.two.even
+               [:div (bullets "A theorem prover written in Clojure."
+                              "The statement is a type; the proof is a term with that type."
+                              "Search and generators propose terms. The kernel checks them.")]
+               [:div
+                [:div.proof-flow [:div "statement + proposed proof"] [:span "↓ kernel checks the term"]
+                 [:div "accepted or rejected"]]
+                [:p.aside "Think of a type checker whose types can express mathematical claims."]
+                [:p.muted "The browser shows recorded kernel evidence. It does not run Rainbow."]]])
+    :notes "90 seconds. Introduce what Rainbow is before displaying theorem identifiers. For developers: checking a proof resembles type-checking a program; the term must inhabit the type we asked for. For the Lean people: this is the familiar separation between proof construction and the kernel. The interesting claim for today is about our function-transforming function, Bellman."}
+
+   {:section "Rainbow" :title "A claim about the function we just used" :steps 2
+    :render (fn [step]
+              (let [B (bellman restock)
+                    V (zipmap (:states restock) (repeat 0))
+                    W (zipmap (:states restock) (repeat 10))
+                    before (largest-change V W)
+                    after (largest-change (B V) (B W))]
+                [:div.two.even
+                 [:div [:pre.sig "B : Values → Values\n\nIf V and W differ by at most ε,\nB(V) and B(W) differ\nby at most γ × ε."]
+                  [:p.caption "Finite model; nonnegative transition probabilities sum to 1; nonempty admissible actions. 0 ≤ γ < 1 gives strict contraction."]]
+                 [:div
+                  [:div.proof-flow [:div (str "two value tables: gap " (fmt before))]
+                   [:span "↓ apply the SAME Bellman function to both"]
+                   (when (= step 1) [:div (str "new gap: " (fmt after) " = 0.9 × " (fmt before))])]
+                  [:p.aside "This numerical example illustrates the claim. A proof must cover every admissible pair V, W."]]]))
+    :notes "One minute. We are back at the restocking example, not learning another OR problem. The left is a mathematical statement about an operator. The right really applies our browser Bellman function to two value tables. It is an example, not evidence that all inputs satisfy it. Now show why the general bound holds."}
+
+   {:section "Rainbow" :title "The proof follows the higher-order structure" :steps 4
+    :render (fn [step]
+              (let [rows [["1 · map outcomes" "Same reward and next state on both sides." "Reward cancels; each future-value gap is at most ε."]
+                          ["2 · reduce the weighted outcomes" "Σ p × γ × ε = γ × ε" "p ≥ 0 and Σ p = 1 preserve the bound."]
+                          ["3 · take the best action" "max Q(V) ≤ max Q(W) + γ × ε" "Every action has the bound, so its maximum does too."]
+                          ["4 · swap V and W" "|B(V)(s) − B(W)(s)| ≤ γ × ε" "Both directions hold, for every state s."]]]
+                [:div
+                 [:div.proof-steps
+                  (for [[i [label statement reason]] (map-indexed vector rows)]
+                    [:div.proof-row {:class (if (<= i step) "revealed" "pending")}
+                     [:strong label] [:div [:b statement] [:p reason]]])]
+                 [:p.caption "Readable proof argument. Rainbow checks a formal term for the exact-rational theorem; this prose is not kernel syntax."]]))
+    :notes "Two minutes. Reveal one row at a time. Fix a state and an action. Subtract the two backups: immediate reward is identical, so it cancels. Future values differ by at most epsilon; multiply by nonnegative probabilities and discount and sum. Normalization makes the sum gamma epsilon. For each action QV is at most QW plus this bound, hence at most max QW plus the bound; take max QV. Reverse V and W for the other inequality. This is a proof for all admissible inputs, organised exactly like the nested map, weighted reduce and max. Different best actions do not break the argument."}
+
+   {:section "Rainbow" :title "The kernel’s receipt — and its boundary"
     :render (fn [_]
               [:div.two.even
                [:div
-                [:h3 "Rainbow (open source)"]
-                (bullets "Apache-2.0, v1.0.0 (13 Oct 2026), github.com/flexiana/rainbow"
-                         "About 5,000 kernel-checked declarations: rationals, sums, order, convexity and duality, matrices, Markov chains"
-                         "The decision step of each of the 222 algorithms in the book's catalogue"
-                         "Levels 1–3: the kernel and the mathematics")]
-               [:div
-                [:h3 "Rainbow Pro"]
-                (bullets "Generates Clojure from proved specifications"
-                         "A value-iteration program proved equal to the Bellman iterate, for every size"
-                         "1,000 program families with certificate checkers"
-                         "The only unproved part is the printer, and it refuses any form it does not know"
-                         "Level 5 today. Level 6 is the goal.")]])
-    :notes "Pro is a library on top of the open core. The open-source kernel checks everything Pro proves. The emit namespace's docstring lists the two things it assumes; quote it if asked."}
+                (code "value/signed-optimality-step-\n  additively-contractive\n\nstatus: checked\naxioms: []\nchecked: 2026-10-09")
+                [:p.caption "Recorded in resources/rainbow-evidence.edn; Rainbow commit 3f411ae. Identifier wrapped for display."]]
+               [:div.aside
+                [:p "The exact mathematical operator has a checked proof of the bound we just walked through."]
+                [:p "Our ClojureScript run uses floating point. Its correspondence to that operator has not been proved."]
+                [:p "A small update can support a stopping bound when the contraction assumptions hold. Stopping alone is not a correctness argument."]]])
+    :notes "One minute. The recorded check is the signed Bellman additive-closeness theorem with empty axiom closure. We did not check the JavaScript program against it. Point to that boundary rather than implying that a theorem name certifies a renderer. The epsilon-to-gamma-epsilon statement is what is checked; fixed-point existence, convergence and a run-level stopping certificate need their own premises and proofs."}
 
-   {:section "Rainbow" :title "What I am building"
+   {:section "Rainbow" :title "A proposed proof can be refused"
     :render (fn [_]
-              [:div.title-slide
-               [:div.goal "A free, open-source theorem prover for operations research,"]
-               [:div.goal "and programs generated together with their proofs."]
-               [:div.sub "Write the function. Run it. State what it must do. Prove that it does."]])
-    :notes "Two lines, then stop. Ask for help: a theorem whose statement says less than its name promises is a bug. Report it."}
+              [:div.two.even
+               [:div (code ";; Earlier: the momentum step\n;; Proposed proof of its recurrence:\n0")]
+               [:div (kv-table [["kernel result" [:span.bad (name (:status kernel-rejection))]]
+                                ["recorded check" (:checked-at kernel-rejection)]])
+                [:p.aside "Zero is a number. It is not a proof of the requested recurrence."]
+                [:p.muted "Recorded negative check, not a live browser kernel call."]]])
+    :notes "30 seconds. Connect back to momentum, which the audience has seen. The kernel is not persuaded by a label or a plausible result. Our audit replaced the proof term with zero, and the check rejected it. Then close on the broader idea: functions describe computation; proof terms justify precise claims."}
 
    ;; ---------------------------------------------------------------- The book (2 min)
    {:section "The book" :title "Applied Higher-Order Functions"
@@ -1531,7 +1403,7 @@
                 [:p.caption "A Functional Architecture of Optimization, Decision Making, and Validation"]]
                [:div
                 (bullets "Three parts: optimisation, decision making, validation. This talk follows them."
-                         "A catalogue of about 480 algorithms, each annotated with the higher-order functions it uses"
+                         "The same question throughout: which function changes, and which structure stays?"
                          "Every listing runs, against the companion library orhof (MIT)"
                          "Book text CC BY-SA 4.0")
                 [:p.goal "flexiana.com/book"]]])
@@ -1544,7 +1416,7 @@
                [:div.promise "state · step · converged?"]
                [:div.sub "Find the state. Write the step. Decide when to stop."]
                [:div.byline "Jiri Knesl · flexiana.com/book · github.com/flexiana/rainbow"]])
-    :notes "Questions. Likely ones: Why not Haskell? (Types would help. I chose Clojure for code as data and the REPL.) Where do the prices come from? (The solver. You check them.) Does Adam always converge? (No.) Why are the proofs so large? (Stored without sharing; about 620 distinct pieces.)"}])
+    :notes "Questions. Likely ones: Why not Haskell? (Types would help. I chose Clojure for code as data and the REPL.) Does momentum always help? (No.) Is the browser program proved? (No; the Rainbow result is about exact mathematical terms.)"}])
 
 ;; =============================================================================
 ;; 8. App
