@@ -10,8 +10,8 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=lazy-and-macros-20261019).
-Updated 2026-10-19: removed iterate captions, exposed the actual defmodel macro, and checked early stopping under a large iteration cap. This URL is **public and unauthenticated**;
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plain-update-20261019).
+Updated 2026-10-19: concrete wording for the gradient update, and an explicit explanation that minimize/subject-to belong to the talk’s own notation. This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, speaker notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
 
@@ -125,13 +125,15 @@ the limit prioritizes birds. The hourly `energy` forecast is illustrative kWh pe
 turbine. `bird-risk` is an exposure index, not a calibrated count of birds killed. Revenue and
 gearbox wear are no longer part of the objective.
 
-`defmodel` is a macro in `src/talk/notation.cljc`. `minimize` and `subject-to` are syntax markers
+`defmodel` is a macro in `src/talk/notation.cljc`. This notation was written for the talk; it is not
+part of Clojure or an imported optimization library. `minimize` and `subject-to` are syntax markers
 consumed by that macro, not standalone functions or macros. Slide 10 shows the real helper
 functions, the actual `defmodel` implementation, and the generated objective/constraint functions.
 The implementation panel is extracted from the macro's source at build time, not a handwritten
 copy. `[sense objective]` reads the objective form: `sense` receives `minimize`, and `case` maps it
 to `:minimize`. `[_ & constraints]` discards the leading `subject-to` symbol and reads its rows.
-In this small DSL that marker is positional syntax; it is not independently validated. The helper
+The macro receives these lists as unevaluated data, so no functions named `minimize` or
+`subject-to` are called. In this small DSL that marker is positional syntax; it is not independently validated. The helper
 `compile-constraint` turns each row into an ordinary function that computes the constraint gap.
 
 The first run passes only `electricity-lost` to gradient descent. The next wraps it with
@@ -162,7 +164,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Build one update (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=lazy-and-macros-20261019#s11).
+Start at [Build one update (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plain-update-20261019#s11).
 Use **Right** for each reveal, **N** for the fuller explanation. These are the layers:
 
 | Expression | Takes | Returns |

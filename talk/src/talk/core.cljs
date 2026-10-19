@@ -1170,13 +1170,15 @@
                 [:div
                  (code (n/defmodel-source) {:size :small :marks #{"defmacro" "minimize" "subject-to" "sense" "constraints"}})
                  [:p.caption "Actual implementation · talk/notation.cljc"]
-                 [:p.aside [:code "minimize"] " selects the sense. "
-                  [:code "[_ & constraints]"] " skips the " [:code "subject-to"] " marker."]]
+                 [:p.aside "Only " [:code "defmodel"] " is a macro. It reads these lists without calling them."]
+                 [:p.caption [:code "minimize"] " names the objective; " [:code "subject-to"] " introduces the constraint rows."]]
                 [:div.two
                [:div
                 (if (= frame 1)
                   [:div (code 'electricity-lost {:size :small}) (code 'bird-risk {:size :small})]
-                  (code 'day-plan {:marks #{"defmodel" "minimize" "subject-to"}}))
+                  [:div
+                   [:p.caption "Notation written for this talk. defmodel is the macro."]
+                   (code 'day-plan {:marks #{"defmodel" "minimize" "subject-to"}})])
                 (when (= frame 3) (code (:expansion day-plan) {:size :small}))]
                [:div
                 (case frame
@@ -1197,7 +1199,8 @@
                    [:p.aside "The macro returns data containing functions."]
                    (code "((:objective day-plan) plan)
 ;; → electricity lost")
-                   [:p.caption "The solver receives an ordinary function."]])]]))
+                   [:p.caption "This describes the problem; it does not solve it."]
+                   [:p.caption "Later, penalize adds a cost for breaking a constraint."]])]]))
     :notes "Stopping loses electricity; keeping every turbine running increases collision risk. Those goals compete. We choose a bird-risk limit and maximize electricity subject to it, equivalently minimize electricity lost. The risk index is exposure times bird traffic times turbine operation, not a calibrated prediction of birds killed. All forecasts are illustrative. Lowering the limit chooses another tradeoff. The next step shows the two real functions, then shows the actual macro implementation: defmodel is a macro in talk/notation.cljc. minimize and subject-to are marker symbols consumed by that macro, not independently defined functions or macros. In the argument destructuring, sense receives the symbol minimize and objective receives the unevaluated electricity-lost form. The case selects :minimize. In [_ & constraints], the underscore discards the subject-to marker; the remaining constraint rows go through compile-constraint. The marker is positional syntax here, not a function call or separately validated operator. compile-expr and compile-constraint generate the ordinary function forms. The final step shows its actual expansion into objective and constraint functions."}
 
    {:section "Optimise" :title "Build one update" :steps 4
@@ -1206,19 +1209,19 @@
                     (coordinate-update day-plan)
                     panels ['electricity-lost 'gradient
                             'descent-step 'solver-step]
-                    rows [["1 · state → score" "72 settings → one cost"
-                           "One setting: turbine 1, noon. Start at 50%."]
-                          ["2 · objective → gradient"
+                    rows [["Turbine 1 at noon" "50% power"
+                           "6 turbines × 12 hours = 72 settings."]
+                          ["Change this setting by ±0.00001"
                            (str "slope = " (fmt slope 2))
-                           (str "Cost at x−h: " (fmt low 6)
-                                " · at x+h: " (fmt high 6))]
-                          ["3 · gradient → step"
+                           (str "Electricity lost: " (fmt low 6)
+                                " / " (fmt high 6) " kWh")]
+                          ["Apply the learning rate"
                            (str (fmt x) " − 0.0001 × (" (fmt slope 2)
                                 ") = " (fmt (+ x move) 4))
-                           "Negative slope: more power reduces the cost."]
-                          ["4 · wrap, then repeat"
-                           (str "50% → " (fmt (* 100 next) 2) "%")
-                           "Clamp to 0…1. Repeat for all 72 settings."]]]
+                           nil]
+                          ["New power setting"
+                           (str (fmt (* 100 next) 2) "% power")
+                           "Allowed range: 0–100%."]]]
                 [:div.two.even
                  [:div (code (panels frame) {:size :small})
                   (when (= frame 0) (code 'on-flat {:size :small}))
@@ -1230,7 +1233,7 @@
                   (for [[i [label value explanation]] (map-indexed vector rows)]
                     [:div.update-card {:class (when (> i frame) "pending")}
                      [:div.caption label] [:strong value]
-                     [:p.caption explanation]])]]))
+                     (when explanation [:p.caption explanation])])]]))
     :notes "Take this slowly. A state contains 72 fractions: six turbines times twelve hours. x=0.5 means half power for that turbine during that hour. on-flat turns the vector into the map the objective expects. One score evaluates the whole day. To estimate one slope, hold the other 71 settings fixed; nudge this one down and up by h and divide the score difference by 2h. At noon the slope is -84 kWh per unit of operation. descent-step subtracts rate times slope, so 0.5 becomes 0.5084. It computes all 72 slopes from the OLD vector, then returns a NEW vector. clamped enforces the physical 0 to 1 range. solver-step composes these HOFs; iterate repeatedly applies the returned state function. So far the score includes electricity only. The next model adds the bird penalty to that same score."}
 
    (plan-slide :crowd "A step is State → State"
