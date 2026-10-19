@@ -10,8 +10,8 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=aeonik-20261019).
-Updated 2026-10-19: shorter slide text, revised biography, book-photo space and Aeonik typography. This URL is **public and unauthenticated**;
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=clearer-model-20261019).
+Updated 2026-10-19: clearer fixed points, macro explanation, electricity/risk tradeoff and before/after objectives. This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, speaker notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
 
@@ -87,7 +87,7 @@ open the release build (`public/index.html`) — it needs nothing else.
 |---|---|
 | 1. Rendering kit | hiccup → HTML, Clojure highlighting, formulas rendered from model source, SVG helpers |
 | 2. The shared loop | `fixed-point` (iterate + step + converged?), Newton's √2 |
-| 3. Optimise | tomorrow's stop plan for a wind farm on Andalusian hills: `defmap hills`, `defmodel day-plan`, `wear`, `penalize`, `gradient`, `descent-step`, `clamped`, `with-momentum`, `with-adam`; runs computed one state per frame; `schedule` draws the plan, `project` and `scene` play it in 3D |
+| 3. Optimise | tomorrow's stop plan for a wind farm on Andalusian hills: `defmap hills`, `defmodel day-plan`, `electricity-lost`, `bird-risk`, `penalize`, `gradient`, `descent-step`, `clamped`, `with-momentum`, `with-adam`; runs computed one state per frame; `schedule` draws the plan, `project` and `scene` play it in 3D |
 | 4. Decide | `defbellman restock`, `bellman`, the stopping bound |
 | 5. Verify | `table-decision`, `with-shield`, `tick-controller`, `react-to-detections`, `reachable`, rules (`always`, `implies`, `within`), the worst-case search |
 | 6. Receipt | `defmodel trailers` (RH2EDIN Reto 2), `linear-rows`, `pivot`, `check-receipt`, recorded Rainbow verdicts |
@@ -116,6 +116,30 @@ Each example shows its problem, supplied function, visible updates and resulting
 These sum to 40 minutes; they are targets, not measured speaking duration. The old long macro
 introduction, Adam race, falsification demo, trailer/simplex/LP detour and open-core/Pro catalogue
 are outside the spoken arc. Their supporting algorithms remain in the source and tests.
+
+## Wind-farm model and notation
+
+Stopping reduces both generation and collision exposure. The two goals compete. This demo chooses
+**maximum electricity under a bird-risk limit**, implemented as minimum electricity lost; lowering
+the limit prioritizes birds. The hourly `energy` forecast is illustrative kWh per fully running
+turbine. `bird-risk` is an exposure index, not a calibrated count of birds killed. Revenue and
+gearbox wear are no longer part of the objective.
+
+`defmodel` is a macro in `src/talk/notation.cljc`. `minimize` and `subject-to` are syntax markers
+consumed by that macro, not standalone functions or macros. Slide 10 shows the real helper
+functions, explains the markers, and shows the generated objective/constraint functions.
+
+The first run passes only `electricity-lost` to gradient descent. The next wraps it with
+`penalize`: electricity lost + 100 × excess-risk², where excess-risk = max(0, risk − limit).
+The same solver now trades some generation for less risk. The penalty is soft: the displayed
+risk can exceed the limit. Slide 12 shows both objective definitions and a numerical comparison
+with all turbines running. Formulas use named quantities and separate lines; Bellman's update
+likewise separates outcome return, averaging and action selection.
+
+Removing wear also removes the old assumption that different optimizers give nearly identical
+coordinates. Tests now compare their objectives with an independent convex lower bound; each
+gap must be below 1% of total available energy. Additional checks verify off/on/half-power energy
+and risk directly. This is numerical validation, not a Rainbow certificate.
 
 ## The proof example and its limits
 
@@ -153,10 +177,10 @@ image when available.
 
 ## Before the talk
 
-Typography/copy revision checks (2026-10-19): release build completed without warnings.
+Clarity/model revision checks (2026-10-19): release built without warnings; 9 tests / 364 assertions passed.
 Chromium's rendered-font inspection confirmed embedded Aeonik and Aeonik Mono. The browser
-check exercised 237 frames across 1600×900, 1920×1080 and 1024×768,
-including every short reveal and sampled long traces. No render errors, clipped code panels or
+check exercised 243 frames across 1600×900, 1920×1080 and 1024×768, including every short
+reveal and sampled long traces. No render errors, clipped code panels or
 overflow remained; hash restore, navigation, playback, theme and presenter controls passed.
 The release loaded from disk with no external requests. This does not replace the spoken or
 physical-projector rehearsal, and the old app's hostile-room audit does not certify this new deck.

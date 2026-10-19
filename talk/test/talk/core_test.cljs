@@ -26,6 +26,17 @@
   (testing "max-steps stops a run that never settles"
     (is (= 6 (count (c/fixed-point inc = 0 :max-steps 5))))))
 
+(deftest electricity-and-birds
+  (let [off (zipmap c/slots (repeat 0))
+        on (zipmap c/slots (repeat 1))
+        half (zipmap c/slots (repeat 0.5))]
+    (is (= c/full-energy (c/electricity-lost off)))
+    (is (= 0 (c/electricity-lost on)))
+    (is (= 0 (c/bird-risk off)))
+    (is (< (abs (- (c/electricity-lost half) (/ c/full-energy 2))) 1e-8))
+    (is (< (abs (- (c/bird-risk half) (/ (c/bird-risk on) 2))) 1e-8))
+    (is (= (c/electricity-lost half) ((:objective c/day-plan) half)))))
+
 (deftest optimise
   (doseq [k [:crowd :plain :momentum :adam]] (c/finish! k))
   (testing "advance is fixed-point one state at a time"
@@ -41,9 +52,23 @@
                   (is (< (:risk s) (* 1.1 c/budget)) (str k " keeps close to the bird budget"))
                   (is (seq (:stops s)) (str k " slows some turbines"))
                   (:plan s)))]
-    (testing "the three steps reach the same plan"
-      (is (every? (fn [slot] (< (- (apply max (map #(% slot) plans)) (apply min (map #(% slot) plans))) 0.15))
-                  c/slots)))))
+    (testing "plans are near a global lower bound, not necessarily identical"
+      ;; Quadratic penalty conjugate + independent box minimization:
+      ;; w max(0,R-b)^2 >= lambda (R-b) - lambda^2/(4w).
+      (doseq [plan plans]
+        (let [w 100
+              lambda (* 2 w (max 0 (- (c/risk plan) c/budget)))
+              lower (+ c/full-energy
+                       (reduce + (for [[t h] c/slots]
+                                   (min 0 (- (* lambda (c/exposure t) (c/birds h))
+                                             (c/energy h)))))
+                       (- (* lambda c/budget))
+                       (- (/ (* lambda lambda) (* 4 w))))
+              score ((:objective c/safe-plan) plan)]
+          (is (<= lower (+ score 1e-6)))
+          (is (< (- score lower) (* 0.01 c/full-energy))
+              (str "objective gap to lower bound: " (- score lower))))))))
+
 
 (deftest decide
   (let [policy (c/best-order c/restock (peek c/restock-run))

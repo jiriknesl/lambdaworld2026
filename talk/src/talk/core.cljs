@@ -189,16 +189,14 @@
                                          (for [[_ c] constraints] (list '* weight (penalty-term c))))))]
      [:div.f-st [:span.f-label "no constraints left: they became costs"]]]))
 
-(defn bellman-formula [{:keys [source discount]}]
-  (let [[_ _ [s] [a] [w] & opts] source
-        {:keys [reward next]} (apply hash-map opts)]
-    [:div.formula
-     [:div.f-line [:i "V"] "(" [:i (name s)] ") = " [:b.op "max"] [:sub [:i (name a)]] " "
-      [:span.bigop "Σ"] [:sub [:i (name w)]] " " [:i "p"] "(" [:i (name w)] ") · [ "
-      [:i "reward"] " + " (fmt discount) " · " [:i "V"] "(" [:i "next"] ") ]"]
-     [:div.f-st
-      [:div.f-line [:span.f-name "reward"] (fx reward)]
-      [:div.f-line [:span.f-name "next"] (fx next)]]]))
+(defn bellman-formula [{:keys [discount]}]
+  [:div.equation-stack
+   [:div.equation-part [:span.f-label "For each possible demand"]
+    [:div "return = reward + " (fmt discount) " × next value"]]
+   [:div.equation-part [:span.f-label "For each order"]
+    [:div "score = probability-weighted average of returns"]]
+   [:div.equation-part [:span.f-label "For this stock level"]
+    [:div "new value = best order’s score"]]])
 
 ;; ---- SVG helpers --------------------------------------------------------------
 
@@ -275,31 +273,28 @@
   (into {} (for [t turbines]
              [t (reduce + (for [f flyway] (js/Math.exp (- (/ (dist2 t f) 2)))))])))
 
-;; Tomorrow's forecasts, hour by hour (illustrative numbers). Soaring birds fly on the
-;; midday thermals; Spanish power is cheapest at midday, when the solar farms peak.
+;; Illustrative hourly forecasts: energy is kWh per fully running turbine.
+;; Bird risk is an exposure index, not calibrated expected fatalities.
 (def hours (vec (range 8 20)))
 (def birds (zipmap hours [0.2 0.5 1.2 2.4 3.6 4 3.6 2.4 1.2 0.5 0.2 0.1]))
-(def value (zipmap hours (map #(* 2 %) [92 85 70 55 42 38 40 48 66 98 120 115])))  ; € per turbine-hour
+(def energy (zipmap hours (map #(* 2 %) [92 85 70 55 42 38 40 48 66 98 120 115])))
 (def budget 12)
-
 (def slots (vec (for [t turbines h hours] [t h])))
 
-(src (defn wear
-       "Changing speed wears the gearbox: 50 € for a
-        full stop or start, less for less."
-       [run t h]
-       (if-let [later (run [t (inc h)])]
-         (* 50 (sq (- later (run [t h]))))
-         0)))
+(src (defn electricity-lost [run]
+       (reduce +
+               (for [[t h] slots]
+                 (* (energy h) (- 1 (run [t h])))))))
+
+(src (defn bird-risk [run]
+       (reduce +
+               (for [[t h] slots]
+                 (* (exposure t) (birds h) (run [t h]))))))
 
 (defmodel day-plan [run]
-  (minimize (sum [[t h] slots]
-                 (+ (* (value h) (- 1 (run [t h])))
-                    (wear run t h))))
+  (minimize (electricity-lost run))
   (subject-to
-   [bird-risk (<= (sum [[t h] slots]
-                    (* (exposure t) (birds h) (run [t h])))
-                  budget)]))
+   [birds (<= (bird-risk run) budget)]))
 
 (src (defn penalize
        "Model → Model. Breaking a constraint now costs
@@ -439,9 +434,9 @@
   (let [run (run-of k)]
     (as-plan (:x (nth run (min step (dec (count run))))))))
 
-(defn risk [plan] (reduce + (for [[t h] slots] (* (exposure t) (birds h) (plan [t h])))))
-(defn lost [plan] (reduce + (for [[t h] slots] (* (value h) (- 1 (plan [t h]))))))
-(def full-value (reduce + (for [[_ h] slots] (value h))))
+(def risk bird-risk)
+(def lost electricity-lost)
+(def full-energy (reduce + (for [[_ h] slots] (energy h))))
 
 (defn label-of [t] (str "T" (inc (.indexOf turbines t))))
 
@@ -469,16 +464,16 @@
         h (+ top (* ch (count turbines)) 34)
         x-of (fn [i] (+ left (* i cw)))
         bmax (apply max (vals birds))
-        vmax (apply max (vals value))]
+        vmax (apply max (vals energy))]
     (svg w h
          [:text.small {:x 0 :y 40} "birds passing"]
          [:text.small {:x 0 :y (- top 6)} "turbine · near flyway"]
-         [:text.small.price {:x 0 :y 70} "power price"]
+         [:text.small.price {:x 0 :y 70} "available kWh"]
          (for [[i hr] (map-indexed vector hours)
                :let [bh (* 70 (/ (birds hr) bmax))]]
            [:rect.bird-bar {:x (+ (x-of i) 5) :y (- 92 bh) :width (- cw 10) :height bh}])
          (polyline (for [[i hr] (map-indexed vector hours)]
-                     [(+ (x-of i) (/ cw 2)) (- 92 (* 70 (/ (value hr) vmax)))])
+                     [(+ (x-of i) (/ cw 2)) (- 92 (* 70 (/ (energy hr) vmax)))])
                    {:class "price-line"})
          (for [[r t] (map-indexed vector turbines)
                :let [y (+ top (* r ch))]]
@@ -994,6 +989,13 @@
                  [:div.caption (str caption " · " (if (done? k)
                                                      (str "state " i " of " (dec (count run)))
                                                      (str "computing · state " i)))]
+                 (when (= k :plain)
+                   (let [plan (plan-at k step)
+                         all-on (zipmap slots (repeat 1))]
+                     [:table.comparison
+                      [:tr [:th "plan"] [:th "generated kWh"] [:th "bird risk"]]
+                      [:tr [:td "all running"] [:td (fmt full-energy 0)] [:td (fmt (risk all-on) 1)]]
+                      [:tr [:td "this state"] [:td (fmt (- full-energy (lost plan)) 0)] [:td (fmt (risk plan) 1)]]]))
                  (when (and (done? k) (= i (dec (count run))))
                    (final (run-summary k)))]]))
    :notes notes})
@@ -1011,7 +1013,6 @@
               [:div.title-slide
                [:div.kicker "Lambda World 2026"]
                [:h1.big "Rebuilding Operations Research" [:br] "in Higher-Order Functions"]
-               [:div.sub "Optimise a plan. Make a decision. Validate a system."]
                [:div.byline "Jiri Knesl · Flexiana"]])
     :notes "15 seconds. Today I want to show you what higher-order functions let us do inside operations research."}
 
@@ -1068,16 +1069,21 @@
                [:p.callout "A lazy sequence. No stopping rule."]])
     :notes "90 seconds. Press Right one state at a time. Say: input, call, output; the output becomes the next input. This is a trace we can replay, plot or inspect. take asks for five states. It does not claim that five is enough. Next we must choose what done means."}
 
-   {:section "HOFs" :title "Fixed points"
-    :render (fn [_]
-              [:div.two.even
-               [:div [:pre.sig "step(x*) = x*\n\nstate → step → state → …"]
-                [:p.aside "Another step changes nothing."]]
-               [:div (bullets "Sets: equality."
-                              "Numbers: a tolerance."
-                              "Step limit: bounded work.")
-                [:p.callout "Supply the stopping test."]]])
-    :notes "One minute. Distinguish the mathematical fixed point from our routine named fixed-point. A tolerance is an approximate stop; a guard may stop an unsettled run. Not every step converges. The useful abstraction is that both step and stopping test are arguments."}
+   {:section "HOFs" :title "A fixed point stays the same" :steps 2
+    :render (fn [frame]
+              (let [step (newton-sqrt 4)]
+                [:div.two.even
+                 [:div (code 'newton-sqrt)
+                  (code "(def step (newton-sqrt 4))")
+                  [:p.aside "This step improves a guess for √4."]]
+                 [:div
+                  [:div.fixed-example [:span "(step 3)"] [:strong (str "→ " (fmt (step 3) 6))]
+                   [:span.caption "Changed. Keep going."]]
+                  (when (pos? frame)
+                    [:div.fixed-example.fixed-example-same
+                     [:span "(step 2)"] [:strong (str "→ " (fmt (step 2)))]
+                     [:span "2 is a fixed point: input = output."]])]]))
+    :notes "Use the same Newton step, this time for the square root of four. Three changes to about 2.166667. Two maps exactly to two: applying the step again changes nothing. That is all fixed point means. It does not claim that every starting value reaches one. In the next slide the square root of two cannot be represented exactly, so we supply a tolerance instead of exact equality."}
 
    {:section "HOFs" :title "step + converged?" :steps (count sqrt-run)
     :render (fn [step]
@@ -1108,19 +1114,42 @@
                    [:div#live-map (scene nil (now-s) {})]])]])
     :notes "defmap reads the grid at compile time and returns a map of positions. The third step draws the same data in 3D, playing a day: the clock runs, birds pass along the flyway, thickest at midday when the thermals are strong. The projection is a dozen lines of pure functions. Live: move a turbine in core.cljs and save; the slide redraws and tomorrow's plan is recomputed. (n/random-map {:seed 7}) prints a new map to paste."}
 
-   {:section "Optimise" :title "Plan tomorrow’s turbine settings" :steps 3
-    :render (fn [step]
+   {:section "Optimise" :title "Birds ↔ electricity" :steps 4
+    :render (fn [frame]
               [:div.two
-               [:div (code 'day-plan) (code 'wear {:size :small})]
                [:div
-                (case step
-                  0 [:div.aside
-                     [:p "Plan: power per turbine and hour, 0–1. " [:code "(run [t h])"] "."]
-                     [:p "Cost: lost power + wear."]
-                     [:p "Constraint: bird risk ≤ budget."]]
-                  1 [:div [:div.caption "same model, as a formula"] (model-formula day-plan)]
-                  [:div [:div.caption "macro expansion"] (code (:expansion day-plan) {:size :small})])]])
-    :notes "Operations research keeps two things apart: what a good answer is (the model) and how to find one (the solver). SQL works the same way: you declare the result, the engine finds it. The grammar has four words: minimize or maximize, subject-to, sum, for-all. The expansion shows that sum is reduce +. The formula is drawn from the model's source, so the two cannot disagree. The forecasts are illustrative: birds peak at midday, and Spanish power is cheapest at midday, when the solar farms flood the grid."}
+                (if (= frame 1)
+                  [:div (code 'electricity-lost {:size :small}) (code 'bird-risk {:size :small})]
+                  (code 'day-plan {:marks #{"defmodel" "minimize" "subject-to"}}))
+                (when (= frame 3) (code (:expansion day-plan) {:size :small}))]
+               [:div
+                (case frame
+                  0 [:div.equation-stack
+                     [:div.equation-part [:span.f-label "Two competing goals"]
+                      [:div "Fewer bird deaths."] [:div "More electricity."]]
+                     [:div.equation-part [:span.f-label "Our chosen tradeoff"]
+                      [:div "Maximize electricity under a bird-risk limit."]]
+                     [:p.caption "Stopping protects birds, but loses generation. Risk here is a proxy, not a death count."]]
+                  1 [:div.equation-stack
+                     [:div.equation-part [:span.f-label "Minimize"]
+                      [:div "electricity lost"]
+                      [:p.caption "available kWh − generated kWh"]]
+                     [:div.equation-part [:span.f-label "Subject to"]
+                      [:div "bird risk ≤ " budget]]
+                     [:p.caption "Same goal as maximizing generated electricity. Lower the risk limit to prioritize birds."]]
+                  2 [:div
+                     [:p.aside [:code "defmodel"] " is the macro."]
+                     [:table.kv
+                      [:tr [:th "minimize"] [:td "objective marker"]]
+                      [:tr [:th "subject-to"] [:td "constraint marker"]]]
+                     [:p.aside "These markers are syntax, not function calls."]
+                     [:p.caption "Implemented in talk/notation.cljc. → See the expansion."]]
+                  [:div
+                   [:p.aside "The macro returns data containing functions."]
+                   (code "((:objective day-plan) plan)
+;; → electricity lost")
+                   [:p.caption "The solver receives an ordinary function."]])]])
+    :notes "Stopping loses electricity; keeping every turbine running increases collision risk. Those goals compete. We choose a bird-risk limit and maximize electricity subject to it, equivalently minimize electricity lost. The risk index is exposure times bird traffic times turbine operation, not a calibrated prediction of birds killed. All forecasts are illustrative. Lowering the limit chooses another tradeoff. The next step shows the two real functions, then explains the mini-language: defmodel is a macro in talk/notation.cljc. minimize and subject-to are marker symbols consumed by that macro, not independently defined functions or macros. The final step shows its actual expansion into objective and constraint functions."}
 
    (plan-slide :crowd "A step is State → State"
                [:div (code 'gradient {:size :small}) (code 'descent-step {:size :small})]
@@ -1128,14 +1157,18 @@
                (fn [_] [:p.aside "Full power. The objective ignores bird risk."])
                "gradient nudges each number and watches the score move. That is the derivative, computed the way a developer would. descent-step takes a gradient and a rate and returns a function from state to state. Each column is an hour, each row a turbine; dark means running. Press Space to play. The fault is in the model: bird-risk is a constraint, and this solver reads only the score. The deck computes each run one state per frame, in the browser: the same states fixed-point would return.")
 
-   (plan-slide :plain "Wrap the objective"
-               [:div (code 'penalize {:size :small}) [:div.caption "(penalize day-plan 100)"] (penalized-formula day-plan 100)]
-               "same step · penalized objective"
-               (fn [{:keys [stops lost risk]}]
-                 [:p.aside (str "Slows down: " (str/join ", " stops) ". Power given up: €" (fmt lost 0)
-                                " of €" (fmt full-value 0) ". Bird risk " (fmt risk 1) " against a budget of " budget
-                                ": a fine is a soft rule.")])
-               "penalize takes a model and returns a model. Breaking a rule now costs weight × (how far it is broken)². The solver is unchanged; only its input changed. The plan slows the turbines nearest the flyway around midday, when birds peak and power is cheap anyway. Nobody wrote that rule. A soft rule can be broken a little when the fine is cheap: read the risk against the budget.")
+   (plan-slide :plain "New objective. Same solver."
+               [:div
+                [:div.objective-change
+                 [:div [:b "Before  "] "electricity lost"]
+                 [:div [:b "After   "] "electricity lost + bird penalty"]]
+                (code 'penalize {:size :small})
+                [:div.caption "(penalize day-plan 100)"]
+                [:div.penalty-equation "penalty = 100 × excess risk²"]
+                [:p.caption "excess risk = max(0, bird risk − limit)"]]
+               "same gradient-descent solver"
+               (fn [_] [:p.aside (str "Risk limit: " budget ". Soft penalty; overshoot is possible.")])
+               "penalize takes a model and returns a model. Breaking a rule now costs weight × (how far it is broken)². The solver is unchanged; only its input changed. The plan reduces operation where bird exposure is high relative to the electricity available. The penalty approximates the risk constraint; it does not guarantee feasibility. Nobody wrote that rule. A soft rule can be broken a little when the fine is cheap: read the risk against the budget.")
 
    (plan-slide :momentum "Wrap the step"
                [:div (code 'with-momentum {:size :small :marks #{"step"}}) (code 'clamped {:size :small :marks #{"step"}})

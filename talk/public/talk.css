@@ -73,7 +73,7 @@ body { font-family: var(--sans); color: var(--ink); }
 .sections span { margin-right: 22px; }
 .sections span.on { color: var(--accent); font-weight: 700; }
 .count { font-variant-numeric: tabular-nums; }
-.title { font-size: 46px; line-height: 1.1; margin: 20px 0 22px; font-weight: 700; letter-spacing: -.01em; }
+.title { font-size: 46px; line-height: 1.1; margin: 42px 0 30px; font-weight: 700; letter-spacing: -.01em; }
 .body { flex: 1; min-height: 0; position: relative; font-size: 28px; line-height: 1.35; }
 
 .two { display: grid; grid-template-columns: 56fr 44fr; gap: 44px; height: 100%; align-items: start; }
@@ -284,3 +284,18 @@ svg.scene path.bird.flying { stroke: var(--muted); stroke-width: 3; }
 .book-photo { width: 390px; height: 520px; margin: 12px auto; display: grid; place-items: center;
   border: 2px dashed var(--line); border-radius: 8px; background: var(--wash); color: var(--muted); font-size: 22px; }
 .book-photo img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Separate the agenda, heading and opening prompt. */
+p.aside + .bullets { margin-top: 36px; }
+.fixed-example { display: flex; flex-direction: column; gap: 16px; padding: 24px;
+  margin-bottom: 24px; border: 1px solid var(--line); border-radius: 8px; }
+.fixed-example strong { font-family: var(--mono); font-size: 38px; }
+.fixed-example-same { background: var(--accent-soft); border-color: var(--accent); }
+.equation-stack { display: grid; gap: 18px; }
+.equation-part { padding: 18px 22px; border-left: 4px solid var(--accent); background: var(--wash); font-size: 25px; }
+.equation-part .f-label { margin-bottom: 10px; }
+.objective-change { padding: 14px 18px; background: var(--accent-soft); margin-bottom: 16px; font-size: 23px; line-height: 1.6; }
+.penalty-equation { font-size: 25px; padding: 10px 0; }
+table.comparison { width: 100%; font-size: 20px; margin-top: 16px; }
+table.comparison th, table.comparison td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+table.comparison th { color: var(--muted); font-weight: 400; }

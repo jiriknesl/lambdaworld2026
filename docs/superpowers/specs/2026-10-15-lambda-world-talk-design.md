@@ -135,3 +135,13 @@ Group 13 years ago. OR's opening gives the questions without revealing the examp
 Why Clojure has four points: simple and functional language; immutable data; the REPL; code is data.
 Keep titles and visible prose short, with explanation in speaker notes. The book slide reserves
 space for Jiri's forthcoming photograph. Use Aeonik for text and Aeonik Mono for code.
+
+## Clarity update — 2026-10-19
+
+Remove the opening subtitle. Increase agenda-to-heading space and the gap after OR's opening
+prompt. Explain fixed points through the actual Newton step for √4: 3 changes, 2 returns 2.
+The optimisation goal is maximum electricity under a chosen bird-risk limit. Remove revenue
+and wear from the objective, label illustrative energy in kWh and bird risk as a proxy. Explain
+minimize/subject-to as markers in defmodel, with its actual generated functions visible. The
+penalty slide must show before/after objectives and electricity/risk numbers; replace long
+expanded sums with separate, named quantities.
