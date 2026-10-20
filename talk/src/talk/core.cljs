@@ -291,10 +291,11 @@
                (for [[t h] slots]
                  (* (exposure t) (birds h) (run [t h]))))))
 
-(defmodel day-plan [run]
-  (minimize (electricity-lost run))
-  (subject-to
-   [birds (<= (bird-risk run) budget)]))
+(def day-plan
+  {:objective electricity-lost
+   :constraints [{:name 'birds :rel :<=
+                  :gaps (fn [run]
+                          [{:at nil :gap (- (bird-risk run) budget)}])}]})
 
 (src (defn penalize
        "Model → Model. Breaking a constraint now costs
@@ -330,6 +331,17 @@
 
 (src (defn on-flat [model]
        (comp (:objective model) as-plan)))
+
+(src (defn with-risk-penalty [cost risk limit weight]
+       (fn [settings]
+         (let [excess (max 0 (- (risk settings) limit))]
+           (+ (cost settings) (* weight excess excess))))))
+
+(src (def energy-cost (comp electricity-lost as-plan)))
+(src (def risk-cost
+       (with-risk-penalty energy-cost
+                          (comp bird-risk as-plan)
+                          12 100)))
 
 (def first-guess
   "Half power everywhere: somewhere to start."
@@ -392,27 +404,47 @@
 (def settle (moved-less-than 1e-3))
 (def max-steps 600)
 
-(src (defn solver-step [model]
+(src (defn solver-step [cost]
        (clamped
-        (descent-step (gradient (on-flat model)) 0.0001)
+        (descent-step (gradient cost) 0.0001)
         0 1)))
 
-(defn coordinate-update [model]
-  (let [i 4 x (:x first-guess) f (on-flat model)
+(defn coordinate-update [cost]
+  (let [i 4 x (:x first-guess) f cost
         h 1e-5 g ((gradient f) x)
-        next ((solver-step model) first-guess)]
+        next ((solver-step cost) first-guess)]
     {:index i :slot (slots i) :x (x i) :h h
      :low (f (update x i - h)) :high (f (update x i + h))
      :slope (g i) :move (* -0.0001 (g i))
      :next (get-in next [:x i])}))
 
+(src (def energy-step (solver-step energy-cost)))
+(src (def risk-descent
+       (descent-step (gradient risk-cost) 0.0001)))
+(src (def risk-step (clamped risk-descent 0 1)))
+(src (def momentum-step
+       (clamped (with-momentum risk-descent 0.9) 0 1)))
+
+(src (defn with-observer [step observe!]
+       (fn [state]
+         (let [next (step state)]
+           (observe! state next)
+           next))))
+
+(src (def observed-costs (atom [])))
+(src (defn record-cost! [_ next]
+       (swap! observed-costs conj (risk-cost (:x next)))))
+
+(def observed-states
+  (vec (take 5 (iterate (with-observer risk-step record-cost!)
+                        first-guess))))
+
 (def run-specs
-  (let [plain (solver-step day-plan)
-        safe (descent-step (gradient (on-flat safe-plan)) 0.0001)]
-    {:crowd {:label "plain step, birds cost nothing" :step plain}
-     :plain {:label "plain gradient step" :step (solver-step safe-plan)}
-     :momentum {:label "with-momentum 0.9" :step (clamped (with-momentum safe 0.9) 0 1)}
-     :adam {:label "with-adam 0.02" :step (clamped (with-adam safe 0.02) 0 1)}}))
+  {:crowd {:label "electricity only" :step energy-step}
+   :plain {:label "electricity + bird penalty" :step risk-step}
+   :momentum {:label "same cost, with momentum" :step momentum-step}
+   :adam {:label "with-adam 0.02"
+          :step (clamped (with-adam risk-descent 0.02) 0 1)}})
 
 ;; A run takes seconds, so the deck computes it one state per animation frame and draws
 ;; while it works. advance is the loop of fixed-point, unrolled: the same step, the same
@@ -614,7 +646,7 @@
 ;; 4. Decide: restocking a hydrogen station
 ;; =============================================================================
 
-(def capacity 4)   ; trailer loads the station can hold
+(def capacity 4)   ; abstract tank units; one customer uses one unit
 (def price 10)     ; revenue per load sold
 (def unit-cost 4)  ; cost per load ordered
 (def holding 1)    ; cost per load left over for a week
@@ -629,13 +661,22 @@
             (* unit-cost order)
             (* holding left)))))
 
-(defbellman restock
-  [stock (range 0 (inc capacity))]
-  [order (range 0 (inc (- capacity stock)))]
-  [demand {0 0.1, 1 0.3, 2 0.4, 3 0.2}]
-  :reward (weekly-profit stock order demand)
-  :next (remaining-stock stock order demand)
-  :discount 0.9)
+(def demand-probabilities {0 0.1, 1 0.3, 2 0.4, 3 0.2})
+
+(src (defn expected-return [V stock order]
+       (reduce +
+         (for [[demand p] demand-probabilities]
+           (* p (+ (weekly-profit stock order demand)
+                   (* 0.9 (V (remaining-stock
+                              stock order demand)))))))))
+
+(src (def restock
+  {:states (vec (range (inc capacity)))
+   :actions (fn [stock] (range (inc (- capacity stock))))
+   :outcomes demand-probabilities :discount 0.9
+   :q expected-return}))
+
+(def zero-values (zipmap (:states restock) (repeat 0)))
 
 (defn demand-outcomes [V stock order]
   (for [[demand probability] (:outcomes restock)
@@ -667,6 +708,25 @@
 
 (defn best-order [{:keys [states actions q]} V]
   (into (sorted-map) (for [s states] [s (apply max-key #(q V s %) (reverse (actions s)))])))
+
+(src (defn order-up-to [target]
+       (fn [stock] (max 0 (- target stock)))))
+
+(src (defn evaluate-policy [policy]
+       (fn [V]
+         (into {} (for [stock (:states restock)]
+                    [stock (expected-return
+                            V stock (policy stock))])))))
+
+(def policy-comparison
+  (mapv (fn [target]
+          (let [policy (order-up-to target)
+                values (iterate (evaluate-policy policy)
+                                zero-values)]
+            {:target target :policy policy
+             :one-week ((nth values 1) 1)
+             :twenty-weeks ((nth values 20) 1)}))
+        (range 5)))
 
 (defn residuals [run] (mapv (fn [[a b]] (largest-change a b)) (partition 2 1 run)))
 
@@ -747,7 +807,8 @@
   (into {} (for [{:keys [id controller]} controllers]
              [id (controller shield-input shield-event)])))
 
-(defn unanswered? [{:keys [det action]}] (and (= 2 det) (= :run action)))
+(src (defn unanswered? [{:keys [det action]}]
+       (and (= 2 det) (= :run action))))
 
 (defn ticks [controller s]
   (for [u (vals draws) ctx [:seen :unseen]]
@@ -770,14 +831,13 @@
                            (ticks controller s))]
                 next)))))
 
-(src (defn reachable
-       "Every state the system can reach:
-        grow the set until it stops growing."
-       [successors initial]
-       (fixed-point
-        (fn [states] (into states (mapcat successors states)))
-        =
-        (set initial))))
+(src (defn reach-step [successors]
+       (fn [states]
+         (into states (mapcat successors states)))))
+
+(src (defn reachable [successors initial]
+       (fixed-point (reach-step successors)
+                    = (set initial))))
 
 (defn initial-states [controller]
   (ticks controller {:det 0 :action :run :minute 0 :waiting nil}))
@@ -1052,11 +1112,98 @@
                    (final (run-summary k)))]]))
    :notes notes})
 
+;; Visuals use the same state and functions as the demonstrations.
+(defn plan-metrics [plan]
+  (kv-table [["generated electricity" (str (fmt (- full-energy (lost plan)) 0) " kWh")]
+             ["bird-risk index" (fmt (risk plan) 2)]]))
+
+(defn coordinate-plot [cost]
+  (let [xs (:x first-guess) i 4
+        points (for [x (range 0.4 0.601 0.01)] [x (cost (assoc xs i x))])
+        low (apply min (map second points)) high (apply max (map second points))
+        xy (fn [[x y]] [(+ 50 (* 2500 (- x 0.4)))
+                       (+ 30 (* 220 (/ (- high y) (max 1 (- high low)))))])]
+    (svg 620 320
+         [:text.small {:x 50 :y 20} "electricity lost (kWh)"]
+         [:line.axis {:x1 50 :y1 260 :x2 560 :y2 260}]
+         (polyline (map xy points) {:class "curve"})
+         (for [x [0.4 0.5 0.6]]
+           [:text.small {:x (- (first (xy [x low])) 15) :y 289} (str (fmt (* 100 x)) "%")])
+         (let [[x y] (xy [0.5 (cost xs)])]
+           [:g [:circle {:cx x :cy y :r 7 :fill "var(--accent)"}]
+            [:text.small {:x (+ x 14) :y (- y 12)} (str (fmt (cost xs)) " kWh")]])
+         [:text.small {:x 120 :y 315} "turbine 1 at noon · other settings held at 50%"])))
+
+(defn convergence-chart []
+  (let [traces (mapv (fn [k] (mapv #(risk-cost (:x %)) (run-of k))) [:plain :momentum])
+        n (max 1 (dec (apply max (map count traces))))
+        top (max 1 (apply max (mapcat identity traces)))
+        point (fn [i y] [(+ 48 (* 540 (/ i n))) (+ 30 (* 200 (- 1 (/ y top))))])]
+    (svg 640 285
+         [:text.small {:x 48 :y 18} "same cost function"]
+         [:line.axis {:x1 48 :y1 232 :x2 600 :y2 232}]
+         (for [[trace colour] (map vector traces ["var(--muted)" "var(--accent)"])]
+           (polyline (map-indexed point trace) {:stroke colour :stroke-width 3}))
+         [:text.small {:x 48 :y 259} "0"]
+         [:text.small {:x 540 :y 259} (str n " updates")]
+         [:text.small {:x 48 :y 282} "gray: plain descent · blue: with momentum"])))
+
+(defn truck-icon [x y colour tanker?]
+  [:g {:transform (str "translate(" x "," y ")")}
+   [:rect {:x 0 :y 0 :width 60 :height 32 :rx (if tanker? 14 3) :fill colour}]
+   [:path {:d "M 64 8 L 83 8 L 94 21 L 94 36 L 64 36 Z" :fill colour}]
+   [:rect {:x 70 :y 12 :width 12 :height 10 :fill "var(--bg)"}]
+   [:circle {:cx 17 :cy 38 :r 8 :fill "var(--ink)"}]
+   [:circle {:cx 76 :cy 38 :r 8 :fill "var(--ink)"}]
+   (when tanker? [:text {:x 19 :y 23 :fill "var(--bg)" :font-size 20} "H₂"])])
+
+(defn hydrogen-scene [stock order demand phase]
+  (let [available (+ stock order)
+        sold (min demand available)
+        tank (case phase 0 stock 1 available (- available sold))]
+    (svg 680 310
+         [:text.small {:x 20 :y 24} (str "delivery: " order " units")]
+         (truck-icon (if (= phase 1) 155 20) 60 "var(--accent)" true)
+         [:path {:d "M 125 112 L 280 112" :stroke "var(--accent)" :stroke-width 3 :stroke-dasharray "8 6"}]
+         [:text.small {:x 320 :y 24} (str "tank: " tank " / 4")]
+         [:rect {:x 320 :y 38 :width 104 :height 142 :rx 12 :fill "var(--wash)" :stroke "var(--ink)" :stroke-width 2}]
+         (for [i (range 4)]
+           [:rect {:x 328 :y (- 145 (* 32 i)) :width 88 :height 26 :rx 4
+                   :fill (if (< i tank) "var(--accent)" "var(--line)")}])
+         [:path {:d "M 424 132 L 470 132 L 470 180" :fill "none" :stroke "var(--ink)" :stroke-width 4}]
+         [:text.small {:x 490 :y 100} "customer trucks"]
+         [:text.small {:x 490 :y 126} "1 unit each"]
+         (for [i (range demand)
+               :let [served? (< i sold)
+                     colour (if (< phase 2) "var(--muted)" (if served? "var(--ok)" "var(--bad)"))
+                     x (+ 40 (* 205 i))]]
+           [:g (truck-icon x 215 colour false)
+            [:text.small {:x x :y 292}
+             (if (< phase 2) "waiting" (if served? "filled" "turned away"))]]))))
+
+(defn controller-branches [controller]
+  (let [s shield-input
+        branches [["no detection" nil] ["possible bird" {:type :detect :level 1}]
+                  ["confident bird" shield-event]]]
+    (svg 650 330
+         [:rect {:x 10 :y 123 :width 190 :height 85 :rx 8 :fill "var(--wash)" :stroke "var(--muted)"}]
+         [:text.small {:x 25 :y 150} "minute 1 · RUN"]
+         [:text.small {:x 25 :y 178} "no detection yet"]
+         (for [[i [label event]] (map-indexed vector branches)
+               :let [after (if event (controller s event) s) y (+ 16 (* i 105)) bad? (unanswered? after)]]
+           [:g [:line {:x1 200 :y1 165 :x2 330 :y2 (+ y 40) :stroke "var(--muted)" :stroke-width 2}]
+            [:rect {:x 330 :y y :width 300 :height 80 :rx 8 :fill "var(--wash)"
+                    :stroke (if bad? "var(--bad)" "var(--ok)") :stroke-width 3}]
+            [:text.small {:x 346 :y (+ y 28)} label]
+            [:text {:x 346 :y (+ y 58) :font-size 24 :fill (if bad? "var(--bad)" "var(--ink)")}
+             (str (str/upper-case (name (:action after))) (when bad? " · rule broken"))]]))))
+
+
 ;; ---- Slide content ---------------------------------------------------------------
 
 (defn bullets [& items] [:ul.bullets (for [i items] [:li i])])
 
-(def section-order ["Hello" "OR" "Clojure" "HOFs" "Optimise" "Decide" "Validate" "Rainbow" "The book" "Thank you"])
+(def section-order ["Hello" "Clojure" "OR" "HOFs" "Optimise" "Decide" "Validate" "Compose" "Rainbow" "The book" "Thank you"])
 
 (def slides
   [
@@ -1074,16 +1221,7 @@
                (bullets "Lifelong software developer"
                         "Economist by education"
                         "Started Barcelona Meetup Group 13 years ago")])
-    :notes "45 seconds. Lifelong software developer, economist by education. Started Barcelona Meetup Group 13 years ago. Transition to the kinds of decisions operations research helps us make."}
-
-   {:section "OR" :title "Operations research"
-    :render (fn [_]
-              [:div
-               [:p.aside "Choices, objectives, constraints."]
-               (bullets "Which plan should we choose?"
-                        "What should we do under uncertainty?"
-                        "Does the system obey its rules?")])
-    :notes "Two minutes. A plan is a choice; an objective scores it; constraints limit it. Uncertainty changes what a good decision means. Validation asks whether a system meets its specification. Keep the concrete examples as surprises for their sections."}
+    :notes "45 seconds. Lifelong software developer, economist by education. Started Barcelona Meetup Group 13 years ago. Next: why I work in Clojure."}
 
    {:section "Clojure" :title "Why Clojure?"
     :render (fn [_]
@@ -1092,7 +1230,16 @@
                         "Immutable data"
                         "The REPL"
                         "Code is data")])
-    :notes "Two minutes. Explain each point aloud: functions as values; old states remain available; experiment in the REPL; macros turn problem notation into ordinary functions. Now put higher-order functions at the centre."}
+    :notes "Two minutes. Explain each point aloud: functions as values; old states remain available; experiment in the REPL; code can be inspected and transformed as data. Those are reasons for my choice, not claims that other languages cannot do this. Next introduce the three areas of operations research before the higher-order functions."}
+
+   {:section "OR" :title "Operations research"
+    :render (fn [_]
+              [:div
+               [:p.aside "Choices, objectives, constraints."]
+               (bullets "Optimization: choose a plan."
+                        "Decision-making: act under uncertainty."
+                        "Validation: check the rules.")])
+    :notes "Two minutes. A plan is a choice; an objective scores it; constraints limit it. Uncertainty changes what a good decision means. Validation asks whether a system meets its specification. Keep the concrete examples as surprises for their sections."}
 
    {:section "HOFs" :title "Functions in. Functions out." :steps 3
     :render (fn [step]
@@ -1147,286 +1294,211 @@
                   [:p.aside "Change < 10⁻¹². Stop."])]])
     :notes "This is the pattern of the whole talk. A state, a step from state to state, a test for done. iterate makes the lazy sequence of states. take-while stops it. take and take-while are lazy. count eagerly walks only the non-converged prefix; it must inspect the first converged pair to stop. vec collects the retained states, including both states of that pair, from the already realized sequence without rerunning step. The default cap is 1000 updates, not a request to perform them all. A checked example with max-steps 10000 converges after 12 calls and returns 13 states including the start. Optimising, deciding and verifying are all this loop with different arguments."}
 
-   {:section "Optimise" :title "Draw the problem" :steps 3
-    :live (fn [step t] (when (= step 2) {"live-map" (scene nil t {})}))
-    :render (fn [step]
-              [:div.two
-               [:div (code 'hills {:size :small})]
-               [:div
-                (case step
-                  0 [:div.aside
-                     [:p "An Andalusian wind farm. A bird migration route."]
-                     [:p "The drawing is code. " [:code "defmap"] " reads it."]]
-                  1 [:div [:div.caption "positions"]
-                     (code (str "{:turbine " (pr-str (:turbine hills))
-                                "\n :flyway  " (pr-str (vec (take 6 (:flyway hills)))) "\n          …}") {:size :small})]
-                  [:div [:div.caption "same data, in 3D"]
-                   [:div#live-map (scene nil (now-s) {})]])]])
-    :notes "defmap reads the grid at compile time and returns a map of positions. The third step draws the same data in 3D, playing a day: the clock runs, birds pass along the flyway, thickest at midday when the thermals are strong. The projection is a dozen lines of pure functions. Live: move a turbine in core.cljs and save; the slide redraws and tomorrow's plan is recomputed. (n/random-map {:seed 7}) prints a new map to paste."}
-
-   {:section "Optimise" :title "Birds ↔ electricity" :steps 2
+   {:section "Optimise" :title "Plan tomorrow’s turbine settings" :steps 2
+    :live (fn [frame t] {"farm-context" (scene (when (pos? frame) (as-plan (:x first-guess))) t {:w 700 :h 510})})
     :render (fn [frame]
-              [:div.two
-               [:div
-                (if (= frame 1)
-                  [:div (code 'electricity-lost {:size :small}) (code 'bird-risk {:size :small})]
-                  [:div
-                   [:p.caption "Notation written for this talk. defmodel is the macro."]
-                   (code 'day-plan {:marks #{"defmodel" "minimize" "subject-to"}})])]
-               [:div
-                (case frame
-                  0 [:div.equation-stack
-                     [:div.equation-part [:span.f-label "Two competing goals"]
-                      [:div "Fewer bird deaths."] [:div "More electricity."]]
-                     [:div.equation-part [:span.f-label "Our chosen tradeoff"]
-                      [:div "Maximize electricity under a bird-risk limit."]]
-                     [:p.caption "Stopping protects birds, but loses generation. Risk here is a proxy, not a death count."]]
-                  1 [:div.equation-stack
-                     [:div.equation-part [:span.f-label "Minimize"]
-                      [:div "electricity lost"]
-                      [:p.caption "available kWh − generated kWh"]]
-                     [:div.equation-part [:span.f-label "Subject to"]
-                      [:div "bird risk ≤ " budget]]
-                     [:p.caption "Same goal as maximizing generated electricity. Lower the risk limit to prioritize birds."]]
-                  nil)]])
-    :notes "Stopping loses electricity; keeping every turbine running increases collision risk. Those goals compete. We choose a bird-risk limit and maximize electricity subject to it, equivalently minimize electricity lost. The risk index is exposure times bird traffic times turbine operation, not a calibrated prediction of birds killed. All forecasts are illustrative. Lowering the limit chooses another tradeoff. The next reveal shows the two real functions. The following slide shows the actual macro implementation: defmodel is a macro in talk/notation.cljc. minimize and subject-to are marker symbols consumed by that macro, not independently defined functions or macros. In the argument destructuring, sense receives the symbol minimize and objective receives the unevaluated electricity-lost form. The case selects :minimize. In [_ & constraints], the underscore discards the subject-to marker; the remaining constraint rows go through compile-constraint. The marker is positional syntax here, not a function call or separately validated operator. compile-expr and compile-constraint generate the ordinary function forms. The source slide ends with its actual expansion into objective and constraint functions."}
-
-   {:section "Optimise" :title "Source of the model notation" :steps 4
-    :render (fn [frame]
-              (case frame
-                0 [:div
-                   (code (n/implementation-source defmodel)
-                         {:size :small :marks #{"sense" "minimize" "constraints" "compile-expr" "compile-constraint"}})
-                   [:p.caption "talk/notation.cljc · actual macro source"]
-                   [:p.aside [:code "[sense objective]"] " reads " [:code "(minimize …)"] ". "
-                    [:code "[_ & constraints]"] " reads " [:code "(subject-to …)"] "."]]
-                1 [:div.two
-                   [:div (code (n/implementation-source compile-expr) {:size :small})
-                    [:p.caption "The expression compiler called by defmodel."]]
-                   [:div
-                    [:p.caption "For this objective, the expression is unchanged:"]
-                    (code "(electricity-lost run)")
-                    [:p.caption "defmodel puts it inside a function:"]
-                    (code "(fn [run]
-  (electricity-lost run))")]]
-                2 [:div.two
-                   [:div (code (n/implementation-source compile-constraint) {:size :small})]
-                   [:div
-                    (code (n/implementation-source relations) {:size :small})
-                    (code (n/implementation-source binding-label) {:size :small})
-                    [:p.caption "binding-label handles indexed constraints written with for-all."]
-                    [:p.aside "For our bird constraint:"]
-                    (code "(<= (bird-risk run) budget)
-
-;; generated gap
-(- (bird-risk run) budget)" {:size :small})
-                    [:p.caption "A positive gap exceeds the budget."]]]
-                3 [:div.two.even
-                   [:div [:p.caption "The model we wrote"]
-                    (code 'day-plan {:size :small})]
-                   [:div [:p.caption "The generated functions"]
-                    (code (:expansion day-plan) {:size :small})
-                    [:p.caption "penalize uses these gaps to add a cost for violations."]]]))
-    :notes "This is the source, extracted from the running macro namespace at build time. No handwritten stand-in. First show defmodel: the arguments are unevaluated lists, sense receives minimize, objective receives the expression, and the constraint block is destructured into its rows. The macro constructs a map containing functions. Next show compile-expr: it handles sum notation recursively; electricity-lost is already an ordinary function call, so this expression is unchanged. Next show compile-constraint and its helpers. It recognizes the relation and emits a function returning left-minus-right gaps. A positive gap violates a <= constraint. The for-all branch and binding-label support indexed constraints; this bird-risk example takes the simple branch. Finally put the model next to the actual generated functions. The constraint describes what should hold; it does not enforce itself. The upcoming penalize wrapper turns a positive violation into an extra cost. Keep this source walkthrough brief; the audience can inspect each reveal with the arrow keys."}
-
-   {:section "Optimise" :title "Build one update" :steps 4
-    :render (fn [frame]
-              (let [{:keys [x h low high slope move next]}
-                    (coordinate-update day-plan)
-                    panels ['electricity-lost 'gradient
-                            'descent-step 'solver-step]
-                    rows [["Turbine 1 at noon" "50% power"
-                           "6 turbines × 12 hours = 72 settings."]
-                          ["Change this setting by ±0.00001"
-                           (str "slope = " (fmt slope 2))
-                           (str "Electricity lost: " (fmt low 6)
-                                " / " (fmt high 6) " kWh")]
-                          ["Apply the learning rate"
-                           (str (fmt x) " − 0.0001 × (" (fmt slope 2)
-                                ") = " (fmt (+ x move) 4))
-                           nil]
-                          ["New power setting"
-                           (str (fmt (* 100 next) 2) "% power")
-                           "Allowed range: 0–100%."]]]
-                [:div.two.even
-                 [:div (code (panels frame) {:size :small})
-                  (when (= frame 0) (code 'on-flat {:size :small}))
-                  (when (= frame 1)
-                    [:p.caption "h = 0.00001 · slope = (cost(x+h) − cost(x−h)) / (2h)"])
-                  (when (= frame 3)
-                    (code "(iterate (solver-step day-plan) first-guess)" {:size :small}))]
-                 [:div.update-flow
-                  (for [[i [label value explanation]] (map-indexed vector rows)]
-                    [:div.update-card {:class (when (> i frame) "pending")}
-                     [:div.caption label] [:strong value]
-                     (when explanation [:p.caption explanation])])]]))
-    :notes "Take this slowly. A state contains 72 fractions: six turbines times twelve hours. x=0.5 means half power for that turbine during that hour. on-flat turns the vector into the map the objective expects. One score evaluates the whole day. To estimate one slope, hold the other 71 settings fixed; nudge this one down and up by h and divide the score difference by 2h. At noon the slope is -84 kWh per unit of operation. descent-step subtracts rate times slope, so 0.5 becomes 0.5084. It computes all 72 slopes from the OLD vector, then returns a NEW vector. clamped enforces the physical 0 to 1 range. solver-step composes these HOFs; iterate repeatedly applies the returned state function. So far the score includes electricity only. The next model adds the bird penalty to that same score."}
-
-   (plan-slide :crowd "A step is State → State"
-               [:div (code 'gradient {:size :small}) (code 'descent-step {:size :small})]
-               "gradient step · no bird cost"
-               (fn [_] [:p.aside "Full power. The objective ignores bird risk."])
-               "gradient nudges each number and watches the score move. That is the derivative, computed the way a developer would. descent-step takes a gradient and a rate and returns a function from state to state. Each column is an hour, each row a turbine; dark means running. Press Space to play. The fault is in the model: bird-risk is a constraint, and this solver reads only the score. The deck computes each run one state per frame, in the browser: the same states fixed-point would return.")
-
-   (plan-slide :plain "New objective. Same solver."
-               [:div
-                [:div.objective-change
-                 [:div [:b "Before  "] "electricity lost"]
-                 [:div [:b "After   "] "electricity lost + bird penalty"]]
-                (code 'penalize {:size :small})
-                (code "(solver-step (penalize day-plan 100))" {:size :small})
-                [:div.penalty-equation "penalty = 100 × excess risk²"]
-                [:p.caption "excess risk = max(0, bird risk − limit)"]]
-               "same gradient-descent solver"
-               (fn [_] [:p.aside (str "Risk limit: " budget ". Soft penalty; overshoot is possible.")])
-               "penalize takes a model and returns a model. Breaking a rule now costs weight × (how far it is broken)². The solver is unchanged; only its input changed. The plan reduces operation where bird exposure is high relative to the electricity available. The penalty approximates the risk constraint; it does not guarantee feasibility. Nobody wrote that rule. A soft rule can be broken a little when the fine is cheap: read the risk against the budget.")
-
-   (plan-slide :momentum "Wrap the step"
-               [:div (code 'with-momentum {:size :small :marks #{"step"}}) (code 'clamped {:size :small :marks #{"step"}})
-                [:div.caption "(clamped (with-momentum step 0.9) 0 1)"]]
-               "with-momentum 0.9, clamped"
-               (fn [{:keys [steps]}] [:p.aside (str "Settled in " steps " steps.")])
-               "with-momentum takes a step and returns a step. It asks the base step where to move, then adds 90% of the previous velocity. The velocity is stored in the state map, so the step stays pure. clamped is another decorator: it keeps every number between 0 and 1, because a turbine cannot run at minus 20%. Every run today is clamped; decorators compose. The outer clamp clips position without resetting the stored velocity, so velocity can differ from actual movement at a bound. The row under the schedule shows the base proposal, carried velocity and new velocity for turbine 1 at noon.")
-
-   {:section "Optimise" :title "Tomorrow, played"
-    :runs [:plain]
-    :live (fn [_ t] {"played-3d" (scene (:plan (run-summary :plain)) t {:h 600})
-                     "played-grid" (schedule (:plan (run-summary :plain)) {:w 640 :now (:hour (time-of-day t))})})
-    :render (fn [_]
-              (let [plan (:plan (run-summary :plain))
-                    t (now-s)]
-                [:div.two.even
-                 [:div [:div#played-grid (schedule plan {:w 640 :now (:hour (time-of-day t))})]
-                  [:p.aside "Red hubs: stopped. Watch the flyway at midday."]]
-                 [:div#played-3d (scene plan t {:h 600})]]))
-    :notes "The plan from the last slides, played fast: a day in eighteen seconds. Watch the clock and the turbines near the flyway around midday. This is the plan made a day ahead. We chose a plan by transforming a step. Next, decisions under uncertainty: the state of our iteration will be a value function."}
-
-   ;; ---------------------------------------------------------------- Decide (5 min)
-   {:section "Decide" :title "Restock a hydrogen station" :steps 3
-    :render (fn [step]
               [:div.two.even
                [:div
-                (case step
-                  0 [:div.equation-stack
-                     [:div.equation-part [:span.f-label "State"] "Hydrogen in storage: 0–4 trailer loads."]
-                     [:div.equation-part [:span.f-label "Decision"] "How many loads to order this week?"]
-                     [:div.equation-part [:span.f-label "Uncertainty"] "Customers may buy 0, 1, 2 or 3 loads."]]
-                  1 [:div (code 'weekly-profit {:size :small})
-                     (code 'remaining-stock {:size :small})
-                     [:p.caption "Per load: sell for 10 · buy for 4 · store for 1."]]
-                  (code 'restock {:size :small}))]
-               [:div
-                (case step
-                  0 [:div
-                     [:div.inventory-flow
-                      [:div [:span.caption "Already stored"] [:strong "1 load"]]
-                      [:span "＋"]
-                      [:div [:span.caption "Order arrives"] [:strong "2 loads"]]
-                      [:span "→"]
-                      [:div [:span.caption "Available"] [:strong "3 loads"]]]
-                     [:p.aside "Choose the order before demand is known."]
-                     (kv-table [["demand" "0 / 1 / 2 / 3"]
-                                ["probability" "10% / 30% / 40% / 20%"]])
-                     [:p.caption "Unsold hydrogen stays. Unmet demand is lost sales."]]
-                  1 [:div.equation-stack
-                     [:div.equation-part [:span.f-label "Example: demand = 2 loads"]
-                      [:div "3 available → 2 sold → 1 left"]]
-                     [:div.equation-part [:span.f-label "This week’s profit"]
-                      [:div "20 − 8 − 1 = 11"]]
-                     [:div.equation-part [:span.f-label "Next week starts with"]
-                      [:div "1 load in storage"]]]
-                  [:div (bellman-formula restock)
-                   [:p.caption "V(stock): estimated discounted profit from that stock onward."]])]])
-    :notes "We stock hydrogen at a filling station, measured in trailer loads. Capacity four. At the start of each week, observe stock and choose an order that fits the tank. It arrives before customers buy. Demand is a random load count with the four displayed probabilities; these illustrative probabilities stay the same each week. We cannot choose after seeing demand. Sell at most the available stock; unmet demand disappears, leftovers carry into the next week. Units of money are illustrative. With stock one, order two and demand two: sell two for 20, pay 8 for the order and 1 for holding the leftover, profit 11. Our action should maximize expected discounted profit over future weeks, not just this week's profit. The last reveal defines the model and separates return, average, max. V is a function from stock to estimated future profit, supplied to the backup."}
+                (bullets "Six turbines. Twelve hours."
+                         "Choose an operating level for each turbine-hour."
+                         "More operation generates electricity and exposes more birds.")
+                (code "{:x [0.5 0.5 0.5 …]}" {:size :small})
+                [:p.caption "72 numbers between 0 and 1. Initially, every setting is 50%."]]
+               [:div#farm-context (scene (when (pos? frame) (as-plan (:x first-guess))) (now-s) {:w 700 :h 510})]])
+    :notes "We are optimizing one day-ahead operating plan. There are six turbines and twelve forecast hours, so a state has 72 operating fractions. Start with half power everywhere. The bird forecast and electricity forecast are fixed inputs for this optimization. We change the settings, not those forecasts. The picture locates the turbines relative to the flight path. The map macro remains available in the source, but we do not teach its implementation here."}
 
-   {:section "Decide" :title "Average demand, then choose an order" :steps 3
-    :render (fn [step]
-              (let [V (nth restock-run (max 0 (dec step)))
-                    stock 1 order 2
-                    outcomes (demand-outcomes V stock order)
-                    orders ((:actions restock) stock)
-                    scores (mapv #((:q restock) V stock %) orders)
-                    best (apply max scores)]
+   {:section "Optimise" :title "What makes one plan better?" :steps 2
+    :render (fn [frame]
+              (let [off (zipmap slots (repeat 0)) on (zipmap slots (repeat 1))
+                    half (as-plan (:x first-guess))]
                 [:div.two.even
                  [:div
-                  (if (zero? step)
-                    [:div (code (:expansion restock) {:size :small :marks #{"reduce" "for" "V"}})
-                     [:p.caption "The q function generated by defbellman."]
-                     [:p.aside "Stock 1. Try ordering 2."]
-                     [:p.caption "Start with V = 0: no future value yet."]
-                     [:p.callout "Score = sum of the weighted returns."]]
-                    [:div (code 'bellman {:size :small :marks #{"fn" "map" "max"}})
-                     [:p.aside "Stock 1. Try every feasible order."]
-                     [:p.caption "q averages the demand outcomes for one order."]])]
+                  (if (zero? frame)
+                    [:div (code 'electricity-lost {:size :small})
+                     [:p.aside "Less electricity lost is better."]]
+                    [:div (code 'bird-risk {:size :small})
+                     [:p.aside "We also want less bird exposure."]])
+                  [:p.caption "Bird risk is an illustrative exposure index, not a death count."]]
                  [:div
-                  (if (zero? step)
-                    [:div
-                     [:table.levels
-                      [:tr [:th "demand"] [:th "p"] [:th "profit"] [:th "p × profit"]]
-                      (for [{:keys [demand probability reward weighted]} outcomes]
-                        [:tr [:td demand] [:td (fmt probability)] [:td reward] [:td (fmt weighted)]])]
-                     [:p.aside (str "Order 2 scores " (fmt (reduce + (map :weighted outcomes))) ".")]]
-                    [:div
-                     [:div.caption (str "using V from iteration " (dec step))]
-                     [:table.levels
-                      [:tr [:th "order"] [:th "expected return"]]
-                      (for [[order score] (map vector orders scores)]
-                        [:tr [:td order] [:td {:class (when (= score best) "ok")} (fmt score 3)]])]
-                     [:p.aside (str "New V(1) = " (fmt best 3))]
-                     [:p.caption "Do this for every stock level → a new value table."]])]]))
-    :notes "First reveal unpacks q for one action. With V zero, the four profits for stock one/order two are -11, 0, 11, 22. Weighted by demand probabilities, they sum to 7.7. The next reveal compares all orders, still using V zero. Order one wins this first, short-sighted backup. Then use V from one Bellman update: each outcome also contributes 0.9 times V(remaining stock). The best order can change because inventory left over now has a future value. map scores actions, max chooses, zipmap builds the next value table. No customer is being simulated here: iterate improves estimates of future value; it does not advance calendar weeks."}
+                  [:table.levels
+                   [:tr [:th "plan"] [:th "generated kWh"] [:th "bird risk"]]
+                   (for [[label plan] [["all stopped" off] ["half power" half] ["full power" on]]]
+                     [:tr [:td label] [:td (fmt (- full-energy (lost plan)) 0)] [:td (fmt (risk plan) 1)]])]
+                  [:p.aside "Choose where to reduce operation, rather than stopping everything."]
+                  [:p.caption "A lower electricity cost alone would run every turbine at full power."]]]))
+    :notes "Read the three complete candidate plans before any algorithm. Stopping everything protects birds but generates zero energy. Full power produces the most energy and the most exposure. Half power is our initial guess. electricity-lost returns one number for a whole plan; bird-risk returns another. They are ordinary Clojure functions over a map. We will combine them into a single cost and pass that function to the same update algorithm. The exposure index is a teaching model, not a mortality forecast."}
 
-   {:section "Decide" :title "Bellman: Values → Values" :steps (count restock-run)
+   {:section "Optimise" :title "Optimization is iterate" :steps 3
+    :render (fn [frame]
+              (let [{:keys [low high slope next]} (coordinate-update energy-cost)]
+                [:div.two.even
+                 [:div
+                  (case frame
+                    0 (code 'gradient {:size :small})
+                    1 (code 'descent-step {:size :small})
+                    [:div (code 'clamped {:size :small})
+                     (code 'solver-step {:size :small})])
+                  (code "(iterate (solver-step energy-cost) first-guess)" {:size :small :marks #{"iterate"}})]
+                 [:div
+                  (case frame
+                    0 [:div (coordinate-plot energy-cost)
+                       [:p.aside "Hold 71 settings fixed. Nudge turbine 1 at noon."]
+                       [:p.caption (str "At 0.49999: " (fmt low 6) " kWh lost. At 0.50001: " (fmt high 6) ".")]
+                       [:p.caption "Divide the cost difference by 0.00002: slope −84."]]
+                    1 [:div
+                       [:p.aside "Subtract rate × gradient from every setting."]
+                       [:div.state-chain
+                        [:div.state-node [:span.caption "old setting"] [:strong "0.5"]]
+                        [:div.state-node [:span.caption "new setting"] [:strong (fmt next 4)]]]
+                       (code "0.5 - 0.0001 * (-84) = 0.5084" {:size :small})
+                       [:p.caption "All 72 slopes use the old settings. One call returns a new state."]]
+                    [:div
+                     [:p.aside "clamped wraps a step and limits its output."]
+                     (kv-table [["proposed setting" "after clamped"] ["−0.1" "0"] ["0.5084" "0.5084"] ["1.2" "1"]])
+                     [:p.caption "A turbine cannot operate below 0% or above 100%."]
+                     [:p.aside "iterate feeds the new state back into this step."]])]]))
+    :notes "This is the optimization algorithm: repeated updates to a vector of settings. gradient receives a numerical cost function and returns a numerical gradient function. It samples the cost just below and above each coordinate, holding the others fixed. No symbolic algebra or Hessian is used. descent-step receives that gradient and a learning rate, and returns a state-update function. One component moves from 0.5 to 0.5084 in the electricity-only example. All coordinates are updated from the same old vector. clamped is a function wrapper that limits each resulting setting to the physical range zero to one. It clips values; it is not a bird-safety constraint. The displayed iterate call repeatedly applies the resulting step. The next slide changes only the cost we supply."}
+
+   {:section "Optimise" :title "Pass in a cost that includes birds" :steps 2
+    :render (fn [frame]
+              [:div.two.even
+               [:div (code 'with-risk-penalty {:size :small :marks #{"cost" "risk" "fn"}})
+                (code 'energy-cost {:size :small})
+                (code 'risk-cost {:size :small})]
+               [:div
+                [:p.aside "with-risk-penalty takes two functions and returns a cost function."]
+                [:div.equation-stack
+                 [:div.equation-part "electricity lost"]
+                 [:div.equation-part "+ 100 × excess bird risk²"]]
+                [:p.caption "Excess risk is the amount above 12. The penalty is zero below 12."]
+                (when (pos? frame)
+                  [:div (code "(solver-step energy-cost)\n(solver-step risk-cost)" {:size :small})
+                   [:p.caption "Same update algorithm, rate and initial state. Different cost function."]])]])
+    :notes "This replaces the obscure minimize/subject-to language. These are real ordinary functions, and all the relevant source is on screen. energy-cost composes the plan representation with electricity-lost. with-risk-penalty closes over the cost, risk function, limit and weight and returns another function. When exposure exceeds twelve, the returned cost includes a quadratic penalty. This is a chosen tradeoff, not a hard guarantee of risk below twelve. The numerical gradient samples whichever cost we pass; it needs no understanding of birds. The next slide shows the two runs side by side instead of making the audience infer what changed between two slides."}
+
+   {:section "Optimise" :title "Same updates, different objectives" :runs [:crowd :plain]
+    :steps #(max (steps-for :crowd) (steps-for :plain))
     :render (fn [step]
-              (let [V (nth restock-run step)
-                    policy (best-order restock V)
-                    rs (residuals restock-run)
-                    top (apply max (vals (peek restock-run)))
-                    bar-h 260]
-                [:div.two
-                 [:div (code 'bellman {:size :small}) (code 'largest-change {:size :small})
-                  [:div.caption "(fixed-point (bellman restock) #(< (largest-change %1 %2) 0.001) zeros)"]]
+              [:div.two.even
+               (for [[k label call] [[:crowd "Electricity only" "(iterate energy-step first-guess)"]
+                                     [:plain "Electricity + bird penalty" "(iterate risk-step first-guess)"]]
+                     :let [plan (plan-at k step) i (min step (dec (count (run-of k))))]]
+                 [:div [:p.aside label]
+                  (code call {:size :small :marks #{"iterate"}})
+                  (schedule plan {:w 700})
+                  (plan-metrics plan)
+                  [:p.caption (str "Update " i (when (and (done? k) (= i (dec (count (run-of k))))) " · stopped: settings barely move"))]])])
+    :notes "Both panels begin with exactly the same half-power plan and use rate 0.0001, the same clamp and the same stopping test. Press Space. Left: electricity alone pushes everything to full power. Right: the extra bird penalty reduces operation near the flight path and during heavy bird traffic. Read both electricity and risk at the end. A row is a turbine, a column is an hour; darker means more operation. An optimization iteration is a revised plan for the same day, not an hour passing. Stop when maximum setting change is below 0.001, with a work cap. Numerical settling is not a proof of global optimality. The right-hand final risk may slightly exceed twelve because this is a soft penalty."}
+
+   {:section "Optimise" :title "Play the resulting day" :steps 2 :runs [:plain]
+    :live (fn [frame t]
+            (let [plan (if (zero? frame) (zipmap slots (repeat 1)) (:plan (run-summary :plain)))]
+              {"played-3d" (scene plan t {:w 700 :h 500})}))
+    :render (fn [frame]
+              (let [plan (if (zero? frame) (zipmap slots (repeat 1)) (:plan (run-summary :plain)))]
+                [:div.two.even
+                 [:div [:p.aside (if (zero? frame) "Before: every turbine runs." "After: the optimized schedule.")]
+                  (schedule plan {:w 700}) (plan-metrics plan)]
+                 [:div#played-3d (scene plan (now-s) {:w 700 :h 500})]]))
+    :notes "Now time really is passing through a day. First reveal is full power; second is the risk-aware plan. Contrast that with the previous slide, where an update changed the plan rather than advancing the clock. The red hubs mark stopped turbines. The example shows what the supplied cost function changes in the real-world interpretation of the state."}
+
+   {:section "Decide" :title "How much hydrogen should we order?" :steps 4
+    :render (fn [phase]
+              [:div.two.even
+               [:div (hydrogen-scene 1 1 3 (min phase 2))
+                [:p.aside (nth ["Start with 1 unit. Order 1 more." "Delivery arrives before customers." "Three trucks arrive. One cannot refuel."] (min phase 2))]]
+               [:div
+                (if (= phase 3)
+                  [:div (code 'remaining-stock {:size :small})
+                   (code 'weekly-profit {:size :small})]
+                  (kv-table [["state" "hydrogen left in the tank"]
+                           ["decision" "units to order each week"]
+                           ["uncertainty" "0, 1, 2 or 3 customer trucks"]
+                           ["capacity" "4 units; each customer uses 1"]]))
+                [:p.aside "Maximize expected profit over future weeks."]
+                [:p.caption "Sell a unit for 10. Buy it for 4. Store leftovers for 1 per unit per week."]
+                [:p.caption "Probabilities: 0 trucks 10% · 1 truck 30% · 2 trucks 40% · 3 trucks 20%."]
+                (when (= phase 2)
+                  [:p.caption "This outcome: 2 × 10 − 1 × 4 = 16 profit; no stock left."])]] )
+    :notes "New problem, still a step function iterated to a fixed point. We operate a hydrogen filling station. Units are abstract tank units; each modeled customer truck consumes one, and the tank holds four. State is stock left at the start of a week. Choose an order before learning this week's demand. The tanker delivers, then customer trucks arrive. Walk through stock one, order one, demand three: two served, one turned away. Unsatisfied demand is lost sales, not a backlog. Unsold hydrogen carries forward; we charge a holding cost, not physical hydrogen evaporation. Prices, demand and units are illustrative. We maximize expected discounted profit, with future weeks discounted by 0.9."}
+
+   {:section "Decide" :title "Why not stock the average demand?" :steps 2
+    :render (fn [frame]
+              [:div.two.even
+               [:div
+                [:p.aside "Average demand is 1.7 units. Try filling to 2."]
+                (hydrogen-scene 1 (if (zero? frame) 1 2) 3 2)
+                [:p.caption (if (zero? frame) "Fill to 2: one lost sale when 3 trucks arrive." "Fill to 3: all three served, but more stock can be left over.")]]
+               [:div
+                [:table.levels
+                 [:tr [:th "fill to"] [:th "1 week"] [:th "20 weeks"]]
+                 (for [{:keys [target one-week twenty-weeks]} policy-comparison :when (#{2 3} target)]
+                   [:tr [:td target] [:td (fmt one-week 2)] [:td (fmt twenty-weeks 2)]])]
+                [:p.caption "Expected discounted profit, starting with 1 unit. Same demand distribution."]
+                [:p.aside "Today’s leftovers change next week’s decision."]
+                [:p.caption "This small case can be checked by enumerating stocking rules. Bellman gives us a reusable update."]]])
+    :notes "Take the user's simple heuristic seriously. Mean demand is 1.7, so filling to two sounds reasonable. But min(demand, stock) is nonlinear: the mean does not say how often we lose a sale or pay for leftover inventory. A rule filling to two beats filling to three for one week's expected profit from stock one. Over twenty weeks the ordering can reverse because inventory is carried forward and has future value. Both table entries are exact weighted enumeration for a fixed policy, not one cherry-picked random simulation. There is no need to pretend this five-state toy needs advanced mathematics: we could enumerate sensible policies. The point is the Bellman HOF that generalizes when there are more states and actions."}
+
+   {:section "Decide" :title "Improve the estimate, then the order" :steps 4
+    :render (fn [frame]
+              (let [V (nth restock-run (min frame 2)) stock 1
+                    scores (mapv (fn [order] [order (expected-return V stock order)]) ((:actions restock) stock))
+                    best (apply max (map second scores))]
+                [:div.two.even
+                 [:div
+                  (if (= frame 3)
+                    [:div (code 'bellman {:size :small :marks #{"fn" "map" "max"}})
+                     (code 'restock {:size :small})]
+                    (code 'expected-return {:size :small :marks #{"V" "reduce"}}))
+                  (code "(iterate (bellman restock) zero-values)" {:size :small :marks #{"iterate"}})
+                  [:p.caption "V(stock) estimates future profit from that inventory."]]
+                 [:div
+                  [:p.aside (str "Hydrogen in stock: 1. Use V from update " (min frame 2) ".")]
+                  [:table.levels [:tr [:th "order"] [:th "expected return"]]
+                   (for [[order value] scores]
+                     [:tr [:td order] [:td {:class (when (= value best) "ok")} (fmt value 2)]])]
+                  [:p.caption "For each demand: this week’s profit + 0.9 × value of leftover stock."]
+                  [:p.aside (if (= frame 3) "Repeat for every stock level to get the next V." "Choose the order with the highest expected return.")]]]))
+    :notes "The input state to this iteration is a value table, not a truck or the physical tank. Start with all values zero, ignoring the future. Score each order by summing over possible demands. The first two estimates favor ordering one. After two value updates the recommendation changes to ordering two: future inventory now justifies the extra purchase. The fourth reveal shows bellman itself: it takes a model of states, actions and an ordinary scoring function, and returns the value-table update. The new maximum score becomes V(stock). Iterate feeds that whole table into the next backup. No custom macro and no symbolic differentiation are involved. weekly-profit and remaining-stock are ordinary arithmetic functions; their source and worked values appear in the station example."}
+
+   {:section "Decide" :title "Hydrogen: iterate the value table" :steps (count restock-run)
+    :render (fn [step]
+              (let [V (nth restock-run step) policy (best-order restock V)
+                    top (apply max (vals (peek restock-run)))]
+                [:div.two.even
+                 [:div (code 'bellman {:size :small})
+                  (code "(fixed-point (bellman restock)\n  #(< (largest-change %1 %2) 0.001)\n  zero-values)" {:size :small})
+                  [:p.aside "Same hydrogen station. Better estimates of future profit."]
+                  [:p.caption "The tank is not changing here. We are improving a plan for every possible stock level."]]
                  [:div
                   [:div.bars
-                   (for [s (:states restock)]
+                   (for [stock (:states restock)]
                      [:div.bar-col
-                      [:div.bar-v {:style {:height (str (js/Math.max 2 (* bar-h (/ (V s) top))) "px")}}]
-                      [:div.bar-n (fmt (V s) 1)]
-                      [:div.bar-k (str "stock " s)]
-                      [:div.bar-p (str "order " (policy s))]])]
-                  [:div.caption (str "update " step " of " (dec (count restock-run))
-                                     (when (pos? step) (str " · largest change " (.toPrecision (rs (dec step)) 3))))]]]))
-    :notes "Each update reads the old values and returns new ones. It is a function from value tables to value tables, and a Clojure map is itself a function. Under each bar is the best order at that stock level. Space plays. Shift+Right jumps 10."}
+                      [:div.bar-v {:style {:height (str (max 2 (* 240 (/ (V stock) top))) "px")}}]
+                      [:div.bar-n (fmt (V stock) 1)]
+                      [:div.bar-k (str "stock " stock)]
+                      [:div.bar-p (str "order " (policy stock))]])]
+                  [:p.caption (str "Update " step " · bars: expected future profit · below: recommended order")]
+                  (when (pos? step)
+                    [:p.aside (str "Largest value change: " (fmt (largest-change (nth restock-run (dec step)) V) 4))])]]))
+    :notes "This is still the hydrogen problem. Each column corresponds to a possible starting stock. Its height is the estimated discounted profit from that state; the label below is the best order under those estimates. Space advances value iteration, not calendar time. Early recommendations may change, then stabilize. Value estimates keep refining until the maximum change drops below 0.001. The stopping test is numerical; the proof section will explain a property of this operator."}
 
-   {:section "Decide" :title "The resulting policy" :steps 2
-    :render (fn [step]
-              (let [V (peek restock-run)
-                    policy (best-order restock V)
-                    {:keys [updates residual bound]} restock-certificate
-                    rs (residuals restock-run)
-                    w 640 h 240
-                    lg (fn [r] (/ (js/Math.log r) js/Math.LN10))
-                    lo -4 hi (js/Math.ceil (lg (first rs)))
-                    pt (fn [i r] [(* w (/ i (dec (count rs)))) (* h (/ (- hi (lg r)) (- hi lo)))])]
-                [:div.two
-                 [:div
-                  [:table.kv
-                   [:tr [:th "stock"] (for [s (:states restock)] [:td s])]
-                   [:tr [:th "order"] (for [s (:states restock)] [:td (policy s)])]
-                   [:tr [:th "stock + order"] (for [s (:states restock)] [:td (+ s (policy s))])]]
-                  [:p.aside "Stock below 3? Order up to 3."]]
-                 [:div
-                  (svg w (+ h 30)
-                       [:line.axis {:x1 0 :y1 h :x2 w :y2 h}]
-                       (let [[_ ey] (pt 0 epsilon)] [:line.eps {:x1 0 :y1 ey :x2 w :y2 ey}])
-                       (polyline (map-indexed pt rs) {:class "curve"})
-                       [:text.small {:x 4 :y (- (second (pt 0 epsilon)) 8)} "ε = 0.001"]
-                       [:text.small {:x 4 :y (+ h 24)} "largest change per update (log scale)"])
-                  (when (= step 1)
-                    [:div.callout
-                     [:p (str "Stopped after " updates " updates: largest change " (.toPrecision residual 3) " < ε = 0.001.")]
-                     [:p "A stopping test. We’ll return to the proof."]])]]))
-    :notes "Read the policy first: order up to three. Then point at the residual crossing the threshold. converged? is the function we supplied; it decides when this run ends. A small numerical change is an observation. We will ask what can be proved about the operator after the validation example."}
+   {:section "Decide" :title "Hydrogen: compare the stocking rules" :steps 2
+    :render (fn [frame]
+              [:div.two.even
+               [:div
+                [:table.levels [:tr [:th "fill to"] [:th "20-week profit"]]
+                 (for [{:keys [target twenty-weeks]} policy-comparison]
+                   [:tr [:td target] [:td {:class (when (= target 3) "ok")} (fmt twenty-weeks 2)]])]
+                [:p.caption "Expected discounted profit, initial stock 1. All five fixed target rules evaluated."]
+                (code 'order-up-to {:size :small})]
+               [:div
+                [:p.aside "Bellman recommends ordering up to 3."]
+                (hydrogen-scene 1 (if (zero? frame) 1 2) 3 2)
+                [:p.caption (if (zero? frame) "Before: fill to 2, based on average demand." "After: fill to 3, accounting for future inventory.")]
+                [:p.caption "This policy serves all three in this outcome. Other outcomes can leave stock in the tank."]]])
+    :notes "Close the decision example with the policy and a before/after, not just a residual chart. The table computes all five fixed order-up-to rules for twenty weeks, starting with one unit; it does not claim these are all possible policies. Bellman independently produces the best stationary action for each state, which in this model is order up to three (and order zero when already at four). The finite-horizon table is an interpretable comparison, not the infinite-horizon convergence proof. The customer picture illustrates demand three; the profit table averages all demands, not that one favorable outcome. This same simple policy can be discovered by enumeration in a tiny model."}
+
 
    ;; ---------------------------------------------------------------- Verify (5 min)
    {:section "Validate" :title "Can a detected bird be left unprotected?" :steps 3
@@ -1463,86 +1535,99 @@
                    [:p.caption "Computed by both controllers from the same detection event."]])]])
     :notes "Name the safety rule first, and what we validate: controller commands in a finite model. It is not a proof of bird survival or turbine braking physics. The original controller records detection but changes action only at a ten-minute tick. react-to-detections is a HOF that returns a controller which also decides on stronger detections. Still insufficient: the learned table has no row for an unseen context, defaults to probability zero, and keeps running. with-shield wraps the decision function. For known contexts it delegates; for unseen contexts it stops on any detection. The final reveal shows the exact definition of shielded-decision and executes the same confident detection through both controllers. The following exhaustive search checks that this holds throughout the modeled state space, not just in one hand-picked example."}
 
-   {:section "Validate" :title "Reachability: grow a set" :steps (* 3 4)
-    :render (fn [step]
-              (let [ci (quot step 4)
-                    sub (mod step 4)
-                    {:keys [id label] composed :code} (controllers ci)
-                    run (reach-runs id)
-                    k (frame-of sub 4 (count run))
-                    states (nth run k)
-                    unsafe (filter unanswered? states)
-                    cells (group-by (juxt :minute :waiting) states)
-                    cw 50 ch 26]
-                [:div.two
-                 [:div (code 'reachable {:size :small :marks #{"=" "mapcat"}})
-                  [:p.aside "From every state, try every possible next event."]
-                  [:p.caption "No bird · uncertain detection · confident detection"]
-                  (if (= id :shielded)
-                    (code 'shielded-decision {:size :small})
-                    [:p.callout "Any reached state with a confident bird + RUN breaks the rule."])]
-                 [:div
-                  [:div.caption [:b label]]
-                  (code composed {:size :small})
-                  (svg (* 11 cw) (* 11 ch)
-                       (for [m (range 10)] [:text.small {:x (+ cw (* m cw) 18) :y (- ch 8)} m])
-                       (for [[r w] (map-indexed vector (cons nil (range 1 10)))]
-                         [:text.small {:x 2 :y (+ (* (inc r) ch) 20)} (if w (str w "′") "ok")])
-                       (for [m (range 10) [r w] (map-indexed vector (cons nil (range 1 10)))
-                             :let [hit (cells [m w])]]
-                         [:rect {:x (+ cw (* m cw)) :y (+ ch (* r ch)) :width (- cw 4) :height (- ch 4)
-                                 :class (cond (nil? hit) "cell-empty" w "cell-bad" :else "cell-ok")}]))
-                  [:div.caption (str "round " k " of " (dec (count run)) " · " (count states) " states · "
-                                     (count unsafe) " break the rule")
-                   (when (= sub 3) (if (seq unsafe) [:span.bad " · rule broken"] [:span.ok " · set closed, rule holds"]))]
-                  [:div.legend "columns: minute · rows: detection waiting time"]]]))
-    :notes "The step adds every state reachable in one more minute. converged? is plain =: the set stopped growing. There are finitely many states, so it must stop. Right arrow walks the rounds for each controller. Tick-only shows a red diagonal: a bird can wait 9 minutes. Reacting fixes known situations; unseen ones never stop. With the shield the set closes with nothing red. This is an exhaustive check by our code, not a kernel proof."}
-
-   {:section "Validate" :title "Turn a failed check into a bug report" :steps 2
-    :render (fn [step]
-              (let [id (if (zero? step) :tick-only :reacting)
-                    path (counterexamples id)]
-                [:div
-                 [:div.caption [:b (:label (first (filter #(= id (:id %)) controllers)))] " · one reachable failure"]
-                 [:div.timeline
-                  (for [s path]
-                    [:div.tl {:class (if (:waiting s) "tl-bad" "tl-ok")}
-                     [:div.tl-m (str "min " (:minute s))]
-                     [:div.tl-c (name (or (:ctx s) :seen))]
-                     [:div.tl-d (case (:det s) 2 "confident bird" 1 "maybe bird" "—")]
-                     [:div.tl-a (name (:action s))]])]
-                 [:p.aside (if (zero? step)
-                             "Detection after a tick → 9 minutes still running."
-                             "Unseen situation → no stop. Add the shield.")]
-                 [:p.caption "A reachable failure becomes a reproducible test case."]]))
-    :notes "This slide explains why validation is useful: it returns a reproducible failure rather than just a red count. One reachable bad state disproves the rule; a path tells us how to reproduce it. The search returns a path, so the failure is a story you can debug. Tick-only: detection at minute 0, decision at minute 10. Reacting without the shield: the unseen situation has no row in the table, so its stop probability is 0."}
-
+   {:section "Validate" :title "Can any event sequence reach RUN + confident bird?" :steps 12
+    :render (fn [frame]
+              (let [ci (quot frame 4) sub (mod frame 4)
+                    {:keys [id label controller]} (controllers ci)
+                    run (reach-runs id) k (frame-of sub 4 (count run))
+                    states (nth run k) bad (filter unanswered? states)]
+                [:div.two.even
+                 [:div (code 'reach-step {:size :small :marks #{"fn" "mapcat"}})
+                  (code 'reachable {:size :small :marks #{"fixed-point" "="}})
+                  [:p.aside "Add every possible successor. Repeat until the set stops growing."]
+                  (code 'unanswered? {:size :small})
+                  [:p.caption "Failure: a confident bird was detected, but the command is RUN."]]
+                 [:div [:p.aside label]
+                  (controller-branches controller)
+                  [:p.caption "One branch point: minute 1, an unseen situation."]
+                  (kv-table [["expansion round" k] ["states reached" (count states)]
+                             ["states breaking the rule" (count bad)]])
+                  (when (= sub 3)
+                    [:p.aside {:class (if (seq bad) "bad" "ok")}
+                     (if (seq bad) "Failure is reachable." "Set closed. No failure in this model.")])]]))
+    :notes "Reachable means obtainable by some modeled sequence of events. We search for a state where detection is confident and the controller still commands RUN. The diagram shows just one branching point in an unseen situation; the counts cover the whole explored finite model. reach-step takes a successor function and returns a set-expansion function. mapcat gets successors of all current states; into keeps old states and adds new ones. fixed-point repeatedly applies it, stopping on set equality. Advance four reveals per controller. Tick-only and immediate reactions both have failures; the shielded controller has none. This checks the encoded events and commands, not braking physics or the checker implementation."}
 
    {:section "Validate" :title "iterate underneath all three"
     :render (fn [_]
               [:div
                [:table.levels
                 [:tr [:th "example"] [:th "state"] [:th "supplied step"] [:th "stop test"]]
-                [:tr [:td "optimise"] [:td "plan + velocity"] [:td "wrapped gradient step"] [:td "small movement"]]
+                [:tr [:td "optimise"] [:td "turbine settings"] [:td "gradient step"] [:td "small movement"]]
                 [:tr [:td "decide"] [:td "value function"] [:td "Bellman operator"] [:td "small value change"]]
                 [:tr [:td "validate"] [:td "set of reached states"] [:td "expand with successors"] [:td "set equality"]]]
                [:div.promise "(iterate step start)"]
                [:p.caption "fixed-point takes this sequence until the supplied stopping test passes."]])
-    :notes "One minute. This is the payoff. Point back to each animation: a schedule, values and actions, a growing set. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. That is the bridge to Rainbow: write down a precise claim, then check a proof of it."}
+    :notes "One minute. This is the payoff. Point back to each animation: a schedule, values and actions, a growing set. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. Now use that separation to change the update without changing the iteration."}
+
+   {:section "Compose" :title "Change the pace" :steps 2
+    :render (fn [frame]
+              (let [rate (if (zero? frame) 0.0001 0.0002)
+                    step (clamped (descent-step (gradient energy-cost) rate) 0 1)
+                    next (get-in (step first-guess) [:x 4])]
+                [:div.two.even
+                 [:div (code 'descent-step {:size :small})
+                  (code (str "(def step\n  (clamped\n    (descent-step (gradient energy-cost) " rate ")\n    0 1))\n\n(iterate step first-guess)") {:size :small})]
+                 [:div [:p.aside "Turbine 1 at noon: the same slope, −84."]
+                  (kv-table [["rate" rate] ["old setting" "0.5"] ["new setting" (fmt next 4)]])
+                  [:p.aside "Change the argument. Keep the iteration."]
+                  [:p.caption "A larger step can overshoot. Faster movement does not guarantee faster convergence."]]]))
+    :notes "We have seen all three algorithms run. Now compare this design with an update buried inside nested loops. To change the pace, pass a different rate to the function that constructs the update. The same coordinate moves twice as far; the iteration and stopping test do not change. This is the electricity-only cost, chosen to keep the arithmetic familiar. Larger rates can overshoot; this is an interface demonstration, not a recommendation to double every learning rate."}
+
+   {:section "Compose" :title "Give the update momentum" :steps 2 :runs [:plain :momentum]
+    :render (fn [frame]
+              [:div.two.even
+               [:div
+                (if (zero? frame)
+                  (code 'with-momentum {:size :small :marks #{"step" "fn"}})
+                  [:div (code 'risk-descent {:size :small})
+                   (code 'risk-step {:size :small})
+                   (code 'momentum-step {:size :small})])
+                (code "(iterate momentum-step first-guess)" {:size :small})
+                [:p.caption "Base move + 90% of the previous velocity. Then limit settings to 0…1."]]
+               [:div (convergence-chart)
+                [:table.levels [:tr [:th "update"] [:th "steps"] [:th "final cost"]]
+                 (for [[k label] [[:plain "plain"] [:momentum "momentum"]]
+                       :let [run (run-of k)]]
+                   [:tr [:td label] [:td (dec (count run))]
+                    [:td (fmt (risk-cost (:x (peek run))) 1)]])]
+                [:p.caption "Same cost, rate, start and stopping test. Momentum helps this run; it can hurt others."]]])
+    :notes "Return to the cost including bird risk. with-momentum accepts a state-update function and returns another. It calls the base update once, measures that proposal's displacement, adds 90 percent of stored velocity, and returns new position and velocity. The outer clamped wrapper clips position to the allowed range; it does not reset velocity at a bound. The chart and table use actual runs. Fewer updates reach the same movement tolerance here; that does not prove a better optimum, general convergence, or a wall-clock speedup. The second reveal shows exactly what wraps what. The iteration remains unchanged."}
+
+   {:section "Compose" :title "Observe each update" :steps 2
+    :render (fn [frame]
+              [:div.two.even
+               [:div (code 'with-observer {:size :small :marks #{"step" "observe!" "fn"}})
+                (when (pos? frame)
+                  [:div (code 'observed-costs {:size :small})
+                   (code 'record-cost! {:size :small})])
+                (code "(vec\n  (take 5\n    (iterate (with-observer risk-step record-cost!)\n             first-guess)))" {:size :small})]
+               [:div [:p.aside "The wrapper calls the observer, then returns the new state."]
+                [:table.levels [:tr [:th "update"] [:th "recorded cost"]]
+                 (for [[i value] (map-indexed vector @observed-costs)]
+                   [:tr [:td (inc i)] [:td (fmt value 2)]])]
+                [:p.caption "Five states, including the start. Four updates logged."]
+                [:p.caption "Logging happens when the lazy sequence is realized."]]])
+    :notes "with-observer wraps any step. It calls the supplied observer with old and new state, and returns the new state unchanged. record-cost! is shown in full: it appends the actual cost to an atom. The demo realizes take 5 once and displays those four log entries. The computation stays in the original pure step; the observer deliberately performs an effect. Laziness matters: creating the sequence does not run the log. Reusing realized states does not repeat the log, but constructing and realizing a fresh sequence does. This is the composition payoff: change the update or observe it without editing the traversal."}
 
    {:section "Rainbow" :title "Rainbow"
     :render (fn [_]
               [:div.two.even
-               [:div (bullets "A theorem prover in Clojure."
-                              "Statement: type. Proof: term."
-                              "Propose a proof. The kernel checks it.")
+               [:div [:p.aside "A theorem prover written in Clojure."]
                 [:p.aside [:a {:href "https://flexiana.com/rainbow"} "flexiana.com/rainbow"]]]
-               [:div
-                [:div.proof-flow [:div "statement + proposed proof"] [:span "↓ kernel checks the term"]
-                 [:div "accepted or rejected"]]
-                [:p.aside "Type-checking mathematical claims."]
-                [:p.muted "Recorded checks · no browser kernel."]]])
-    :notes "90 seconds. Introduce what Rainbow is before displaying theorem identifiers. For developers: checking a proof resembles type-checking a program; the term must inhabit the type we asked for. For the Lean people: this is the familiar separation between proof construction and the kernel. The interesting claim for today is about our function-transforming function, Bellman."}
+               [:div [:p.aside "Can we prove a property of our update?"]
+                [:p "For Bellman: two value estimates get closer after an update."]
+                [:p.caption "Specify the claim. Construct a proof. Check it."]]])
+    :notes "Clojure is dynamically typed. You might prefer Haskell for static guarantees; those catch useful classes of errors. But choosing a dynamic language does not prevent us from stating and mechanically checking a mathematical theorem. Rainbow is a theorem prover written in Clojure. Static typing and proof are complementary, and Haskell can participate in formal verification too. We will prove a specific property under explicit assumptions, not claim the entire application has no bugs. First show a tiny proof of function composition to teach Rainbow syntax, then the larger property of Bellman's update."}
 
    {:section "Rainbow" :title "A proof is a function" :steps 2
     :render (fn [step]
@@ -1610,11 +1695,11 @@
                [:div.book-photo {:role "img" :aria-label "Space reserved for the book photo"}
                 [:span "Book photo"]]
                [:div
-                (bullets "Optimisation"
-                         "Decision-making"
-                         "Validation")
+                [:p.aside "There is more than iterate."]
+                [:p "About twelve HOFs, and their composition."]
+                (code "map · reduce · filter · comp\npartial · iterate …" {:size :small})
                 [:p.goal "flexiana.com/book"]]])
-    :notes "The book follows these three areas. Every listing runs with the companion library orhof. Book text: CC BY-SA 4.0; library: MIT. Replace the reserved photo area with Jiri's supplied book photograph."}
+    :notes "The talk centered on iterate. The book develops a broader toolkit of roughly twelve higher-order functions and their composition across optimization, decision-making and validation. Every listing runs with the companion library orhof. Book text: CC BY-SA 4.0; library: MIT. Replace the reserved photo area with Jiri's supplied book photograph."}
 
    ;; ---------------------------------------------------------------- Closing
    {:section "Thank you" :title "Thank you"

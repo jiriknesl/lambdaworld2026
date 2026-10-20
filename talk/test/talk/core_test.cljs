@@ -12,7 +12,7 @@
   (testing "src records the definition as typed"
     (is (str/starts-with? (n/source 'c/fixed-point) ";; no source"))   ; registry keys are bare names
     (is (str/starts-with? (n/source 'fixed-point) "(defn fixed-point")))
-  (testing "defmodel gives an objective and constraint gaps"
+  (testing "plain model data contains an objective and constraint gaps"
     (let [all-on (c/as-plan (vec (repeat (count c/slots) 1)))]
       (is (= 0 ((:objective c/day-plan) all-on)) "running everything gives up nothing")
       (is (not (n/feasible? c/day-plan all-on 0)) "running everything breaks the bird budget")))
@@ -77,7 +77,7 @@
               (str "objective gap to lower bound: " (- score lower))))))))
 
 (deftest optimization-walkthrough
-  (let [{:keys [x low high h slope move next]} (c/coordinate-update c/day-plan)]
+  (let [{:keys [x low high h slope move next]} (c/coordinate-update c/energy-cost)]
     (is (= 0.5 x))
     (is (< (abs (- slope -84)) 1e-5))
     (is (< (abs (- slope (/ (- high low) (* 2 h)))) 1e-8))
@@ -108,6 +108,57 @@
       (is (< (abs (- ((:q c/restock) V stock order)
                      (reduce + (map :weighted (c/demand-outcomes V stock order)))))
              1e-10)))))
+
+(deftest cost-and-observer-composition
+  (testing "the plain cost function preserves the prior model's numerical objective"
+    (doseq [x [(vec (repeat 72 0)) (:x c/first-guess)
+               (vec (repeat 72 1)) (mapv #(/ (mod % 7) 6) (range 72))]]
+      (is (< (abs (- (c/risk-cost x)
+                     ((:objective c/safe-plan) (c/as-plan x))))
+             1e-8))))
+  (testing "an observer sees each realized update without changing its result"
+    (let [seen (atom [])
+          wrapped (c/with-observer inc #(swap! seen conj [%1 %2]))
+          states (iterate wrapped 0)]
+      (is (empty? @seen))
+      (is (= [0 1 2 3 4] (vec (take 5 states))))
+      (is (= [[0 1] [1 2] [2 3] [3 4]] @seen))
+      (is (= [0 1 2] (vec (take 3 states))))
+      (is (= 4 (count @seen)) "reading cached states does not repeat logging")))
+  (is (= (vec (take 5 (iterate c/risk-step c/first-guess)))
+         c/observed-states))
+  (is (= 4 (count @c/observed-costs))))
+
+(deftest hydrogen-policy-comparison
+  (testing "the visible recommendation changes as future values improve"
+    (is (= 1 ((c/best-order c/restock (first c/restock-run)) 1)))
+    (is (= 2 ((c/best-order c/restock (nth c/restock-run 2)) 1))))
+  (testing "two-week policy evaluation matches direct enumeration of demand pairs"
+    (doseq [target (range 5) stock (range 5)
+            :let [policy (c/order-up-to target)
+                  order (policy stock)
+                  direct (reduce +
+                           (for [[d1 p1] c/demand-probabilities
+                                 [d2 p2] c/demand-probabilities
+                                 :let [left (max 0 (- (+ stock order) d1))
+                                       next-order (policy left)
+                                       profit (fn [s o d]
+                                                (- (* 10 (min d (+ s o)))
+                                                   (* 4 o)
+                                                   (max 0 (- (+ s o) d))))]]
+                             (* p1 p2 (+ (profit stock order d1)
+                                         (* 0.9 (profit left next-order d2))))))
+                  values (nth (iterate (c/evaluate-policy policy) c/zero-values) 2)]]
+      (is (< (abs (- direct (values stock))) 1e-9))))
+  (let [two (c/policy-comparison 2) three (c/policy-comparison 3)]
+    (is (> (:one-week two) (:one-week three)))
+    (is (< (:twenty-weeks two) (:twenty-weeks three)))
+    (is (= {0 3, 1 2, 2 1, 3 0, 4 0}
+           (c/best-order c/restock (peek c/restock-run)))))
+  (testing "optimal backups dominate every displayed fixed policy at the same horizon"
+    (let [optimal (nth (iterate (c/bellman c/restock) c/zero-values) 20)]
+      (doseq [{:keys [twenty-weeks]} c/policy-comparison]
+        (is (>= (+ (optimal 1) 1e-9) twenty-weeks))))))
 
 (deftest shield-walkthrough
   (is (= :run (get-in c/shield-comparison [:reacting :action])))

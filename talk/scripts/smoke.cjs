@@ -19,6 +19,7 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
   let checkedFrames = 0;
   for (const [w, h] of [[1600, 900], [1920, 1080], [1024, 768]]) {
     const page = await browser.newPage({ viewport: { width: w, height: h } });
+    if (url.startsWith('file:')) await page.context().setOffline(true);
     page.on('request', r => { const u = r.url(); if (!u.startsWith('file:') && !u.startsWith('data:') && !u.includes('localhost') && !u.includes('127.0.0.1')) external.push(u); });
     page.on('pageerror', e => problems.push(`${w}x${h} page error: ${e.message}`));
     await page.goto(url);
@@ -54,7 +55,7 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
                    over: [...new Set(over)].slice(0, 4), hash: location.hash };
         });
         checkedFrames++;
-        if (info.title === 'A step is State → State') traceSlide = s;
+        if (info.title === 'Same updates, different objectives') traceSlide = s;
         if (info.error) problems.push(`${w}x${h} slide ${s}: render error`);
         if (info.over.length) problems.push(`${w}x${h} slide ${s} (${info.title}): overflow ${info.over.join(', ')}`);
       }

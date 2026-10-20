@@ -1,174 +1,84 @@
-# Lambda World 2026 talk: design
+# Lambda World 2026: presentation design
 
+Revision 4, 2026-10-20. This replaces the earlier macro-first and Function Observatory outlines.
 Talk: **Rebuilding Operations Research in Higher-Order Functions in Clojure**, Jiri Knesl, 40 minutes.
-Status: revision 3, implementing Jiri's revised arc from 2026-10-19. Replaces the "Function
-Observatory" as the stage version. The outline below supersedes revision 2's macro-first opening
-and long LP/proof catalogue.
 
-## 1. Goal and audience
+## Audience and purpose
 
-**Audience.** Software developers who like functional programming (Scala, Kotlin, JS, Haskell, a few
-Lean developers). They know `map`/`filter`/`reduce`; fewer use monoids daily. They do **not** know
-operations research (OR) and most do not write Lisp.
+Clojure, Elixir and Haskell developers, plus some Lean 4 developers. Teach the algorithms through
+higher-order functions. The audience should see what each supplied function does, watch successive
+states, and understand why separating the update from traversal helps them change the program.
 
-**Goal.** Leave the room able to read an optimisation, decision or verification algorithm as code they
-already know: a state, a step, and a test for "done", run by `iterate`. Show why code-as-data makes
-Clojure a good home for it, and what Rainbow is and is trying to become.
+## Agreed arc
 
-**Success criteria.**
-- Every idea is explained in developer terms first; mathematical names come second, if at all.
-- Jiri, a developer, can answer the likely questions on every slide (speaker notes carry the answers).
-- Every animation shows real computation by the code on the slide. Code on slides is the exact source
-  text of the running definitions, captured at compile time.
-- The talk works with no REPL, no network and no server.
-- Every claim about Rainbow matches Rainbow's own documentation and recorded results.
+1. Who Jiri is: lifelong developer, economist by education, Barcelona Meetup Group 13 years ago.
+2. Why Clojure: simple and functional, immutable data, REPL, code as data.
+3. OR: optimization, decision-making, validation. Keep the examples as surprises.
+4. HOFs: functions as inputs/outputs; `map` versus `iterate`; exact fixed point, numerical tolerance.
+5. Optimization: turbine operation versus birds; actual numerical derivatives; compare successive plans.
+6. Decision-making: hydrogen delivery and customer trucks; uncertain demand; improved value estimates and orders.
+7. Validation: search reachable states for confident detection + RUN; compare controllers and shield.
+8. Name `iterate` underneath all three, then demonstrate composition: pace, momentum, logging.
+9. Rainbow: a theorem prover written in Clojure; actual proof syntax; Bellman property and evidence.
+10. Book: more than `iterate`, about twelve HOFs and their composition; photo placeholder.
+11. Thank you: jiri@flexiana.com.
 
-**Non-goals.** Teaching OR theory. Arguing that Clojure beats typed languages. Claiming Rainbow verifies
-the browser code.
+The 32-slide timing worksheet is the table in `talk/README.md`. The three examples precede the
+composition payoff. Avoid teaching a custom macro language or implying that functional languages
+other than Clojure cannot express the same ideas.
 
-## 2. Delivery vehicle
+## Concrete explanations and visuals
 
-One local page, built with **shadow-cljs**, in `talk/`.
+- Optimization uses ordinary functions. No `minimize`/`subject-to` DSL on stage, no symbolic
+  differentiation or Hessians. Show one coordinate's cost samples, numerical slope, update and
+  clipping. Compare energy-only and penalized schedules side by side using actual states.
+- The bird penalty is soft. State what changes in the cost and what remains the same in the
+  comparison. Illustrative exposure is not mortality. A small update does not prove optimality.
+- The hydrogen example shows the tank, delivery tanker, served and unserved trucks. State the
+  commodity, units, action, uncertainty, prices and inventory carryover. Show ordinary reward,
+  expectation and Bellman functions. Value iterations improve a plan; they are not simulated weeks.
+- Compare filling to two versus three over one and twenty weeks. Evaluate all five fixed target
+  rules and show the recommended policy. Admit this small problem can be solved by enumeration.
+- Reachability has an explicit target: a reachable command state with confident detection and RUN.
+  Show branching events and expansion counts, the shield source and its effect. The graph is one
+  sample branch point, not the full state graph. Set equality ends the exhaustive finite search.
+- Composition changes a function argument or wraps the update; it does not rewrite the traversal.
+  Compare momentum using measured update counts and costs, without claiming general superiority.
+  Logging is an intentional effect on realization, illustrated with a captured four-entry log.
 
-| Piece | Path | Role |
-|---|---|---|
-| Slides, algorithms, rendering | `talk/src/talk/core.cljs` | one namespace, in clearly marked sections |
-| Notation macros | `talk/src/talk/notation.cljc` | `src`, `defmap`, `defmodel`, `defbellman` |
-| Page | `talk/public/index.html`, `talk/public/talk.css`, `talk/public/fonts.css` | stage and notes views |
-| Build | `talk/shadow-cljs.edn`, `talk/package.json` | `watch` while working, `release` for stage |
-| Tests | `talk/test/talk/core_test.cljs` | algorithm and notation tests (`:node-test`) |
-| Browser check | `talk/scripts/smoke.cjs` | Playwright: every slide/step, hash restore, overflow, offline |
+## Rainbow and the book
 
-**Controls.** Up/Down: previous/next slide. Left/Right: previous/next step. Shift+Left/Right: 10 steps.
-Space: play/pause the steps. Home/End: first/last step. `N`: notes window. `F`: fullscreen.
-`D`: dark/light. `?`: key help.
+Dynamic typing does not prevent Clojure from hosting a proof checker. Static typing can catch
+useful errors; formal proofs establish particular claims under assumptions. Neither language
+choice nor one theorem implies an application is bug-free.
 
-**Location.** `#s{slide}a{step}` (slides and steps from 1). A refresh restores slide and step.
+Show the checked composition term from `talk/src/talk/composition.edn`, including a rejected
+wrong-result variant. Its receipt is tied to the exact source and Rainbow revision `d9080c7`.
+Then connect the hydrogen example to the Bellman contraction bound: identical rewards cancel,
+nonnegative normalized averaging preserves the discounted bound, max preserves it, and swapping
+inputs gives the reverse inequality. Show the existing `3f411ae` Bellman receipt from 2026-10-09.
+It checks an exact rational mathematical term; correspondence with floating-point browser code
+is unproved. The browser shows recorded verdicts, not an embedded Rainbow kernel.
 
-**Stage.** A fixed 1600×900 canvas, scaled to the window and letterboxed, so the layout is identical on
-16:9 and 4:3 projectors. Aeonik and Aeonik Mono from flexiana-web are embedded; DejaVu covers missing glyphs. No font network requests.
+Link to https://flexiana.com/rainbow. The book broadens the view from `iterate` to composition,
+partial application, mapping, filtering, reduction and other HOFs. Reserve space for Jiri's photo.
 
-**Working mode.** `npx shadow-cljs watch talk`: save `core.cljs`, the page hot-reloads and keeps slide
-and step (state in a `defonce` atom). shadow-cljs's nREPL lets Cursor (Calva) evaluate forms in the page.
+## Delivery and verification
 
-**Fallback principle.** Every slide's default example is compiled in; the REPL and live edits only add.
-A bad edit shows its compile error in shadow's overlay and the previous build keeps running; undo and
-save to recover. `npx shadow-cljs release talk` gives one JS file that runs from `file://`.
+`talk/src/talk/core.cljs` owns the algorithms, SVG visualizations, slides and speaker notes.
+`src` captures actual implementation source for definition panels. Explanatory calls are separate.
+The release runs from disk, offline, without a REPL or server. Aeonik and Aeonik Mono are embedded;
+embedded DejaVu covers missing glyphs. Native SVG vehicles avoid platform emoji dependencies.
 
-**Numbers.** Browser arithmetic is floating point. The trailer LP and receipt use integers (exact in
-doubles). Kernel-checked results are shown as recorded Rainbow output.
+Controls: up/down changes slide; left/right changes reveal; Shift+left/right jumps ten updates;
+Space plays; Home/End selects first/last; N opens synchronized presenter notes; D switches theme.
+Hashes restore slide/reveal after refresh. The 1600×900 canvas scales and letterboxes at 4:3.
 
-## 3. Notation (`notation.cljc`)
+Run algorithm tests, build the release, and check all slides and short reveals plus sampled long
+traces at 1600×900, 1920×1080 and 1024×768, with networking disabled for the disk build. Inspect
+new diagrams visually in addition to overflow and render-error checks. Maintain the existing
+public static ngrok preview without changing its tunnel configuration; it exposes the compiled
+deck, notes and evidence without authentication. Public URL and file inventory live in README.
 
-- **`src`** wraps a top-level definition, `(src (defn step ...))`, and records its exact source text
-  (from the file, by reader line/column metadata) so slides show code that cannot drift from what runs.
-- **`defmap`** draws a problem: a legend (glyph → role) and rows of glyphs; expands to a map of positions.
-  `random-map` prints a new `defmap` form from a seed, for pasting.
-- **`defmodel`**: `(defmodel name [plan] (minimize|maximize e) (subject-to [cname c] ...))` with exactly
-  `sum` (Σ), `for-all` (∀), and comparisons `<=`, `>=`, `=`. Expands to the objective `plan → number`,
-  constraints returning one signed gap per row, the source form (for the formula renderer) and the
-  pretty-printed expansion (for the "what the macro wrote" slide). Violations, penalties and, for linear
-  models, LP coefficients (by evaluating rows at unit plans) are derived from these functions.
-- **`defbellman`**: `(defbellman name [state states] [action actions] [outcome distribution] :reward e
-  :next e :discount g)` expands to a Q-function `(V, s, a) → number`, the state list, action function
-  and source.
-
-## 4. Talk outline (40 minutes)
-
-| Block | Min | Purpose |
-| --- | ---: | --- |
-| About Jiri | 1 | Brief work/book/Rainbow introduction. |
-| Operations research | 2 | Define choices, objectives, constraints and uncertainty before algorithms. |
-| Why Clojure | 2 | Explain the choice through functions, immutable data, REPL and macros. |
-| Higher-order functions | 6 | Accept/return functions; map vs iterate; visible state chain; exact fixed point vs tolerance; fixed-point takes step and converged?. |
-| Optimisation | 8 | One wind-farm planning example: problem, model, step, penalty, momentum, schedule and 3D result. |
-| Decision-making | 6 | One restocking example: possible orders, expected scores, Bellman updates, policy. |
-| Validation | 5 | One bird-controller example: successors → growing reachable set → counterexample → shielded result. Summarise what changes inside the same HOF structure. |
-| Rainbow and proof | 7 | Introduce theorem prover and kernel; return to Bellman; show a literal composition proof and rejected variant, then the Bellman contraction argument and recorded check. |
-| Book / close | 1 | Three areas in the book; return to the HOF takeaway. |
-| Questions | 2 | Discussion. |
-
-The revised deck has 31 slides. HOFs are the subject throughout. Each example must say which
-function is passed or returned and show the resulting computation. The macro is a way to describe
-the optimisation problem, not a separate introduction to Lisp. Adam, falsification, trailer LP,
-proof-size metrics and product catalogues are outside this spoken arc. Supporting code can stay.
-
-## 5. Visuals and proof walkthrough
-
-- `newton-sqrt` returns an update function. `map` calls it on independent guesses; `iterate`
-  connects the calls. Reveal five computed states before introducing a stopping test.
-- Wind-farm plan: a source grid becomes positions and the 3D scene. A schedule shows each turbine's
-  setting by hour. The plain objective ignores birds; the penalty changes the objective; momentum
-  wraps the step. No claim that the soft penalty ensures feasibility or momentum always helps.
-- Restocking: fix stock at one load and show the actual Q score for every allowed order. The q
-  function folds uncertain demand; max selects the new value. Then animate all stock values and
-  the policy. The future value function is an argument to the update.
-- Controller: `reachable` receives a successor function; mapcat expands states and into unions
-  them. Show reached states and rule violations, then a readable counterexample. Compare the
-  same finite model under tick-only, reacting and shielded controllers. Set equality stops it.
-- Rainbow: statement + proof term → kernel → acceptance/rejection. State the Bellman bound,
-  illustrate a 10-to-9 value gap using the actual browser function, then prove the general bound:
-  identical rewards cancel; nonnegative normalized outcome averaging preserves γ ε; the maximum
-  preserves the one-sided bound; swap V and W. Explicit model/action/discount assumptions.
-- A small composition proof is shown in literal Rainbow syntax, from a checked EDN file. Its
-  successful kernel check and wrong-result rejection are recorded against clean revision
-  `d9080c7`; the build verifies the displayed source matches its receipt. This introduces syntax
-  before the larger Bellman argument. The Bellman outline remains mathematical prose. Its
-  `value/signed-optimality-step-additively-contractive` receipt is the 2026-10-09 export at
-  `3f411ae`, with empty axiom closure; it was not rechecked in this revision. Neither example
-  claims a proof of floating-point browser correspondence.
-
-## 6. Testing
-
-Node tests: `defmap`/`defmodel`/`defbellman` expansions; flock converges, penalty spreads, Adam/momentum
-run; restocking policy order-up-to and residual stop; reachability finds violations for the naive and
-unshielded controllers and none for the full one; falsification finds the near-tick time; LP gives 127,
-prices balance, tampered receipt refused. Browser check: every slide and short reveal, sampled long traces, hash restore,
-no overflow at 1600×900, 1920×1080 and 1024×768, no external requests, release build from `file://`.
-
-## 7. Existing presentation and prototypes
-
-The "Function Observatory" app stays untouched until the new talk passes its checks. `prototypes/` is
-throwaway and is removed when the new talk is complete.
-
-## Editorial update — 2026-10-19
-
-Jiri's introduction: lifelong software developer, economist by education, started Barcelona Meetup
-Group 13 years ago. OR's opening gives the questions without revealing the example problems.
-Why Clojure has four points: simple and functional language; immutable data; the REPL; code is data.
-Keep titles and visible prose short, with explanation in speaker notes. The book slide reserves
-space for Jiri's forthcoming photograph. Use Aeonik for text and Aeonik Mono for code.
-
-## Clarity update — 2026-10-19
-
-Remove the opening subtitle. Increase agenda-to-heading space and the gap after OR's opening
-prompt. Explain fixed points through the actual Newton step for √4: 3 changes, 2 returns 2.
-The optimisation goal is maximum electricity under a chosen bird-risk limit. Remove revenue
-and wear from the objective, label illustrative energy in kWh and bird risk as a proxy. Explain
-minimize/subject-to as markers in defmodel, with its actual generated functions visible. The
-penalty slide must show before/after objectives and electricity/risk numbers; replace long
-expanded sums with separate, named quantities.
-
-## Mechanics update — 2026-10-19
-
-Before animating optimization, trace one coordinate: state → whole-plan cost → numerical slope →
-gradient update → clamp → iterate. At noon, 50% becomes 50.84% under the electricity-only objective.
-Keep both baseline and penalized learning rates identical. The momentum replay shows the base
-movement, carried velocity and their sum. The outer clamp changes position, not stored velocity.
-
-Restocking must name the commodity (hydrogen), units (trailer loads), timing (order before demand),
-and uncertainty (weekly customer demand). Show one profit calculation and its weighted outcome
-sum before maximizing over orders. Split the Bellman equation into return, average and maximum.
-
-Validation must put its rule on screen: confident detection requires STOP in the same modeled
-minute. Show the actual shield definition and run the same unseen-context detection with/without
-it. Then exhaust the finite state space. The counterexample is a reproducible bug report that
-explains the failed rule. Name iterate explicitly in the shared-structure slide.
-
-Link Rainbow to https://flexiana.com/rainbow. Close with Thank you and jiri@flexiana.com; remove
-the old state/step/converged slogan. Fuller learning explanations live in talk/README.md and notes.
-
-The model-notation source now has its own slide after the problem definition: defmodel, the
-expression compiler, the constraint compiler with its helpers, and the generated functions.
-Source is extracted from the implementation at build time. Keep this walkthrough brief so the
-optimization block stays within its eight-minute target.
+Book photo, aloud rehearsal and room/projector checks remain external inputs. Older prototype
+handoff assets are superseded and must not be described as matching this revision.
