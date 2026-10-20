@@ -16,6 +16,7 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
   const problems = [];
   const external = [];
   let traceSlide = null;
+  let playbackSlide = null;
   let checkedFrames = 0;
   for (const [w, h] of [[1600, 900], [1920, 1080], [1024, 768]]) {
     const page = await browser.newPage({ viewport: { width: w, height: h } });
@@ -56,6 +57,7 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
         });
         checkedFrames++;
         if (info.title === 'Same updates, different objectives') traceSlide = s;
+        if (info.title === 'Play the resulting day') playbackSlide = s;
         if (info.error) problems.push(`${w}x${h} slide ${s}: render error`);
         if (info.over.length) problems.push(`${w}x${h} slide ${s} (${info.title}): overflow ${info.over.join(', ')}`);
       }
@@ -109,10 +111,30 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
     await page.waitForTimeout(300);
     const driven = await page.evaluate(() => document.querySelector('.title').textContent);
     if (driven === stageTitle) problems.push('keys in the notes window did not drive the stage');
+    // The schedule highlight must advance with the 3D clock in both day replays.
+    if (playbackSlide === null) throw Error('Cannot find day playback');
+    await page.evaluate(s => { location.hash = '#s' + s; }, playbackSlide);
+    await page.waitForSelector('#played-schedule rect.now');
+    for (const frame of [0, 1]) {
+      if (frame) await page.keyboard.press('ArrowRight');
+      const sample = () => page.evaluate(() => {
+        const marker = document.querySelector('#played-schedule rect.now');
+        const hour = parseInt(document.querySelector('#played-3d .clock').textContent);
+        return {hour, x: +marker.getAttribute('x'), width: +marker.getAttribute('width')};
+      });
+      const a = await sample();
+      await page.waitForFunction(hour => parseInt(document.querySelector('#played-3d .clock').textContent) !== hour, a.hour);
+      const b = await sample();
+      for (const value of [a, b]) {
+        if (Math.abs(value.x - (120 + (value.hour - 8) * value.width)) > 1e-6)
+          problems.push(`day replay ${frame}: hour ${value.hour} disagrees with schedule highlight`);
+      }
+      if (a.x === b.x) problems.push(`day replay ${frame}: current-hour marker did not move`);
+    }
     await context.close();
   }
   await browser.close();
   if (external.length) problems.push('external requests: ' + [...new Set(external)].join(', '));
-  console.log(problems.length ? problems.join('\n') : `OK: ${checkedFrames} frames checked at three sizes; all slides and short reveals, sampled long traces; no overflow, hash restore works, no external requests`);
+  console.log(problems.length ? problems.join('\n') : `OK: ${checkedFrames} frames checked at three sizes; all slides and short reveals, sampled long traces; no overflow, hash restore works, day marker stays synchronized, no external requests`);
   process.exit(problems.length ? 1 : 0);
 })();

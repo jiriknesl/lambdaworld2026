@@ -10,9 +10,10 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=hof-arc-20261020).
-Updated 2026-10-20: examples first, composition afterwards. Ordinary cost and Bellman functions
-replace the spoken DSL; turbine runs, hydrogen policies and reachable failures are visualized.
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=model-clarity-20261020).
+Updated 2026-10-20: clarified forecasts versus settings, turbine exposure and whole-plan updates;
+added a worked penalty comparison; restored the synchronized day marker. Hydrogen now has a
+two-week supplier price/availability cycle and bursty demand, with explicitly labelled profit bars.
 This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, speaker notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
@@ -71,7 +72,7 @@ The address bar shows `#s{slide}a{step}`; a refresh returns to the same place. T
 2. Edit and save `core.cljs`: the slide redraws in about a second. Good candidates:
    - move a 🌀 turbine or the 🐦 flyway in the `defmap hills` drawing, and watch tomorrow's plan change;
    - change the risk limit/weight in `risk-cost`, or the momentum `0.9`;
-   - change `demand-probabilities` (keep their sum at one), or the future weight in `expected-return`;
+   - change `supply-calendar`, `demand-probabilities` (keep their sum at one), or the future weight in `expected-return`;
    - remove `with-shield` from the third controller and watch reachability turn red.
 3. A new random wind farm and flyway, from the REPL: `(talk.notation/random-map {:seed 7})`, then paste it.
 
@@ -95,7 +96,7 @@ The deck has 32 slides; reveals are steps within a slide, not additional topics.
 | 4: OR | 2 | Optimization, decision-making, validation. Keep the examples a surprise. |
 | 5–8: HOFs | 5 | Return an update; map vs iterate; successive guesses; exact fixed point and tolerance. |
 | 9–14: Optimization | 8 | Costs, one numerical update, a bird penalty, two schedules improving side by side, then the resulting day. |
-| 15–19: Decision-making | 6 | Hydrogen delivery and customer trucks; one-week vs repeated profit; improving value estimates and orders. |
+| 15–19: Decision-making | 6 | Hydrogen procurement and customers; changing supplier prices/limits, bursty demand; improving value estimates and orders. |
 | 20–22: Validation | 4 | Search for confident detection + RUN; expand the reachable set; shield the decision. Then the shared iterate. |
 | 23–25: Composition | 4 | Change the rate; wrap the step with momentum; add logging without rewriting traversal. |
 | 26–30: Rainbow | 6 | A prover in Clojure; literal proof of composition; Bellman bound, proof outline and recorded check. |
@@ -117,7 +118,7 @@ captures definitions for display, so definition panels show the implementation a
 | Turbine costs | `electricity-lost`, `bird-risk`, `as-plan`, `energy-cost`, `with-risk-penalty`, `risk-cost` |
 | Optimization | `gradient`, `descent-step`, `clamped`, `solver-step` |
 | Composition | `with-momentum`, `with-observer`, `record-cost!` |
-| Hydrogen | `remaining-stock`, `weekly-profit`, `expected-return`, `bellman`, `order-up-to`, `evaluate-policy` |
+| Hydrogen | `supply-calendar`, `orders`, `next-state`, `weekly-profit`, `expected-return`, `bellman`, `evaluate-policy` |
 | Validation | `tick-controller`, `react-to-detections`, `with-shield`, `reach-step`, `reachable` |
 | Visuals | `schedule`, `scene`, `coordinate-plot`, `convergence-chart`, `hydrogen-scene`, `controller-branches` |
 
@@ -142,7 +143,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=hof-arc-20261020#s11).
+Start at [Optimization is iterate (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=model-clarity-20261020#s11).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |
@@ -155,17 +156,33 @@ Use **Right** for each reveal and **N** for the explanation.
 | `with-observer` | step, observer | step reporting each realized update |
 | `iterate` | step, initial state | lazy sequence of states |
 
-A state initially has 72 settings at 0.5: six turbines × twelve hours. `as-plan` gives them
+A state initially has 72 settings at 0.5: six turbines × twelve hours. This is an arbitrary
+interior starting guess for the search, not a wind forecast or the physical state of the farm.
+The forecast supplies available generation; a setting chooses the fraction retained. At noon,
+84 kWh available × 0.5 = 42 kWh retained. The demo uses the same illustrative generation forecast
+for all six turbines; it does not calculate a wind field or turbine power curve. `as-plan` gives them
 `[turbine hour]` keys. The cost scores the whole day. Numerical differentiation holds 71 settings
 fixed and nudges the remaining one up and down. For turbine 1 at noon, cost changes from
 5214.00084 to 5213.99916 across a setting change of 0.00002. The slope is −84.
 Subtract rate × slope: `0.5 − 0.0001 × (−84) = 0.5084`. Every coordinate's slope uses the same
-old vector. One call returns 72 updated settings, then the clamp limits them to 0…1.
+old vector. One call returns 72 updated settings, then the clamp limits them to 0…1. Slide 11
+shows all six noon settings changing together. Other hours update in the same call.
+
+Slide 10 visualizes all turbine-hour exposure inputs. Risk at full operation is `exposure(t) ×
+birds(h)`: location relative to the flyway gives each turbine a different weight, while all share
+one hourly traffic pattern. These are exposure indices, not independent probability distributions.
+
+Slide 12 compares two real candidate plans. A retains half everywhere; B only changes T3 at noon
+to stopped. B sacrifices another 42 kWh but lowers exposure. A wins on electricity alone; B wins
+with the chosen penalty. The target 12 and weight 100 are modelling choices. Risk 14 adds 400
+score points; risk at or below 12 adds zero. The comparison teaches the tradeoff before the HOF
+that implements it. Neither candidate is claimed to be the final solution.
 
 Electricity-only descent eventually runs everything. `with-risk-penalty` returns a different
 cost: electricity lost + 100 × max(0, risk − 12)². Both runs use the same start, rate and stopping
 test. The schedules are shown side by side; an update revises the plan for the same day, rather
-than advancing the clock. The following 3D playback advances time through the resulting day.
+than advancing the clock. The following 3D playback advances time through the resulting day. Its current-hour rectangle
+and 3D clock use the same time argument, on both the full-operation and optimized-plan reveals.
 
 Stopping turbines sacrifices generation. Risk is an illustrative exposure index, not a count
 of deaths. The penalty is a soft tradeoff and can settle above twelve; it is not a hard constraint.
@@ -184,26 +201,62 @@ cached states does not repeat logging. A new realization of a new sequence runs 
 
 ## Reading the decision and validation examples
 
-Slides 15–19 concern a **hydrogen filling station** throughout. A tank holds four abstract units;
-each customer truck needs one. Choose an order before learning demand. Delivery comes first,
-then customers, then any leftovers carry into the following week. There is no evaporation or
-backlog. Demand is 0/1/2/3 with probabilities 0.1/0.3/0.4/0.2. Sell for 10, buy for 4, store for 1.
-The source of both `remaining-stock` and `weekly-profit` is on the station slide's last reveal.
+Slides 15–19 concern a **hydrogen filling station** throughout. The physical tank holds four
+units; one customer truck uses one unit. The station observes stock and the supplier window,
+orders before demand is known, receives the delivery, serves customers and carries leftovers.
 
-Mean demand is 1.7, but mean demand alone misses lost sales and leftover stock. Filling to two
-beats filling to three for one week starting from stock one; the comparison reverses over twenty
-weeks. The table evaluates all demands with their probabilities, not a selected simulation.
-A second table compares all five fixed target rules. This tiny problem can be solved by enumeration;
-Bellman supplies a reusable update for larger state/action spaces.
+| Supply week | Purchase price/unit | Maximum purchase | Following week |
+| --- | ---: | ---: | --- |
+| Regular | 2 | 3 units | Tight |
+| Tight | 6 | 1 unit | Regular |
 
-`expected-return` sums `probability × (weekly profit + 0.9 × V(leftovers))`. Bellman takes the
-best order's score at each stock level and returns the new value table. Starting with zero values,
-orders improve as the future estimates improve. **Iterations are planning updates, not weeks
-passing.** The resulting stationary policy fills to three (or orders nothing if already at four).
-The twenty-week policy table is a finite-horizon comparison, not an infinite-horizon certificate.
+The supplier limits vary; the tank capacity stays four. Customer arrivals form a **discrete
+mixture**: 0 trucks with probability .40, 1 with .15, 3 with .45. No Gaussian approximation is
+used. Draws are independent across weeks in this compact teaching model. Selling price is 10,
+holding cost is 1 per leftover unit, future discount .9. No evaporation, backlog, delivery fee
+or extra service-level penalty is included; turning a customer away loses that sale.
+
+State is `[supply-week stock]`: two phases × five stock levels = ten states. The repeating calendar
+becomes part of the state, allowing the same stationary Bellman update to handle varying purchase
+prices and supplier capacity. `orders` obeys both tank space and supplier availability. `next-state`
+advances the week and carries leftovers. `expected-return` averages current profit plus .9 times
+that next state's value. The generic `bellman` implementation remains unchanged.
+
+Slide 16 poses the non-obvious choice: in a regular week with one unit, order two to cover any
+current convoy, or three to carry an extra unit into tight supply? All possible next inventories
+are shown. Slide 17 scores those orders. With zero future values order two wins; after three value
+backups order three wins. **Iterations refine a plan; they are not weeks or actual purchases.**
+
+Slide 18 shows expected future profit, in money units, with a labelled bar for each `[week stock]`.
+Regular/tight bars are grouped by inventory. A worked table reads both stock-1 bars and the orders.
+After n backups, V is the n-week optimal value; the displayed greedy order looks one week beyond
+that table. The final policy is:
+
+| Starting stock | Order in regular week | Order in tight week |
+| ---: | ---: | ---: |
+| 0 | 3 | 1 |
+| 1 | 3 | 0 |
+| 2 | 2 | 0 |
+| 3 | 1 | 0 |
+| 4 | 0 | 0 |
+
+Slide 19 compares five feasible rules over twenty weeks, starting at `[:regular 1]`. Expected
+discounted profit is approximately 50.11 (fill to two), 70.36 (fill to three), 66.36 (fill to four),
+70.48 (optimize this week only) and 72.20 (Bellman's stationary policy). All target rules are clipped
+to available supply and tank space. Always filling to capacity is worse than adapting to the phase;
+filling to three is already fairly good. A second non-obvious action is buying one in an empty
+tight-week tank: immediate expected profit is −0.40, but the possible carried stock helps before
+the next capped cheap delivery. The myopic policy skips that purchase; Bellman takes it.
+These are weighted evaluations over all demand paths,
+not selected simulations. The stationary policy is evaluated over twenty weeks for a comparable
+score; it is not claimed to be the optimal finite-horizon terminal-week policy. This example is
+an illustrative procurement model, not a hydrogen price or customer forecast.
 
 Slides 20–21 validate controller commands: a confident detection must produce STOP in the same
-modeled minute. A timer-only controller delays; immediate reactions fix delay but an unseen
+modeled minute. Slide 20 first identifies the sensor input, controller and output command,
+and demonstrates a failure before showing code. Bird recognition is assumed input; the property
+concerns the controller response. This is a separate wind-farm controller, not a verification of
+the optimized day schedule. A timer-only controller delays; immediate reactions fix delay but an unseen
 context has no row in its learned table. The shield handles that missing case. Its actual source
 and the same event's outputs with/without shielding are shown.
 
@@ -265,16 +318,18 @@ image when available.
 
 ## Verification and remaining delivery work
 
-The 2026-10-20 revision passes **14 tests / 526 assertions**. The release builds without warnings.
-Chromium checked **258 frames** across 1600×900, 1920×1080 and 1024×768 with networking disabled:
+The 2026-10-20 revision passes **15 tests / 845 assertions**. The release builds without warnings.
+Chromium checked **267 frames** across 1600×900, 1920×1080 and 1024×768 with networking disabled:
 all slides, every short reveal and sampled long traces; no overflow, clipped code or render errors.
-Playback, navigation, theme, refresh recovery and synchronized presenter controls passed. The new
+Playback, navigation, theme, refresh recovery and synchronized presenter controls passed.
+The current-hour rectangle advances in sync with the 3D clock on both day-replay reveals. The new
 diagrams and source panels were also inspected in screenshots. The refreshed ngrok edition passed
-19 browser content checks, including the new arc, computed outcomes, source panels and Rainbow link.
+22 browser content checks, including the new arc, computed outcomes, source panels and Rainbow link.
 The existing tunnel configuration was left unchanged.
 
 The test suite independently enumerates two-week demand pairs to check policy evaluation,
-compares finite-horizon policies with optimal backups, checks the cost wrapper against the old
+checks every supply-phase transition and all policy purchase limits, compares finite-horizon
+policies with optimal backups, checks the cost wrapper against the old
 objective, and verifies lazy observer effects and unchanged returned states. Existing optimization,
 reachability, stopping, proof-source and source-width checks remain.
 

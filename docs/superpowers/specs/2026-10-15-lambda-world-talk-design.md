@@ -37,8 +37,12 @@ other than Clojure cannot express the same ideas.
 - The hydrogen example shows the tank, delivery tanker, served and unserved trucks. State the
   commodity, units, action, uncertainty, prices and inventory carryover. Show ordinary reward,
   expectation and Bellman functions. Value iterations improve a plan; they are not simulated weeks.
-- Compare filling to two versus three over one and twenty weeks. Evaluate all five fixed target
-  rules and show the recommended policy. Admit this small problem can be solved by enumeration.
+- Use two supplier windows: regular (price 2, limit 3), tight (price 6, limit 1), alternating.
+  Tank capacity stays four. Demand is a discrete quiet/convoy mixture (0/.40, 1/.15, 3/.45),
+  not a normal distribution. State includes supply phase and inventory. The same Bellman HOF
+  updates ten values. Show why one unit in stock calls for buying three in the regular week
+  and nothing in the tight week. Compare feasible fill-to-2/3/4 and myopic rules against the
+  learned policy; show the actual modest gain over fill-to-three without exaggeration.
 - Reachability has an explicit target: a reachable command state with confident detection and RUN.
   Show branching events and expansion counts, the shield source and its effect. The graph is one
   sample branch point, not the full state graph. Set equality ends the exhaustive finite search.
@@ -82,3 +86,24 @@ deck, notes and evidence without authentication. Public URL and file inventory l
 
 Book photo, aloud rehearsal and room/projector checks remain external inputs. Older prototype
 handoff assets are superseded and must not be described as matching this revision.
+
+## Model-clarity corrections — 2026-10-20
+
+The optimizer's 50% settings are an arbitrary starting guess. The supplied generation forecast
+represents availability from wind; settings retain a fraction of it. Do not imply we choose wind
+speed or that every physical turbine initially runs at half power. Show per-turbine/hour bird
+exposure: proximity to the flyway scales a common daily traffic pattern. One gradient update
+returns all 72 new settings using the same old vector.
+
+Before teaching the cost wrapper, compare two actual plans: retain half everywhere versus stop
+T3 at noon as well. The latter loses another 42 kWh but wins under the chosen bird penalty. Explain
+12 and 100 as modelling choices, not physical constants or a hard constraint.
+
+Restore the current-hour rectangle on the day replay and test its synchronization with the 3D
+clock on both reveals. Label Bellman bars as expected future profit in money units, show regular
+and tight supply windows separately, and read stock one with explicit profit and order values.
+
+Introduce validation before controller code: a sensor reports a confident bird detection; the
+controller must issue STOP in the same modeled minute. Show the timer-only failure, then ask
+whether any modeled event sequence breaks that rule. Bird detection is input, not the classifier
+being validated. This separate controller example does not verify the optimized day schedule.

@@ -95,12 +95,34 @@
       (is (= a (step start)))
       (is (= [0] (:x ((c/clamped step 0 1) {:x [0.2] :velocity [-1]})))))))
 
+(deftest whole-plan-update-and-tradeoff
+  (testing "one update uses the old plan for all turbine-hour coordinates"
+    (let [start c/first-guess
+          updated ((c/solver-step c/energy-cost) start)]
+      (is (= 72 (count (:x updated))))
+      (doseq [[i [_ hour]] (map-indexed vector c/slots)]
+        ;; Analytic derivative of forecast * (1 - setting) is -forecast.
+        (is (< (abs (- (get-in updated [:x i])
+                       (+ 0.5 (* 0.0001 (c/energy hour)))))
+               1e-8)))
+      (is (every? #(= 0.5 %) (:x start)) "input plan is unchanged")))
+  (testing "curtailing the exposed turbine reverses the ranking only with the penalty"
+    (let [[a b] c/penalty-candidates
+          changed (keep-indexed (fn [i x] (when (not= x ((:x b) i)) i)) (:x a))]
+      (is (= [[(c/turbines 2) 12]] (mapv c/slots changed)))
+      (is (= 42 (- (:lost b) (:lost a))))
+      (is (< (:risk b) (:risk a)))
+      (is (< (:lost a) (:lost b)))
+      (is (< (:score b) (:score a)))
+      (is (> (:risk b) 12) "one illustrative improvement is not the final solution"))))
+
 (deftest restock-walkthrough
   (let [zero-V (zipmap (:states c/restock) (repeat 0))
-        outcomes (c/demand-outcomes zero-V 1 2)]
-    (is (= [3 2 1 0] (mapv :left outcomes)))
-    (is (= [-11 0 11 22] (mapv :reward outcomes)))
-    (is (< (abs (- 7.7 (reduce + (map :weighted outcomes)))) 1e-10)))
+        outcomes (c/demand-outcomes zero-V [:regular 1] 2)]
+    (is (= [3 2 0] (mapv :left outcomes)))
+    (is (= [[:tight 3] [:tight 2] [:tight 0]] (mapv :next outcomes)))
+    (is (= [-7 4 26] (mapv :reward outcomes)))
+    (is (< (abs (- 9.5 (reduce + (map :weighted outcomes)))) 1e-10)))
   (testing "the displayed outcome decomposition matches q for every feasible action"
     (doseq [V [(first c/restock-run) (second c/restock-run) (peek c/restock-run)]
             stock (:states c/restock)
@@ -130,35 +152,47 @@
   (is (= 4 (count @c/observed-costs))))
 
 (deftest hydrogen-policy-comparison
-  (testing "the visible recommendation changes as future values improve"
-    (is (= 1 ((c/best-order c/restock (first c/restock-run)) 1)))
-    (is (= 2 ((c/best-order c/restock (nth c/restock-run 2)) 1))))
-  (testing "two-week policy evaluation matches direct enumeration of demand pairs"
-    (doseq [target (range 5) stock (range 5)
-            :let [policy (c/order-up-to target)
-                  order (policy stock)
+  (testing "future values change the order for the same regular-week inventory"
+    (is (= 2 ((c/best-order c/restock c/zero-values) [:regular 1])))
+    (is (= 3 ((c/best-order c/restock (nth c/restock-run 3)) [:regular 1]))))
+  (testing "two-week policy evaluation matches independent demand-pair enumeration"
+    (doseq [{:keys [policy]} c/policy-comparison
+            [week stock :as state] (:states c/restock)
+            :let [order (policy state)
+                  next-week (if (= week :regular) :tight :regular)
                   direct (reduce +
                            (for [[d1 p1] c/demand-probabilities
                                  [d2 p2] c/demand-probabilities
                                  :let [left (max 0 (- (+ stock order) d1))
-                                       next-order (policy left)
-                                       profit (fn [s o d]
+                                       next-order (policy [next-week left])
+                                       profit (fn [w s o d]
                                                 (- (* 10 (min d (+ s o)))
-                                                   (* 4 o)
+                                                   (* (if (= w :regular) 2 6) o)
                                                    (max 0 (- (+ s o) d))))]]
-                             (* p1 p2 (+ (profit stock order d1)
-                                         (* 0.9 (profit left next-order d2))))))
+                             (* p1 p2 (+ (profit week stock order d1)
+                                         (* 0.9 (profit next-week left next-order d2))))))
                   values (nth (iterate (c/evaluate-policy policy) c/zero-values) 2)]]
-      (is (< (abs (- direct (values stock))) 1e-9))))
-  (let [two (c/policy-comparison 2) three (c/policy-comparison 3)]
-    (is (> (:one-week two) (:one-week three)))
-    (is (< (:twenty-weeks two) (:twenty-weeks three)))
-    (is (= {0 3, 1 2, 2 1, 3 0, 4 0}
-           (c/best-order c/restock (peek c/restock-run)))))
-  (testing "optimal backups dominate every displayed fixed policy at the same horizon"
+      (is (< (abs (- direct (values state))) 1e-9))))
+  (testing "the learned policy depends on the supply phase"
+    (is (= [3 3 2 1 0] (mapv #(c/station-policy [:regular %]) (range 5))))
+    (is (= [1 0 0 0 0] (mapv #(c/station-policy [:tight %]) (range 5))))
+    (is (> (:twenty-weeks (peek c/policy-comparison))
+           (apply max (map :twenty-weeks (butlast c/policy-comparison))))))
+  (testing "future value justifies a purchase with negative immediate expected profit"
+    (let [V (peek c/restock-run) state [:tight 0]]
+      (is (< (abs (+ 0.4 (c/expected-return c/zero-values state 1))) 1e-9))
+      (is (= 0 (c/myopic-policy state)))
+      (is (= 1 (c/station-policy state)))
+      (is (> (c/expected-return V state 1) (c/expected-return V state 0)))))
+  (testing "all rules respect both purchase limits and tank capacity"
+    (doseq [{:keys [policy]} c/policy-comparison
+            [week stock :as state] (:states c/restock)]
+      (is (<= 0 (policy state) (if (= week :regular) 3 1)))
+      (is (<= (+ stock (policy state)) 4))))
+  (testing "optimal backups dominate fixed policies at the same finite horizon"
     (let [optimal (nth (iterate (c/bellman c/restock) c/zero-values) 20)]
       (doseq [{:keys [twenty-weeks]} c/policy-comparison]
-        (is (>= (+ (optimal 1) 1e-9) twenty-weeks))))))
+        (is (>= (+ (optimal c/station-start) 1e-9) twenty-weeks))))))
 
 (deftest shield-walkthrough
   (is (= :run (get-in c/shield-comparison [:reacting :action])))
@@ -176,13 +210,20 @@
 
 
 (deftest decide
-  (let [policy (c/best-order c/restock (peek c/restock-run))
-        {:keys [residual bound]} c/restock-certificate]
+  (let [{:keys [residual bound]} c/restock-certificate]
     (is (< residual c/epsilon))
-    (is (< bound 0.01))
-    (testing "order-up-to: stock + order is the same level wherever stock is below it"
-      (let [levels (set (for [[s o] policy :when (pos? o)] (+ s o)))]
-        (is (= 1 (count levels)))))))
+    (is (< bound 0.01)))
+  (is (= 10 (count (:states c/restock))))
+  (is (= 1 (reduce + (vals c/demand-probabilities))))
+  (testing "every possible transition stays in the ten-state model"
+    (doseq [state (:states c/restock)
+            order (c/orders state)
+            demand (keys c/demand-probabilities)]
+      (is (contains? c/zero-values (c/next-state state order demand)))))
+  (testing "the phase-augmented Bellman example still shrinks the uniform gap"
+    (let [B (c/bellman c/restock)
+          W (zipmap (:states c/restock) (repeat 10))]
+      (is (< (abs (- 9 (c/largest-change (B c/zero-values) (B W)))) 1e-9)))))
 
 (deftest verify
   (let [bad (fn [id] (count (filter c/unanswered? (peek (c/reach-runs id)))))]
