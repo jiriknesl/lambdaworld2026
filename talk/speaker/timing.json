@@ -1,0 +1,238 @@
+{
+  "spoken_words": 4103,
+  "pace_wpm": 125,
+  "holds_seconds": 260,
+  "questions_seconds": 120,
+  "slides": [
+    {
+      "slide": 1,
+      "words": 25,
+      "hold_seconds": 3,
+      "start_seconds": 0,
+      "end_seconds": 15
+    },
+    {
+      "slide": 2,
+      "words": 48,
+      "hold_seconds": 3,
+      "start_seconds": 15,
+      "end_seconds": 41
+    },
+    {
+      "slide": 3,
+      "words": 51,
+      "hold_seconds": 3,
+      "start_seconds": 41,
+      "end_seconds": 69
+    },
+    {
+      "slide": 4,
+      "words": 72,
+      "hold_seconds": 3,
+      "start_seconds": 69,
+      "end_seconds": 106
+    },
+    {
+      "slide": 5,
+      "words": 167,
+      "hold_seconds": 9,
+      "start_seconds": 106,
+      "end_seconds": 195
+    },
+    {
+      "slide": 6,
+      "words": 98,
+      "hold_seconds": 15,
+      "start_seconds": 195,
+      "end_seconds": 257
+    },
+    {
+      "slide": 7,
+      "words": 66,
+      "hold_seconds": 6,
+      "start_seconds": 257,
+      "end_seconds": 295
+    },
+    {
+      "slide": 8,
+      "words": 166,
+      "hold_seconds": 9,
+      "start_seconds": 295,
+      "end_seconds": 384
+    },
+    {
+      "slide": 9,
+      "words": 116,
+      "hold_seconds": 6,
+      "start_seconds": 384,
+      "end_seconds": 445
+    },
+    {
+      "slide": 10,
+      "words": 171,
+      "hold_seconds": 9,
+      "start_seconds": 445,
+      "end_seconds": 536
+    },
+    {
+      "slide": 11,
+      "words": 221,
+      "hold_seconds": 9,
+      "start_seconds": 536,
+      "end_seconds": 651
+    },
+    {
+      "slide": 12,
+      "words": 209,
+      "hold_seconds": 9,
+      "start_seconds": 651,
+      "end_seconds": 761
+    },
+    {
+      "slide": 13,
+      "words": 139,
+      "hold_seconds": 16,
+      "start_seconds": 761,
+      "end_seconds": 844
+    },
+    {
+      "slide": 14,
+      "words": 62,
+      "hold_seconds": 14,
+      "start_seconds": 844,
+      "end_seconds": 887
+    },
+    {
+      "slide": 15,
+      "words": 236,
+      "hold_seconds": 12,
+      "start_seconds": 887,
+      "end_seconds": 1013
+    },
+    {
+      "slide": 16,
+      "words": 96,
+      "hold_seconds": 6,
+      "start_seconds": 1013,
+      "end_seconds": 1065
+    },
+    {
+      "slide": 17,
+      "words": 235,
+      "hold_seconds": 12,
+      "start_seconds": 1065,
+      "end_seconds": 1189
+    },
+    {
+      "slide": 18,
+      "words": 174,
+      "hold_seconds": 14,
+      "start_seconds": 1189,
+      "end_seconds": 1287
+    },
+    {
+      "slide": 19,
+      "words": 139,
+      "hold_seconds": 6,
+      "start_seconds": 1287,
+      "end_seconds": 1360
+    },
+    {
+      "slide": 20,
+      "words": 239,
+      "hold_seconds": 12,
+      "start_seconds": 1360,
+      "end_seconds": 1486
+    },
+    {
+      "slide": 21,
+      "words": 269,
+      "hold_seconds": 27,
+      "start_seconds": 1486,
+      "end_seconds": 1643
+    },
+    {
+      "slide": 22,
+      "words": 89,
+      "hold_seconds": 3,
+      "start_seconds": 1643,
+      "end_seconds": 1688
+    },
+    {
+      "slide": 23,
+      "words": 89,
+      "hold_seconds": 6,
+      "start_seconds": 1688,
+      "end_seconds": 1737
+    },
+    {
+      "slide": 24,
+      "words": 100,
+      "hold_seconds": 6,
+      "start_seconds": 1737,
+      "end_seconds": 1791
+    },
+    {
+      "slide": 25,
+      "words": 115,
+      "hold_seconds": 6,
+      "start_seconds": 1791,
+      "end_seconds": 1852
+    },
+    {
+      "slide": 26,
+      "words": 74,
+      "hold_seconds": 3,
+      "start_seconds": 1852,
+      "end_seconds": 1891
+    },
+    {
+      "slide": 27,
+      "words": 154,
+      "hold_seconds": 6,
+      "start_seconds": 1891,
+      "end_seconds": 1971
+    },
+    {
+      "slide": 28,
+      "words": 110,
+      "hold_seconds": 6,
+      "start_seconds": 1971,
+      "end_seconds": 2029
+    },
+    {
+      "slide": 29,
+      "words": 166,
+      "hold_seconds": 12,
+      "start_seconds": 2029,
+      "end_seconds": 2121
+    },
+    {
+      "slide": 30,
+      "words": 113,
+      "hold_seconds": 3,
+      "start_seconds": 2121,
+      "end_seconds": 2178
+    },
+    {
+      "slide": 31,
+      "words": 76,
+      "hold_seconds": 3,
+      "start_seconds": 2178,
+      "end_seconds": 2218
+    },
+    {
+      "slide": 32,
+      "words": 18,
+      "hold_seconds": 3,
+      "start_seconds": 2218,
+      "end_seconds": 2229
+    }
+  ],
+  "estimates_seconds_including_questions": {
+    "110": 2618,
+    "125": 2349,
+    "140": 2138
+  },
+  "script_sha256": "79f76c9c6e98fdbd0bb5ebdadb793a942be035cc99bc45a554af153b28b9630b"
+}

@@ -1,0 +1,170 @@
+[
+  {
+    "pass": 1,
+    "focus": "Clojure entry cost",
+    "finding": "The first code panel assumes the audience can read Lisp calls and defn.",
+    "changes": "Move the syntax explanation to the first code panel; add a compact call/fn legend.",
+    "before_sha256": "11b9a34b2d1ae5e1c044050bbd5c5f294f98a60312115324c113520e93a98b54",
+    "after_sha256": "6bd648ec33583a5eea45d03faca2a08c54c6847fca0984391108c34bfb9a5177"
+  },
+  {
+    "pass": 2,
+    "focus": "Scope of OR and the book",
+    "finding": "The three topics and twelve HOFs could sound like an exhaustive taxonomy.",
+    "changes": "State the talk’s scope and distinguish the book’s chosen toolkit from a theorem about all OR.",
+    "before_sha256": "6bd648ec33583a5eea45d03faca2a08c54c6847fca0984391108c34bfb9a5177",
+    "after_sha256": "c2298ee830ecdb4714198f5105f15b416b2854adc3c363c0d9a915458a9ba5b5"
+  },
+  {
+    "pass": 3,
+    "focus": "HOF definition and Newton domain",
+    "finding": "The draft says improves a guess without stating the domain or identifying both HOF roles.",
+    "changes": "Name the constructor and map as HOFs; state the positive-input domain.",
+    "before_sha256": "c2298ee830ecdb4714198f5105f15b416b2854adc3c363c0d9a915458a9ba5b5",
+    "after_sha256": "aa1e0fbc1eb5b8710f885b0a1140568b34287e8c5c0d805b6a952e812011ca4a"
+  },
+  {
+    "pass": 4,
+    "focus": "Fixed point versus stopping",
+    "finding": "Full implementation arrives before its interface; close-enough? is named but not defined on stage.",
+    "changes": "Reveal implementation last, show the actual predicate, separate tolerance from accuracy and the work cap.",
+    "before_sha256": "aa1e0fbc1eb5b8710f885b0a1140568b34287e8c5c0d805b6a952e812011ca4a",
+    "after_sha256": "329fa9556f2573cf51913c511c54591fbd95b324cf7af83f81fe1788cfcce39b"
+  },
+  {
+    "pass": 5,
+    "focus": "State representation bridge",
+    "finding": "The talk silently switches between a vector, a state map and a map keyed by turbine-hour.",
+    "changes": "Show as-plan where the vector is introduced; explain callable maps and reduce at the first cost function.",
+    "before_sha256": "329fa9556f2573cf51913c511c54591fbd95b324cf7af83f81fe1788cfcce39b",
+    "after_sha256": "276c3e92951af3f66c620c42ae1573f2cd40a95b5050080da23837dc76b4f128"
+  },
+  {
+    "pass": 6,
+    "focus": "Numerical gradient and immutable update",
+    "finding": "The gradient vector and Clojure destructuring are unexplained; the arithmetic is only spoken.",
+    "changes": "Define the vector of partial slopes, explain x/assoc, and put the worked subtraction on the slide.",
+    "before_sha256": "276c3e92951af3f66c620c42ae1573f2cd40a95b5050080da23837dc76b4f128",
+    "after_sha256": "3631c7bd4c8495273ddc67202a49c98351b85fb679f1a6c24dc0f568c2345d67"
+  },
+  {
+    "pass": 7,
+    "focus": "Scalarization and score units",
+    "finding": "A raw sum of kWh and squared exposure can sound dimensionally meaningful without a chosen conversion.",
+    "changes": "Explain the weight’s role, the candidates still exceeding the target, and comp at its first prominent use.",
+    "before_sha256": "3631c7bd4c8495273ddc67202a49c98351b85fb679f1a6c24dc0f568c2345d67",
+    "after_sha256": "a825ad46736af8c5ba2b0e8e48da64ae5b1caf33daae55d6534b089b0ed7dcba"
+  },
+  {
+    "pass": 8,
+    "focus": "Animation meaning and honest stop labels",
+    "finding": "The slide would label a capped run as settled; moving drawings can imply a measured wildlife result.",
+    "changes": "Use the actual settled flag for the stop label; distinguish replay, search and illustrative wildlife motion.",
+    "before_sha256": "a825ad46736af8c5ba2b0e8e48da64ae5b1caf33daae55d6534b089b0ed7dcba",
+    "after_sha256": "2c8c39b6578cbcc116f37b7874a4a1199f8816ba4b7b97dd6876576b70718f7e"
+  },
+  {
+    "pass": 9,
+    "focus": "Hydrogen information load",
+    "finding": "The first reveal introduces stock, two prices, availability, probabilities, reward, holding and discount together.",
+    "changes": "Stage supplier, demand and economic details across the existing reveals; clarify independence and discount.",
+    "before_sha256": "2c8c39b6578cbcc116f37b7874a4a1199f8816ba4b7b97dd6876576b70718f7e",
+    "after_sha256": "c64ce1fe51811081c179784379e1fcfca44395cc511514f0bdb45c0d9875bd4d"
+  },
+  {
+    "pass": 10,
+    "focus": "Bellman horizon and policy semantics",
+    "finding": "Values after n backups and a greedy order scored with those values have different horizons.",
+    "changes": "Explain the n versus n+1 distinction on stage and in speech, and distinguish the numerical run from the exact claim.",
+    "before_sha256": "c64ce1fe51811081c179784379e1fcfca44395cc511514f0bdb45c0d9875bd4d",
+    "after_sha256": "571cab1440d352579ad9502e4f1bc782248bce56ac309745a20193634d72d342"
+  },
+  {
+    "pass": 11,
+    "focus": "Policy comparison claim",
+    "finding": "A 20-week evaluation can be mistaken for a proof of finite-horizon optimality, and profits are discounted.",
+    "changes": "Label discounted profit, explain weighted evaluation and the stationary-policy comparison boundary.",
+    "before_sha256": "571cab1440d352579ad9502e4f1bc782248bce56ac309745a20193634d72d342",
+    "after_sha256": "8c95b588fa743df6f6d725262e1971ece94f4bb101b74586afcfdfa8cb1e5172"
+  },
+  {
+    "pass": 12,
+    "focus": "Validation transition soundness",
+    "finding": "A failing regression showed the old minute-nine transition erased a pre-tick failure.",
+    "changes": "Separate the boundary detection state from the tick, rename successors to match its semantics, update longest-wait expectation and retain the regression.",
+    "before_sha256": "8c95b588fa743df6f6d725262e1971ece94f4bb101b74586afcfdfa8cb1e5172",
+    "after_sha256": "a8a19be633e0303c2db589a26184c667368be19c52da78c977d83bcaff3017c4"
+  },
+  {
+    "pass": 13,
+    "focus": "Reachability assumptions",
+    "finding": "All event sequences sounds unbounded or physical; random-draw notation is unexplained.",
+    "changes": "State finite encoded events, representative draw bands, initial-state coverage and closure; keep physical claims out.",
+    "before_sha256": "a8a19be633e0303c2db589a26184c667368be19c52da78c977d83bcaff3017c4",
+    "after_sha256": "98673b314115b9bff0dc5683d31715fdf5997c5c3fe01661a6b380b250968c24"
+  },
+  {
+    "pass": 14,
+    "focus": "Reachability pacing and wrapper wiring",
+    "finding": "Twelve reveals repeat several count updates without adding a concept; final controller wiring is missing.",
+    "changes": "Reduce to nine reveals with mapped speech coverage, and show the actual shielded-controller construction.",
+    "before_sha256": "98673b314115b9bff0dc5683d31715fdf5997c5c3fe01661a6b380b250968c24",
+    "after_sha256": "bc87069983c2f6b9ee8b2952d6d3f8485b09163c096c0ca859eeaed4e7428dc1"
+  },
+  {
+    "pass": 15,
+    "focus": "Composition without language superiority",
+    "finding": "The pitch risks implying loops cannot be modular, and momentum boundary handling is hidden.",
+    "changes": "Credit equivalent imperative factoring; explain the first-class update benefit and this momentum variant’s boundary policy.",
+    "before_sha256": "bc87069983c2f6b9ee8b2952d6d3f8485b09163c096c0ca859eeaed4e7428dc1",
+    "after_sha256": "f6441f9f15fb72a39e3220dd28394dad4810bee656b3a212e3c2e341fb17afe3"
+  },
+  {
+    "pass": 16,
+    "focus": "Effects and dynamic typing claims",
+    "finding": "Logging could imply repeat-free effects across fresh sequences; proof could sound like a dynamic-language advantage.",
+    "changes": "Explain cached versus fresh sequences and present static typing and proof as complementary tools.",
+    "before_sha256": "f6441f9f15fb72a39e3220dd28394dad4810bee656b3a212e3c2e341fb17afe3",
+    "after_sha256": "7cf86003f067cd43f6693cbf0a50074acf295ac07f12ef8051cb6f17a5de67d1"
+  },
+  {
+    "pass": 17,
+    "focus": "Why the Bellman theorem matters",
+    "finding": "The receipt ends in caveats without explaining what the bound buys the programmer.",
+    "changes": "Connect contraction to the exact residual error bound and state the floating-point/certificate boundary next to it.",
+    "before_sha256": "7cf86003f067cd43f6693cbf0a50074acf295ac07f12ef8051cb6f17a5de67d1",
+    "after_sha256": "25c60d816f387fb39ca14dcca4f4d85ba2a120082321932d39099f3657caa294"
+  },
+  {
+    "pass": 18,
+    "focus": "Proof accessibility for FP readers",
+    "finding": "Q notation is introduced without defining it and collides with the proposition Q in the previous example.",
+    "changes": "Explain the max argument through a winning order; remove unexplained Q notation and define the worst-entry gap.",
+    "before_sha256": "25c60d816f387fb39ca14dcca4f4d85ba2a120082321932d39099f3657caa294",
+    "after_sha256": "578467d3f97801dd2ddf7af0a371d620f6e23cd456dff6e4140ccc440a9e703a"
+  },
+  {
+    "pass": 19,
+    "focus": "Forty-minute delivery budget",
+    "finding": "Draft plus explicit holds and Q&A exceeded forty minutes; several explanations repeated visible tables.",
+    "changes": "Condense twelve passages while keeping notation and mathematical qualifications; give long traces continuous narration.",
+    "before_sha256": "578467d3f97801dd2ddf7af0a371d620f6e23cd456dff6e4140ccc440a9e703a",
+    "after_sha256": "9b231d4624b30d48f84bcc918fc8a4238a4d2860665606e8f38ca627041dab2d"
+  },
+  {
+    "pass": 20,
+    "focus": "Complete speech continuity and voice",
+    "finding": "A final start-to-finish read found awkward spoken grammar, an unexplained zipmap, and a vague promise at the opening.",
+    "changes": "Polish those sentences, make the opening match the delivered arc, and keep the closing brief for questions.",
+    "before_sha256": "9b231d4624b30d48f84bcc918fc8a4238a4d2860665606e8f38ca627041dab2d",
+    "after_sha256": "5b3bd1310513c72806b61e02aa7f5409a99b76789dcb786b1cb54d004372077a"
+  },
+  {
+    "pass": 21,
+    "focus": "First-use notation audit after integration",
+    "finding": "The full speech exposed remaining implicit Clojure reader notation before the audience had heard its meaning.",
+    "changes": "Introduce keyword, comprehension and shorthand lambda notation at first use; explain %1/%2 at the stopping predicate.",
+    "before_sha256": "965bf2bf323b9bc3916fa1e269ec96deb0d1c4f96a67e76f2914c88d5ada1c7f",
+    "after_sha256": "b5df0707776173a076176691facdc3a3568360a73f1841c3c6d7bfdf9a4f35bf"
+  }
+]

@@ -1,11 +1,14 @@
 {
   "name": "lambda-world-2026-talk",
   "private": true,
-  "description": "Rebuilding Operations Research in Higher-Order Functions in Clojure — the stage deck",
+  "description": "Rebuilding Operations Research in Higher-Order Functions in Clojure \u2014 the stage deck",
   "scripts": {
     "watch": "shadow-cljs watch talk",
     "release": "shadow-cljs release talk",
-    "test": "shadow-cljs compile test && node out/test.js"
+    "test": "shadow-cljs compile test && node out/test.js",
+    "speaker:build": "python3 scripts/build-speaker.py",
+    "pretest": "python3 scripts/build-speaker.py --check",
+    "prerelease": "python3 scripts/build-speaker.py --check"
   },
   "devDependencies": {
     "shadow-cljs": "3.5.7"

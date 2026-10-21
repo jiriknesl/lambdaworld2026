@@ -8,6 +8,7 @@ const fs = require('fs');
 const args = process.argv.slice(2);
 const pw = require(args[0] || 'playwright');
 const url = args[1] && !args[1].startsWith('--') ? args[1] : 'file://' + path.resolve(__dirname, '../public/index.html');
+const allPhases = args.includes('--all-phases');
 const shotsAt = args.indexOf('--shots');
 const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
 
@@ -35,11 +36,15 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
         return label ? parseInt(label.textContent.split('/')[1]) : 1;
       });
       if (!Number.isInteger(steps) || steps < 1) throw Error(`Invalid step count on slide ${s}`);
-      const frames = steps <= 12 ? Array.from({length: steps}, (_, i) => i + 1)
+      const frames = allPhases || steps <= 12 ? Array.from({length: steps}, (_, i) => i + 1)
         : [...new Set([1, 2, Math.ceil(steps / 2), steps])];
       for (const frame of frames) {
-        await page.keyboard.press('Home');
-        for (let n = 1; n < frame; n++) await page.keyboard.press('ArrowRight');
+        await page.evaluate(({s, frame}) => { location.hash = '#s' + s + (frame > 1 ? 'a' + frame : ''); }, {s, frame});
+        await page.waitForFunction(({s, frame, steps}) => {
+          const count = document.querySelector('.count').textContent.trim();
+          const label = document.querySelector('.steps-text');
+          return count.startsWith(s + ' /') && (steps === 1 || label.textContent.trim().startsWith(frame + ' /'));
+        }, {s, frame, steps});
         const info = await page.evaluate(() => {
           const body = document.querySelector('.slide .body');
           const stage = document.getElementById('stage').getBoundingClientRect();
@@ -111,6 +116,17 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
     await page.waitForTimeout(300);
     const driven = await page.evaluate(() => document.querySelector('.title').textContent);
     if (driven === stageTitle) problems.push('keys in the notes window did not drive the stage');
+    // Speech must follow reveals, not merely the slide title.
+    await page.evaluate(() => { location.hash = '#s5'; });
+    await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('positive starting guess'));
+    await page.keyboard.press('ArrowRight');
+    await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('Map is higher-order'));
+    if ((await notes.locator('.n-text').innerText()).includes('positive starting guess')) problems.push('presenter speech stayed on previous reveal');
+    await page.evaluate(() => { location.hash = '#s18a2'; });
+    await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('Every update revises all ten'));
+    await page.keyboard.press('End');
+    await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('largest change is now below'));
+    if (await notes.locator('.n-reference[open]').count()) problems.push('technical reference should start collapsed');
     // The schedule highlight must advance with the 3D clock in both day replays.
     if (playbackSlide === null) throw Error('Cannot find day playback');
     await page.evaluate(s => { location.hash = '#s' + s; }, playbackSlide);
@@ -135,6 +151,6 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
   }
   await browser.close();
   if (external.length) problems.push('external requests: ' + [...new Set(external)].join(', '));
-  console.log(problems.length ? problems.join('\n') : `OK: ${checkedFrames} frames checked at three sizes; all slides and short reveals, sampled long traces; no overflow, hash restore works, day marker stays synchronized, no external requests`);
+  console.log(problems.length ? problems.join('\n') : `OK: ${checkedFrames} frames checked at three sizes; ${allPhases ? 'every slide and phase' : 'all slides and short reveals, sampled long traces'}; no overflow, hash restore works, day marker stays synchronized, no external requests`);
   process.exit(problems.length ? 1 : 0);
 })();

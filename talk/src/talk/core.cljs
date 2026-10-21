@@ -14,6 +14,7 @@
   Demo values are computed here. Definition panels use source captured by `src`;
   illustrative calls, proof explanations and recorded kernel evidence are labelled separately."
   (:require [clojure.string :as str]
+            [talk.speaker :as speaker]
             [talk.notation :as n :refer [src defmap defmodel defbellman pairs violations]]))
 
 ;; =============================================================================
@@ -242,7 +243,10 @@
        [n]
        (fn [guess] (/ (+ guess (/ n guess)) 2))))
 
-(def sqrt-run (fixed-point (newton-sqrt 2) #(< (abs (- %1 %2)) 1e-12) 1.0))
+(src (defn close-enough? [a b]
+       (< (abs (- a b)) 1e-12)))
+
+(def sqrt-run (fixed-point (newton-sqrt 2) close-enough? 1.0))
 
 ;; =============================================================================
 ;; 3. Optimise: tomorrow's stop plan for a wind farm
@@ -846,22 +850,21 @@
   (for [u (vals draws) ctx [:seen :unseen]]
     (-> (controller s {:type :tick :u u :ctx ctx}) (assoc :minute 0 :waiting nil))))
 
-(src (defn one-minute
-       "Controller → (State → next states): any detection
-        may arrive, then a minute passes."
+(src (defn controller-successors
+       "Controller → (State → next states).
+        Record detection before the next timer tick."
        [controller]
        (fn [{:keys [minute waiting] :as s}]
-         (set (for [event [nil
-                           {:type :detect :level 1}
-                           {:type :detect :level 2}]
-                    :let [s (if event (controller s event) s)
-                          s (assoc s :waiting
-                                   (when (unanswered? s)
-                                     (inc (or waiting 0))))]
-                    next (if (< minute 9)
-                           [(assoc s :minute (inc minute))]
-                           (ticks controller s))]
-                next)))))
+         (if (= minute 10)
+           (set (ticks controller s))
+           (set
+             (for [event [nil
+                          {:type :detect :level 1}
+                          {:type :detect :level 2}]
+                   :let [s (if event (controller s event) s)]]
+               (assoc s :minute (inc minute)
+                        :waiting (when (unanswered? s)
+                                   (inc (or waiting 0))))))))))
 
 (src (defn reach-step [successors]
        (fn [states]
@@ -876,12 +879,12 @@
 
 (def reach-runs
   (into {} (for [{:keys [id controller]} controllers]
-             [id (reachable (one-minute controller) (initial-states controller))])))
+             [id (reachable (controller-successors controller) (initial-states controller))])))
 
 (defn longest-wait-path
   "Breadth-first search with parents: the reachable path to the longest unanswered wait."
   [controller]
-  (let [succ (one-minute controller)
+  (let [succ (controller-successors controller)
         init (initial-states controller)]
     (loop [frontier init
            parent (zipmap init (repeat nil))]
@@ -1326,6 +1329,8 @@
                 (code "(map (newton-sqrt 2) [1 2 4])")]
                [:div
                 [:p.aside "newton-sqrt returns an update function."]
+                [:p.caption "(function argument …) · fn introduces a function"]
+                [:p.caption "Here: n > 0 and a positive starting guess."]
                 (when (>= step 1)
                   [:div.callout [:p "map applies it to each guess."]
                    [:p (pr-str (mapv (newton-sqrt 2) [1 2 4]))]])
@@ -1363,7 +1368,11 @@
    {:section "HOFs" :title "step + converged?" :steps (count sqrt-run)
     :render (fn [step]
               [:div.two
-               [:div (code 'fixed-point {:marks #{"iterate" "converged?"}}) (code 'newton-sqrt {:size :small})]
+               [:div
+                (if (= step (dec (count sqrt-run)))
+                  (code 'fixed-point {:size :small :marks #{"iterate" "converged?"}})
+                  (code "(fixed-point step converged? start)\n\n(iterate step start)" {:marks #{"iterate"}}))
+                (code 'close-enough? {:size :small})]
                [:div
                 [:div.caption "(fixed-point (newton-sqrt 2) close-enough? 1.0)"]
                 [:table.trace (for [[i x] (map-indexed vector sqrt-run) :when (<= i step)]
@@ -1384,6 +1393,7 @@
                 (when (pos? frame)
                   [:div
                    (code "{:x [0.5 0.5 0.5 …]}" {:size :small})
+                   (code 'as-plan {:size :small})
                    [:p.aside "50% everywhere is an arbitrary starting plan for the search."]
                    [:p.caption "6 turbines × 12 hours = 72 settings to improve."]])
                 [:p.caption "Demo: one generation forecast shared by all six turbines."]]
@@ -1443,6 +1453,7 @@
                         (for [t turbines :let [i (.indexOf slots [t 12])]]
                           [:tr [:td (label-of t)] [:td "0.5"]
                            [:td (fmt (get-in updated [:x i]) 4)]])]
+                       [:p.caption "0.5 − 0.0001 × (−84) = 0.5084"]
                        [:p.caption "The other 11 hours are updated too."]
                        [:p.caption "This first run scores electricity only. Equal forecasts give equal slopes."]]
                     [:div
@@ -1505,7 +1516,10 @@
                   (code call {:size :small :marks #{"iterate"}})
                   (schedule plan {:w 700})
                   (plan-metrics plan)
-                  [:p.caption (str "Update " i (when (and (done? k) (= i (dec (count (run-of k))))) " · stopped: settings barely move"))]])])
+                  [:p.caption (str "Update " i (when (and (done? k) (= i (dec (count (run-of k)))))
+                                                    (if (:settled (run-summary k))
+                                                      " · settings barely move"
+                                                      " · work cap reached")))]])])
     :notes "Both panels begin with exactly the same half-power plan and use rate 0.0001, the same clamp and the same stopping test. Press Space. Left: electricity alone pushes everything to full power. Right: the extra bird penalty reduces operation near the flight path and during heavy bird traffic. Read both electricity and risk at the end. A row is a turbine, a column is an hour; darker means more operation. An optimization iteration is a revised plan for the same day, not an hour passing. Stop when maximum setting change is below 0.001, with a work cap. Numerical settling is not a proof of global optimality. The right-hand final risk may slightly exceed twelve because this is a soft penalty."}
 
    {:section "Optimise" :title "Play the resulting day" :steps 2 :runs [:plain]
@@ -1543,13 +1557,16 @@
                     [:tr [:td "regular"] [:td "2 / unit"] [:td "3 units"]]
                     [:tr [:td "tight"] [:td "6 / unit"] [:td "1 unit"]]]
                    [:p.caption "Regular → tight → regular … Known delivery cycle."]
+                   (when (pos? frame)
+                     [:div
                    [:p.aside "Customers come in bursts."]
                    [:table.levels
                     [:tr [:th "trucks"] [:th "probability"]]
                     (for [[d p] demand-probabilities]
                       [:tr [:td d] [:td (str (fmt (* 100 p)) "%")]])]
-                   [:p.caption "No arrivals, a single truck, or a convoy. No normal-distribution assumption."]])
-                [:p.caption "Sell for 10; holding cost 1 per leftover unit/week. Future discount 0.9."]]])
+                   [:p.caption "No arrivals, a single truck, or a convoy."]])])
+                (when (>= frame 2)
+                  [:p.caption "Sell for 10; holding cost 1 per leftover unit/week. Future discount 0.9."])]])
     :notes "The station buys hydrogen from a supplier and sells it to customer trucks. The tank always holds four units, while supplier capacity changes: regular weeks offer at most three units at price two, tight weeks at most one at price six. Weeks alternate predictably; this is a two-period model, not a general market price forecast. Customer demand is a discrete mixture: no arrivals with probability .4, one truck with .15, a three-truck convoy with .45. There is no demand of two in this teaching distribution. The two peaks represent quiet weeks and convoy arrivals, and the same distribution applies in both supply weeks. Mean demand is 1.5 but does not capture the convoy risk. Each week, observe phase and stock, choose a feasible order, receive it, serve uncertain customers and carry leftovers. No evaporation, backlog or fixed delivery fee is included. Walk through one regular-week outcome: stock one, order one, demand three, profit 20 minus 2 = 18. Last reveal shows the actual reward and state transition: leftover inventory plus the next supply phase. The optimization goal is expected discounted profit over repeated weeks, not simply serving every truck."}
 
    {:section "Decide" :title "Buy for this week—or the next?" :steps 2
@@ -1590,7 +1607,7 @@
                     [:div (code 'expected-return {:size :small :marks #{"V" "reduce"}})
                      (code 'demand-probabilities {:size :small})])
                   (code "(iterate (bellman restock) zero-values)" {:size :small :marks #{"iterate"}})
-                  [:p.caption "V([week stock]) estimates future profit from that state."]]
+                  [:p.caption "V after n updates covers n weeks; scoring an order looks one week further."]]
                  [:div
                   [:p.aside (str "Regular week · stock 1 · values after " n " updates")]
                   [:table.levels [:tr [:th "order"] [:th "expected return"]]
@@ -1638,7 +1655,7 @@
                 [:p.caption "Regular: price 2, buy ≤ 3. Tight: price 6, buy ≤ 1."]
                 [:p.aside "At stock 1: buy 3 in a regular week, buy 0 in a tight week."]]
                [:div
-                [:table.levels [:tr [:th "rule"] [:th "20-week profit"]]
+                [:table.levels [:tr [:th "rule"] [:th "20-week discounted profit"]]
                  (for [{:keys [label twenty-weeks]} policy-comparison]
                    [:tr [:td label] [:td {:class (when (= label "Bellman") "ok")} (fmt twenty-weeks 2)]])]
                 [:p.caption "Start in a regular week with 1 unit. Every rule respects tank and supplier limits."]
@@ -1671,7 +1688,8 @@
                   2 [:div (code 'table-decision {:size :small})
                      (code 'react-to-detections {:size :small})]
                   [:div (code 'with-shield {:size :small :marks #{"decide"}})
-                   (code 'shielded-decision {:size :small})])]
+                   (code 'shielded-decision {:size :small})
+                   (code (:code (controllers 2)) {:size :small})])]
                [:div
                 [:div.callout "Rule: confident detection → STOP in the same minute."]
                 (case step
@@ -1700,11 +1718,11 @@
                    [:p.caption "Computed by both controllers from the same detection event."]])]])
     :notes "Return explicitly to the wind farm, with a separate controller example. The earlier optimizer chose a day schedule; this example checks a controller's response to incoming events, not the correctness of that schedule. Name the input (sensor detection), implementation (controller), output (RUN or STOP) and requirement (confident detection must yield STOP in the same modeled minute). Validation asks whether any encoded event sequence violates that requirement. We assume the sensor reports a detection; we do not validate its classifier, bird survival or turbine braking physics. The first reveal demonstrates a failure before showing code. The original controller records detection but changes action only at a ten-minute tick. react-to-detections is a HOF that returns a controller which also decides on stronger detections. Still insufficient: the learned table has no row for an unseen context, defaults to probability zero, and keeps running. with-shield wraps the decision function. For known contexts it delegates; for unseen contexts it stops on any detection. The final reveal shows the exact definition of shielded-decision and executes the same confident detection through both controllers. The following exhaustive search checks that this holds throughout the modeled state space, not just in one hand-picked example."}
 
-   {:section "Validate" :title "Can any event sequence reach RUN + confident bird?" :steps 12
+   {:section "Validate" :title "Can any event sequence reach RUN + confident bird?" :steps 9
     :render (fn [frame]
-              (let [ci (quot frame 4) sub (mod frame 4)
+              (let [ci (quot frame 3) sub (mod frame 3)
                     {:keys [id label controller]} (controllers ci)
-                    run (reach-runs id) k (frame-of sub 4 (count run))
+                    run (reach-runs id) k (frame-of sub 3 (count run))
                     states (nth run k) bad (filter unanswered? states)]
                 [:div.two.even
                  [:div (code 'reach-step {:size :small :marks #{"fn" "mapcat"}})
@@ -1714,13 +1732,13 @@
                   [:p.caption "Failure: a confident bird was detected, but the command is RUN."]]
                  [:div [:p.aside label]
                   (controller-branches controller)
-                  [:p.caption "One branch point: minute 1, an unseen situation."]
+                  [:p.caption "One branch point shown; counts cover all encoded initial states and events."]
                   (kv-table [["expansion round" k] ["states reached" (count states)]
                              ["states breaking the rule" (count bad)]])
-                  (when (= sub 3)
+                  (when (= sub 2)
                     [:p.aside {:class (if (seq bad) "bad" "ok")}
                      (if (seq bad) "Failure is reachable." "Set closed. No failure in this model.")])]]))
-    :notes "Reachable means obtainable by some modeled sequence of events. We search for a state where detection is confident and the controller still commands RUN. The diagram shows just one branching point in an unseen situation; the counts cover the whole explored finite model. reach-step takes a successor function and returns a set-expansion function. mapcat gets successors of all current states; into keeps old states and adds new ones. fixed-point repeatedly applies it, stopping on set equality. Advance four reveals per controller. Tick-only and immediate reactions both have failures; the shielded controller has none. This checks the encoded events and commands, not braking physics or the checker implementation."}
+    :notes "Reachable means obtainable by some modeled sequence of events. We search for a state where detection is confident and the controller still commands RUN. The diagram shows just one branching point in an unseen situation; the counts cover the whole explored finite model. reach-step takes a successor function and returns a set-expansion function. mapcat gets successors of all current states; into keeps old states and adds new ones. fixed-point repeatedly applies it, stopping on set equality. Advance three reveals per controller: initial set, sampled expansion and closure. Tick-only and immediate reactions both have failures; the shielded controller has none. This checks the encoded events and commands, not braking physics or the checker implementation."}
 
    {:section "Validate" :title "iterate underneath all three"
     :render (fn [_]
@@ -1831,7 +1849,7 @@
     :render (fn [step]
               (let [rows [["1 · map outcomes" "Identical rewards cancel." "Future-value gap ≤ ε."]
                           ["2 · weighted reduce" "Σ p × γ × ε = γ × ε" "Nonnegative, normalized probabilities."]
-                          ["3 · max over actions" "max Q(V) ≤ max Q(W) + γ × ε" "Each action is bounded; so is max."]
+                          ["3 · max over actions" "best score with V ≤ best score with W + γ × ε" "The winning actions may differ."]
                           ["4 · swap V and W" "|B(V)(s) − B(W)(s)| ≤ γ × ε" "Both directions, every state."]]]
                 [:div
                  [:div.proof-steps
@@ -1850,8 +1868,10 @@
                [:div.aside
                 [:p "Exact operator: bound proved."]
                 [:p "Floating-point browser code: correspondence unproved."]
-                [:p "Stopping ≠ correctness."]]])
-    :notes "One minute. The recorded check is the signed Bellman additive-closeness theorem with empty axiom closure. We did not check the JavaScript program against it. Point to that boundary rather than implying that a theorem name certifies a renderer. The epsilon-to-gamma-epsilon statement is what is checked; fixed-point existence, convergence and a run-level stopping certificate need their own premises and proofs."}
+                [:p "An exact residual can bound value error."]
+                [:p.caption "With γ = 0.9: residual ≤ 0.001 ⇒ value error ≤ 0.01."]
+                [:p.caption "Mathematical consequence; not a certificate for this browser run."]]])
+    :notes "One minute. The recorded check is the signed Bellman additive-closeness theorem with empty axiom closure. We did not check the JavaScript program against it. Point to that boundary rather than implying that a theorem name certifies a renderer. The epsilon-to-gamma-epsilon statement is what is checked; fixed-point existence and convergence use the usual finite discounted model assumptions. The residual-to-error bound is a mathematical consequence of contraction, not a recorded certificate for this floating-point run. Residual refers to a candidate table versus one more update, not the size of a chosen action."}
 
    ;; ---------------------------------------------------------------- The book (2 min)
    {:section "The book" :title "Applied Higher-Order Functions"
@@ -1912,11 +1932,18 @@
 
 (defn notes-view [{:keys [slide step]}]
   (let [{:keys [title notes]} (nth slides slide)
-        nxt (get slides (inc slide))]
+        nxt (get slides (inc slide))
+        speech (speaker/current slide (inc step) (steps-of (nth slides slide)))]
     [:div.notes-view
      [:div.n-head (str (inc slide) " / " (count slides) " · step " (inc step) " / " (steps-of (nth slides slide)))]
      [:h1 title]
-     [:div.n-text notes]
+     [:p.n-cue (:cue speech)]
+     [:div.n-text
+      (for [paragraph (str/split (or (:speech speech) notes) #"\n\n")]
+        [:p paragraph])]
+     [:details.n-reference
+      [:summary "Technical reference and optional detail"]
+      [:p notes]]
      [:div.n-next (if nxt (str "next: " (:title nxt)) "last slide")]
      [:div.n-clock {:id "clock"} "00:00"]
      [:div.n-keys "keys here drive the stage window · T start/pause clock"]]))

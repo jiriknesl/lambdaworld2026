@@ -107,3 +107,22 @@ Introduce validation before controller code: a sensor reports a confident bird d
 controller must issue STOP in the same modeled minute. Show the timer-only failure, then ask
 whether any modeled event sequence breaks that rule. Bird detection is input, not the classifier
 being validated. This separate controller example does not verify the optimized day schedule.
+
+
+## Speech and audience review — 2026-10-21
+
+Assume FP familiarity, no Clojure or OR prerequisites, and mathematically knowledgeable listeners.
+The complete spoken script is `talk/speaker/script.json`, exported as SCRIPT.md and printable HTML/PDF,
+and embedded in the presenter with per-phase cues. Twenty-one recorded editorial passes introduced
+notation at first use, staged the hydrogen model, distinguished Bellman n-week values from n+1-week
+action scores, explained the max proof without undefined Q notation, and connected the exact bound
+to a useful residual consequence without claiming a floating-point certificate.
+
+The validation review found and fixed a real model issue: the last detection in a timer slot was
+reset before its unsafe command state entered reachability. `controller-successors` now retains that
+state before a separate tick transition. A test demonstrated the old failure, and all final reachable
+sets are tested for closure. Slide 21 uses nine phases rather than twelve, removing repetitive updates.
+The full deck has 444 rendered phases covered by 80 speech cues, including continuous animation ranges.
+
+The 4,103 spoken words plus holds estimate 37:09 at 125 wpm, leaving two minutes for questions within
+40 minutes. This is not an aloud measurement; slower delivery needs the provided shortening guidance.

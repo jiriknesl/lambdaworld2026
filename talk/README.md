@@ -10,12 +10,12 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=model-clarity-20261020).
-Updated 2026-10-20: clarified forecasts versus settings, turbine exposure and whole-plan updates;
-added a worked penalty comparison; restored the synchronized day marker. Hydrogen now has a
-two-week supplier price/availability cycle and bursty demand, with explicitly labelled profit bars.
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=speech-20261021).
+Updated 2026-10-21: full spoken script for every slide and reveal, phase-aware presenter speech,
+progressive introductions for non-Clojure FP readers, and a corrected pre-tick detection transition.
+The script and slides went through 21 documented editorial passes.
 This URL is **public and unauthenticated**;
-the compiled deck includes all slides, displayed source, speaker notes and recorded proof evidence.
+the compiled deck includes all slides, displayed source, the full spoken script, technical reference notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
 
 The detached tmux session `lambdaworld-preview` serves
@@ -57,7 +57,7 @@ node scripts/smoke.cjs /path/to/node_modules/playwright
 | Shift + → / ← | 10 steps |
 | Space | play / pause the steps |
 | Home / End | first / last step |
-| N | notes window: speaker notes, next slide, clock (T starts/pauses); its keys drive the stage |
+| N | presenter window: speech for this reveal, stage cue, optional technical notes, next slide and clock (T starts/pauses); its keys drive the stage |
 | F | fullscreen |
 | D | dark / light |
 | ? | key help |
@@ -84,28 +84,50 @@ Optimise section. After a hot reload they start again.
 overlay and the last good build keeps running: undo, save. If the watch process or the editor fails,
 open the release build (`public/index.html`) — it needs nothing else.
 
-## Talk arc — revised 2026-10-20
+## Talk arc — revised 2026-10-21
 
 HOFs are the subject. The audience sees the three examples run **before** the composition payoff.
 The deck has 32 slides; reveals are steps within a slide, not additional topics.
 
-| Slides | Minutes | What the audience sees |
+| Slides | Estimated time | What the audience sees |
 | --- | ---: | --- |
-| 1–2: Jiri | 1 | Lifelong developer, economist by education; Barcelona Meetup Group 13 years ago. |
-| 3: Why Clojure | 1 | Simple and functional; immutable data; REPL; code as data. |
-| 4: OR | 2 | Optimization, decision-making, validation. Keep the examples a surprise. |
-| 5–8: HOFs | 5 | Return an update; map vs iterate; successive guesses; exact fixed point and tolerance. |
-| 9–14: Optimization | 8 | Costs, one numerical update, a bird penalty, two schedules improving side by side, then the resulting day. |
-| 15–19: Decision-making | 6 | Hydrogen procurement and customers; changing supplier prices/limits, bursty demand; improving value estimates and orders. |
-| 20–22: Validation | 4 | Search for confident detection + RUN; expand the reachable set; shield the decision. Then the shared iterate. |
-| 23–25: Composition | 4 | Change the rate; wrap the step with momentum; add logging without rewriting traversal. |
-| 26–30: Rainbow | 6 | A prover in Clojure; literal proof of composition; Bellman bound, proof outline and recorded check. |
-| 31–32: Book, thanks | 1 | About twelve HOFs and their composition; book photo placeholder; email. |
-| Questions | 2 | Discussion. |
+| 1–2: Jiri | 0:41 | Developer, economist, Barcelona meetup. |
+| 3: Clojure | 0:28 | Why I chose it; no language prerequisite. |
+| 4: OR | 0:37 | What optimization, decisions and validation ask. |
+| 5–8: HOFs | 4:38 | Function construction, independent map, chained iterate, fixed points and stopping. |
+| 9–14: Optimization | 8:23 | Forecast, representation, cost, numerical gradient, penalty and a replayed plan. |
+| 15–19: Decision-making | 7:53 | Supply cycle, uncertain demand, value tables and the resulting policy. |
+| 20–22: Validation | 5:28 | Controller requirement, failures, shield, closed reachable set; shared iterate. |
+| 23–25: Composition | 2:44 | Pace, momentum and observation; precise claims about each. |
+| 26–30: Rainbow | 5:26 | Composition proof syntax, Bellman bound, proof outline and exact residual consequence. |
+| 31–32: Book and thanks | 0:51 | Broader HOF toolkit and contact. |
 
-Total: 40 minutes. These are editorial targets, not an aloud timing measurement. The macro
-compiler, Adam race, falsification, trailer LP and separate counterexample detour are outside
-this spoken arc. Legacy supporting code remains tested in the same namespace.
+The current 4,103-word script estimates **37:09 including visual holds**, or **39:09 with two
+minutes for questions**, at 125 words/minute. This is a planning calculation, not an aloud rehearsal.
+At 110 words/minute it exceeds forty minutes; see `speaker/timing.json` and the short-time guidance
+in `speaker/ANSWERS.md`. The macro compiler, Adam race, falsification and trailer LP remain offstage.
+
+## Spoken script and revision record
+
+- [Full speech](speaker/SCRIPT.md): 32 slides, 80 cues. Numerical phase ranges have one passage to
+  speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
+- [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
+  `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
+- [Optional answers](speaker/ANSWERS.md): assumptions, numerical details, proof scope and parallelism.
+- [Printable HTML](../artifacts/lambda-world-current-speaker-script.html) and
+  [PDF](../artifacts/lambda-world-current-speaker-script.pdf): current local handoff artifacts,
+  generated with embedded fonts; these files are **not** served by the six-file ngrok preview.
+
+Edit `speaker/script.json`, then run `npm run speaker:build`. It generates the Markdown speech,
+revision log, timing data, printable HTML and `src/talk/script_data.cljs`. Test/release prechecks
+reject stale tracked exports. The presenter imports that same data, selects the cue for the current
+phase and keeps old technical notes collapsed. Changing a slide title or phase count requires
+updating the script; tests require exactly one nonempty speech/cue match for every rendered phase.
+To regenerate the PDF after building the script:
+
+```sh
+node scripts/print-speaker.cjs /path/to/node_modules/playwright
+```
 
 ## Where the running definitions live
 
@@ -119,7 +141,7 @@ captures definitions for display, so definition panels show the implementation a
 | Optimization | `gradient`, `descent-step`, `clamped`, `solver-step` |
 | Composition | `with-momentum`, `with-observer`, `record-cost!` |
 | Hydrogen | `supply-calendar`, `orders`, `next-state`, `weekly-profit`, `expected-return`, `bellman`, `evaluate-policy` |
-| Validation | `tick-controller`, `react-to-detections`, `with-shield`, `reach-step`, `reachable` |
+| Validation | `tick-controller`, `react-to-detections`, `with-shield`, `controller-successors`, `reach-step`, `reachable` |
 | Visuals | `schedule`, `scene`, `coordinate-plot`, `convergence-chart`, `hydrogen-scene`, `controller-branches` |
 
 There is no `minimize` or `subject-to` in the spoken optimization example. In the old custom
@@ -143,7 +165,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=model-clarity-20261020#s11).
+Start at [Optimization is iterate (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=speech-20261021#s11).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |
@@ -264,7 +286,9 @@ Reachability asks whether **any event sequence can reach confident detection + R
 unions in successors; equality detects when no new states can be added. The graph illustrates one
 branch point; the accompanying counts cover the full finite search. Tick-only and unshielded
 controllers fail. The shielded set closes without a failure. This covers encoded command states,
-not physical braking or bird survival. The separate counterexample slide has been removed.
+not physical braking or bird survival. The separate counterexample slide has been removed. Detection at the end of a slot is retained
+before a separate tick resets it; a regression test prevents a reset from hiding that failure.
+Slide 21 has three reveals per controller (nine total), with selected expansion rounds.
 
 Slide 22 names `iterate` underneath optimization, value iteration and reachability. Their states,
 update functions and stopping tests differ. Slides 23–25 then demonstrate why separating those
@@ -318,20 +342,20 @@ image when available.
 
 ## Verification and remaining delivery work
 
-The 2026-10-20 revision passes **15 tests / 845 assertions**. The release builds without warnings.
-Chromium checked **267 frames** across 1600×900, 1920×1080 and 1024×768 with networking disabled:
-all slides, every short reveal and sampled long traces; no overflow, clipped code or render errors.
-Playback, navigation, theme, refresh recovery and synchronized presenter controls passed.
-The current-hour rectangle advances in sync with the 3D clock on both day-replay reveals. The new
-diagrams and source panels were also inspected in screenshots. The refreshed ngrok edition passed
-22 browser content checks, including the new arc, computed outcomes, source panels and Rainbow link.
-The existing tunnel configuration was left unchanged.
+The 2026-10-21 revision passes **18 tests / 2,189 assertions**, including a regression that first
+failed on the old pre-tick transition, closure checks for every controller, and speech coverage for
+all **444 rendered phases**. The release builds without warnings.
+Chromium checked **1,332 frames**: every phase at 1600×900, 1920×1080 and 1024×768, with networking
+disabled. No overflow, clipped code, render errors or external requests. Playback, hash recovery,
+theme, synchronized presenter controls, per-reveal speech and the current-hour marker passed.
+Screenshots of changed code panels and proof slides were inspected. The final additional speech
+wording preserves those phase ranges and layouts. Public verification is recorded in
+`speaker/VERIFICATION.md`; the tunnel configuration is unchanged.
 
-The test suite independently enumerates two-week demand pairs to check policy evaluation,
-checks every supply-phase transition and all policy purchase limits, compares finite-horizon
-policies with optimal backups, checks the cost wrapper against the old
-objective, and verifies lazy observer effects and unchanged returned states. Existing optimization,
-reachability, stopping, proof-source and source-width checks remain.
+The model tests independently enumerate two-week demand pairs, check supply-phase transitions and
+purchase limits, compare finite-horizon policies against optimal backups, check gradient and penalty
+calculations, and verify observer effects. The full script distinguishes numerical convergence,
+model exploration, exact theorems and the unproved correspondence to browser arithmetic.
 
 - Supply the book photograph to replace its placeholder.
 - Jiri: rehearse aloud against the 40-minute target.

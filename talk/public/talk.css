@@ -313,3 +313,9 @@ a { color: var(--accent); text-underline-offset: 5px; }
 table.comparison { width: 100%; font-size: 20px; margin-top: 16px; }
 table.comparison th, table.comparison td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
 table.comparison th { color: var(--muted); font-weight: 400; }
+
+/* Speech follows the current reveal in the presenter window. */
+.n-cue { border-left: 4px solid var(--accent, #3948e8); padding-left: 14px; color: var(--muted, #505968); font-size: 19px; }
+.n-text p { margin: 0 0 20px; white-space: normal; }
+.n-reference { font-size: 17px; margin: 20px 0; }
+.n-reference summary { cursor: pointer; }

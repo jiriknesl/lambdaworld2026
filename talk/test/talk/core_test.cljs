@@ -2,7 +2,9 @@
   (:require [cljs.test :refer [deftest is testing]]
             [clojure.string :as str]
             [talk.notation :as n]
-            [talk.core :as c]))
+            [talk.core :as c]
+            [talk.speaker :as speaker]
+            [talk.script-data :as script]))
 
 (deftest notation
   (testing "defmap turns the drawing into positions"
@@ -206,7 +208,7 @@
                   after (id c/shield-comparison)]]
       (is (some #(= (select-keys after [:ctx :det :u :action])
                     (select-keys % [:ctx :det :u :action]))
-                ((c/one-minute controller) before))))))
+                ((c/controller-successors controller) before))))))
 
 
 (deftest decide
@@ -230,7 +232,7 @@
     (is (pos? (bad :tick-only)))
     (is (pos? (bad :reacting)))
     (is (zero? (bad :shielded))))
-  (is (= 9 (:waiting (last (c/counterexamples :tick-only)))))
+  (is (= 10 (:waiting (last (c/counterexamples :tick-only)))))
   (is (nil? (c/counterexamples :shielded)))
   (let [worst (peek (:tick-only c/falsify-runs))]
     (is (< (:t worst) 1))
@@ -256,3 +258,31 @@
   (is (= "1" (c/fmt 1.0001 3)))
   (is (= "−0.05" (c/fmt -0.05 3)))
   (is (= "127" (c/fmt 127.0 2))))
+
+(deftest final-minute-detection-is-visible
+  (let [controller (c/tick-controller (constantly :stop))
+        before {:ctx :seen :det 0 :u 0.3 :action :run
+                :minute 9 :waiting nil}
+        next-states ((c/controller-successors controller) before)]
+    (is (some c/unanswered? next-states)
+        "a tick must not erase a failure immediately before it")))
+
+(deftest speech-covers-every-rendered-phase
+  (doseq [k [:crowd :plain :momentum]] (c/finish! k))
+  (is (= (mapv :title c/slides) (mapv :title script/slides)))
+  (doseq [[i slide] (map-indexed vector c/slides)
+          :let [total (c/steps-of slide)]
+          phase (range 1 (inc total))]
+    (let [matches (speaker/matching-phases i phase total)]
+      (is (= 1 (count matches))
+          (str "Exactly one speech cue: slide " (inc i) " phase " phase))
+      (is (not (str/blank? (:speech (first matches)))))
+      (is (not (str/blank? (:cue (first matches))))))))
+
+(deftest reachable-results-are-closed
+  (doseq [{:keys [id controller]} c/controllers
+          :let [states (peek (c/reach-runs id))
+                successors (c/controller-successors controller)]]
+    (is (= states ((c/reach-step successors) states)))
+    (is (every? #(<= 0 (:minute %) 10) states))
+    (is (every? #(<= 0 (or (:waiting %) 0) 10) states))))

@@ -6,3 +6,6 @@
 artifacts/preview/
 .preview/
 artifacts/stage/
+
+# Generated printable speech; recreate with npm run speaker:build.
+artifacts/lambda-world-current-speaker-script.html
