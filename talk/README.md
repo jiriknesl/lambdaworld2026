@@ -10,10 +10,10 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bio-20261022).
-Updated 2026-10-22: biography now includes 34 years programming, 14 years using Clojure and
-interviews with Clojure open-source authors, linked to the Flexiana YouTube channel. “Why Clojure”
-now says “REPL-oriented programming.” The matching speech and PDF are regenerated.
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=flow-20261022).
+Updated 2026-10-22: step size and momentum now sit inside the optimization example (slides 12
+and 15). The Bellman walkthrough shows its value-table input/output and the separate best-order
+extraction (slide 19, reveals 4–5). The spoken script and PDF follow the new order.
 This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, the full spoken script, technical reference notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
@@ -84,32 +84,32 @@ Optimise section. After a hot reload they start again.
 overlay and the last good build keeps running: undo, save. If the watch process or the editor fails,
 open the release build (`public/index.html`) — it needs nothing else.
 
-## Talk arc — revised 2026-10-21
+## Talk arc — revised 2026-10-22
 
-HOFs are the subject. The audience sees the three examples run **before** the composition payoff.
+HOFs are the subject. Step size and momentum are integrated into optimization; observation follows the three examples.
 The deck has 32 slides; reveals are steps within a slide, not additional topics.
 
 | Slides | Estimated time | What the audience sees |
 | --- | ---: | --- |
-| 1–2: Jiri | 0:44 | Developer, economist, Barcelona meetup. |
+| 1–2: Jiri | 0:44 | Developer, economist, Barcelona meetup and interviews. |
 | 3: Clojure | 0:28 | Why I chose it; no language prerequisite. |
 | 4: OR | 0:37 | What optimization, decisions and validation ask. |
-| 5–8: HOFs | 4:38 | Function construction, independent map, chained iterate, fixed points and stopping. |
-| 9–14: Optimization | 8:24 | Forecast, representation, cost, numerical gradient, penalty and a replayed plan. |
-| 15–19: Decision-making | 7:52 | Supply cycle, uncertain demand, value tables and the resulting policy. |
-| 20–22: Validation | 5:29 | Controller requirement, failures, shield, closed reachable set; shared iterate. |
-| 23–25: Composition | 2:44 | Pace, momentum and observation; precise claims about each. |
-| 26–30: Rainbow | 5:26 | Composition proof syntax, Bellman bound, proof outline and exact residual consequence. |
-| 31–32: Book and thanks | 0:51 | Broader HOF toolkit and contact. |
+| 5–8: HOFs | 4:14 | Function construction, map, iterate and stopping. |
+| 9–16: Optimization | 10:17 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
+| 17–21: Decision-making | 8:31 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
+| 22–24: Validation | 5:35 | Controller rule, reachable states and shared iterate. |
+| 25: Observation | 1:06 | Observe a supplied step without changing its result. |
+| 26–30: Rainbow | 5:26 | Composition proof, Bellman bound and its exact residual consequence. |
+| 31–32: Book and thanks | 0:51 | Broader toolkit and contact. |
 
-The current 4,110-word script estimates **37:13 including visual holds**, or **39:13 with two
-minutes for questions**, at 125 words/minute. This is a planning calculation, not an aloud rehearsal.
-At 110 words/minute it exceeds forty minutes; see `speaker/timing.json` and the short-time guidance
-in `speaker/ANSWERS.md`. The macro compiler, Adam race, falsification and trailer LP remain offstage.
+The current 4,179-word script estimates **37:49 including visual holds**, or **39:49 with two
+minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
+speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
+Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 32 slides, 80 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 32 slides, 81 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -165,7 +165,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bio-20261022#s11).
+Start at [Optimization is iterate (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=flow-20261022#s11).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |
@@ -194,7 +194,7 @@ Slide 10 visualizes all turbine-hour exposure inputs. Risk at full operation is 
 birds(h)`: location relative to the flyway gives each turbine a different weight, while all share
 one hourly traffic pattern. These are exposure indices, not independent probability distributions.
 
-Slide 12 compares two real candidate plans. A retains half everywhere; B only changes T3 at noon
+Slide 13 compares two real candidate plans. A retains half everywhere; B only changes T3 at noon
 to stopped. B sacrifices another 42 kWh but lowers exposure. A wins on electricity alone; B wins
 with the chosen penalty. The target 12 and weight 100 are modelling choices. Risk 14 adds 400
 score points; risk at or below 12 adds zero. The comparison teaches the tradeoff before the HOF
@@ -203,7 +203,7 @@ that implements it. Neither candidate is claimed to be the final solution.
 Electricity-only descent eventually runs everything. `with-risk-penalty` returns a different
 cost: electricity lost + 100 × max(0, risk − 12)². Both runs use the same start, rate and stopping
 test. The schedules are shown side by side; an update revises the plan for the same day, rather
-than advancing the clock. The following 3D playback advances time through the resulting day. Its current-hour rectangle
+than advancing the clock. After the momentum comparison, the 3D playback advances time through the resulting day. Its current-hour rectangle
 and 3D clock use the same time argument, on both the full-operation and optimized-plan reveals.
 
 Stopping turbines sacrifices generation. Risk is an illustrative exposure index, not a count
@@ -211,7 +211,8 @@ of deaths. The penalty is a soft tradeoff and can settle above twelve; it is not
 Tests compare final objective values with an independent convex lower bound, not an assumption
 that all optimizers produce identical settings. Settling alone does not certify an optimum.
 
-Only after all three examples do we change the pace, add momentum and observe updates. Momentum
+Slide 12 changes the rate immediately after gradient descent is introduced. Slide 15 follows the
+plain risk-aware run with the question of whether momentum can reduce update count. Momentum
 calls the base step once, adds 90% of the old velocity to its proposed displacement, and returns
 new position and velocity. The outer clamp clips position, not velocity. The cost chart and update
 counts compare actual runs with the same start/rate/tolerance; fewer updates here do not promise
@@ -223,7 +224,7 @@ cached states does not repeat logging. A new realization of a new sequence runs 
 
 ## Reading the decision and validation examples
 
-Slides 15–19 concern a **hydrogen filling station** throughout. The physical tank holds four
+Slides 17–21 concern a **hydrogen filling station** throughout. The physical tank holds four
 units; one customer truck uses one unit. The station observes stock and the supplier window,
 orders before demand is known, receives the delivery, serves customers and carries leftovers.
 
@@ -244,12 +245,16 @@ prices and supplier capacity. `orders` obeys both tank space and supplier availa
 advances the week and carries leftovers. `expected-return` averages current profit plus .9 times
 that next state's value. The generic `bellman` implementation remains unchanged.
 
-Slide 16 poses the non-obvious choice: in a regular week with one unit, order two to cover any
+Slide 18 poses the non-obvious choice: in a regular week with one unit, order two to cover any
 current convoy, or three to carry an extra unit into tight supply? All possible next inventories
-are shown. Slide 17 scores those orders. With zero future values order two wins; after three value
-backups order three wins. **Iterations refine a plan; they are not weeks or actual purchases.**
+are shown. Slide 19 scores those orders. With zero future values order two wins; after three value
+backups order three wins. The fourth reveal exposes Bellman’s two levels: the model constructs an
+update function, which maps ten old profit estimates to ten new best scores. The fifth reveal shows
+actual `best-order` source: `max-key` retains the winning order, whereas `max` retains its score.
+Both use the same q function. `best-order` returns a state-to-order map without modifying V.
+**Iterations refine a plan; they are not weeks or actual purchases.**
 
-Slide 18 shows expected future profit, in money units, with a labelled bar for each `[week stock]`.
+Slide 20 shows expected future profit, in money units, with a labelled bar for each `[week stock]`.
 Regular/tight bars are grouped by inventory. A worked table reads both stock-1 bars and the orders.
 After n backups, V is the n-week optimal value; the displayed greedy order looks one week beyond
 that table. The final policy is:
@@ -262,7 +267,7 @@ that table. The final policy is:
 | 3 | 1 | 0 |
 | 4 | 0 | 0 |
 
-Slide 19 compares five feasible rules over twenty weeks, starting at `[:regular 1]`. Expected
+Slide 21 compares five feasible rules over twenty weeks, starting at `[:regular 1]`. Expected
 discounted profit is approximately 50.11 (fill to two), 70.36 (fill to three), 66.36 (fill to four),
 70.48 (optimize this week only) and 72.20 (Bellman's stationary policy). All target rules are clipped
 to available supply and tank space. Always filling to capacity is worse than adapting to the phase;
@@ -274,8 +279,8 @@ not selected simulations. The stationary policy is evaluated over twenty weeks f
 score; it is not claimed to be the optimal finite-horizon terminal-week policy. This example is
 an illustrative procurement model, not a hydrogen price or customer forecast.
 
-Slides 20–21 validate controller commands: a confident detection must produce STOP in the same
-modeled minute. Slide 20 first identifies the sensor input, controller and output command,
+Slides 22–23 validate controller commands: a confident detection must produce STOP in the same
+modeled minute. Slide 22 first identifies the sensor input, controller and output command,
 and demonstrates a failure before showing code. Bird recognition is assumed input; the property
 concerns the controller response. This is a separate wind-farm controller, not a verification of
 the optimized day schedule. A timer-only controller delays; immediate reactions fix delay but an unseen
@@ -288,11 +293,11 @@ branch point; the accompanying counts cover the full finite search. Tick-only an
 controllers fail. The shielded set closes without a failure. This covers encoded command states,
 not physical braking or bird survival. The separate counterexample slide has been removed. Detection at the end of a slot is retained
 before a separate tick resets it; a regression test prevents a reset from hiding that failure.
-Slide 21 has three reveals per controller (nine total), with selected expansion rounds.
+Slide 23 has three reveals per controller (nine total), with selected expansion rounds.
 
-Slide 22 names `iterate` underneath optimization, value iteration and reachability. Their states,
-update functions and stopping tests differ. Slides 23–25 then demonstrate why separating those
-parts lets us change behaviour without rewriting traversal.
+Slide 24 names `iterate` underneath optimization, value iteration and reachability. Their states,
+update functions and stopping tests differ. Slide 25 observes an update through the common interface;
+rate and momentum have already demonstrated composition within the optimization example.
 
 ## The proof examples and their limits
 
@@ -342,14 +347,13 @@ image when available.
 
 ## Verification and remaining delivery work
 
-The 2026-10-21 revision passes **18 tests / 2,189 assertions**, including a regression that first
+The flow-20261022 revision passes **18 tests / 2,199 assertions**, including a regression that first
 failed on the old pre-tick transition, closure checks for every controller, and speech coverage for
-all **444 rendered phases**. The release builds without warnings.
-Chromium checked **1,332 frames**: every phase at 1600×900, 1920×1080 and 1024×768, with networking
+all **445 rendered phases**. The release builds without warnings.
+Chromium checked **1,335 frames**: every phase at 1600×900, 1920×1080 and 1024×768, with networking
 disabled. No overflow, clipped code, render errors or external requests. Playback, hash recovery,
 theme, synchronized presenter controls, per-reveal speech and the current-hour marker passed.
-Screenshots of changed code panels and proof slides were inspected. The final additional speech
-wording preserves those phase ranges and layouts. Public verification is recorded in
+Screenshots of changed code panels and proof slides were inspected. The step-size, momentum and Bellman source panels were inspected in their new positions. Public verification is recorded in
 `speaker/VERIFICATION.md`; the tunnel configuration is unchanged.
 
 The model tests independently enumerate two-week demand pairs, check supply-phase transitions and

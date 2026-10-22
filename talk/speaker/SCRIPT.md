@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,110 spoken words. Planning pace: 125 words/minute, plus 04:20 of pauses and visual holds. Speech and holds: 37:13; with 02:00 for questions: 39:13. This is an estimate, not an aloud rehearsal.
+4,179 spoken words. Planning pace: 125 words/minute, plus 04:23 of pauses and visual holds. Speech and holds: 37:49; with 02:00 for questions: 39:49. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -52,13 +52,13 @@ I also include validation: checking whether a system respects its specification.
 
 ## 05 Functions in. Functions out.
 
-01:49–03:19 · 167 words · 9s visual holds
+01:49–03:08 · 144 words · 9s visual holds
 
 ### Phase 1
 
 [Point to the returned fn, then the captured n.]
 
-Let’s start with something small: improving a guess for a square root. In Clojure a call puts the function first, then its arguments. Defn names a function; square brackets list its parameters. This function takes the number whose root we want, and returns an update function. That returned function averages the guess with the number divided by the guess. We use a positive number and a positive starting guess here, so division by zero is avoided. The outer function chooses the problem; the inner function performs one update.
+Let’s improve a guess for a square root. In Clojure, a call puts the function first, then its arguments. Defn names a function; square brackets list parameters. This function takes n and returns an update that averages a guess with n divided by that guess. We use positive inputs, avoiding division by zero. The outer function chooses the problem; the returned function performs one update.
 
 ### Phase 2
 
@@ -74,7 +74,7 @@ But to solve the problem, I want the result of one update to become the input to
 
 ## 06 iterate: state → state → …
 
-03:19–04:21 · 98 words · 15s visual holds
+03:08–04:10 · 98 words · 15s visual holds
 
 ### Phase 1
 
@@ -108,7 +108,7 @@ Take asks for five states from this lazy sequence. Iterate itself has no idea wh
 
 ## 07 A fixed point stays the same
 
-04:21–04:58 · 66 words · 6s visual holds
+04:10–04:47 · 66 words · 6s visual holds
 
 ### Phase 1
 
@@ -124,7 +124,7 @@ Starting at two, the update returns two. Two is a fixed point of this particular
 
 ## 08 step + converged?
 
-04:58–06:27 · 166 words · 9s visual holds
+04:47–06:03 · 140 words · 9s visual holds
 
 ### Phase 1
 
@@ -142,11 +142,11 @@ For the square root of two, I use a tolerance. Watch the values settle. The maxi
 
 [End if needed. Pause on the stopping message.]
 
-Here the change falls below ten to the minus twelve. That is a bound on successive changes, not automatically a bound on the error in an arbitrary algorithm. Hitting the work cap would be a different reason to stop. The full helper is here for reference; the important interface is still these two supplied functions. In the examples that follow, both the state and the stopping test will change.
+The change is below ten to the minus twelve. Successive change does not automatically bound solution error; hitting the work cap is also different from convergence. Here is the full helper for reference. Its important interface remains the supplied step and stopping test.
 
 ## 09 Plan tomorrow’s turbine settings
 
-06:27–07:29 · 116 words · 6s visual holds
+06:03–07:05 · 116 words · 6s visual holds
 
 ### Phase 1
 
@@ -162,7 +162,7 @@ Six turbines over twelve hours gives seventy-two settings, stored under the keyw
 
 ## 10 What makes one plan better?
 
-07:29–09:00 · 171 words · 9s visual holds
+07:05–08:36 · 171 words · 9s visual holds
 
 ### Phase 1
 
@@ -184,7 +184,7 @@ Neither column alone tells us which compromise to choose. First I’ll show how 
 
 ## 11 Optimization is iterate
 
-09:00–10:55 · 221 words · 9s visual holds
+08:36–10:40 · 239 words · 9s visual holds
 
 ### Phase 1
 
@@ -204,11 +204,27 @@ Descent-step subtracts a small multiple of each slope. Half minus point zero zer
 
 [Right. Follow solver-step from the inside outward.]
 
-Clamped takes that update function and returns another function. It calls the update, then clips every proposed setting to zero through one. The solver is now a function from a plan state to a new plan state. Iterate feeds each new state back. All the problem-specific work is inside the step we supplied.
+Clamped takes that update function and returns another function. It calls the update, then clips every proposed setting to zero through one. The solver is now a function from a plan state to a new plan state. Iterate feeds each new state back. All the problem-specific work is inside the step we supplied. Before we change the cost, let’s look at the small multiplier that controls how far each update moves.
 
-## 12 Which plan should win?
+## 12 How far should one update move?
 
-10:55–12:44 · 209 words · 9s visual holds
+10:40–11:21 · 72 words · 6s visual holds
+
+### Phase 1
+
+[Return to the electricity-only slope at turbine 1, noon.]
+
+The rate we just supplied controls the movement. Keep turbine one at noon, with slope minus eighty-four. At this rate, half becomes point five zero eight four.
+
+### Phase 2
+
+[Right. Point to the changed rate and result.]
+
+Double the rate and this proposed movement doubles. A larger rate can overshoot on other objectives. The useful interface is the function argument: we change it without editing iterate. For this electricity-only cost, running everything is obviously best. Now let’s supply the tradeoff with birds.
+
+## 13 Which plan should win?
+
+11:21–13:10 · 209 words · 9s visual holds
 
 ### Phase 1
 
@@ -230,9 +246,9 @@ Now B wins: its reduction in exposure is worth more under this chosen score than
 
 Here is the wrapper. It receives the original cost, a risk function, and the parameters, then returns a new cost function. Comp in the definition composes functions right to left: first turn the vector into a plan, then measure its risk. Both old and new costs accept the same vector and return one number. Gradient can sample either one. We change the objective without changing the update algorithm or iterate.
 
-## 13 Same updates, different objectives
+## 14 Same updates, different objectives
 
-12:44–14:07 · 139 words · 16s visual holds
+13:10–14:38 · 150 words · 16s visual holds
 
 ### Phase 1
 
@@ -250,11 +266,27 @@ On the left, electricity alone pushes the settings upward. On the right, the bir
 
 [End. Read the displayed final generation and risk, without memorizing them.]
 
-Compare the final generation and exposure. The penalty buys a reduction in exposure by giving up some generation. Here both traces stop because the largest setting change is below point zero zero one. The cap is six hundred updates. That says the numerical search has settled under our tolerance; it is not a general proof of optimality.
+Compare the final generation and exposure. The penalty buys a reduction in exposure by giving up some generation. Here both traces stop because the largest setting change is below point zero zero one. The cap is six hundred updates. That says the numerical search has settled under our tolerance; it is not a general proof of optimality. Could a different update reach a settled plan in fewer steps?
 
-## 14 Play the resulting day
+## 15 Can momentum reduce the number of updates?
 
-14:07–14:51 · 62 words · 14s visual holds
+14:38–15:36 · 109 words · 6s visual holds
+
+### Phase 1
+
+[Point to the returned fn and the velocity in state.]
+
+We have just watched plain gradient descent on the bird-aware cost. Here is a different update for that same problem: momentum. It calls the base step and adds ninety percent of the previous movement. That velocity travels in the immutable state. Iterate still receives a state-to-state function.
+
+### Phase 2
+
+[Right. Follow the wrappers inside out; read the measured table.]
+
+The base step performs descent; momentum wraps it; clamped wraps the result. Clamping clips position but keeps velocity. The chart compares the same cost, start, rate and stopping test. Momentum uses fewer updates here; that is not a general guarantee or a wall-clock benchmark. We have changed the solver’s update without changing the model. Now let’s replay the plain solver’s resulting day.
+
+## 16 Play the resulting day
+
+15:36–16:20 · 62 words · 14s visual holds
 
 ### Phase 1
 
@@ -268,9 +300,9 @@ Now we play a day through a fixed schedule. The red rectangle marks the current 
 
 With the penalty, the chosen schedule curtails exposed turbines during busy hours. The clock is advancing; the plan is no longer changing. The optimizer produced the data being replayed. The moving birds illustrate that model, not measured field results.
 
-## 15 Buy hydrogen before the customers arrive
+## 17 Buy hydrogen before the customers arrive
 
-14:51–16:56 · 236 words · 12s visual holds
+16:20–18:25 · 236 words · 12s visual holds
 
 ### Phase 1
 
@@ -298,9 +330,9 @@ A convoy arrives. We sell to two trucks and turn the third away. This is one pos
 
 We sell each unit for ten, so this outcome earns twenty minus the purchase cost of two: eighteen. Unsold units would cost one each to hold for the week. The next state contains leftover stock and the next supply window. Our objective is expected profit over repeated weeks, multiplying each following week’s contribution by another factor of point nine. This is a modelling preference for earlier returns, not a ten-percent hydrogen leak.
 
-## 16 Buy for this week—or the next?
+## 18 Buy for this week—or the next?
 
-16:56–17:48 · 96 words · 6s visual holds
+18:25–19:17 · 96 words · 6s visual holds
 
 ### Phase 1
 
@@ -316,9 +348,9 @@ In a regular week with one unit already in stock, buying two covers the largest 
 
 That extra unit may avoid an expensive future purchase, or it may sit unsold and incur holding cost. We need a value for each possible next state. That is what the Bellman calculation will build.
 
-## 17 Future values change the order
+## 19 Future values change the order
 
-17:48–19:53 · 235 words · 12s visual holds
+19:17–21:58 · 303 words · 15s visual holds
 
 ### Phase 1
 
@@ -342,23 +374,29 @@ We skip update two on this slide. After three updates, V accounts for three week
 
 [Right. Point to fn, then max, then zipmap.]
 
-Bellman takes our model and returns an update function. For every state it scores feasible orders, takes the maximum, and uses zipmap to associate each state with its new value. There are ten states: two supply windows times five stock levels. Iterate applies this table-to-table function repeatedly.
+There are two levels here. Bellman accepts the model and returns an update function. That returned function accepts V, a table of ten profit estimates. For every state it scores feasible orders using V, takes the maximum, and builds a new table of best scores. Read the old and new profit estimate for our state below. The output contains money values, not orders.
 
-## 18 Hydrogen: iterate the value table
+### Phase 5
 
-19:53–21:30 · 174 words · 14s visual holds
+[Right. Compare max with max-key; point to order 3 in the scores table.]
+
+To choose an order, use best-order with the model and V. Max keeps the highest score. Max-key keeps the order whose score is highest. For this state it returns three. Applying that to every state produces the policy: a table of purchase quantities. We use the same scoring function for both jobs.
+
+## 20 Hydrogen: iterate the value table
+
+21:58–23:31 · 166 words · 14s visual holds
 
 ### Phase 1
 
 [Identify the axes and colours before starting the animation.]
 
-Each pair of bars is a starting stock level. Blue is a regular week; amber is a tight week. Height is expected future profit in money units. It is not the amount of hydrogen. All bars start at zero because that was our initial guess for future value.
+Now iterate updates the whole table of profit estimates. Each pair of bars is a starting stock level: blue for a regular week, amber for a tight week. Height is money, not hydrogen or an order. The separate best-order call produces the order column. Both use the same model.
 
 ### Phase 2–penultimate
 
 [Space. Follow the stock-1 row; allow the animation to finish. This paragraph covers every intermediate numerical phase; do not narrate each number.]
 
-Every update revises all ten values using the old table. The order recommendation beside stock one changes as those future values improve. We’re expanding how far ahead the calculation can account for consequences. The supplier cycle is already part of the state, so we keep using the same update function.
+Every update revises all ten values using the old table. Best-order then compares possible purchases using those values. Watch stock one: the recommendation changes as the estimates account for more future consequences. No purchases happen during this animation; it is planning.
 
 ### Phase last
 
@@ -366,15 +404,15 @@ Every update revises all ten values using the old table. The order recommendatio
 
 The largest change is now below our tolerance. In the stopping lambda, percent-one and percent-two stand for the two successive tables. With one unit in stock, the recommended action depends on the week: buy three when supply is cheap, and buy none in the tight week. For a fixed finite model and discount below one, exact value iteration has a convergence argument. Later I’ll show the bound behind it; here we are watching a floating-point calculation.
 
-## 19 The best order depends on the supply window
+## 21 The best order depends on the supply window
 
-21:30–22:43 · 139 words · 6s visual holds
+23:31–24:51 · 154 words · 6s visual holds
 
 ### Phase 1
 
 [Read stock 1 first; compare the strongest simple rule with Bellman.]
 
-This policy maps situations to orders. The comparison evaluates each rule from the same initial state over twenty discounted weeks, weighting all demand branches. Filling toward three is already good. Bellman does a little better; filling toward four does worse. This evaluates a stationary policy over twenty weeks, rather than optimizing a business that closes after week twenty.
+The policy maps supply window and stock to a purchase quantity. “This week only” maximizes immediate expected profit, with no value assigned to leftover stock. Bellman also accounts for future weeks. We evaluate every rule over the same twenty discounted weeks, weighting all demand branches. Filling toward three is already good; Bellman does a little better. This is a comparison of stationary policies, not an optimization for a business closing after week twenty.
 
 ### Phase 2
 
@@ -382,9 +420,9 @@ This policy maps situations to orders. The comparison evaluates each rule from t
 
 There is a less obvious recommendation here. With an empty tank in a tight week, buy one, even though that purchase has negative expected profit this week. The cost is paid now. If nobody arrives, the unit carries into next week, when cheap supply is capped. That future benefit outweighs the immediate expected loss in this model. Looking only at immediate expected profit misses that value. This comes from the actual model; it is not a general claim about hydrogen markets.
 
-## 20 Validate the turbine controller
+## 22 Validate the turbine controller
 
-22:43–24:50 · 239 words · 12s visual holds
+24:51–26:58 · 239 words · 12s visual holds
 
 ### Phase 1
 
@@ -410,9 +448,9 @@ We can wrap the controller so a stronger detection triggers an immediate decisio
 
 With-shield wraps the decision function. In known situations it delegates to that function. In an unknown situation, any detection produces STOP. The same event now gives STOP instead of RUN. The construction below shows the wiring: the shielded decision is supplied both to the timer controller and to the immediate-reaction wrapper. One example is encouraging. Next we search all the event sequences represented by this finite model.
 
-## 21 Can any event sequence reach RUN + confident bird?
+## 23 Can any event sequence reach RUN + confident bird?
 
-24:50–27:26 · 269 words · 27s visual holds
+26:58–29:34 · 269 words · 27s visual holds
 
 ### Phase 1
 
@@ -470,57 +508,25 @@ The search continues, so we are checking more than that one branch.
 
 The set is now closed under every encoded successor, without a failure. That establishes the rule for this finite model and its initial states. Set equality is the stopping test. Finiteness and the growing set guarantee eventual closure; infinite-state systems need not terminate. This says nothing about sensor accuracy or physical braking.
 
-## 22 iterate underneath all three
+## 24 iterate underneath all three
 
-27:26–28:12 · 89 words · 3s visual holds
+29:34–30:26 · 101 words · 3s visual holds
 
 ### Phase 1
 
 [Read across each row; do not repeat the whole story.]
 
-Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. Now let’s use the shared interface to change the update.
-
-## 23 Change the pace
-
-28:12–29:00 · 89 words · 6s visual holds
-
-### Phase 1
-
-[Return to the electricity-only slope at turbine 1, noon.]
-
-Back to our gradient update. The step size is an argument to descent-step. Here the familiar setting moves from one half to point five zero eight four.
-
-### Phase 2
-
-[Right. Point to the changed rate and result.]
-
-Double that argument and the proposed movement doubles. A carefully factored imperative program could expose the same parameter. The benefit here is that the update is already a value we can pass, replace, and wrap; no traversal code needs editing. This makes experiments easy, although a larger step can overshoot. It is control over the algorithm, not a guarantee of faster convergence.
-
-## 24 Give the update momentum
-
-29:00–29:54 · 100 words · 6s visual holds
-
-### Phase 1
-
-[Point to the returned fn and the velocity in state.]
-
-Momentum remembers the previous movement. This wrapper calls the original step, measures its proposed change, and adds ninety percent of the previous velocity. The new velocity is carried in the next immutable state. The update is still a function from state to state, so iterate does not need to change.
-
-### Phase 2
-
-[Right. Follow the wrappers inside out; read the measured table.]
-
-The base step performs descent; momentum wraps it; clamped wraps the result. Clamping clips position but keeps velocity, a particular boundary choice. These actual runs use the same cost, start, rate and stopping test. Momentum takes fewer updates here. That is not a general convergence guarantee or a wall-clock benchmark.
+Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. We already used that interface to change the optimizer’s pace and add momentum. We can also use it to observe a run.
 
 ## 25 Observe each update
 
-29:54–30:56 · 115 words · 6s visual holds
+30:26–31:32 · 125 words · 6s visual holds
 
 ### Phase 1
 
 [Point to the return value after the observer call.]
 
-Logging is another wrapper. Call the original step, give the old and new states to an observer, then return the new state unchanged. The numerical update is still the same function; the observer is where we deliberately perform an effect.
+The same step interface gives us a place to observe any of these iterations. Call the supplied step, give the old and new states to an observer, then return the new state unchanged. Here the observer records the turbine cost. It is the deliberate effect; the numerical step stays pure.
 
 ### Phase 2
 
@@ -530,7 +536,7 @@ This observer records costs in an atom, Clojure’s explicit mutable reference. 
 
 ## 26 Rainbow
 
-30:56–31:34 · 74 words · 3s visual holds
+31:32–32:10 · 74 words · 3s visual holds
 
 ### Phase 1
 
@@ -542,7 +548,7 @@ Rainbow is a theorem prover written in Clojure. I’ll show a small proof so you
 
 ## 27 A proof is a function
 
-31:34–32:54 · 154 words · 6s visual holds
+32:10–33:30 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -560,7 +566,7 @@ If I offer only f of p, I have produced Q, while the statement asks for R. The c
 
 ## 28 Bellman shrinks disagreement
 
-32:54–33:53 · 110 words · 6s visual holds
+33:30–34:29 · 110 words · 6s visual holds
 
 ### Phase 1
 
@@ -576,7 +582,7 @@ For illustration, start one table at zero everywhere and the other at ten. Apply
 
 ## 29 The proof follows the code
 
-33:53–35:24 · 166 words · 12s visual holds
+34:29–36:01 · 166 words · 12s visual holds
 
 ### Phase 1
 
@@ -604,7 +610,7 @@ Swap V and W to get the reverse inequality. Together they bound the absolute dif
 
 ## 30 What the kernel checked
 
-35:24–36:22 · 113 words · 3s visual holds
+36:01–36:58 · 113 words · 3s visual holds
 
 ### Phase 1
 
@@ -616,7 +622,7 @@ There is a useful mathematical consequence. For an exact candidate value table, 
 
 ## 31 Applied Higher-Order Functions
 
-36:22–37:01 · 76 words · 3s visual holds
+36:58–37:37 · 76 words · 3s visual holds
 
 ### Phase 1
 
@@ -626,7 +632,7 @@ Today I concentrated on iterate, but you’ve also seen map, reduce, function co
 
 ## 32 Thank you
 
-37:01–37:13 · 18 words · 3s visual holds
+37:37–37:49 · 18 words · 3s visual holds
 
 ### Phase 1
 

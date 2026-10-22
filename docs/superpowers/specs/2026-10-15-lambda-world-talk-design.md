@@ -1,6 +1,6 @@
 # Lambda World 2026: presentation design
 
-Revision 4, 2026-10-20. This replaces the earlier macro-first and Function Observatory outlines.
+Revision 5, 2026-10-22. This replaces the earlier macro-first and Function Observatory outlines.
 Talk: **Rebuilding Operations Research in Higher-Order Functions in Clojure**, Jiri Knesl, 40 minutes.
 
 ## Audience and purpose
@@ -12,19 +12,19 @@ states, and understand why separating the update from traversal helps them chang
 ## Agreed arc
 
 1. Who Jiri is: lifelong developer, economist by education, Barcelona Meetup Group 13 years ago.
-2. Why Clojure: simple and functional, immutable data, REPL, code as data.
+2. Why Clojure: simple and functional, immutable data, REPL-oriented programming, code as data.
 3. OR: optimization, decision-making, validation. Keep the examples as surprises.
 4. HOFs: functions as inputs/outputs; `map` versus `iterate`; exact fixed point, numerical tolerance.
-5. Optimization: turbine operation versus birds; actual numerical derivatives; compare successive plans.
+5. Optimization: turbine operation versus birds; build the update, choose its pace, compare costs and then momentum; replay the resulting day.
 6. Decision-making: hydrogen delivery and customer trucks; uncertain demand; improved value estimates and orders.
 7. Validation: search reachable states for confident detection + RUN; compare controllers and shield.
-8. Name `iterate` underneath all three, then demonstrate composition: pace, momentum, logging.
+8. Name `iterate` underneath all three, then show observation through the common step interface.
 9. Rainbow: a theorem prover written in Clojure; actual proof syntax; Bellman property and evidence.
 10. Book: more than `iterate`, about twelve HOFs and their composition; photo placeholder.
 11. Thank you: jiri@flexiana.com.
 
-The 32-slide timing worksheet is the table in `talk/README.md`. The three examples precede the
-composition payoff. Avoid teaching a custom macro language or implying that functional languages
+The 32-slide timing worksheet is the table in `talk/README.md`. Step size and momentum belong within optimization; the shared structure is named after all three
+examples. Avoid teaching a custom macro language or implying that functional languages
 other than Clojure cannot express the same ideas.
 
 ## Concrete explanations and visuals
@@ -126,3 +126,16 @@ The full deck has 444 rendered phases covered by 80 speech cues, including conti
 
 The 4,103 spoken words plus holds estimate 37:09 at 125 wpm, leaving two minutes for questions within
 40 minutes. This is not an aloud measurement; slower delivery needs the provided shortening guidance.
+
+
+## Flow and Bellman outputs — 2026-10-22
+
+The former slides 23–24 felt appended. Move rate to slide 12, directly after building gradient
+descent, and momentum to slide 15, directly after the plain risk-aware trace. Rewrite their spoken
+transitions; retain observation after the shared-iterate table. There are still 32 slides.
+
+The Bellman chapter explicitly distinguishes its two calls: model → update function, then
+value table → value table. The returned table stores profit estimates, not orders. Slide 19
+reveal 4 shows actual old/new values; reveal 5 shows the exact best-order source and how max-key
+retains an order. Slide 20 labels best-order as the producer of its order column. Hydrogen now
+occupies slides 17–21 and validation 22–24. The script has 81 cues for 445 rendered phases.

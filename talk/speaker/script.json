@@ -64,7 +64,7 @@
           "from": 1,
           "to": 1,
           "cue": "Point to the returned fn, then the captured n.",
-          "speech": "Let’s start with something small: improving a guess for a square root. In Clojure a call puts the function first, then its arguments. Defn names a function; square brackets list its parameters. This function takes the number whose root we want, and returns an update function. That returned function averages the guess with the number divided by the guess. We use a positive number and a positive starting guess here, so division by zero is avoided. The outer function chooses the problem; the inner function performs one update.",
+          "speech": "Let’s improve a guess for a square root. In Clojure, a call puts the function first, then its arguments. Defn names a function; square brackets list parameters. This function takes n and returns an update that averages a guess with n divided by that guess. We use positive inputs, avoiding division by zero. The outer function chooses the problem; the returned function performs one update.",
           "hold_seconds": 3
         },
         {
@@ -166,7 +166,7 @@
           "from": "last",
           "to": "last",
           "cue": "End if needed. Pause on the stopping message.",
-          "speech": "Here the change falls below ten to the minus twelve. That is a bound on successive changes, not automatically a bound on the error in an arbitrary algorithm. Hitting the work cap would be a different reason to stop. The full helper is here for reference; the important interface is still these two supplied functions. In the examples that follow, both the state and the stopping test will change.",
+          "speech": "The change is below ten to the minus twelve. Successive change does not automatically bound solution error; hitting the work cap is also different from convergence. Here is the full helper for reference. Its important interface remains the supplied step and stopping test.",
           "hold_seconds": 3
         }
       ]
@@ -240,13 +240,33 @@
           "from": 3,
           "to": 3,
           "cue": "Right. Follow solver-step from the inside outward.",
-          "speech": "Clamped takes that update function and returns another function. It calls the update, then clips every proposed setting to zero through one. The solver is now a function from a plan state to a new plan state. Iterate feeds each new state back. All the problem-specific work is inside the step we supplied.",
+          "speech": "Clamped takes that update function and returns another function. It calls the update, then clips every proposed setting to zero through one. The solver is now a function from a plan state to a new plan state. Iterate feeds each new state back. All the problem-specific work is inside the step we supplied. Before we change the cost, let’s look at the small multiplier that controls how far each update moves.",
           "hold_seconds": 3
         }
       ]
     },
     {
       "slide": 12,
+      "title": "How far should one update move?",
+      "phases": [
+        {
+          "from": 1,
+          "to": 1,
+          "cue": "Return to the electricity-only slope at turbine 1, noon.",
+          "speech": "The rate we just supplied controls the movement. Keep turbine one at noon, with slope minus eighty-four. At this rate, half becomes point five zero eight four.",
+          "hold_seconds": 3
+        },
+        {
+          "from": 2,
+          "to": 2,
+          "cue": "Right. Point to the changed rate and result.",
+          "speech": "Double the rate and this proposed movement doubles. A larger rate can overshoot on other objectives. The useful interface is the function argument: we change it without editing iterate. For this electricity-only cost, running everything is obviously best. Now let’s supply the tradeoff with birds.",
+          "hold_seconds": 3
+        }
+      ]
+    },
+    {
+      "slide": 13,
       "title": "Which plan should win?",
       "phases": [
         {
@@ -273,7 +293,7 @@
       ]
     },
     {
-      "slide": 13,
+      "slide": 14,
       "title": "Same updates, different objectives",
       "phases": [
         {
@@ -294,13 +314,33 @@
           "from": "last",
           "to": "last",
           "cue": "End. Read the displayed final generation and risk, without memorizing them.",
-          "speech": "Compare the final generation and exposure. The penalty buys a reduction in exposure by giving up some generation. Here both traces stop because the largest setting change is below point zero zero one. The cap is six hundred updates. That says the numerical search has settled under our tolerance; it is not a general proof of optimality.",
+          "speech": "Compare the final generation and exposure. The penalty buys a reduction in exposure by giving up some generation. Here both traces stop because the largest setting change is below point zero zero one. The cap is six hundred updates. That says the numerical search has settled under our tolerance; it is not a general proof of optimality. Could a different update reach a settled plan in fewer steps?",
           "hold_seconds": 5
         }
       ]
     },
     {
-      "slide": 14,
+      "slide": 15,
+      "title": "Can momentum reduce the number of updates?",
+      "phases": [
+        {
+          "from": 1,
+          "to": 1,
+          "cue": "Point to the returned fn and the velocity in state.",
+          "speech": "We have just watched plain gradient descent on the bird-aware cost. Here is a different update for that same problem: momentum. It calls the base step and adds ninety percent of the previous movement. That velocity travels in the immutable state. Iterate still receives a state-to-state function.",
+          "hold_seconds": 3
+        },
+        {
+          "from": 2,
+          "to": 2,
+          "cue": "Right. Follow the wrappers inside out; read the measured table.",
+          "speech": "The base step performs descent; momentum wraps it; clamped wraps the result. Clamping clips position but keeps velocity. The chart compares the same cost, start, rate and stopping test. Momentum uses fewer updates here; that is not a general guarantee or a wall-clock benchmark. We have changed the solver’s update without changing the model. Now let’s replay the plain solver’s resulting day.",
+          "hold_seconds": 3
+        }
+      ]
+    },
+    {
+      "slide": 16,
       "title": "Play the resulting day",
       "phases": [
         {
@@ -320,7 +360,7 @@
       ]
     },
     {
-      "slide": 15,
+      "slide": 17,
       "title": "Buy hydrogen before the customers arrive",
       "phases": [
         {
@@ -354,7 +394,7 @@
       ]
     },
     {
-      "slide": 16,
+      "slide": 18,
       "title": "Buy for this week—or the next?",
       "phases": [
         {
@@ -374,7 +414,7 @@
       ]
     },
     {
-      "slide": 17,
+      "slide": 19,
       "title": "Future values change the order",
       "phases": [
         {
@@ -402,27 +442,34 @@
           "from": 4,
           "to": 4,
           "cue": "Right. Point to fn, then max, then zipmap.",
-          "speech": "Bellman takes our model and returns an update function. For every state it scores feasible orders, takes the maximum, and uses zipmap to associate each state with its new value. There are ten states: two supply windows times five stock levels. Iterate applies this table-to-table function repeatedly.",
+          "speech": "There are two levels here. Bellman accepts the model and returns an update function. That returned function accepts V, a table of ten profit estimates. For every state it scores feasible orders using V, takes the maximum, and builds a new table of best scores. Read the old and new profit estimate for our state below. The output contains money values, not orders.",
+          "hold_seconds": 3
+        },
+        {
+          "from": 5,
+          "to": 5,
+          "cue": "Right. Compare max with max-key; point to order 3 in the scores table.",
+          "speech": "To choose an order, use best-order with the model and V. Max keeps the highest score. Max-key keeps the order whose score is highest. For this state it returns three. Applying that to every state produces the policy: a table of purchase quantities. We use the same scoring function for both jobs.",
           "hold_seconds": 3
         }
       ]
     },
     {
-      "slide": 18,
+      "slide": 20,
       "title": "Hydrogen: iterate the value table",
       "phases": [
         {
           "from": 1,
           "to": 1,
           "cue": "Identify the axes and colours before starting the animation.",
-          "speech": "Each pair of bars is a starting stock level. Blue is a regular week; amber is a tight week. Height is expected future profit in money units. It is not the amount of hydrogen. All bars start at zero because that was our initial guess for future value.",
+          "speech": "Now iterate updates the whole table of profit estimates. Each pair of bars is a starting stock level: blue for a regular week, amber for a tight week. Height is money, not hydrogen or an order. The separate best-order call produces the order column. Both use the same model.",
           "hold_seconds": 3
         },
         {
           "from": 2,
           "to": "penultimate",
           "cue": "Space. Follow the stock-1 row; allow the animation to finish. This paragraph covers every intermediate numerical phase; do not narrate each number.",
-          "speech": "Every update revises all ten values using the old table. The order recommendation beside stock one changes as those future values improve. We’re expanding how far ahead the calculation can account for consequences. The supplier cycle is already part of the state, so we keep using the same update function.",
+          "speech": "Every update revises all ten values using the old table. Best-order then compares possible purchases using those values. Watch stock one: the recommendation changes as the estimates account for more future consequences. No purchases happen during this animation; it is planning.",
           "hold_seconds": 8
         },
         {
@@ -435,14 +482,14 @@
       ]
     },
     {
-      "slide": 19,
+      "slide": 21,
       "title": "The best order depends on the supply window",
       "phases": [
         {
           "from": 1,
           "to": 1,
           "cue": "Read stock 1 first; compare the strongest simple rule with Bellman.",
-          "speech": "This policy maps situations to orders. The comparison evaluates each rule from the same initial state over twenty discounted weeks, weighting all demand branches. Filling toward three is already good. Bellman does a little better; filling toward four does worse. This evaluates a stationary policy over twenty weeks, rather than optimizing a business that closes after week twenty.",
+          "speech": "The policy maps supply window and stock to a purchase quantity. “This week only” maximizes immediate expected profit, with no value assigned to leftover stock. Bellman also accounts for future weeks. We evaluate every rule over the same twenty discounted weeks, weighting all demand branches. Filling toward three is already good; Bellman does a little better. This is a comparison of stationary policies, not an optimization for a business closing after week twenty.",
           "hold_seconds": 3
         },
         {
@@ -455,7 +502,7 @@
       ]
     },
     {
-      "slide": 20,
+      "slide": 22,
       "title": "Validate the turbine controller",
       "phases": [
         {
@@ -489,7 +536,7 @@
       ]
     },
     {
-      "slide": 21,
+      "slide": 23,
       "title": "Can any event sequence reach RUN + confident bird?",
       "phases": [
         {
@@ -558,54 +605,14 @@
       ]
     },
     {
-      "slide": 22,
+      "slide": 24,
       "title": "iterate underneath all three",
       "phases": [
         {
           "from": 1,
           "to": 1,
           "cue": "Read across each row; do not repeat the whole story.",
-          "speech": "Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. Now let’s use the shared interface to change the update.",
-          "hold_seconds": 3
-        }
-      ]
-    },
-    {
-      "slide": 23,
-      "title": "Change the pace",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Return to the electricity-only slope at turbine 1, noon.",
-          "speech": "Back to our gradient update. The step size is an argument to descent-step. Here the familiar setting moves from one half to point five zero eight four.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Right. Point to the changed rate and result.",
-          "speech": "Double that argument and the proposed movement doubles. A carefully factored imperative program could expose the same parameter. The benefit here is that the update is already a value we can pass, replace, and wrap; no traversal code needs editing. This makes experiments easy, although a larger step can overshoot. It is control over the algorithm, not a guarantee of faster convergence.",
-          "hold_seconds": 3
-        }
-      ]
-    },
-    {
-      "slide": 24,
-      "title": "Give the update momentum",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Point to the returned fn and the velocity in state.",
-          "speech": "Momentum remembers the previous movement. This wrapper calls the original step, measures its proposed change, and adds ninety percent of the previous velocity. The new velocity is carried in the next immutable state. The update is still a function from state to state, so iterate does not need to change.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Right. Follow the wrappers inside out; read the measured table.",
-          "speech": "The base step performs descent; momentum wraps it; clamped wraps the result. Clamping clips position but keeps velocity, a particular boundary choice. These actual runs use the same cost, start, rate and stopping test. Momentum takes fewer updates here. That is not a general convergence guarantee or a wall-clock benchmark.",
+          "speech": "Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. We already used that interface to change the optimizer’s pace and add momentum. We can also use it to observe a run.",
           "hold_seconds": 3
         }
       ]
@@ -618,7 +625,7 @@
           "from": 1,
           "to": 1,
           "cue": "Point to the return value after the observer call.",
-          "speech": "Logging is another wrapper. Call the original step, give the old and new states to an observer, then return the new state unchanged. The numerical update is still the same function; the observer is where we deliberately perform an effect.",
+          "speech": "The same step interface gives us a place to observe any of these iterations. Call the supplied step, give the old and new states to an observer, then return the new state unchanged. Here the observer records the turbine cost. It is the deliberate effect; the numerical step stays pure.",
           "hold_seconds": 3
         },
         {

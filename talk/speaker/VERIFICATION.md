@@ -78,3 +78,26 @@ timing data and PDF were regenerated. It now contains 4,110 spoken words: 37:13 
 or 39:13 including questions at the planning pace. Release compilation passed without warnings;
 focused offline and public browser checks passed for both slides at all three presentation sizes,
 including the interview link and matching presenter speech. No algorithm or phase-count changes.
+
+## Integrated optimizer flow and Bellman outputs 2026-10-22
+
+The flow-20261022 edition moves the rate example to slide 12, immediately after constructing the
+step, and momentum to slide 15, after the first risk-aware run. The script connects each change
+to a question raised by the preceding example; the day replay follows both. Observation remains
+a shared-interface example after the three OR demonstrations.
+
+Slide 19 now has five reveals. Its fourth shows actual value-table input/output for one state;
+the fifth displays the captured best-order implementation. Bellman retains the best score,
+whereas best-order retains the order that achieved that score. The bar slide explicitly names
+best-order as the source of its order column. Algorithm semantics and computed policy are unchanged.
+
+The updated suite passed 18 tests / 2,199 assertions. The release compiled without warnings.
+Offline browser checks covered all 445 phases at three sizes (1,335 frames), including presenter
+synchronization and moving hour markers. The moved slides and Bellman panels were visually inspected.
+The public edition passed 11 focused content checks and presenter speech checks for both the
+value update and policy extraction. One initial public check incorrectly expected a later reveal’s
+text on the first penalty reveal; correcting that expectation made the check pass.
+
+The regenerated PDF contains all 81 speech cues in the new order. The script has 4,179 words:
+37:49 including planned holds, or 39:49 with questions, at 125 wpm. The earlier 21-pass log describes
+the original editorial review; these later user-directed revisions are recorded here separately.

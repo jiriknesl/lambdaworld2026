@@ -718,7 +718,7 @@
 
 (src (defn bellman
        "Model → (Values → Values).
-        Every state takes its best order."
+        Each state gets its best expected return."
        [{:keys [states actions q]}]
        (fn [V]
          (zipmap states
@@ -735,8 +735,13 @@
                #(< (largest-change %1 %2) epsilon)
                zero-values))
 
-(defn best-order [{:keys [states actions q]} V]
-  (into (sorted-map) (for [s states] [s (apply max-key #(q V s %) (reverse (actions s)))])))
+(src (defn best-order
+       "Model + values → policy: best order per state."
+       [{:keys [states actions q]} V]
+       (into (sorted-map)
+             (for [s states]
+               [s (apply max-key #(q V s %)
+                         (reverse (actions s)))]))))
 
 (src (defn order-up-to [target]
        (fn [[_ stock :as state]]
@@ -1429,7 +1434,7 @@
                       (for [[label plan] [["all stopped" off] ["half retained" half] ["all retained" on]]]
                         [:tr [:td label] [:td (fmt (- full-energy (lost plan)) 0)] [:td (fmt (risk plan) 1)]])]
                      [:p.aside (if (zero? frame) "More generation also means more bird exposure." "We need a rule for choosing between these competing goals.")]])]]))
-    :notes "First compare whole plans: retaining more electricity increases bird exposure too. Next reveal the full turbine-by-hour exposure grid. It is calculated from the actual factors used in bird-risk: a turbine's proximity weight times that hour's bird-traffic forecast. T3 is near the flyway; T2 is farther away, so curtailing T3 protects more exposure for the same sacrificed electricity at noon. Every row has the same daily shape scaled by location; these are not independently estimated probability distributions or bird fatality rates. The final reveal returns to the competing metrics before choosing a scalar score in slide 12. electricity-lost and bird-risk both score the whole 72-setting plan."}
+    :notes "First compare whole plans: retaining more electricity increases bird exposure too. Next reveal the full turbine-by-hour exposure grid. It is calculated from the actual factors used in bird-risk: a turbine's proximity weight times that hour's bird-traffic forecast. T3 is near the flyway; T2 is farther away, so curtailing T3 protects more exposure for the same sacrificed electricity at noon. Every row has the same daily shape scaled by location; these are not independently estimated probability distributions or bird fatality rates. The final reveal returns to the competing metrics before choosing a scalar score in slide 13. electricity-lost and bird-risk both score the whole 72-setting plan."}
 
    {:section "Optimise" :title "Optimization is iterate" :steps 3
     :render (fn [frame]
@@ -1464,7 +1469,21 @@
                      (kv-table [["proposed setting" "after clamped"] ["−0.1" "0"] ["0.5084" "0.5084"] ["1.2" "1"]])
                      [:p.caption "A turbine cannot operate below 0% or above 100%."]
                      [:p.aside "iterate feeds the new state back into this step."]])]]))
-    :notes "This is the optimization algorithm: repeated updates to a vector of settings. gradient receives a numerical cost function and returns a numerical gradient function. It samples the cost just below and above each coordinate, holding the others fixed. No symbolic algebra or Hessian is used. descent-step receives that gradient and a learning rate, and returns a state-update function. One component moves from 0.5 to 0.5084 in the electricity-only example. All coordinates are updated from the same old vector. clamped is a function wrapper that limits each resulting setting to the physical range zero to one. It clips values; it is not a bird-safety constraint. The displayed iterate call repeatedly applies the resulting step. The next slide changes only the cost we supply."}
+    :notes "This is the optimization algorithm: repeated updates to a vector of settings. gradient receives a numerical cost function and returns a numerical gradient function. It samples the cost just below and above each coordinate, holding the others fixed. No symbolic algebra or Hessian is used. descent-step receives that gradient and a learning rate, and returns a state-update function. One component moves from 0.5 to 0.5084 in the electricity-only example. All coordinates are updated from the same old vector. clamped is a function wrapper that limits each resulting setting to the physical range zero to one. It clips values; it is not a bird-safety constraint. The displayed iterate call repeatedly applies the resulting step. Next inspect the rate argument, then change the cost we supply."}
+
+   {:section "Optimise" :title "How far should one update move?" :steps 2
+    :render (fn [frame]
+              (let [rate (if (zero? frame) 0.0001 0.0002)
+                    step (clamped (descent-step (gradient energy-cost) rate) 0 1)
+                    next (get-in (step first-guess) [:x 4])]
+                [:div.two.even
+                 [:div (code 'descent-step {:size :small})
+                  (code (str "(def step\n  (clamped\n    (descent-step (gradient energy-cost) " rate ")\n    0 1))\n\n(iterate step first-guess)") {:size :small})]
+                 [:div [:p.aside "Turbine 1 at noon: the same slope, −84."]
+                  (kv-table [["rate" rate] ["old setting" "0.5"] ["new setting" (fmt next 4)]])
+                  [:p.aside "Change the argument. Keep the iteration."]
+                  [:p.caption "A larger step can overshoot. Faster movement does not guarantee faster convergence."]]]))
+    :notes "Immediately after constructing gradient descent, explain the rate parameter using the same coordinate and slope. To change the pace, pass a different rate to the function that constructs the update. The same coordinate moves twice as far; the iteration and stopping test do not change. This is the electricity-only cost, chosen to keep the arithmetic familiar. Larger rates can overshoot; this is an interface demonstration, not a recommendation to double every learning rate."}
 
    {:section "Optimise" :title "Which plan should win?" :steps 3
     :render (fn [frame]
@@ -1524,6 +1543,26 @@
                                                       " · settings barely move"
                                                       " · work cap reached")))]])])
     :notes "Both panels begin with exactly the same half-power plan and use rate 0.0001, the same clamp and the same stopping test. Press Space. Left: electricity alone pushes everything to full power. Right: the extra bird penalty reduces operation near the flight path and during heavy bird traffic. Read both electricity and risk at the end. A row is a turbine, a column is an hour; darker means more operation. An optimization iteration is a revised plan for the same day, not an hour passing. Stop when maximum setting change is below 0.001, with a work cap. Numerical settling is not a proof of global optimality. The right-hand final risk may slightly exceed twelve because this is a soft penalty."}
+
+   {:section "Optimise" :title "Can momentum reduce the number of updates?" :steps 2 :runs [:plain :momentum]
+    :render (fn [frame]
+              [:div.two.even
+               [:div
+                (if (zero? frame)
+                  (code 'with-momentum {:size :small :marks #{"step" "fn"}})
+                  [:div (code 'risk-descent {:size :small})
+                   (code 'risk-step {:size :small})
+                   (code 'momentum-step {:size :small})])
+                (code "(iterate momentum-step first-guess)" {:size :small})
+                [:p.caption "Base move + 90% of the previous velocity. Then limit settings to 0…1."]]
+               [:div (convergence-chart)
+                [:table.levels [:tr [:th "update"] [:th "steps"] [:th "final cost"]]
+                 (for [[k label] [[:plain "plain"] [:momentum "momentum"]]
+                       :let [run (run-of k)]]
+                   [:tr [:td label] [:td (dec (count run))]
+                    [:td (fmt (risk-cost (:x (peek run))) 1)]])]
+                [:p.caption "Same cost, rate, start and stopping test. Momentum helps this run; it can hurt others."]]])
+    :notes "Continue the risk-aware run just shown: can another step reach a settled plan in fewer updates? with-momentum accepts a state-update function and returns another. It calls the base update once, measures that proposal's displacement, adds 90 percent of stored velocity, and returns new position and velocity. The outer clamped wrapper clips position to the allowed range; it does not reset velocity at a bound. The chart and table use actual runs. Fewer updates reach the same movement tolerance here; that does not prove a better optimum, general convergence, or a wall-clock speedup. The second reveal shows exactly what wraps what. The iteration remains unchanged."}
 
    {:section "Optimise" :title "Play the resulting day" :steps 2 :runs [:plain]
     :live (fn [frame t]
@@ -1596,17 +1635,19 @@
                    [:p.caption "We need the value of each possible next state, not just this week’s sales."]])]])
     :notes "This is why the new problem cannot be reduced to ordering the maximum customer demand. We could buy two and reach three units, enough for any current-week arrival. Or buy three and reach four, even though only three trucks can arrive this week. Carrying an extra unit is costly if demand is quiet but useful before the expensive, capacity-limited supply week. Show all demand branches and their resulting stocks. The next supply phase is part of the state, so identical stock can justify different orders. In Bellman, future values are indexed by [week stock]. Adding the phase makes the repeating time-varying problem a fixed state-transition model; the same update can be iterated."}
 
-   {:section "Decide" :title "Future values change the order" :steps 4
+   {:section "Decide" :title "Future values change the order" :steps 5
     :render (fn [frame]
-              (let [n (nth [0 1 3 3] frame)
+              (let [n (nth [0 1 3 3 3] frame)
                     V (nth restock-run n)
                     scores (mapv (fn [order] [order (expected-return V station-start order)]) (orders station-start))
                     best (apply max (map second scores))]
                 [:div.two.even
                  [:div
-                  (if (= frame 3)
-                    [:div (code 'bellman {:size :small :marks #{"fn" "map" "max"}})
-                     (code 'restock {:size :small})]
+                  (case frame
+                    3 [:div (code 'bellman {:size :small :marks #{"fn" "map" "max"}})
+                       (code 'restock {:size :small})]
+                    4 [:div (code 'best-order {:size :small :marks #{"max-key"}})
+                       (code "((best-order restock V) [:regular 1])" {:size :small})]
                     [:div (code 'expected-return {:size :small :marks #{"V" "reduce"}})
                      (code 'demand-probabilities {:size :small})])
                   (code "(iterate (bellman restock) zero-values)" {:size :small :marks #{"iterate"}})
@@ -1618,11 +1659,17 @@
                      [:tr [:td order] [:td {:class (when (= value best) "ok")} (fmt value 2)]])]
                   [:p.caption "Average over demand: this week’s profit + 0.9 × V(next week, leftover stock)."]
                   [:p.aside (cond
-                              (= frame 3) "Do this for all ten states. Return the new value table."
+                              (= frame 4) "max-key keeps the order: buy 3."
+                              (= frame 3) "max keeps the score. Repeat for all ten states."
                               (zero? frame) "Ignoring the future: buy 2."
                               (= frame 2) "With better future estimates: buy 3."
-                              :else "One update: buying 2 still looks better.")]]]))
-    :notes "Read the actual scores for the same state and same four feasible actions. With V zero, only this week counts and order two wins. After one backup the recommendation stays two. After three backups the value of inventory in the tight week changes the preferred action to three. We skip backup two here; the next slide replays every update. This is a planning update, not a sequence of real purchases. The final reveal shows the unchanged generic Bellman HOF and the ten-state model: two supply phases times five inventory levels. expected-return takes future values as an argument, and Bellman constructs the next values by maximizing those scores. No Gaussian approximation or average-demand substitution is used; the reduce weights each discrete outcome explicitly."}
+                              :else "One update: buying 2 still looks better.")]
+                  (when (= frame 3)
+                    (kv-table [["input V: profit estimate at this state" (fmt (V station-start) 2)]
+                               ["output B(V): new profit estimate" (fmt best 2)]]))
+                  (when (= frame 4)
+                    [:p.caption "best-order returns state → order. The value table is unchanged."])]]))
+    :notes "Read the actual scores for the same state and same four feasible actions. With V zero, only this week counts and order two wins. After one backup the recommendation stays two. After three backups the value of inventory in the tight week changes the preferred action to three. We skip backup two here; the next slide replays every update. This is a planning update, not a sequence of real purchases. The fourth reveal shows the generic Bellman HOF and the ten-state model: two supply phases times five inventory levels. expected-return takes future values as an argument, and Bellman constructs the next values by maximizing those scores. The fifth reveal shows best-order: max-key retains the action achieving the best score, while Bellman retains only the score. Reversing the ascending actions breaks equal-score ties toward smaller orders. No Gaussian approximation or average-demand substitution is used; the reduce weights each discrete outcome explicitly."}
 
    {:section "Decide" :title "Hydrogen: iterate the value table" :steps (count restock-run)
     :render (fn [step]
@@ -1635,7 +1682,8 @@
                    [:tr [:th "week"] [:th "future profit"] [:th "order"]]
                    (for [week [:regular :tight]]
                      [:tr [:td (name week)] [:td (fmt (V [week 1]) 1)] [:td (policy [week 1])]])]
-                  [:p.caption "Same inventory, different buying conditions."]]
+                  (code "(best-order restock V) ; state → order" {:size :small})
+                  [:p.caption "The order column comes from best-order, not from V."]]
                  [:div
                   [:p.aside "Height = expected future profit"]
                   [:p.caption "Money units, with future weeks discounted by 0.9."]
@@ -1643,7 +1691,7 @@
                   [:p.caption (str "Planning update " step " · each pair is one possible starting inventory")]
                   (when (pos? step)
                     [:p.aside (str "Largest value change: " (fmt (largest-change (nth restock-run (dec step)) V) 6))])]]))
-    :notes "Each bar is V([week stock]): an estimate of total future discounted profit in money units. It is not hydrogen volume or weekly sales. Five inventory levels each have two bars: regular delivery week in blue and tight supply week in amber. Read stock one using the table: the same inventory has different value and recommended action depending on the supply window. Every update revises all ten values together. After n backups V is the optimal n-week value; the greedy recommended order looks one step beyond that table. Space advances the planning calculation, not physical time. Stop when the largest change across the ten entries is below .001. The Rainbow section returns to why this operator reduces discrepancies between value tables."}
+    :notes "Bellman takes the model and returns a value-table update. Its input and output are both maps from [week stock] to money values. best-order separately extracts actions from V and the model. Each bar is V([week stock]): an estimate of total future discounted profit in money units. It is not hydrogen volume or weekly sales. Five inventory levels each have two bars: regular delivery week in blue and tight supply week in amber. Read stock one using the table: the same inventory has different value and recommended action depending on the supply window. Every update revises all ten values together. After n backups V is the optimal n-week value; the greedy recommended order looks one step beyond that table. Space advances the planning calculation, not physical time. Stop when the largest change across the ten entries is below .001. The Rainbow section returns to why this operator reduces discrepancies between value tables."}
 
    {:section "Decide" :title "The best order depends on the supply window" :steps 2
     :render (fn [frame]
@@ -1753,41 +1801,7 @@
                 [:tr [:td "validate"] [:td "set of reached states"] [:td "expand with successors"] [:td "set equality"]]]
                [:div.promise "(iterate step start)"]
                [:p.caption "fixed-point takes this sequence until the supplied stopping test passes."]])
-    :notes "One minute. This is the payoff. Point back to each animation: a schedule, values and actions, a growing set. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. Now use that separation to change the update without changing the iteration."}
-
-   {:section "Compose" :title "Change the pace" :steps 2
-    :render (fn [frame]
-              (let [rate (if (zero? frame) 0.0001 0.0002)
-                    step (clamped (descent-step (gradient energy-cost) rate) 0 1)
-                    next (get-in (step first-guess) [:x 4])]
-                [:div.two.even
-                 [:div (code 'descent-step {:size :small})
-                  (code (str "(def step\n  (clamped\n    (descent-step (gradient energy-cost) " rate ")\n    0 1))\n\n(iterate step first-guess)") {:size :small})]
-                 [:div [:p.aside "Turbine 1 at noon: the same slope, −84."]
-                  (kv-table [["rate" rate] ["old setting" "0.5"] ["new setting" (fmt next 4)]])
-                  [:p.aside "Change the argument. Keep the iteration."]
-                  [:p.caption "A larger step can overshoot. Faster movement does not guarantee faster convergence."]]]))
-    :notes "We have seen all three algorithms run. Now compare this design with an update buried inside nested loops. To change the pace, pass a different rate to the function that constructs the update. The same coordinate moves twice as far; the iteration and stopping test do not change. This is the electricity-only cost, chosen to keep the arithmetic familiar. Larger rates can overshoot; this is an interface demonstration, not a recommendation to double every learning rate."}
-
-   {:section "Compose" :title "Give the update momentum" :steps 2 :runs [:plain :momentum]
-    :render (fn [frame]
-              [:div.two.even
-               [:div
-                (if (zero? frame)
-                  (code 'with-momentum {:size :small :marks #{"step" "fn"}})
-                  [:div (code 'risk-descent {:size :small})
-                   (code 'risk-step {:size :small})
-                   (code 'momentum-step {:size :small})])
-                (code "(iterate momentum-step first-guess)" {:size :small})
-                [:p.caption "Base move + 90% of the previous velocity. Then limit settings to 0…1."]]
-               [:div (convergence-chart)
-                [:table.levels [:tr [:th "update"] [:th "steps"] [:th "final cost"]]
-                 (for [[k label] [[:plain "plain"] [:momentum "momentum"]]
-                       :let [run (run-of k)]]
-                   [:tr [:td label] [:td (dec (count run))]
-                    [:td (fmt (risk-cost (:x (peek run))) 1)]])]
-                [:p.caption "Same cost, rate, start and stopping test. Momentum helps this run; it can hurt others."]]])
-    :notes "Return to the cost including bird risk. with-momentum accepts a state-update function and returns another. It calls the base update once, measures that proposal's displacement, adds 90 percent of stored velocity, and returns new position and velocity. The outer clamped wrapper clips position to the allowed range; it does not reset velocity at a bound. The chart and table use actual runs. Fewer updates reach the same movement tolerance here; that does not prove a better optimum, general convergence, or a wall-clock speedup. The second reveal shows exactly what wraps what. The iteration remains unchanged."}
+    :notes "One minute. This is the payoff. Point back to each animation: a schedule, values and actions, a growing set. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. The optimizer has already demonstrated rate and momentum changes. Next observe a supplied update without changing its result."}
 
    {:section "Compose" :title "Observe each update" :steps 2
     :render (fn [frame]

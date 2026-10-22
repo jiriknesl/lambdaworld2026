@@ -77,8 +77,8 @@ is no proved correspondence to the browser program.
 ## If time is short
 
 Keep the explanations that introduce state, score, the Bellman update and reachability. Shorten
-visual holds on slides 13, 14 and 18, using End to show the final numerical state. On slide 19, read
-the stock-one comparison and the empty-tank example without reading every row. On slide 24, state
+visual holds on slides 14, 16 and 20, using End to show the final numerical state. On slide 21, read
+the stock-one comparison and the empty-tank example without reading every row. On slide 15, state
 the measured outcome without reading the whole implementation. Never compensate by reading the
 proof faster. The timing file gives estimates at 110, 125 and 140 words per minute; Jiri’s aloud
 rehearsal determines the actual pace.
