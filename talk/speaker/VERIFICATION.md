@@ -69,3 +69,12 @@ not as an additional kernel receipt. The existing Rainbow receipt was not rerun 
 revision.
 
 Jiri’s aloud rehearsal, the book photograph and room/projector checks remain external inputs.
+
+## Biography update 2026-10-22
+
+The bio-20261022 edition adds 34 years programming, 14 years using Clojure and the linked
+interview channel, and replaces “The REPL” with “REPL-oriented programming.” The full speech,
+timing data and PDF were regenerated. It now contains 4,110 spoken words: 37:13 including holds,
+or 39:13 including questions at the planning pace. Release compilation passed without warnings;
+focused offline and public browser checks passed for both slides at all three presentation sizes,
+including the interview link and matching presenter speech. No algorithm or phase-count changes.

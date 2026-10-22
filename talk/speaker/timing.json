@@ -1,5 +1,5 @@
 {
-  "spoken_words": 4103,
+  "spoken_words": 4110,
   "pace_wpm": 125,
   "holds_seconds": 260,
   "questions_seconds": 120,
@@ -13,226 +13,226 @@
     },
     {
       "slide": 2,
-      "words": 48,
+      "words": 55,
       "hold_seconds": 3,
       "start_seconds": 15,
-      "end_seconds": 41
+      "end_seconds": 44
     },
     {
       "slide": 3,
       "words": 51,
       "hold_seconds": 3,
-      "start_seconds": 41,
-      "end_seconds": 69
+      "start_seconds": 44,
+      "end_seconds": 72
     },
     {
       "slide": 4,
       "words": 72,
       "hold_seconds": 3,
-      "start_seconds": 69,
-      "end_seconds": 106
+      "start_seconds": 72,
+      "end_seconds": 109
     },
     {
       "slide": 5,
       "words": 167,
       "hold_seconds": 9,
-      "start_seconds": 106,
-      "end_seconds": 195
+      "start_seconds": 109,
+      "end_seconds": 199
     },
     {
       "slide": 6,
       "words": 98,
       "hold_seconds": 15,
-      "start_seconds": 195,
-      "end_seconds": 257
+      "start_seconds": 199,
+      "end_seconds": 261
     },
     {
       "slide": 7,
       "words": 66,
       "hold_seconds": 6,
-      "start_seconds": 257,
-      "end_seconds": 295
+      "start_seconds": 261,
+      "end_seconds": 298
     },
     {
       "slide": 8,
       "words": 166,
       "hold_seconds": 9,
-      "start_seconds": 295,
-      "end_seconds": 384
+      "start_seconds": 298,
+      "end_seconds": 387
     },
     {
       "slide": 9,
       "words": 116,
       "hold_seconds": 6,
-      "start_seconds": 384,
-      "end_seconds": 445
+      "start_seconds": 387,
+      "end_seconds": 449
     },
     {
       "slide": 10,
       "words": 171,
       "hold_seconds": 9,
-      "start_seconds": 445,
-      "end_seconds": 536
+      "start_seconds": 449,
+      "end_seconds": 540
     },
     {
       "slide": 11,
       "words": 221,
       "hold_seconds": 9,
-      "start_seconds": 536,
-      "end_seconds": 651
+      "start_seconds": 540,
+      "end_seconds": 655
     },
     {
       "slide": 12,
       "words": 209,
       "hold_seconds": 9,
-      "start_seconds": 651,
-      "end_seconds": 761
+      "start_seconds": 655,
+      "end_seconds": 764
     },
     {
       "slide": 13,
       "words": 139,
       "hold_seconds": 16,
-      "start_seconds": 761,
-      "end_seconds": 844
+      "start_seconds": 764,
+      "end_seconds": 847
     },
     {
       "slide": 14,
       "words": 62,
       "hold_seconds": 14,
-      "start_seconds": 844,
-      "end_seconds": 887
+      "start_seconds": 847,
+      "end_seconds": 891
     },
     {
       "slide": 15,
       "words": 236,
       "hold_seconds": 12,
-      "start_seconds": 887,
-      "end_seconds": 1013
+      "start_seconds": 891,
+      "end_seconds": 1016
     },
     {
       "slide": 16,
       "words": 96,
       "hold_seconds": 6,
-      "start_seconds": 1013,
-      "end_seconds": 1065
+      "start_seconds": 1016,
+      "end_seconds": 1068
     },
     {
       "slide": 17,
       "words": 235,
       "hold_seconds": 12,
-      "start_seconds": 1065,
-      "end_seconds": 1189
+      "start_seconds": 1068,
+      "end_seconds": 1193
     },
     {
       "slide": 18,
       "words": 174,
       "hold_seconds": 14,
-      "start_seconds": 1189,
-      "end_seconds": 1287
+      "start_seconds": 1193,
+      "end_seconds": 1290
     },
     {
       "slide": 19,
       "words": 139,
       "hold_seconds": 6,
-      "start_seconds": 1287,
-      "end_seconds": 1360
+      "start_seconds": 1290,
+      "end_seconds": 1363
     },
     {
       "slide": 20,
       "words": 239,
       "hold_seconds": 12,
-      "start_seconds": 1360,
-      "end_seconds": 1486
+      "start_seconds": 1363,
+      "end_seconds": 1490
     },
     {
       "slide": 21,
       "words": 269,
       "hold_seconds": 27,
-      "start_seconds": 1486,
-      "end_seconds": 1643
+      "start_seconds": 1490,
+      "end_seconds": 1646
     },
     {
       "slide": 22,
       "words": 89,
       "hold_seconds": 3,
-      "start_seconds": 1643,
-      "end_seconds": 1688
+      "start_seconds": 1646,
+      "end_seconds": 1692
     },
     {
       "slide": 23,
       "words": 89,
       "hold_seconds": 6,
-      "start_seconds": 1688,
-      "end_seconds": 1737
+      "start_seconds": 1692,
+      "end_seconds": 1740
     },
     {
       "slide": 24,
       "words": 100,
       "hold_seconds": 6,
-      "start_seconds": 1737,
-      "end_seconds": 1791
+      "start_seconds": 1740,
+      "end_seconds": 1794
     },
     {
       "slide": 25,
       "words": 115,
       "hold_seconds": 6,
-      "start_seconds": 1791,
-      "end_seconds": 1852
+      "start_seconds": 1794,
+      "end_seconds": 1856
     },
     {
       "slide": 26,
       "words": 74,
       "hold_seconds": 3,
-      "start_seconds": 1852,
-      "end_seconds": 1891
+      "start_seconds": 1856,
+      "end_seconds": 1894
     },
     {
       "slide": 27,
       "words": 154,
       "hold_seconds": 6,
-      "start_seconds": 1891,
-      "end_seconds": 1971
+      "start_seconds": 1894,
+      "end_seconds": 1974
     },
     {
       "slide": 28,
       "words": 110,
       "hold_seconds": 6,
-      "start_seconds": 1971,
-      "end_seconds": 2029
+      "start_seconds": 1974,
+      "end_seconds": 2033
     },
     {
       "slide": 29,
       "words": 166,
       "hold_seconds": 12,
-      "start_seconds": 2029,
-      "end_seconds": 2121
+      "start_seconds": 2033,
+      "end_seconds": 2124
     },
     {
       "slide": 30,
       "words": 113,
       "hold_seconds": 3,
-      "start_seconds": 2121,
-      "end_seconds": 2178
+      "start_seconds": 2124,
+      "end_seconds": 2182
     },
     {
       "slide": 31,
       "words": 76,
       "hold_seconds": 3,
-      "start_seconds": 2178,
-      "end_seconds": 2218
+      "start_seconds": 2182,
+      "end_seconds": 2221
     },
     {
       "slide": 32,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 2218,
-      "end_seconds": 2229
+      "start_seconds": 2221,
+      "end_seconds": 2233
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 2618,
-    "125": 2349,
-    "140": 2138
+    "110": 2622,
+    "125": 2353,
+    "140": 2141
   },
-  "script_sha256": "79f76c9c6e98fdbd0bb5ebdadb793a942be035cc99bc45a554af153b28b9630b"
+  "script_sha256": "ce60c1423b6c6e2921d0613161f98f241366095e38d076b98c9a2a4646b1e0d6"
 }

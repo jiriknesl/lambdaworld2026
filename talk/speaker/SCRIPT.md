@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,103 spoken words. Planning pace: 125 words/minute, plus 04:20 of pauses and visual holds. Speech and holds: 37:09; with 02:00 for questions: 39:09. This is an estimate, not an aloud rehearsal.
+4,110 spoken words. Planning pace: 125 words/minute, plus 04:20 of pauses and visual holds. Speech and holds: 37:13; with 02:00 for questions: 39:13. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -20,27 +20,27 @@ Hello, I’m Jiri. We’ll build three operations research examples with higher-
 
 ## 02 About me
 
-00:15–00:41 · 48 words · 3s visual holds
+00:15–00:44 · 55 words · 3s visual holds
 
 ### Phase 1
 
-[Point briefly to the three lines; do not read them twice.]
+[Introduce your background briefly; the interviews line links to the Flexiana channel.]
 
-I’ve been developing software all my life. My education is in economics, so I’m interested in how we make decisions when resources are limited. Thirteen years ago, I started the Barcelona Meetup Group. This talk brings together those interests: functional programming, mathematical models, and decisions we can explain.
+I started programming thirty-four years ago, and I’ve been using Clojure for fourteen years. My education is in economics. Thirteen years ago, I started the Barcelona Meetup Group. I also interview many Clojure open-source authors on Flexiana’s YouTube channel. This talk brings together my interests in functional programming, mathematical models, and decisions we can explain.
 
 ## 03 Why Clojure?
 
-00:41–01:09 · 51 words · 3s visual holds
+00:44–01:12 · 51 words · 3s visual holds
 
 ### Phase 1
 
 [Move down the four reasons.]
 
-I chose Clojure for small functions, immutable data, and the REPL. Keeping old states makes experiments easy to compare. Code is also data, which we’ll use later when we get to proofs. You don’t need Clojure experience today. I’ll introduce its notation where it matters; the functional ideas should be familiar.
+I chose Clojure for small functions, immutable data, and REPL-oriented programming. Keeping old states makes experiments easy to compare. Code is also data, which we’ll use later when we get to proofs. You don’t need Clojure experience today. I’ll introduce its notation where it matters; the functional ideas should be familiar.
 
 ## 04 Operations research
 
-01:09–01:46 · 72 words · 3s visual holds
+01:12–01:49 · 72 words · 3s visual holds
 
 ### Phase 1
 
@@ -52,7 +52,7 @@ I also include validation: checking whether a system respects its specification.
 
 ## 05 Functions in. Functions out.
 
-01:46–03:15 · 167 words · 9s visual holds
+01:49–03:19 · 167 words · 9s visual holds
 
 ### Phase 1
 
@@ -74,7 +74,7 @@ But to solve the problem, I want the result of one update to become the input to
 
 ## 06 iterate: state → state → …
 
-03:15–04:17 · 98 words · 15s visual holds
+03:19–04:21 · 98 words · 15s visual holds
 
 ### Phase 1
 
@@ -108,7 +108,7 @@ Take asks for five states from this lazy sequence. Iterate itself has no idea wh
 
 ## 07 A fixed point stays the same
 
-04:17–04:55 · 66 words · 6s visual holds
+04:21–04:58 · 66 words · 6s visual holds
 
 ### Phase 1
 
@@ -124,7 +124,7 @@ Starting at two, the update returns two. Two is a fixed point of this particular
 
 ## 08 step + converged?
 
-04:55–06:24 · 166 words · 9s visual holds
+04:58–06:27 · 166 words · 9s visual holds
 
 ### Phase 1
 
@@ -146,7 +146,7 @@ Here the change falls below ten to the minus twelve. That is a bound on successi
 
 ## 09 Plan tomorrow’s turbine settings
 
-06:24–07:25 · 116 words · 6s visual holds
+06:27–07:29 · 116 words · 6s visual holds
 
 ### Phase 1
 
@@ -162,7 +162,7 @@ Six turbines over twelve hours gives seventy-two settings, stored under the keyw
 
 ## 10 What makes one plan better?
 
-07:25–08:56 · 171 words · 9s visual holds
+07:29–09:00 · 171 words · 9s visual holds
 
 ### Phase 1
 
@@ -184,7 +184,7 @@ Neither column alone tells us which compromise to choose. First I’ll show how 
 
 ## 11 Optimization is iterate
 
-08:56–10:51 · 221 words · 9s visual holds
+09:00–10:55 · 221 words · 9s visual holds
 
 ### Phase 1
 
@@ -208,7 +208,7 @@ Clamped takes that update function and returns another function. It calls the up
 
 ## 12 Which plan should win?
 
-10:51–12:41 · 209 words · 9s visual holds
+10:55–12:44 · 209 words · 9s visual holds
 
 ### Phase 1
 
@@ -232,7 +232,7 @@ Here is the wrapper. It receives the original cost, a risk function, and the par
 
 ## 13 Same updates, different objectives
 
-12:41–14:04 · 139 words · 16s visual holds
+12:44–14:07 · 139 words · 16s visual holds
 
 ### Phase 1
 
@@ -254,7 +254,7 @@ Compare the final generation and exposure. The penalty buys a reduction in expos
 
 ## 14 Play the resulting day
 
-14:04–14:47 · 62 words · 14s visual holds
+14:07–14:51 · 62 words · 14s visual holds
 
 ### Phase 1
 
@@ -270,7 +270,7 @@ With the penalty, the chosen schedule curtails exposed turbines during busy hour
 
 ## 15 Buy hydrogen before the customers arrive
 
-14:47–16:53 · 236 words · 12s visual holds
+14:51–16:56 · 236 words · 12s visual holds
 
 ### Phase 1
 
@@ -300,7 +300,7 @@ We sell each unit for ten, so this outcome earns twenty minus the purchase cost 
 
 ## 16 Buy for this week—or the next?
 
-16:53–17:45 · 96 words · 6s visual holds
+16:56–17:48 · 96 words · 6s visual holds
 
 ### Phase 1
 
@@ -318,7 +318,7 @@ That extra unit may avoid an expensive future purchase, or it may sit unsold and
 
 ## 17 Future values change the order
 
-17:45–19:49 · 235 words · 12s visual holds
+17:48–19:53 · 235 words · 12s visual holds
 
 ### Phase 1
 
@@ -346,7 +346,7 @@ Bellman takes our model and returns an update function. For every state it score
 
 ## 18 Hydrogen: iterate the value table
 
-19:49–21:27 · 174 words · 14s visual holds
+19:53–21:30 · 174 words · 14s visual holds
 
 ### Phase 1
 
@@ -368,7 +368,7 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 19 The best order depends on the supply window
 
-21:27–22:40 · 139 words · 6s visual holds
+21:30–22:43 · 139 words · 6s visual holds
 
 ### Phase 1
 
@@ -384,7 +384,7 @@ There is a less obvious recommendation here. With an empty tank in a tight week,
 
 ## 20 Validate the turbine controller
 
-22:40–24:46 · 239 words · 12s visual holds
+22:43–24:50 · 239 words · 12s visual holds
 
 ### Phase 1
 
@@ -412,7 +412,7 @@ With-shield wraps the decision function. In known situations it delegates to tha
 
 ## 21 Can any event sequence reach RUN + confident bird?
 
-24:46–27:23 · 269 words · 27s visual holds
+24:50–27:26 · 269 words · 27s visual holds
 
 ### Phase 1
 
@@ -472,7 +472,7 @@ The set is now closed under every encoded successor, without a failure. That est
 
 ## 22 iterate underneath all three
 
-27:23–28:08 · 89 words · 3s visual holds
+27:26–28:12 · 89 words · 3s visual holds
 
 ### Phase 1
 
@@ -482,7 +482,7 @@ Underneath all three examples is iterate. What changes is what a state means. A 
 
 ## 23 Change the pace
 
-28:08–28:57 · 89 words · 6s visual holds
+28:12–29:00 · 89 words · 6s visual holds
 
 ### Phase 1
 
@@ -498,7 +498,7 @@ Double that argument and the proposed movement doubles. A carefully factored imp
 
 ## 24 Give the update momentum
 
-28:57–29:51 · 100 words · 6s visual holds
+29:00–29:54 · 100 words · 6s visual holds
 
 ### Phase 1
 
@@ -514,7 +514,7 @@ The base step performs descent; momentum wraps it; clamped wraps the result. Cla
 
 ## 25 Observe each update
 
-29:51–30:52 · 115 words · 6s visual holds
+29:54–30:56 · 115 words · 6s visual holds
 
 ### Phase 1
 
@@ -530,7 +530,7 @@ This observer records costs in an atom, Clojure’s explicit mutable reference. 
 
 ## 26 Rainbow
 
-30:52–31:31 · 74 words · 3s visual holds
+30:56–31:34 · 74 words · 3s visual holds
 
 ### Phase 1
 
@@ -542,7 +542,7 @@ Rainbow is a theorem prover written in Clojure. I’ll show a small proof so you
 
 ## 27 A proof is a function
 
-31:31–32:51 · 154 words · 6s visual holds
+31:34–32:54 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -560,7 +560,7 @@ If I offer only f of p, I have produced Q, while the statement asks for R. The c
 
 ## 28 Bellman shrinks disagreement
 
-32:51–33:49 · 110 words · 6s visual holds
+32:54–33:53 · 110 words · 6s visual holds
 
 ### Phase 1
 
@@ -576,7 +576,7 @@ For illustration, start one table at zero everywhere and the other at ten. Apply
 
 ## 29 The proof follows the code
 
-33:49–35:21 · 166 words · 12s visual holds
+33:53–35:24 · 166 words · 12s visual holds
 
 ### Phase 1
 
@@ -604,7 +604,7 @@ Swap V and W to get the reverse inequality. Together they bound the absolute dif
 
 ## 30 What the kernel checked
 
-35:21–36:18 · 113 words · 3s visual holds
+35:24–36:22 · 113 words · 3s visual holds
 
 ### Phase 1
 
@@ -616,7 +616,7 @@ There is a useful mathematical consequence. For an exact candidate value table, 
 
 ## 31 Applied Higher-Order Functions
 
-36:18–36:58 · 76 words · 3s visual holds
+36:22–37:01 · 76 words · 3s visual holds
 
 ### Phase 1
 
@@ -626,7 +626,7 @@ Today I concentrated on iterate, but you’ve also seen map, reduce, function co
 
 ## 32 Thank you
 
-36:58–37:09 · 18 words · 3s visual holds
+37:01–37:13 · 18 words · 3s visual holds
 
 ### Phase 1
 

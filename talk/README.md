@@ -10,10 +10,10 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=speech-20261021).
-Updated 2026-10-21: full spoken script for every slide and reveal, phase-aware presenter speech,
-progressive introductions for non-Clojure FP readers, and a corrected pre-tick detection transition.
-The script and slides went through 21 documented editorial passes.
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bio-20261022).
+Updated 2026-10-22: biography now includes 34 years programming, 14 years using Clojure and
+interviews with Clojure open-source authors, linked to the Flexiana YouTube channel. “Why Clojure”
+now says “REPL-oriented programming.” The matching speech and PDF are regenerated.
 This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, the full spoken script, technical reference notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
@@ -91,18 +91,18 @@ The deck has 32 slides; reveals are steps within a slide, not additional topics.
 
 | Slides | Estimated time | What the audience sees |
 | --- | ---: | --- |
-| 1–2: Jiri | 0:41 | Developer, economist, Barcelona meetup. |
+| 1–2: Jiri | 0:44 | Developer, economist, Barcelona meetup. |
 | 3: Clojure | 0:28 | Why I chose it; no language prerequisite. |
 | 4: OR | 0:37 | What optimization, decisions and validation ask. |
 | 5–8: HOFs | 4:38 | Function construction, independent map, chained iterate, fixed points and stopping. |
-| 9–14: Optimization | 8:23 | Forecast, representation, cost, numerical gradient, penalty and a replayed plan. |
-| 15–19: Decision-making | 7:53 | Supply cycle, uncertain demand, value tables and the resulting policy. |
-| 20–22: Validation | 5:28 | Controller requirement, failures, shield, closed reachable set; shared iterate. |
+| 9–14: Optimization | 8:24 | Forecast, representation, cost, numerical gradient, penalty and a replayed plan. |
+| 15–19: Decision-making | 7:52 | Supply cycle, uncertain demand, value tables and the resulting policy. |
+| 20–22: Validation | 5:29 | Controller requirement, failures, shield, closed reachable set; shared iterate. |
 | 23–25: Composition | 2:44 | Pace, momentum and observation; precise claims about each. |
 | 26–30: Rainbow | 5:26 | Composition proof syntax, Bellman bound, proof outline and exact residual consequence. |
 | 31–32: Book and thanks | 0:51 | Broader HOF toolkit and contact. |
 
-The current 4,103-word script estimates **37:09 including visual holds**, or **39:09 with two
+The current 4,110-word script estimates **37:13 including visual holds**, or **39:13 with two
 minutes for questions**, at 125 words/minute. This is a planning calculation, not an aloud rehearsal.
 At 110 words/minute it exceeds forty minutes; see `speaker/timing.json` and the short-time guidance
 in `speaker/ANSWERS.md`. The macro compiler, Adam race, falsification and trailer LP remain offstage.
@@ -165,7 +165,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=speech-20261021#s11).
+Start at [Optimization is iterate (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bio-20261022#s11).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |

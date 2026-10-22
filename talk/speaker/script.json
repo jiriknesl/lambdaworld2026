@@ -24,8 +24,8 @@
         {
           "from": 1,
           "to": 1,
-          "cue": "Point briefly to the three lines; do not read them twice.",
-          "speech": "I’ve been developing software all my life. My education is in economics, so I’m interested in how we make decisions when resources are limited. Thirteen years ago, I started the Barcelona Meetup Group. This talk brings together those interests: functional programming, mathematical models, and decisions we can explain.",
+          "cue": "Introduce your background briefly; the interviews line links to the Flexiana channel.",
+          "speech": "I started programming thirty-four years ago, and I’ve been using Clojure for fourteen years. My education is in economics. Thirteen years ago, I started the Barcelona Meetup Group. I also interview many Clojure open-source authors on Flexiana’s YouTube channel. This talk brings together my interests in functional programming, mathematical models, and decisions we can explain.",
           "hold_seconds": 3
         }
       ]
@@ -38,7 +38,7 @@
           "from": 1,
           "to": 1,
           "cue": "Move down the four reasons.",
-          "speech": "I chose Clojure for small functions, immutable data, and the REPL. Keeping old states makes experiments easy to compare. Code is also data, which we’ll use later when we get to proofs. You don’t need Clojure experience today. I’ll introduce its notation where it matters; the functional ideas should be familiar.",
+          "speech": "I chose Clojure for small functions, immutable data, and REPL-oriented programming. Keeping old states makes experiments easy to compare. Code is also data, which we’ll use later when we get to proofs. You don’t need Clojure experience today. I’ll introduce its notation where it matters; the functional ideas should be familiar.",
           "hold_seconds": 3
         }
       ]

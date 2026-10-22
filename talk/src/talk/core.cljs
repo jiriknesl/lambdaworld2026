@@ -1299,17 +1299,20 @@
    {:section "Hello" :title "About me"
     :render (fn [_]
               [:div
-               (bullets "Lifelong software developer"
+               (bullets "Started programming 34 years ago"
+                        "Using Clojure for 14 years"
                         "Economist by education"
-                        "Started Barcelona Meetup Group 13 years ago")])
-    :notes "45 seconds. Lifelong software developer, economist by education. Started Barcelona Meetup Group 13 years ago. Next: why I work in Clojure."}
+                        "Started Barcelona Meetup Group 13 years ago"
+                        [:a {:href "https://www.youtube.com/@flexianadev/videos"}
+                         "Interviews with Clojure open-source authors"])])
+    :notes "Started programming 34 years ago; using Clojure for 14 years. Economist by education. Started Barcelona Meetup Group 13 years ago. Interviews many Clojure open-source authors on the Flexiana YouTube channel. Next: why I work in Clojure."}
 
    {:section "Clojure" :title "Why Clojure?"
     :render (fn [_]
               [:div
                (bullets "Clojure is a simple & functional language"
                         "Immutable data"
-                        "The REPL"
+                        "REPL-oriented programming"
                         "Code is data")])
     :notes "Two minutes. Explain each point aloud: functions as values; old states remain available; experiment in the REPL; code can be inspected and transformed as data. Those are reasons for my choice, not claims that other languages cannot do this. Next introduce the three areas of operations research before the higher-order functions."}
 
