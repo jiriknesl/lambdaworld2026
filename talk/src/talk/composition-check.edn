@@ -1,13 +1,35 @@
-{:checked-at "2026-10-23T10:29:42.560915Z",
+{:restored-proof
+ {:type
+  [:forall [[P Prop] [Q Prop] [R Prop]] [:-> [:-> P Q] [:-> Q R] P R]],
+  :value
+  [:fn
+   [[P Prop] [Q Prop] [R Prop] [f [:-> P Q]] [g [:-> Q R]] [p P]]
+   [:app g [:app f p]]]},
+ :checked-at "2026-10-23T18:48:30.434822Z",
  :negative-proof
  [:fn
   [[P Prop] [Q Prop] [R Prop] [f [:-> P Q]] [g [:-> Q R]] [p P]]
   [:app f p]],
+ :removed-proof
+ {:type
+  [:forall [[P Prop] [Q Prop] [R Prop]] [:-> [:-> P Q] [:-> Q R] P R]],
+  :value
+  [:fn
+   [[P Prop] [Q Prop] [R Prop] [f [:-> P Q]] [g [:-> Q R]] [p P]]
+   [:app f p]]},
  :negative-message "Term does not inhabit expected type",
+ :proof
+ {:type
+  [:forall [[P Prop] [Q Prop] [R Prop]] [:-> [:-> P Q] [:-> Q R] P R]],
+  :value
+  [:fn
+   [[P Prop] [Q Prop] [R Prop] [f [:-> P Q]] [g [:-> Q R]] [p P]]
+   [:app g [:app f p]]]},
  :source
  "{:type\n [:forall [[P Prop] [Q Prop] [R Prop]]\n  [:-> [:-> P Q] [:-> Q R] P R]]\n\n :value\n [:fn [[P Prop] [Q Prop] [R Prop]\n       [f [:-> P Q]] [g [:-> Q R]] [p P]]\n  [:app g [:app f p]]]}\n",
  :axioms [],
  :status :checked,
  :rainbow-revision "d9080c7285c7cd28a81e2d184b25ecae333510fd",
  :negative-status :rejected,
- :environment :empty}
+ :environment :empty,
+ :restored-status :checked}

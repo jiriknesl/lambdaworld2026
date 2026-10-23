@@ -67,6 +67,18 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
         if (await page.locator('#played-3d').count()) playbackSlide = s;
         if (info.error) problems.push(`${w}x${h} slide ${s}: render error`);
         if (info.over.length) problems.push(`${w}x${h} slide ${s} (${info.title}): overflow ${info.over.join(', ')}`);
+        if (info.title === 'A proof we can edit') {
+          const labels = await page.locator('.proof-term .term-label').allTextContents();
+          const expected = frame === 2 ? [':app', 'f', 'p'] : [':app', 'g', ':app', 'f', 'p'];
+          if (JSON.stringify(labels) !== JSON.stringify(expected)) problems.push(`proof tree disagrees with edit at phase ${frame}`);
+          const body = await page.locator('.body').innerText();
+          const verdict = frame === 2 ? 'rejected · produces Q; requires R' : 'checked · produces R';
+          if (!body.includes(verdict) || body.includes('no source recorded')) problems.push(`missing proof source/verdict at phase ${frame}`);
+          if (shots && w === 1600) {
+            fs.mkdirSync(shots, {recursive: true});
+            await page.screenshot({path: path.join(shots, `proof-phase-${frame}.png`)});
+          }
+        }
       }
       if (shots && w === 1600) {
         fs.mkdirSync(shots, { recursive: true });
@@ -84,6 +96,7 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
   // controls: steps, playback, theme, notes window following the stage
   {
     const context = await browser.newContext({ viewport: { width: 1600, height: 900 } });
+    if (url.startsWith('file:')) await context.setOffline(true);
     const page = await context.newPage();
     const hash = () => page.evaluate(() => location.hash);
     await page.goto(url.split('#')[0] + `#s${traceSlide}`);
@@ -114,10 +127,11 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
     const notesTitle = await notes.evaluate(() => document.querySelector('.notes-view h1').textContent);
     const stageTitle = await page.evaluate(() => document.querySelector('.title').textContent);
     if (notesTitle !== stageTitle) problems.push(`notes window did not follow: "${notesTitle}" vs "${stageTitle}"`);
+    const stageCount = await page.locator('.count').innerText();
     await notes.keyboard.press('ArrowDown');
     await page.waitForTimeout(300);
-    const driven = await page.evaluate(() => document.querySelector('.title').textContent);
-    if (driven === stageTitle) problems.push('keys in the notes window did not drive the stage');
+    const driven = await page.locator('.count').innerText();
+    if (driven === stageCount) problems.push('keys in the notes window did not drive the stage');
     // Speech must follow reveals, not merely the slide title.
     await page.evaluate(() => { location.hash = '#s5'; });
     await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('We use positive inputs'));

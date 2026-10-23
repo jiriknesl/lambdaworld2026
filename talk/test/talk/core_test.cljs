@@ -1,10 +1,19 @@
 (ns talk.core-test
   (:require [cljs.test :refer [deftest is testing]]
+            [cljs.reader :as reader]
             [clojure.string :as str]
             [talk.notation :as n]
             [talk.core :as c]
             [talk.speaker :as speaker]
             [talk.script-data :as script]))
+
+(deftest proof-edit-source-is-readable
+  (doseq [sym ['remove-outer 'wrap-body]]
+    ;; Read a collection containing the entire displayed source, so an extra
+    ;; trailing delimiter cannot be silently ignored by read-string.
+    (let [forms (reader/read-string (str "[" (n/source sym) "]"))]
+      (is (= 1 (count forms)))
+      (is (= ['defn sym] (take 2 (first forms)))))))
 
 (deftest notation
   (testing "defmap turns the drawing into positions"

@@ -630,28 +630,35 @@
         {
           "from": 1,
           "to": 1,
-          "cue": "Pause before moving from examples to proof.",
-          "speech": "Rainbow is a theorem prover written in Clojure. We’ll read a small proof, examine our Bellman update, then look at industrial scheduling.",
-          "hold_seconds": 3
+          "cue": "Recall code as data from Why Clojure; introduce proofs as data.",
+          "speech": "Rainbow is a theorem prover written in Clojure. Its proofs are data. We can write functions to inspect them, draw them, or change a part. A changed term still needs checking. That lets us experiment with how we work on proofs.",
+          "hold_seconds": 2
         }
       ]
     },
     {
       "slide": 27,
-      "title": "A proof is a function",
+      "title": "A proof we can edit",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Follow the right-hand diagram, then match it to the left.",
-          "speech": "P, Q and R are propositions. We have f taking evidence of P to evidence of Q, g taking Q to R, and p proving P. Apply f, then g: function composition.\n\nThis is actual Rainbow syntax. Forall binds the propositions; arrows state implications. Fn binds proof arguments, and app applies them. The body produces evidence of R for arbitrary P, Q and R. Rainbow checked this term in an empty environment, with no axioms.",
+          "cue": "Read the composition, then match the app nodes to the term.",
+          "speech": "P, Q and R are propositions. Given f from P to Q, g from Q to R, and evidence p of P, apply f then g. This proves R. In Rainbow syntax, fn binds arguments and app applies them. The tree comes directly from this term.",
           "hold_seconds": 3
         },
         {
           "from": 2,
           "to": 2,
-          "cue": "Right. Point to the shortened, rejected term.",
-          "speech": "Return only f of p and we have Q, while the statement requires R. The checker rejects it. Both verdicts are recorded kernel results.",
+          "cue": "Right. The outer application disappears from both the term and its tree.",
+          "speech": "Remove the outer application. Update-in selects the body; our function returns its argument, f of p. We now have Q, but need R. The kernel rejects it. The diagram changes because the data changed.",
+          "hold_seconds": 3
+        },
+        {
+          "from": 3,
+          "to": 3,
+          "cue": "Right. Point to the function passed to update-in; g returns to the tree.",
+          "speech": "Now pass update-in a function that wraps the body in an application of g. The original remains unchanged. This new term checks. The browser edits and draws; kernel checks are recorded. A structural editor could make the same edit.",
           "hold_seconds": 3
         }
       ]
@@ -718,7 +725,7 @@
           "from": 1,
           "to": 1,
           "cue": "Distinguish the historical receipt, pending replay and browser implementation.",
-          "speech": "This historical receipt records a check of the exact Bellman bound. It predates a kernel repair, so replay is still pending. It also does not certify our floating-point browser code.\n\nMathematically, with discount point nine, an exact residual of point zero zero one bounds value error by point zero one. That consequence needs an exact operator; our browser run has no such certificate.",
+          "speech": "This historical receipt records the exact Bellman bound. Replay after a kernel repair is pending; it does not certify our floating-point browser code. Mathematically, with discount point nine, an exact residual of point zero zero one bounds value error by point zero one.",
           "hold_seconds": 3
         }
       ]
@@ -763,13 +770,13 @@
       "slide": 33
     },
     {
-      "title": "How much cheaper could it be?",
+      "title": "Where I want to take Rainbow",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Explain one part per million in euros, then state exactly where the proof work stops.",
-          "speech": "Back to the methanol benchmark: every one of the 52 tested weeks has a reported cost gap below one part per million. The largest gap was 26 cents on a 388-thousand-euro week. That bounds possible further improvement; it is not the saving against current practice. The checker’s acceptance-implies-optimality theorem remains open, so the end-to-end formal proof is not yet complete.",
+          "cue": "Return to proofs as data. Describe a direction, not a finished editor.",
+          "speech": "I want an operator to open a certificate and ask: which constraint ruled out this schedule? Which assumption supports this bound? We could show the relevant part, insert a step, then check the result. Text need not be the only interface. Our tiny example does that for composition. The broader OR views and editing tools are still to build.",
           "hold_seconds": 3
         }
       ],

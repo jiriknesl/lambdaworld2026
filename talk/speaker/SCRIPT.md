@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,164 spoken words. Planning pace: 125 words/minute, plus 04:29 of pauses and visual holds. Speech and holds: 37:48; with 02:00 for questions: 39:48. This is an estimate, not an aloud rehearsal.
+4,182 spoken words. Planning pace: 125 words/minute, plus 04:31 of pauses and visual holds. Speech and holds: 37:58; with 02:00 for questions: 39:58. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -528,35 +528,39 @@ This observer records costs in an atom, Clojure’s explicit mutable reference. 
 
 ## 26 Rainbow
 
-31:09–31:22 · 22 words · 3s visual holds
+31:09–31:31 · 41 words · 2s visual holds
 
 ### Phase 1
 
-[Pause before moving from examples to proof.]
+[Recall code as data from Why Clojure; introduce proofs as data.]
 
-Rainbow is a theorem prover written in Clojure. We’ll read a small proof, examine our Bellman update, then look at industrial scheduling.
+Rainbow is a theorem prover written in Clojure. Its proofs are data. We can write functions to inspect them, draw them, or change a part. A changed term still needs checking. That lets us experiment with how we work on proofs.
 
-## 27 A proof is a function
+## 27 A proof we can edit
 
-31:22–32:16 · 99 words · 6s visual holds
+31:31–32:37 · 119 words · 9s visual holds
 
 ### Phase 1
 
-[Follow the right-hand diagram, then match it to the left.]
+[Read the composition, then match the app nodes to the term.]
 
-P, Q and R are propositions. We have f taking evidence of P to evidence of Q, g taking Q to R, and p proving P. Apply f, then g: function composition.
-
-This is actual Rainbow syntax. Forall binds the propositions; arrows state implications. Fn binds proof arguments, and app applies them. The body produces evidence of R for arbitrary P, Q and R. Rainbow checked this term in an empty environment, with no axioms.
+P, Q and R are propositions. Given f from P to Q, g from Q to R, and evidence p of P, apply f then g. This proves R. In Rainbow syntax, fn binds arguments and app applies them. The tree comes directly from this term.
 
 ### Phase 2
 
-[Right. Point to the shortened, rejected term.]
+[Right. The outer application disappears from both the term and its tree.]
 
-Return only f of p and we have Q, while the statement requires R. The checker rejects it. Both verdicts are recorded kernel results.
+Remove the outer application. Update-in selects the body; our function returns its argument, f of p. We now have Q, but need R. The kernel rejects it. The diagram changes because the data changed.
+
+### Phase 3
+
+[Right. Point to the function passed to update-in; g returns to the tree.]
+
+Now pass update-in a function that wraps the body in an application of g. The original remains unchanged. This new term checks. The browser edits and draws; kernel checks are recorded. A structural editor could make the same edit.
 
 ## 28 Bellman shrinks disagreement
 
-32:16–32:56 · 71 words · 6s visual holds
+32:37–33:17 · 71 words · 6s visual holds
 
 ### Phase 1
 
@@ -572,7 +576,7 @@ Start one table at zero everywhere and the other at ten. Bellman reduces the gap
 
 ## 29 The proof follows the code
 
-32:56–34:28 · 166 words · 12s visual holds
+33:17–34:48 · 166 words · 12s visual holds
 
 ### Phase 1
 
@@ -600,19 +604,17 @@ Swap V and W to get the reverse inequality. Together they bound the absolute dif
 
 ## 30 What the kernel checked
 
-34:28–35:01 · 63 words · 3s visual holds
+34:48–35:12 · 43 words · 3s visual holds
 
 ### Phase 1
 
 [Distinguish the historical receipt, pending replay and browser implementation.]
 
-This historical receipt records a check of the exact Bellman bound. It predates a kernel repair, so replay is still pending. It also does not certify our floating-point browser code.
-
-Mathematically, with discount point nine, an exact residual of point zero zero one bounds value error by point zero one. That consequence needs an exact operator; our browser run has no such certificate.
+This historical receipt records the exact Bellman bound. Replay after a kernel repair is pending; it does not certify our floating-point browser code. Mathematically, with discount point nine, an exact residual of point zero zero one bounds value error by point zero one.
 
 ## 31 Scheduling an e-methanol plant
 
-35:01–35:34 · 62 words · 3s visual holds
+35:12–35:45 · 62 words · 3s visual holds
 
 ### Phase 1
 
@@ -622,7 +624,7 @@ I built this illustrative methanol model to meet a weekly production contract wh
 
 ## 32 52 weekly certificates accepted
 
-35:34–36:08 · 66 words · 3s visual holds
+35:45–36:19 · 66 words · 3s visual holds
 
 ### Phase 1
 
@@ -632,7 +634,7 @@ HiGHS finds the proposed schedule from our Clojure model. Our branch-and-bound a
 
 ## 33 San Roque: what can scheduling save?
 
-36:08–36:43 · 65 words · 3s visual holds
+36:19–36:54 · 65 words · 3s visual holds
 
 ### Phase 1
 
@@ -640,19 +642,19 @@ HiGHS finds the proposed schedule from our Clojure model. Our branch-and-bound a
 
 For financial scale, take our separate e-SAF model at San Roque, by the Bay of Algeciras, using local wind and solar data. Planning forty-eight hours ahead saves a modeled average of 4.4 million euros annually in energy and backup hydrogen against the best tuned operating rule. This excludes missed-delivery penalties. These are model estimates, not measured factory savings or results covered by the methanol certificate.
 
-## 34 How much cheaper could it be?
+## 34 Where I want to take Rainbow
 
-36:43–37:14 · 60 words · 3s visual holds
+36:54–37:25 · 59 words · 3s visual holds
 
 ### Phase 1
 
-[Explain one part per million in euros, then state exactly where the proof work stops.]
+[Return to proofs as data. Describe a direction, not a finished editor.]
 
-Back to the methanol benchmark: every one of the 52 tested weeks has a reported cost gap below one part per million. The largest gap was 26 cents on a 388-thousand-euro week. That bounds possible further improvement; it is not the saving against current practice. The checker’s acceptance-implies-optimality theorem remains open, so the end-to-end formal proof is not yet complete.
+I want an operator to open a certificate and ask: which constraint ruled out this schedule? Which assumption supports this bound? We could show the relevant part, insert a step, then check the result. Text need not be the only interface. Our tiny example does that for composition. The broader OR views and editing tools are still to build.
 
 ## 35 Applied Higher-Order Functions
 
-37:14–37:36 · 39 words · 3s visual holds
+37:25–37:47 · 39 words · 3s visual holds
 
 ### Phase 1
 
@@ -662,7 +664,7 @@ Today I concentrated on iterate. My book, Applied Higher-Order Functions, develo
 
 ## 36 Thank you
 
-37:36–37:48 · 18 words · 3s visual holds
+37:47–37:58 · 18 words · 3s visual holds
 
 ### Phase 1
 

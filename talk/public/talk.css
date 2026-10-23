@@ -337,3 +337,14 @@ table.comparison th { color: var(--muted); font-weight: 400; }
 .n-text p { margin: 0 0 20px; white-space: normal; }
 .n-reference { font-size: 17px; margin: 20px 0; }
 .n-reference summary { cursor: pointer; }
+
+/* Slide 27: the tree is generated from the current Rainbow term. */
+.proof-term { margin: 12px 0 28px; min-height: 230px; }
+.term-node { display: flex; flex-direction: column; align-items: center; }
+.term-label { font: 28px var(--mono); border: 2px solid var(--accent); border-radius: 8px;
+  padding: 10px 24px; background: var(--accent-soft); }
+.term-children { display: flex; justify-content: center; gap: 42px; position: relative;
+  margin-top: 24px; border-top: 2px solid var(--accent); }
+.term-children::before { content: ""; position: absolute; left: 50%; top: -24px;
+  height: 24px; border-left: 2px solid var(--accent); }
+.term-children > .term-node::before { content: ""; height: 24px; border-left: 2px solid var(--accent); }

@@ -241,6 +241,41 @@ The tiny composition proof and this negative control were checked again on 23 Oc
 
 “No axioms” means no additional axiom declarations were required by this proof. It does not eliminate trust in the kernel, runtime or logical rules. The argument parameters f, g and p are explicit assumptions inside the implication, not secretly introduced global axioms.
 
+### Edit the proof as data (slide 27, third phase)
+
+**Say:** “The editor proposes a new term. The kernel checks it. We can change the interface without changing what counts as a proof.”
+
+The slide now has three phases: the original composition, removal of the outer application, and insertion of that application again. Its tree is drawn from the current term. It is not a separately maintained illustration.
+
+The body lives at `[:value 2]`: the map's `:value` is a `[:fn bindings body]` vector, whose zero-based element 2 is the body. These are ordinary Clojure functions from `src/talk/proof_data.cljc`:
+
+```clojure
+(defn remove-outer [proof]
+  (update-in proof [:value 2]
+             (fn [body] (nth body 2))))
+
+(defn wrap-body [proof function-name]
+  (update-in proof [:value 2]
+             (fn [body] [:app function-name body])))
+
+(def shorter (remove-outer proof))
+(wrap-body shorter 'g)
+```
+
+`update-in` is the higher-order function: it receives a function to apply at the selected location and returns a new data structure. `remove-outer` selects the argument from the outer `[:app g argument]` vector. Here that argument is `[:app f p]`. `wrap-body` constructs `[:app g [:app f p]]` again. The quoted `g` is a symbol in a proof term; it is not a Clojure function being called. The original proof remains available.
+
+The shared functions run both in the browser and in the JVM check script. The script checks the original, removed and restored terms; the browser asserts that its edits produce exactly those recorded terms before displaying their verdicts. Rechecked on 23 October against the same clean `d9080c7` revision: checked, rejected, checked. No kernel executes in the browser.
+
+This is a small demonstration for this application-shaped term, not a general proof editor. Arbitrary edits need to respect binders, variable scope, dependencies and the claimed type. A well-formed EDN vector can still be an invalid proof. The record also does not establish that every part of the kernel is sound.
+
+### Why this matters beyond one edit
+
+Clojure forms have a data representation. Rainbow explicit proof terms use vectors and symbols with their own grammar. They are not the same language, but ordinary Clojure functions can manipulate both representations. That is the connection to homoiconicity; choosing Clojure alone does not make a proof correct.
+
+A visual tool could select a subtree, insert a step, show a dependency, or propose an edit from a drawing gesture. Each creates a candidate term requiring a check. Editing means producing a new immutable value, not modifying the accepted artifact in place. The verdict on an old term does not certify a changed term.
+
+On slide 34, “Where I want to take Rainbow,” describe the broader OR tools as future work. The small tree/edit demo exists in this talk. A general visual editor, certificate tree replay and assumption-oriented OR views are not demonstrated as released Rainbow products. Visualization is not exclusive to Rainbow or Clojure; the opportunity is an interface grounded in the actual proof data and the operator's questions.
+
 ## Slides 28 to 30 explain Bellman contraction
 
 **Say:** “Suppose two tables disagree about future profit. Applying the same Bellman update brings their largest disagreement to at most ninety percent of its previous size.”
@@ -298,7 +333,7 @@ That Bellman receipt predates a documented kernel repair. The kernel’s trusted
 
 Do not describe the Bellman browser demo as certified by the theorem. Nor should a theorem that merely unfolds an update definition be described as proving its convergence or optimality.
 
-## Slides 31 to 34 explain the plant work
+## Slides 31 to 33 explain the plant work
 
 ### The physical interpretation of the model
 
@@ -388,7 +423,7 @@ npm run study -- speaker/study-results.json
 From the repository root, check the composition proof and its deliberately wrong alternative:
 
 ```sh
-clojure -Sdeps '{:paths ["../rainbow/rainbow/src"]}' \
+clojure -Sdeps '{:paths ["../rainbow/rainbow/src" "talk/src"]}' \
   -M talk/scripts/check-proof.clj
 ```
 

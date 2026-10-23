@@ -15,6 +15,7 @@
   illustrative calls, proof explanations and recorded kernel evidence are labelled separately."
   (:require [clojure.string :as str]
             [talk.speaker :as speaker]
+            [talk.proof-data :as proof-data]
             [talk.notation :as n :refer [src defmap defmodel defbellman pairs violations]]))
 
 ;; =============================================================================
@@ -215,6 +216,15 @@
   [:g {:transform (str "translate(" x "," y ")")}
    [:rect.food {:x -16 :y -11 :width 32 :height 22 :rx 9}]
    [:path.food-line {:d "M -8 -11 L -8 11 M 0 -11 L 0 11 M 8 -11 L 8 11"}]])
+
+(defn proof-tree
+  "Draw the explicit application term itself; no independent diagram or type inference."
+  [term]
+  (if (vector? term)
+    [:div.term-node
+     [:div.term-label (str (first term))]
+     [:div.term-children (map proof-tree (rest term))]]
+    [:div.term-node [:div.term-label (str term)]]))
 
 ;; =============================================================================
 ;; 2. The shared loop
@@ -1848,26 +1858,42 @@
               [:div.two.even
                [:div [:p.aside "A theorem prover written in Clojure."]
                 [:p.aside [:a {:href "https://flexiana.com/rainbow"} "flexiana.com/rainbow"]]]
-               [:div [:p.aside "Can we prove a property of our update?"]
-                [:p "For Bellman: two value estimates get closer after an update."]
-                [:p.caption "Specify the claim. Construct a proof. Check it."]]])
-    :notes "Clojure is dynamically typed. You might prefer Haskell for static guarantees; those catch useful classes of errors. But choosing a dynamic language does not prevent us from stating and mechanically checking a mathematical theorem. Rainbow is a theorem prover written in Clojure. Static typing and proof are complementary, and Haskell can participate in formal verification too. We will prove a specific property under explicit assumptions, not claim the entire application has no bugs. First show a tiny proof of function composition to teach Rainbow syntax, then the larger property of Bellman's update."}
+               [:div [:p.aside "A proof can have more than one interface."]
+                [:p "Text. A tree. A structural editor."]
+                [:p.caption "The editor proposes a term. The kernel checks it."]]])
+    :notes "Clojure code has a data representation; Rainbow proof terms are EDN data too. This invites ordinary functions to inspect, render and transform them. A transformation can produce an invalid proof: only a new check establishes whether the new term has the claimed type. Static typing and theorem proving are complementary, not competing language claims. The structural view on the next slide is implemented in this talk; a general visual proof editor is a direction, not a shipped Rainbow feature. Other provers also have structured terms and visualization tools."}
 
-   {:section "Rainbow" :title "A proof is a function" :steps 2
+   {:section "Rainbow" :title "A proof we can edit" :steps 3
     :render (fn [step]
-              (let [receipt (n/checked-composition)]
+              (let [receipt (n/checked-composition)
+                    original (:proof receipt)
+                    removed (proof-data/remove-outer original)
+                    restored (proof-data/wrap-body removed 'g)
+                    proof (nth [original removed restored] step)
+                    body (get-in proof [:value 2])
+                    verdict (nth [(:status receipt) (:negative-status receipt)
+                                  (:restored-status receipt)] step)]
+                ;; Never attach a recorded verdict to a different runtime edit.
+                (assert (= removed (:removed-proof receipt)))
+                (assert (= restored (:restored-proof receipt)))
                 [:div.two.even
-                 [:div (code (:source receipt) {:size :small})
-                  [:p.caption "Rainbow explicit term syntax · checked from this exact source."]]
                  [:div
-                  [:div.proof-flow [:div "p : P"] [:span "↓ f : P → Q"]
-                   [:div "f(p) : Q"] [:span "↓ g : Q → R"] [:div "g(f(p)) : R"]]
                   (if (zero? step)
-                    [:p.aside [:span.ok (name (:status receipt))] " · no axioms"]
+                    (code (:source receipt) {:size :small})
                     [:div
-                     (code "[:app f p]" {:size :small})
-                     [:p.aside [:span.bad (name (:negative-status receipt))] " · Q is not R"]])]]))
-    :notes "This is actual Rainbow explicit term syntax, not Clojure pseudocode or a tactic sketch. P, Q and R are arbitrary propositions. The type says: given a proof-transformer f from P to Q, a proof-transformer g from Q to R, and a proof p of P, produce a proof of R. forall binds propositions; the arrow is implication; fn binds the proof's arguments; app applies one proof term to another. The body applies f to p, then g to that result: function composition. The kernel checked this exact file in an empty environment, with no axioms. On the second reveal propose only f(p); it has type Q, not R, and the same kernel rejects it. Both verdicts were recorded by talk/scripts/check-proof.clj, not computed in the browser. This small proof teaches the syntax; the following Bellman theorem is the larger OR application."}
+                     (code "f : P → Q    g : Q → R    p : P\nRequired result: R" {:size :small})
+                     (code (n/source (if (= step 1) 'remove-outer 'wrap-body)) {:size :small})
+                     (code (if (= step 1)
+                             "(def shorter (remove-outer proof))"
+                             "(wrap-body shorter 'g)") {:size :small})])
+                  [:p.caption (if (zero? step) "Rainbow term syntax" "Clojure editing Rainbow data")]]
+                 [:div
+                  [:div.proof-term {:data-proof-body (pr-str body)} (proof-tree body)]
+                  (code (pr-str body) {:size :small})
+                  [:p.aside [:span {:class (if (= verdict :checked) "ok" "bad")} (name verdict)]
+                   (if (= step 1) " · produces Q; requires R" " · produces R")]
+                  [:p.caption "Recorded kernel check · this exact term"]]]))
+    :notes "P, Q and R are arbitrary propositions. Given f from P to Q, g from Q to R, and p proving P, function composition proves R. forall binds propositions; fn binds arguments; app applies a term. The right-hand tree is rendered recursively from the actual body, not drawn separately. Phase two calls remove-outer: update-in selects the body at [:value 2], and nth selects the application argument, dropping g. The result proves Q and the recorded kernel check rejects it against R. Phase three passes a function to update-in that wraps that body in an application of g. Immutable data: the original remains available. The same shared Clojure/ClojureScript functions run in the JVM receipt generator and in the browser. Each runtime term must equal the term recorded in the receipt. This is a small structural-edit demonstration, not a general type-aware editor or a browser kernel. Editing arbitrary terms also requires respecting scope and binders. Check results are evidence from the recorded kernel revision, not a proof of the kernel's own soundness."}
 
    {:section "Rainbow" :title "Bellman shrinks disagreement" :steps 2
     :render (fn [step]
@@ -1944,7 +1970,8 @@
                  [:p "HiGHS solves the smaller problems inside it."]]]
                [:div.proof-row.revealed [:strong "Rainbow"]
                 [:div [:b "Checks the certificate with exact arithmetic"]]]]
-               [:p.aside "Median check: 0.64 seconds per week."]])
+               [:p.aside "Median check: 0.64 seconds per week."]
+               [:p.caption "Reported relative cost gap ≤ 10⁻⁶ in all 52 weeks."]])
     :notes "Verified against ../rh2edin-challenge/proofs/rainbow_bb_export.clj, especially the incumbent at line 84 and the branch-and-bound loop near line 162. Our contribution includes the plant formulation, branch selection, exact certificate construction and checker. HiGHS supplies both the MIP incumbent and LP relaxation solves. HiGHS is a third-party open-source solver from the Edinburgh optimization community. No claim that our gradient descent or Bellman demo generated this schedule."}
 
    {:section "Rainbow" :title "San Roque: what can scheduling save?"
@@ -1960,18 +1987,16 @@
                [:p.caption "Separate study from the methanol certificate benchmark."]])
     :notes "Site point: 36.18 N, 5.40 W in data/manifest.json. The study concerns the San Roque / Los Barrios industrial area, not a named operating factory or customer engineering model. Open-Meteo/ERA5 weather 2015–2025 at that point; PV calibrated to PVGIS; wind uses a generic power curve. Equipment and cost inputs are labelled assumptions in esaf/assumptions.clj. It is not an average Spanish weather profile. Source: ../rh2edin-challenge/challenge-1-esaf/README.md section 5.1 and results/results.json operations. Energy/backup component = total value_vs_rule minus shortfall component, mean 4.388895399574215 M EUR/year; the reported lower interval endpoint is 2.4782220376606423 M EUR/year. This is a modeled comparison, not realized customer savings or a guarantee. Nine cases combine three held-out weather years with three price years reused in tuning; do not call them nine independent future years. Baseline is the strongest of three tuned rule families. The full 9.3 M EUR figure includes modeled missed-delivery penalties; we deliberately quote energy/backup only. This study uses e-SAF, not the e-methanol weekly certificate model, and is not covered by that 1e-6 bound. No commercial relationship or customer outcome is asserted."}
 
-   {:section "Rainbow" :title "How much cheaper could it be?"
+   {:section "Rainbow" :title "Where I want to take Rainbow"
     :render (fn [_]
-              [:div
-               [:p.aside "All 52 tested weeks of 2023: within one part per million."]
-               [:div.certificate-results
-                [:div [:strong "10⁻⁶"] [:span "relative cost gap"]]
-                [:div [:strong "€0.26"] [:span "largest reported gap, on a €388,000 week"]]]
-               [:p.aside "A solver finds the schedule. Our code builds and checks the certificate."]
-               [:p.caption "Reported certificate results · exact arithmetic · optimality within the model"]
-               [:p.certificate-boundary "The checker's soundness proof is still open."]
-               [:p.caption "Acceptance ⇒ optimality is not yet a proved theorem."]])
-    :notes "Jiri supplied these results; their provenance and the division of work are documented in ../rainbow/DESIGN-2026-10-18-proved-milp-certificates.md. No benchmark was rerun for these slides. HiGHS finds the incumbent; our own branch-and-bound uses HiGHS LP solves to construct the exact certificate. The checker is our code. The certificates describe a search tree with bounds at its leaves and accounted-for splits. Exact checking tests the submitted evidence rather than trusting a solver status. The checker runs as a kernel-certified program, but its acceptance-implies-optimality soundness theorem remains open. Do not call these end-to-end formal optimality proofs. A reported nonzero tolerance also does not mean no cheaper schedule exists. One four-stack week remains unaccepted; no monthly certificate result is claimed. HiGHS is faster at solving; this work is about checking answers. Proof coverage concerns the model, not the real plant."}
+              [:div.two.even
+               [:div [:p.aside "Open a certificate."]
+                [:p "Which constraint ruled out this schedule?"]
+                [:p "Which assumptions does this bound depend on?"]]
+               [:div [:p.aside "Work with its structure."]
+                [:p "Select a part. Insert a step. Check again."]
+                [:p.caption "Next: views and editing tools built from proof data."]]])
+    :notes "This is a direction, not a released general editor. The talk's small term tree already comes from the actual EDN body; future views should preserve that link to the checked artifact. For OR, meaningful nodes include constraints, dual bounds, search-tree branches and cited assumptions. Inserting or replacing a part constructs a candidate; the previous verdict does not transfer. Bindings, dependencies and the exact statement must be checked again. A drawing gesture could propose an edit, but is not itself evidence. Visual proof tools also exist in other ecosystems; the opportunity is making OR evidence understandable and reusable through Clojure data. The preceding plant results remain reported certificate checks, with end-to-end checker soundness unfinished. No claim about savings is upgraded by this roadmap."}
 
    ;; ---------------------------------------------------------------- The book (2 min)
    {:section "The book" :title "Applied Higher-Order Functions"

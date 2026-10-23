@@ -267,3 +267,40 @@ the original editorial review; these later user-directed revisions are recorded 
   The final public check includes the expanded “gap to optimal cost” label. Screenshots of
   both result slides and the book slide were inspected. No tunnel configuration changes.
   URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=book-study-20261023
+
+## Proofs as data — 2026-10-23
+
+- Read the live `rainbow-claude-4` pane and the north-star/backlog at internal-rfnbo
+  revision 215f6525. The internal-north-star worktree was behind that discussion.
+  Used the distinction between implemented proof data and planned OR interfaces;
+  did not copy internal strategy documents or commercial plans into this repo/preview.
+- Slide 26 connects the earlier code-as-data point to proof interfaces. Slide 27 now has
+  three phases: composition, removal of the outer application, and reinsertion with
+  `update-in`. Its tree is rendered from the term itself. Shared CLJC functions perform
+  both browser edits and the edits submitted to the JVM checker. Runtime/compile-time
+  guards require the shown terms to match the checked source and recorded edits.
+- Clean Rainbow d9080c7 checked the original and restored terms and rejected the shortened
+  term, in an empty environment with no axioms. Receipt refreshed at
+  2026-10-23T18:48:30Z. These are recorded checks, not an in-browser kernel, a replay of
+  Bellman evidence, or a proof of kernel/checker soundness.
+- Slide 34 replaces duplicate benchmark results with the intended OR interface: inspect
+  constraints and assumptions, insert a part, recheck. General visual editing remains
+  future work. Slides 31–32 retain the reported 52-week outcome, cost gap, timing,
+  solver/search/checker attribution and unfinished soundness boundary.
+- Updated the script, presenter data, study guide and both PDFs. Still 36 slides, now
+  84 cues and 4,182 words: estimated 39:58 including visual holds and two minutes for
+  questions. This is a calculation, not a rehearsal.
+- A source-display check caught an extra closing delimiter from the capture wrapper.
+  The wrapper now sits outside the captured definition; both displayed definitions are
+  read in full by a regression check. All 20 tests / 2,228 assertions passed. Release
+  compilation passed with no warnings, including the new receipt/source equality guard.
+- Offline Chromium checked 270 frames at 1600×900, 1920×1080 and 1024×768: all slides and
+  short reveals, sampled numerical traces. No overflow, clipped code, render errors or
+  external requests. Proof tree labels and verdicts matched every edit; refresh, playback,
+  presenter controls, speech and the hour marker passed. Corrected an old test assumption
+  that the deliberately untitled playback slide must contain a heading. Inspected the
+  final proof-insertion and Rainbow-direction screenshots. PDFs printed offline.
+- Refreshed the existing six-file preview without changing the tunnel configuration. Public
+  JavaScript matched the local release byte-for-byte; 12 frames at 1920×1080 and 1024×768,
+  all three proof-edit phases, presenter speech and refresh passed.
+  URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=proof-data-20261023#s26

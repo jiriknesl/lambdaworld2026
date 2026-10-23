@@ -95,6 +95,8 @@
                       (slurp (io/resource "talk/composition-check.edn")))]
          (assert (= source (:source receipt))
                  "Recheck the edited proof before building the deck")
+         (assert (= (edn/read-string source) (:proof receipt))
+                 "The rendered proof data must match the checked source")
          (list 'quote receipt)))
 
      (defn- current-file []

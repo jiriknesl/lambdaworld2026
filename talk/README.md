@@ -16,7 +16,7 @@ follows one trajectory; the turbine introduction has one reveal. Slide 16 now il
 bird strike with a rotor impact and falling bird, driven by the displayed schedule.
 Its heading and explanatory caption are removed; the model-scope explanation remains in presenter notes.
 Slide 18 now has one reveal, retaining the order comparison. Slide 19 presenter speech explains
-q, score versus order, and the three-week versus four-week value comparison. Slides 31–34 tell the plant story, explain the solver/checker split, and distinguish
+q, score versus order, and the three-week versus four-week value comparison. Slides 31–33 tell the plant story, explain the solver/checker split, and distinguish
 modeled savings from the weekly certificate bound. The open checker-soundness theorem is visible on the results slide.
 The Bellman receipt is labelled historical, with replay after the kernel repair pending.
 Slides 31–32 now state the reported benchmark outcomes immediately: 52 accepted weekly
@@ -114,17 +114,17 @@ The deck has 36 slides; reveals are steps within a slide, not additional topics.
 | 17–21: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 22–24: Validation | 5:34 | Controller rule, reachable states and shared iterate. |
 | 25: Observation | 1:06 | Observe a supplied step without changing its result. |
-| 26–34: Rainbow | 6:05 | Composition proof, Bellman bound, plant scheduling and certificate results with their limits. |
+| 26–34: Rainbow | 6:16 | Proof editing, Bellman bound, plant results and future OR interfaces. |
 | 35–36: Book and thanks | 0:34 | Broader toolkit and contact. |
 
-The current 4,164-word script estimates **37:48 including visual holds**, or **39:48 with two
+The current 4,182-word script estimates **37:58 including visual holds**, or **39:58 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 36 slides, 83 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 36 slides, 84 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -314,6 +314,29 @@ Slide 24 names `iterate` underneath optimization, value iteration and reachabili
 update functions and stopping tests differ. Slide 25 observes an update through the common interface;
 rate and momentum have already demonstrated composition within the optimization example.
 
+## Rainbow: proofs as data — 2026-10-23
+
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=proof-data-20261023#s26).
+It remains publicly accessible without authentication.
+
+Slides 26–27 connect Clojure's data representation of code to Rainbow's EDN proof terms.
+Slide 27 executes two structural edits with `update-in`: remove the outer application,
+then wrap the remaining body in an application of `g`. A tree is rendered from the current
+body. Recorded verdicts are displayed only after checking that the browser's terms match
+those checked on the JVM. This is a talk demo, not a general visual editor.
+
+Slide 34 replaces the repeated benchmark summary with the intended direction: inspect a
+certificate's constraints and assumptions, edit a part, and check the new term. Broader OR
+views and editing tools are future work. The 52-week results, cost gap, HiGHS attribution
+and unfinished checker soundness remain on slides 31–32 and in the study guide.
+
+Direction was reconciled with the live `rainbow-claude-4` worker and
+`../rainbow/internal-rfnbo/doc/north-star-2026-10-23.md` plus `BACKLOG.md`, at
+revision `215f6525`. The older `internal-north-star` worktree lacked the latest update.
+These internal strategy documents were read, not copied into the presentation or preview.
+The useful public-facing distinction is implemented proof data versus planned interfaces;
+no commercial roadmap or unsupported competitive claims were imported.
+
 ## The proof examples and their limits
 
 Slide 27 shows actual Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
@@ -323,12 +346,12 @@ function composition for arbitrary propositions P, Q, R: given `f : P → Q`, `g
 
 `src/talk/composition-check.edn` records a fresh kernel check against the clean Rainbow revision
 `d9080c7285c7cd28a81e2d184b25ecae333510fd`, in an empty environment with no axioms. Returning only
-`f(p)` is rejected because Q does not establish R. Both proof terms are elaborated and checked;
+`f(p)` is rejected because Q does not establish R. The original, removed and restored proof terms are elaborated and checked;
 these verdicts are recorded in the deck, not executed by a browser kernel. Reproduce from the
 **repository root** (requires the local Rainbow checkout):
 
 ```sh
-clojure -Sdeps '{:paths ["../rainbow/rainbow/src"]}' -M talk/scripts/check-proof.clj
+clojure -Sdeps '{:paths ["../rainbow/rainbow/src" "talk/src"]}' -M talk/scripts/check-proof.clj
 ```
 
 The build embeds the exact checked file and fails if it differs from the receipt. This small
@@ -350,7 +373,7 @@ convergence guarantee here. Illustrative forecasts and synthetic bird data remai
 
 ## E-methanol certificate example
 
-Slides 31–34 tell the plant story, distinguish solver and certificate algorithms, and separate
+Slides 31–33 tell the plant story, distinguish solver and certificate algorithms, and separate
 savings from the distance to optimal cost, using Jiri’s supplied
 benchmark account (2026-10-23). This revision inspected the producer and design record, but did
 not rerun the benchmark.
