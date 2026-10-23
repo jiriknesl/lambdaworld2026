@@ -12,7 +12,7 @@
           "from": 1,
           "to": 1,
           "cue": "Let the title settle.",
-          "speech": "Hello, I’m Jiri. We’ll build three operations research examples with higher-order functions, watch them run, and then examine a proof about one of their updates.",
+          "speech": "Hello, I’m Jiri. We’ll build three operations research examples with higher-order functions, then examine a proof about an update.",
           "hold_seconds": 3
         }
       ]
@@ -645,7 +645,7 @@
           "from": 1,
           "to": 1,
           "cue": "Pause before moving from examples to proof.",
-          "speech": "Rainbow is a theorem prover written in Clojure. Static types catch useful mistakes; a proof checks a specific mathematical claim. First, a small proof to read the notation. Then, a property of our Bellman update, and an industrial scheduling example.",
+          "speech": "Rainbow is a theorem prover written in Clojure. We’ll read a small proof, examine our Bellman update, then look at industrial scheduling.",
           "hold_seconds": 3
         }
       ]
@@ -685,7 +685,7 @@
           "from": 2,
           "to": 2,
           "cue": "Right. Point to the computed 10 to 9 example.",
-          "speech": "For illustration, start one table at zero everywhere and the other at ten. Applying the browser’s Bellman function to both reduces the gap from ten to nine. That is one example. A proof has to cover every pair of value tables satisfying the assumptions.",
+          "speech": "Start one table at zero everywhere and the other at ten. Bellman reduces the gap to nine. This illustrates the claim; the proof must cover every admissible pair of tables.",
           "hold_seconds": 3
         }
       ]
@@ -738,46 +738,72 @@
       ]
     },
     {
-      "title": "When should a methanol plant buy power?",
+      "title": "Scheduling an e-methanol plant",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Follow electricity through hydrogen storage to methanol.",
-          "speech": "Here is a larger application. We model a methanol plant buying electricity at hourly Spanish market prices. The electrolyser makes hydrogen; the tank lets production and consumption happen at different times. We must deliver 588 tonnes of methanol per week at minimum cost. Minimum loads and start-up costs make switching decisions matter. This benchmark knows the whole week’s prices in advance.",
+          "cue": "Start with the plant and your work; use the diagram only to explain the scheduling problem.",
+          "speech": "I built a purchasing model for an illustrative e-methanol plant using Spain’s wholesale electricity prices. Production still has to happen, but the tank lets us buy power earlier and use hydrogen later. This benchmark knows the week’s prices. It models neither local weather nor renewable-electricity contracts.",
           "hold_seconds": 3
         }
       ],
       "slide": 31
     },
     {
-      "title": "Check the schedule's certificate",
+      "title": "Our code and the solver",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Read the weekly results, then explicitly state the open soundness theorem.",
-          "speech": "HiGHS finds schedules; Rainbow checks certificates with exact arithmetic. In our reported runs, all 52 weekly certificates were accepted. The largest reported gap was 26 cents on a 388-thousand-euro week; the median check took 0.64 seconds. Four separately switched stacks reached 51 weeks out of 52.\n\nThe checker runs as a kernel-certified program, but the theorem that acceptance implies optimality remains open. These are certificate-checking results, not completed end-to-end optimality proofs. They concern an illustrative model with known prices, not a real plant or live trading strategy. Monthly certificates remain out of reach.",
+          "cue": "Distinguish the model, solver, certificate-producing algorithm and checker.",
+          "speech": "Our Clojure code builds the plant model: prices, equipment, storage and production requirements. HiGHS, an existing open-source solver, finds the schedule. Our branch-and-bound algorithm builds the certificate tree. It chooses branches and constructs exact bounds, calling HiGHS for the smaller optimization problems inside the search. Rainbow checks that certificate.\n\nSo our algorithm produces the evidence, and our checker checks it. HiGHS supplies the proposed schedule.",
           "hold_seconds": 3
         }
       ],
       "slide": 32
     },
     {
-      "slide": 33,
+      "title": "San Roque: what can scheduling save?",
+      "phases": [
+        {
+          "from": 1,
+          "to": 1,
+          "cue": "Say this is a separate e-SAF model, a baseline comparison and a modeled result.",
+          "speech": "For financial scale, take our separate e-SAF model at San Roque, by the Bay of Algeciras, using local wind and solar data. Planning forty-eight hours ahead saves a modeled average of 4.4 million euros annually in energy and backup hydrogen against the best tuned operating rule. This excludes missed-delivery penalties. These are model estimates, not measured factory savings or results covered by the methanol certificate.",
+          "hold_seconds": 3
+        }
+      ],
+      "slide": 33
+    },
+    {
+      "title": "How much cheaper could it be?",
+      "phases": [
+        {
+          "from": 1,
+          "to": 1,
+          "cue": "Explain one part per million in euros, then state exactly where the proof work stops.",
+          "speech": "Back to the methanol benchmark: every one of the 52 tested weeks has a reported cost gap below one part per million. The largest gap was 26 cents on a 388-thousand-euro week. That bounds possible further improvement; it is not the saving against current practice. The checker’s acceptance-implies-optimality theorem remains open, so the end-to-end formal proof is not yet complete.",
+          "hold_seconds": 3
+        }
+      ],
+      "slide": 34
+    },
+    {
+      "slide": 35,
       "title": "Applied Higher-Order Functions",
       "phases": [
         {
           "from": 1,
           "to": 1,
           "cue": "Gesture to the reserved book image; leave the URL visible.",
-          "speech": "Today I concentrated on iterate, but you’ve also seen map, reduce, function composition, and functions that return other functions. My book, Applied Higher-Order Functions, develops a chosen toolkit of about twelve higher-order functions and their composition. That is the book’s organizing choice, not a claim that all of operations research reduces to twelve functions. If you want to build more of these algorithms and work through the examples, that is where I’ve put the longer treatment.",
+          "speech": "Today I concentrated on iterate. My book, Applied Higher-Order Functions, develops about twelve higher-order functions and their composition across operations research. It has the longer explanations and runnable examples. You can find it at flexiana dot com slash book.",
           "hold_seconds": 3
         }
       ]
     },
     {
-      "slide": 34,
+      "slide": 36,
       "title": "Thank you",
       "phases": [
         {

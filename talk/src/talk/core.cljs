@@ -1890,34 +1890,60 @@
                 [:p.caption "Mathematical consequence; not a certificate for this browser run."]]])
     :notes "This historical receipt predates the documented kernel repair; replay on the repaired kernel is pending. The recorded check is the signed Bellman additive-closeness theorem with empty axiom closure. We did not check the JavaScript program against it. Point to that boundary rather than implying that a theorem name certifies a renderer. The epsilon-to-gamma-epsilon statement is what is checked; fixed-point existence and convergence use the usual finite discounted model assumptions. The residual-to-error bound is a mathematical consequence of contraction, not a recorded certificate for this floating-point run. Residual refers to a candidate table versus one more update, not the size of a chosen action."}
 
-   {:section "Rainbow" :title "When should a methanol plant buy power?"
+   {:section "Rainbow" :title "Scheduling an e-methanol plant"
     :render (fn [_]
               [:div
+               [:p.aside "I built a purchasing model using Spain’s wholesale electricity prices."]
                [:div.plant-flow
                 [:div.plant-node [:strong "Electrolyser"] [:span "120 MW"]]
                 [:span.plant-arrow "→"]
                 [:div.plant-node [:strong "Hydrogen tank"] [:span "20 t"]]
                 [:span.plant-arrow "→"]
                 [:div.plant-node [:strong "Methanol loop"] [:span "10 t/h"]]]
-               [:p.aside "Deliver 588 t per week at minimum cost."]
-               [:p.aside "Buy power in cheap hours. Store hydrogen for later."]
-               [:p.aside "Minimum loads and start-up costs make switching matter."]
-               [:p.caption "Illustrative model · OMIE Spain, 2023 · full week of prices known"]])
-    :notes "Reported plant benchmark supplied by Jiri. Electricity use is 50 MWh per tonne of hydrogen; methanol consumes 0.19 tonnes of hydrogen per tonne. The tank starts at 10 tonnes and must finish at least there. The loop has 50% turndown and a EUR 1,000 start cost. The four-stack variant has four 30 MW stacks, 20% turndown and EUR 500 per stack start. No ramp limits, degradation, CO₂ or compressor limits, grid fees or renewable-fuel sourcing rules are represented. This is a model with known weekly prices, not a live day-ahead trading strategy. No operating trace is drawn because the underlying hourly schedules were not supplied."}
+               [:p.aside "Electricity prices change every hour. The plant still has to deliver."]
+               [:p.aside "When should we buy power, make hydrogen, and use the tank?"]
+               [:p.caption "588 t/week · illustrative plant · known OMIE prices · no local weather inputs"]])
+    :notes "This illustrative methanol model has no municipality, named physical plant or weather inputs. Spain refers to the OMIE peninsular wholesale bidding zone, not a uniform renewable PPA price. Plant model and certificate producer: ../rh2edin-challenge/proofs/rainbow_bb_export.clj. HiGHS supplies the MIP incumbent; our Clojure branch-and-bound constructs a certificate using HiGHS LP relaxations. The Rainbow checker validates that certificate. This is not the slide gradient-descent or Bellman solver. Reported plant benchmark supplied by Jiri. Electricity use is 50 MWh per tonne of hydrogen; methanol consumes 0.19 tonnes of hydrogen per tonne. The tank starts at 10 tonnes and must finish at least there. The loop has 50% turndown and a EUR 1,000 start cost. The four-stack variant has four 30 MW stacks, 20% turndown and EUR 500 per stack start. No ramp limits, degradation, CO₂ or compressor limits, grid fees or renewable-fuel sourcing rules are represented. This is a model with known weekly prices, not a live day-ahead trading strategy. No operating trace is drawn because the underlying hourly schedules were not supplied."}
 
-   {:section "Rainbow" :title "Check the schedule's certificate"
+   {:section "Rainbow" :title "Our code and the solver"
+    :render (fn [_]
+              [:div.proof-steps
+               [:div.proof-row.revealed [:strong "Our model"]
+                [:div [:b "Prices, equipment, storage, production"]]]
+               [:div.proof-row.revealed [:strong "HiGHS"]
+                [:div [:b "Finds the proposed schedule"]]]
+               [:div.proof-row.revealed [:strong "Our search"]
+                [:div [:b "Builds the certificate tree"]
+                 [:p "HiGHS solves the smaller problems inside it."]]]
+               [:div.proof-row.revealed [:strong "Rainbow"]
+                [:div [:b "Checks the certificate with exact arithmetic"]]]])
+    :notes "Verified against ../rh2edin-challenge/proofs/rainbow_bb_export.clj, especially the incumbent at line 84 and the branch-and-bound loop near line 162. Our contribution includes the plant formulation, branch selection, exact certificate construction and checker. HiGHS supplies both the MIP incumbent and LP relaxation solves. HiGHS is a third-party open-source solver from the Edinburgh optimization community. No claim that our gradient descent or Bellman demo generated this schedule."}
+
+   {:section "Rainbow" :title "San Roque: what can scheduling save?"
     :render (fn [_]
               [:div
-               [:p.aside "HiGHS finds a schedule. Rainbow checks its certificate with exact arithmetic."]
+               [:p.aside "e-SAF model · Bay of Algeciras · local wind and solar data"]
                [:div.certificate-results
-                [:div [:strong "52 / 52"] [:span "weekly certificates accepted"]]
-                [:div [:strong "€0.26"] [:span "largest reported optimality gap"]]
-                [:div [:strong "0.64 s"] [:span "median check per week"]]]
-               [:p.caption "2023 benchmark · €0.26 on a €388,000 week · tolerance: one part per million"]
-               [:p.aside "Four stacks: 51 of 52 weeks accepted; median check 15 s."]
-               [:p.certificate-boundary "Still open: proving that checker acceptance implies optimality."]
-               [:p.caption "Model, not plant · known weekly prices · monthly certificates still out of reach"]])
-    :notes "These are Jiri's supplied benchmark results, not a benchmark rerun in this deck. The certificates describe a search tree with bounds at its leaves and accounted-for splits. Exact checking tests the submitted evidence rather than trusting a solver status. The checker runs as a kernel-certified program, but its acceptance-implies-optimality soundness theorem remains open. Do not call these end-to-end formal optimality proofs. A reported nonzero tolerance also does not mean no cheaper schedule exists. One four-stack week remains unaccepted; no monthly certificate result is claimed. HiGHS is faster at solving; this work is about checking answers. Proof coverage concerns the model, not the real plant."}
+                [:div [:strong "€4.4m/year"] [:span "mean modeled saving"]]
+                [:div [:strong "€2.5–6.3m"] [:span "reported 95% interval"]]]
+               [:p.aside "Energy and backup hydrogen, compared with the best tuned operating rule."]
+               [:p.caption "Excludes the assumed cost of missed deliveries. Not savings measured at a factory."]
+               [:p.caption "Nine weather/price combinations · price years also used in tuning"]
+               [:p.caption "Separate study from the methanol certificate benchmark."]])
+    :notes "Site point: 36.18 N, 5.40 W in data/manifest.json. The study concerns the San Roque / Los Barrios industrial area, not a named operating factory or customer engineering model. Open-Meteo/ERA5 weather 2015–2025 at that point; PV calibrated to PVGIS; wind uses a generic power curve. Equipment and cost inputs are labelled assumptions in esaf/assumptions.clj. It is not an average Spanish weather profile. Source: ../rh2edin-challenge/challenge-1-esaf/README.md section 5.1 and results/results.json operations. Energy/backup component = total value_vs_rule minus shortfall component, mean 4.388895399574215 M EUR/year; the reported lower interval endpoint is 2.4782220376606423 M EUR/year. This is a modeled comparison, not realized customer savings or a guarantee. Nine cases combine three held-out weather years with three price years reused in tuning; do not call them nine independent future years. Baseline is the strongest of three tuned rule families. The full 9.3 M EUR figure includes modeled missed-delivery penalties; we deliberately quote energy/backup only. This study uses e-SAF, not the e-methanol weekly certificate model, and is not covered by that 1e-6 bound. No commercial relationship or customer outcome is asserted."}
+
+   {:section "Rainbow" :title "How much cheaper could it be?"
+    :render (fn [_]
+              [:div
+               [:p.aside "All 52 tested weeks of 2023: within one part per million."]
+               [:div.certificate-results
+                [:div [:strong "10⁻⁶"] [:span "relative cost gap"]]
+                [:div [:strong "€0.26"] [:span "largest reported gap, on a €388,000 week"]]]
+               [:p.aside "A solver finds the schedule. Our code builds and checks the certificate."]
+               [:p.caption "Reported certificate results · exact arithmetic · optimality within the model"]
+               [:p.certificate-boundary "The checker's soundness proof is still open."]
+               [:p.caption "Acceptance ⇒ optimality is not yet a proved theorem."]])
+    :notes "Jiri supplied these results; their provenance and the division of work are documented in ../rainbow/DESIGN-2026-10-18-proved-milp-certificates.md. No benchmark was rerun for these slides. HiGHS finds the incumbent; our own branch-and-bound uses HiGHS LP solves to construct the exact certificate. The checker is our code. The certificates describe a search tree with bounds at its leaves and accounted-for splits. Exact checking tests the submitted evidence rather than trusting a solver status. The checker runs as a kernel-certified program, but its acceptance-implies-optimality soundness theorem remains open. Do not call these end-to-end formal optimality proofs. A reported nonzero tolerance also does not mean no cheaper schedule exists. One four-stack week remains unaccepted; no monthly certificate result is claimed. HiGHS is faster at solving; this work is about checking answers. Proof coverage concerns the model, not the real plant."}
 
    ;; ---------------------------------------------------------------- The book (2 min)
    {:section "The book" :title "Applied Higher-Order Functions"

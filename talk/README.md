@@ -10,9 +10,9 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=methanol-20261023).
-Updated 2026-10-23: slides 31–32 add the e-methanol scheduling example and reported weekly
-certificate results. The open checker-soundness theorem is visible on the results slide.
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plant-evidence-20261023).
+Updated 2026-10-23: slides 31–34 tell the plant story, explain the solver/checker split, and distinguish
+modeled savings from the weekly certificate bound. The open checker-soundness theorem is visible on the results slide.
 The Bellman receipt is labelled historical, with replay after the kernel repair pending.
 The spoken script and PDF follow the new order.
 This URL is **public and unauthenticated**;
@@ -88,29 +88,29 @@ open the release build (`public/index.html`) — it needs nothing else.
 ## Talk arc — revised 2026-10-23
 
 HOFs are the subject. Step size and momentum are integrated into optimization; observation follows the three examples.
-The deck has 34 slides; reveals are steps within a slide, not additional topics.
+The deck has 36 slides; reveals are steps within a slide, not additional topics.
 
 | Slides | Estimated time | What the audience sees |
 | --- | ---: | --- |
-| 1–2: Jiri | 0:44 | Developer, economist, Barcelona meetup and interviews. |
-| 3: Clojure | 0:28 | Why I chose it; no language prerequisite. |
-| 4: OR | 0:37 | What optimization, decisions and validation ask. |
+| 1–2: Jiri | 0:42 | Developer, economist, Barcelona meetup and interviews. |
+| 3: Clojure | 0:27 | Why I chose it; no language prerequisite. |
+| 4: OR | 0:38 | What optimization, decisions and validation ask. |
 | 5–8: HOFs | 4:14 | Function construction, map, iterate and stopping. |
-| 9–16: Optimization | 10:17 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
+| 9–16: Optimization | 10:16 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
 | 17–21: Decision-making | 8:31 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 22–24: Validation | 5:35 | Controller rule, reachable states and shared iterate. |
 | 25: Observation | 1:06 | Observe a supplied step without changing its result. |
-| 26–32: Rainbow | 5:27 | Composition proof, Bellman bound, plant scheduling and certificate results with their limits. |
-| 33–34: Book and thanks | 0:51 | Broader toolkit and contact. |
+| 26–34: Rainbow | 5:57 | Composition proof, Bellman bound, plant scheduling and certificate results with their limits. |
+| 35–36: Book and thanks | 0:33 | Broader toolkit and contact. |
 
-The current 4,169-word script estimates **37:50 including visual holds**, or **39:50 with two
+The current 4,176-word script estimates **37:59 including visual holds**, or **39:59 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 34 slides, 83 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 36 slides, 85 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -336,7 +336,10 @@ convergence guarantee here. Illustrative forecasts and synthetic bird data remai
 
 ## E-methanol certificate example
 
-Slides 31–32 condense Jiri’s supplied benchmark account (2026-10-23), not a newly audited run.
+Slides 31–34 tell the plant story, distinguish solver and certificate algorithms, and separate
+savings from the distance to optimal cost, using Jiri’s supplied
+benchmark account (2026-10-23). This revision inspected the producer and design record, but did
+not rerun the benchmark.
 The plant diagram shows 120 MW of electrolysis, a 20 t hydrogen tank and a 10 t/h methanol loop,
 with a 588 t weekly contract. Minimum loads and start-up costs make the schedule mixed-integer.
 The speaker’s technical notes retain the tank’s initial/terminal inventory, conversion rates,
@@ -344,8 +347,16 @@ turndown and start-up assumptions.
 
 Reported results: 52/52 weekly certificates accepted for 2023; largest reported gap EUR 0.26 on
 an approximately EUR 388,000 week; relative tolerance one part per million; median check 0.64 s.
-The four-stack variant reaches 51/52 weeks, with a 15 s median check. No weekly chart or hourly
-schedule is invented: the underlying certificates and per-week measurements were not supplied.
+The four-stack variant reaches 51/52 weeks, with a 15 s median check (technical notes only).
+No weekly chart or hourly schedule is drawn. Benchmark records were located in
+`../rainbow/PLANT-CERTIFICATES`; the summary is documented in
+`../rainbow/DESIGN-2026-10-18-proved-milp-certificates.md`.
+
+The implementation in `../rh2edin-challenge/proofs/rainbow_bb_export.clj` separates the work:
+our Clojure code builds the plant model; HiGHS finds the MIP incumbent; our branch-and-bound
+producer builds a certificate tree using HiGHS LP solves and exact bound construction; Rainbow
+checks the certificate. This is not a run of the presentation's gradient-descent or Bellman
+algorithm. HiGHS is a third-party solver, not a Flexiana implementation.
 
 **Scope:** the checker runs as a kernel-certified program, but the theorem that acceptance
 implies optimality is still open. These are reported certificate-checking results, not completed
@@ -353,6 +364,30 @@ end-to-end formal optimality proofs. The model knows a whole week of prices in a
 ramp limits, degradation, CO₂/compressor limits, grid fees and renewable-fuel sourcing rules.
 Monthly certificates remain out of reach. The work checks solver answers; it does not claim to
 outperform HiGHS at finding them. The visible slide copy and speaker script preserve these boundaries.
+
+### Savings are a separate comparison
+
+Slide 33 quotes the San Roque e-SAF operations study, not the methanol certificate benchmark.
+The weather point is 36.18° N, 5.40° W, in the San Roque / Los Barrios area by the Bay of Algeciras
+(`../rh2edin-challenge/data/manifest.json`). It uses local ERA5/Open-Meteo wind and solar data,
+PVGIS calibration and a generic wind power curve. Equipment and costs are model assumptions,
+not a named factory’s engineering data. The methanol benchmark has no site or weather input: it
+uses OMIE’s Spanish wholesale price, which is not a renewable-specific supply-contract price.
+The peninsular Spanish bidding zone shares a day-ahead clearing price for each trading period
+([OMIE market explanation](https://www.omie.es/en/mercado-de-electricidad)). Renewable PPAs
+have separately agreed prices, which may be fixed or indexed
+([Iberdrola España PPA explanation](https://www.iberdrolaespana.com/about-us/business-lines/energy-solutions-customers-spain/ppas-energy-spain)).
+A 48-hour rolling-horizon policy reduces modeled energy and backup-hydrogen costs by a mean
+EUR 4.4m/year versus the best of three tuned rule families; the study reports a 95% interval of
+EUR 2.5–6.3m. The full EUR 9.3m result includes assumed missed-delivery penalties, which this
+slide excludes. These are model estimates, not savings realized at a customer factory. Nine
+cases combine three held-out weather years with three price years reused in tuning; they are
+not nine independent future years. The weekly methanol certificates do not certify this result.
+
+Source: `../rh2edin-challenge/challenge-1-esaf/README.md` section 5.1 and
+`results/results.json` → `operations`; the energy component is total value minus the shortfall
+component in each paired case. `speaker/plant-case-evidence.json` records the extraction, source
+hashes and attribution boundary. The model/certificate pipelines were inspected, not rerun.
 
 ## Typography and slide copy
 
@@ -363,7 +398,7 @@ faces are used, with browser-synthesized bold. Bundled DejaVu remains for missin
 its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
 
 Visible text is intentionally brief; fuller explanations and proof assumptions remain in
-speaker notes. OR's opening slide does not reveal the concrete examples. Slide 33 reserves a
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 35 reserves a
 390 × 520 area for the book photograph; replace its `.book-photo` placeholder with the supplied
 image when available.
 

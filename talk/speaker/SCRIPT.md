@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,169 spoken words. Planning pace: 125 words/minute, plus 04:29 of pauses and visual holds. Speech and holds: 37:50; with 02:00 for questions: 39:50. This is an estimate, not an aloud rehearsal.
+4,176 spoken words. Planning pace: 125 words/minute, plus 04:35 of pauses and visual holds. Speech and holds: 37:59; with 02:00 for questions: 39:59. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -10,17 +10,17 @@ Every rendered phase has a passage. Ranges such as “2–penultimate” cover c
 
 ## 01 Rebuilding Operations Research in Higher-Order Functions
 
-00:00–00:15 · 25 words · 3s visual holds
+00:00–00:12 · 19 words · 3s visual holds
 
 ### Phase 1
 
 [Let the title settle.]
 
-Hello, I’m Jiri. We’ll build three operations research examples with higher-order functions, watch them run, and then examine a proof about one of their updates.
+Hello, I’m Jiri. We’ll build three operations research examples with higher-order functions, then examine a proof about an update.
 
 ## 02 About me
 
-00:15–00:44 · 55 words · 3s visual holds
+00:12–00:42 · 55 words · 3s visual holds
 
 ### Phase 1
 
@@ -30,7 +30,7 @@ I started programming thirty-four years ago, and I’ve been using Clojure for f
 
 ## 03 Why Clojure?
 
-00:44–01:12 · 51 words · 3s visual holds
+00:42–01:09 · 51 words · 3s visual holds
 
 ### Phase 1
 
@@ -40,7 +40,7 @@ I chose Clojure for small functions, immutable data, and REPL-oriented programmi
 
 ## 04 Operations research
 
-01:12–01:49 · 72 words · 3s visual holds
+01:09–01:47 · 72 words · 3s visual holds
 
 ### Phase 1
 
@@ -52,7 +52,7 @@ I also include validation: checking whether a system respects its specification.
 
 ## 05 Functions in. Functions out.
 
-01:49–03:08 · 144 words · 9s visual holds
+01:47–03:05 · 144 words · 9s visual holds
 
 ### Phase 1
 
@@ -74,7 +74,7 @@ But to solve the problem, I want the result of one update to become the input to
 
 ## 06 iterate: state → state → …
 
-03:08–04:10 · 98 words · 15s visual holds
+03:05–04:07 · 98 words · 15s visual holds
 
 ### Phase 1
 
@@ -108,7 +108,7 @@ Take asks for five states from this lazy sequence. Iterate itself has no idea wh
 
 ## 07 A fixed point stays the same
 
-04:10–04:47 · 66 words · 6s visual holds
+04:07–04:44 · 66 words · 6s visual holds
 
 ### Phase 1
 
@@ -124,7 +124,7 @@ Starting at two, the update returns two. Two is a fixed point of this particular
 
 ## 08 step + converged?
 
-04:47–06:03 · 140 words · 9s visual holds
+04:44–06:01 · 140 words · 9s visual holds
 
 ### Phase 1
 
@@ -146,7 +146,7 @@ The change is below ten to the minus twelve. Successive change does not automati
 
 ## 09 Plan tomorrow’s turbine settings
 
-06:03–07:05 · 116 words · 6s visual holds
+06:01–07:02 · 116 words · 6s visual holds
 
 ### Phase 1
 
@@ -162,7 +162,7 @@ Six turbines over twelve hours gives seventy-two settings, stored under the keyw
 
 ## 10 What makes one plan better?
 
-07:05–08:36 · 171 words · 9s visual holds
+07:02–08:33 · 171 words · 9s visual holds
 
 ### Phase 1
 
@@ -184,7 +184,7 @@ Neither column alone tells us which compromise to choose. First I’ll show how 
 
 ## 11 Optimization is iterate
 
-08:36–10:40 · 239 words · 9s visual holds
+08:33–10:37 · 239 words · 9s visual holds
 
 ### Phase 1
 
@@ -208,7 +208,7 @@ Clamped takes that update function and returns another function. It calls the up
 
 ## 12 How far should one update move?
 
-10:40–11:21 · 72 words · 6s visual holds
+10:37–11:18 · 72 words · 6s visual holds
 
 ### Phase 1
 
@@ -224,7 +224,7 @@ Double the rate and this proposed movement doubles. A larger rate can overshoot 
 
 ## 13 Which plan should win?
 
-11:21–13:10 · 209 words · 9s visual holds
+11:18–13:07 · 209 words · 9s visual holds
 
 ### Phase 1
 
@@ -248,7 +248,7 @@ Here is the wrapper. It receives the original cost, a risk function, and the par
 
 ## 14 Same updates, different objectives
 
-13:10–14:38 · 150 words · 16s visual holds
+13:07–14:35 · 150 words · 16s visual holds
 
 ### Phase 1
 
@@ -270,7 +270,7 @@ Compare the final generation and exposure. The penalty buys a reduction in expos
 
 ## 15 Can momentum reduce the number of updates?
 
-14:38–15:36 · 109 words · 6s visual holds
+14:35–15:33 · 109 words · 6s visual holds
 
 ### Phase 1
 
@@ -286,7 +286,7 @@ The base step performs descent; momentum wraps it; clamped wraps the result. Cla
 
 ## 16 Play the resulting day
 
-15:36–16:20 · 62 words · 14s visual holds
+15:33–16:17 · 62 words · 14s visual holds
 
 ### Phase 1
 
@@ -302,7 +302,7 @@ With the penalty, the chosen schedule curtails exposed turbines during busy hour
 
 ## 17 Buy hydrogen before the customers arrive
 
-16:20–18:25 · 236 words · 12s visual holds
+16:17–18:22 · 236 words · 12s visual holds
 
 ### Phase 1
 
@@ -332,7 +332,7 @@ We sell each unit for ten, so this outcome earns twenty minus the purchase cost 
 
 ## 18 Buy for this week—or the next?
 
-18:25–19:17 · 96 words · 6s visual holds
+18:22–19:14 · 96 words · 6s visual holds
 
 ### Phase 1
 
@@ -350,7 +350,7 @@ That extra unit may avoid an expensive future purchase, or it may sit unsold and
 
 ## 19 Future values change the order
 
-19:17–21:58 · 303 words · 15s visual holds
+19:14–21:55 · 303 words · 15s visual holds
 
 ### Phase 1
 
@@ -384,7 +384,7 @@ To choose an order, use best-order with the model and V. Max keeps the highest s
 
 ## 20 Hydrogen: iterate the value table
 
-21:58–23:31 · 166 words · 14s visual holds
+21:55–23:29 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -406,7 +406,7 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 21 The best order depends on the supply window
 
-23:31–24:51 · 154 words · 6s visual holds
+23:29–24:48 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -422,7 +422,7 @@ There is a less obvious recommendation here. With an empty tank in a tight week,
 
 ## 22 Validate the turbine controller
 
-24:51–26:58 · 239 words · 12s visual holds
+24:48–26:55 · 239 words · 12s visual holds
 
 ### Phase 1
 
@@ -450,7 +450,7 @@ With-shield wraps the decision function. In known situations it delegates to tha
 
 ## 23 Can any event sequence reach RUN + confident bird?
 
-26:58–29:34 · 269 words · 27s visual holds
+26:55–29:31 · 269 words · 27s visual holds
 
 ### Phase 1
 
@@ -510,7 +510,7 @@ The set is now closed under every encoded successor, without a failure. That est
 
 ## 24 iterate underneath all three
 
-29:34–30:26 · 101 words · 3s visual holds
+29:31–30:23 · 101 words · 3s visual holds
 
 ### Phase 1
 
@@ -520,7 +520,7 @@ Underneath all three examples is iterate. What changes is what a state means. A 
 
 ## 25 Observe each update
 
-30:26–31:32 · 125 words · 6s visual holds
+30:23–31:29 · 125 words · 6s visual holds
 
 ### Phase 1
 
@@ -536,17 +536,17 @@ This observer records costs in an atom, Clojure’s explicit mutable reference. 
 
 ## 26 Rainbow
 
-31:32–31:54 · 40 words · 3s visual holds
+31:29–31:42 · 22 words · 3s visual holds
 
 ### Phase 1
 
 [Pause before moving from examples to proof.]
 
-Rainbow is a theorem prover written in Clojure. Static types catch useful mistakes; a proof checks a specific mathematical claim. First, a small proof to read the notation. Then, a property of our Bellman update, and an industrial scheduling example.
+Rainbow is a theorem prover written in Clojure. We’ll read a small proof, examine our Bellman update, then look at industrial scheduling.
 
 ## 27 A proof is a function
 
-31:54–32:47 · 99 words · 6s visual holds
+31:42–32:36 · 99 words · 6s visual holds
 
 ### Phase 1
 
@@ -564,7 +564,7 @@ Return only f of p and we have Q, while the statement requires R. The checker re
 
 ## 28 Bellman shrinks disagreement
 
-32:47–33:34 · 85 words · 6s visual holds
+32:36–33:16 · 71 words · 6s visual holds
 
 ### Phase 1
 
@@ -576,11 +576,11 @@ Take two value tables, V and W. Their largest difference is epsilon. One discoun
 
 [Right. Point to the computed 10 to 9 example.]
 
-For illustration, start one table at zero everywhere and the other at ten. Applying the browser’s Bellman function to both reduces the gap from ten to nine. That is one example. A proof has to cover every pair of value tables satisfying the assumptions.
+Start one table at zero everywhere and the other at ten. Bellman reduces the gap to nine. This illustrates the claim; the proof must cover every admissible pair of tables.
 
 ## 29 The proof follows the code
 
-33:34–35:06 · 166 words · 12s visual holds
+33:16–34:48 · 166 words · 12s visual holds
 
 ### Phase 1
 
@@ -608,7 +608,7 @@ Swap V and W to get the reverse inequality. Together they bound the absolute dif
 
 ## 30 What the kernel checked
 
-35:06–35:39 · 63 words · 3s visual holds
+34:48–35:21 · 63 words · 3s visual holds
 
 ### Phase 1
 
@@ -618,41 +618,61 @@ This historical receipt records a check of the exact Bellman bound. It predates 
 
 Mathematically, with discount point nine, an exact residual of point zero zero one bounds value error by point zero one. That consequence needs an exact operator; our browser run has no such certificate.
 
-## 31 When should a methanol plant buy power?
+## 31 Scheduling an e-methanol plant
 
-35:39–36:11 · 61 words · 3s visual holds
-
-### Phase 1
-
-[Follow electricity through hydrogen storage to methanol.]
-
-Here is a larger application. We model a methanol plant buying electricity at hourly Spanish market prices. The electrolyser makes hydrogen; the tank lets production and consumption happen at different times. We must deliver 588 tonnes of methanol per week at minimum cost. Minimum loads and start-up costs make switching decisions matter. This benchmark knows the whole week’s prices in advance.
-
-## 32 Check the schedule's certificate
-
-36:11–36:59 · 93 words · 3s visual holds
+35:21–35:46 · 46 words · 3s visual holds
 
 ### Phase 1
 
-[Read the weekly results, then explicitly state the open soundness theorem.]
+[Start with the plant and your work; use the diagram only to explain the scheduling problem.]
 
-HiGHS finds schedules; Rainbow checks certificates with exact arithmetic. In our reported runs, all 52 weekly certificates were accepted. The largest reported gap was 26 cents on a 388-thousand-euro week; the median check took 0.64 seconds. Four separately switched stacks reached 51 weeks out of 52.
+I built a purchasing model for an illustrative e-methanol plant using Spain’s wholesale electricity prices. Production still has to happen, but the tank lets us buy power earlier and use hydrogen later. This benchmark knows the week’s prices. It models neither local weather nor renewable-electricity contracts.
 
-The checker runs as a kernel-certified program, but the theorem that acceptance implies optimality remains open. These are certificate-checking results, not completed end-to-end optimality proofs. They concern an illustrative model with known prices, not a real plant or live trading strategy. Monthly certificates remain out of reach.
+## 32 Our code and the solver
 
-## 33 Applied Higher-Order Functions
+35:46–36:20 · 65 words · 3s visual holds
 
-36:59–37:38 · 76 words · 3s visual holds
+### Phase 1
+
+[Distinguish the model, solver, certificate-producing algorithm and checker.]
+
+Our Clojure code builds the plant model: prices, equipment, storage and production requirements. HiGHS, an existing open-source solver, finds the schedule. Our branch-and-bound algorithm builds the certificate tree. It chooses branches and constructs exact bounds, calling HiGHS for the smaller optimization problems inside the search. Rainbow checks that certificate.
+
+So our algorithm produces the evidence, and our checker checks it. HiGHS supplies the proposed schedule.
+
+## 33 San Roque: what can scheduling save?
+
+36:20–36:54 · 65 words · 3s visual holds
+
+### Phase 1
+
+[Say this is a separate e-SAF model, a baseline comparison and a modeled result.]
+
+For financial scale, take our separate e-SAF model at San Roque, by the Bay of Algeciras, using local wind and solar data. Planning forty-eight hours ahead saves a modeled average of 4.4 million euros annually in energy and backup hydrogen against the best tuned operating rule. This excludes missed-delivery penalties. These are model estimates, not measured factory savings or results covered by the methanol certificate.
+
+## 34 How much cheaper could it be?
+
+36:54–37:26 · 60 words · 3s visual holds
+
+### Phase 1
+
+[Explain one part per million in euros, then state exactly where the proof work stops.]
+
+Back to the methanol benchmark: every one of the 52 tested weeks has a reported cost gap below one part per million. The largest gap was 26 cents on a 388-thousand-euro week. That bounds possible further improvement; it is not the saving against current practice. The checker’s acceptance-implies-optimality theorem remains open, so the end-to-end formal proof is not yet complete.
+
+## 35 Applied Higher-Order Functions
+
+37:26–37:48 · 39 words · 3s visual holds
 
 ### Phase 1
 
 [Gesture to the reserved book image; leave the URL visible.]
 
-Today I concentrated on iterate, but you’ve also seen map, reduce, function composition, and functions that return other functions. My book, Applied Higher-Order Functions, develops a chosen toolkit of about twelve higher-order functions and their composition. That is the book’s organizing choice, not a claim that all of operations research reduces to twelve functions. If you want to build more of these algorithms and work through the examples, that is where I’ve put the longer treatment.
+Today I concentrated on iterate. My book, Applied Higher-Order Functions, develops about twelve higher-order functions and their composition across operations research. It has the longer explanations and runnable examples. You can find it at flexiana dot com slash book.
 
-## 34 Thank you
+## 36 Thank you
 
-37:38–37:50 · 18 words · 3s visual holds
+37:48–37:59 · 18 words · 3s visual holds
 
 ### Phase 1
 

@@ -1,0 +1,70 @@
+{
+  "scope": "Separate e-SAF model study; not realized factory savings and not covered by the e-methanol MILP certificates.",
+  "source_files": {
+    "../rh2edin-challenge/challenge-1-esaf/results/results.json": {
+      "sha256": "cf83da8cc4ba3ca0cf4b4b1ee82c1f01ec63421babc80b1b461b11180af00831"
+    },
+    "../rh2edin-challenge/challenge-1-esaf/results/business.json": {
+      "sha256": "ad37e1d4271126c88c354ae781bc5a63c7e3da0286cd4e08d8807269f87d71fe"
+    },
+    "../rh2edin-challenge/challenge-1-esaf/README.md": {
+      "sha256": "e457f73f06dc528bc054e2f00bc7b120079bdb66674908f6f14d6d355c7325e4"
+    },
+    "../rh2edin-challenge/proofs/rainbow_bb_export.clj": {
+      "sha256": "aae0e47185a707cab1edd70d0393bb81cb60b5c7f3a42645aee9c27c0d735860"
+    },
+    "../rainbow/DESIGN-2026-10-18-proved-milp-certificates.md": {
+      "sha256": "343cc3ac2034691d07ea622ce5554c9c880cb7345d9b546243fd76278a3209be"
+    },
+    "../rh2edin-challenge/data/manifest.json": {
+      "sha256": "216bf8cddc63fcb34d4fa7029c29f334d77a64a99edaa370c71b2ce39e1a2dc6"
+    }
+  },
+  "baseline": "Best of three tuned rule families: level control, daily schedule and pacing.",
+  "policy": "48-hour rolling-horizon LP re-solved hourly using forecasts.",
+  "scenarios": [
+    "W2023-P2023",
+    "W2023-P2024",
+    "W2023-P2025",
+    "W2024-P2023",
+    "W2024-P2024",
+    "W2024-P2025",
+    "W2025-P2023",
+    "W2025-P2024",
+    "W2025-P2025"
+  ],
+  "mean_energy_backup_saving_meur_y": 4.388895399574214,
+  "energy_backup_saving_per_case_meur": [
+    2.789873960363815,
+    7.541011053095744,
+    7.153010703667345,
+    2.6940212740157357,
+    6.303838040256341,
+    6.332495544290243,
+    0.4067784049510905,
+    3.1376456119291802,
+    3.141384003598441
+  ],
+  "reported_ci95_meur_y": [
+    2.5,
+    6.3
+  ],
+  "ci_source": "challenge-1-esaf/README.md section 5.1 (rounded reported interval)",
+  "price_years_reused_in_tuning": true,
+  "shortfall_penalty_value_excluded": true,
+  "methanol_solver_attribution": {
+    "model": "Our Clojure plant formulation",
+    "incumbent": "HiGHS MIP solution",
+    "certificate_producer": "Our Clojure branch-and-bound over HiGHS LP relaxations, with exact leaf bounds",
+    "checker": "Rainbow branch-and-bound certificate checker",
+    "soundness": "Acceptance-implies-optimality theorem remains open"
+  },
+  "site": {
+    "name": "San Roque / Los Barrios industrial area, Bay of Algeciras",
+    "latitude": 36.18,
+    "longitude": -5.4,
+    "plant": "Assumed e-SAF design, not identified customer engineering data",
+    "weather": "Open-Meteo/ERA5 at the site, 2015–2025; PVGIS calibration; generic wind power curve",
+    "methanol_benchmark": "No physical site or weather inputs; OMIE Spain wholesale prices, not renewable-specific prices"
+  }
+}

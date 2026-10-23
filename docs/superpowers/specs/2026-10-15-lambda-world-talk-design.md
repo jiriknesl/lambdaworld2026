@@ -23,7 +23,7 @@ states, and understand why separating the update from traversal helps them chang
 10. Book: more than `iterate`, about twelve HOFs and their composition; photo placeholder.
 11. Thank you: jiri@flexiana.com.
 
-The 34-slide timing worksheet is the table in `talk/README.md`. Step size and momentum belong within optimization; the shared structure is named after all three
+The 36-slide timing worksheet is the table in `talk/README.md`. Step size and momentum belong within optimization; the shared structure is named after all three
 examples. Avoid teaching a custom macro language or implying that functional languages
 other than Clojure cannot express the same ideas.
 
@@ -153,3 +153,32 @@ receipt as historical with post-repair replay pending.
 The deck now has 34 slides and 83 speech cues. Shortening the surrounding Rainbow speech keeps
 the estimate at 39:50 including two minutes for questions, at 125 words/minute. New cases add
 context without introducing a fourth algorithm or another live demo.
+
+
+## Story and solver attribution — 2026-10-23
+
+Replace the benchmark-first framing with the Spanish plant and Jiri's electricity-purchasing
+system, then ask how much cheaper another schedule could be. Lead with the one-part-per-million
+bound and EUR 0.26 example; put check speeds and stack variants in reference notes. Inspecting
+rh2edin's producer confirmed that HiGHS finds the incumbent; our own branch-and-bound builds the
+certificate over HiGHS LP solves. Rainbow checks the resulting evidence. Say this explicitly
+in the speech; do not imply our Bellman or gradient solver generated these schedules.
+Current timing: 4,186 words, 39:58 including questions at 125 wpm.
+
+
+## Explain our contribution and financial value — 2026-10-23
+
+The user selected the model → HiGHS incumbent → our certificate-producing search → Rainbow
+checker explanation as stage speech. Give it its own slide (32). Follow with modeled savings
+from the separate San Roque e-SAF study (33): EUR 4.4m/year mean energy/backup saving versus
+the strongest tuned rule, excluding assumed shortfall penalties; reported interval EUR 2.5–6.3m.
+Explicitly distinguish a model estimate from measured factory savings and from the methanol
+certificate scope. Return to the methanol 1e-6 bound on slide 34, then book/thanks 35–36.
+Source extraction and hashes are in speaker/plant-case-evidence.json. The checker soundness
+theorem is still open. Current script: 36 slides, 85 cues, 4,174 words; estimated 39:59 with questions.
+
+
+Geography correction: the methanol certificate example has no physical site or weather inputs;
+Spain identifies its OMIE price zone. Slide 33 alone concerns San Roque / Los Barrios
+(36.18 N, 5.40 W), with local weather, generic generation models and assumed plant equipment.
+Do not say Spanish weather or imply that OMIE prices are renewable-contract prices.

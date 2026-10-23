@@ -85,10 +85,10 @@ body { font-family: var(--sans); color: var(--ink); }
 .plant-node strong { font-size: 27px; margin-bottom: 12px; }
 .plant-node span { font-size: 40px; }
 .plant-arrow { color: var(--accent); font-size: 34px; }
-.certificate-results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin: 32px 0 16px; }
+.certificate-results { display: grid; grid-template-columns: repeat(2, 1fr); gap: 44px; margin: 36px 0 28px; }
 .certificate-results > div { border-top: 3px solid var(--accent); padding-top: 18px; }
 .certificate-results strong, .certificate-results span { display: block; }
-.certificate-results strong { font-size: 60px; line-height: 1.1; margin-bottom: 12px; }
+.certificate-results strong { font-size: 84px; line-height: 1.1; margin-bottom: 12px; }
 .certificate-results span { font-size: 23px; }
 .certificate-boundary { border-left: 4px solid var(--accent); padding: 12px 18px; margin: 24px 0 12px; background: var(--accent-soft); font-size: 26px; }
 

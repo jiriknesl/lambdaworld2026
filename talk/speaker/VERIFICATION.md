@@ -122,3 +122,43 @@ the original editorial review; these later user-directed revisions are recorded 
   content checks (slides 30–34), matching plant/certificate speaker notes and the versioned
   release passed. The check uses the closing slide's actual heading rather than assuming the
   standard title element. Public URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=methanol-20261023#s31
+
+
+## Plant story and solver attribution — 2026-10-23
+
+- Reframed slides 31–32 around the Spanish plant, Jiri's purchasing system and the distance
+  from optimum, rather than a list of benchmark statistics. The one-part-per-million claim
+  remains scoped to 52 tested weeks and the model; the checker-soundness theorem is still open.
+- Read `../rh2edin-challenge/proofs/rainbow_bb_export.clj`: HiGHS finds the MIP incumbent;
+  our Clojure branch-and-bound uses HiGHS LP solves to build exact certificate bounds and
+  a covering tree. Rainbow checks the certificate. Speech and technical notes now make
+  this split explicit; no claim that the talk's gradient/Bellman solvers scheduled the plant.
+- Located the underlying benchmark record in Rainbow's 2026-10-18 MILP design document.
+- 18 tests / 2,205 assertions passed; release has no warnings; speaker PDF regenerated.
+- Current speech: 4,186 words, estimated 39:58 with holds and two minutes for questions.
+
+
+## Final plant story, attribution and geography — 2026-10-23
+
+- Slide 31 is explicitly an illustrative methanol model with OMIE Spain wholesale prices and
+  no local weather input. It is not presented as a named physical factory or renewable PPA.
+- Slide 32 gives the user-selected four-part account: our model, HiGHS schedule, our own
+  certificate-producing branch-and-bound using HiGHS LP solves, and Rainbow checking.
+- Slide 33 is the separate San Roque e-SAF study. Source manifest gives 36.18 N, 5.40 W;
+  local Open-Meteo/ERA5 weather and PVGIS calibration, generic wind curve, assumed equipment.
+  Mean modeled energy/backup savings EUR 4.4m/year, reported interval EUR 2.5–6.3m, relative
+  to the strongest tuned rule. This is neither measured factory savings nor a result certified
+  by the methanol proof pipeline. Extracted figures and source hashes are retained in
+  plant-case-evidence.json. No benchmark rerun or current proof soundness claim is made.
+- Slide 34 returns to the methanol certificate gap; the soundness theorem remains explicitly open.
+- 36 slides, 449 rendered phases, 85 speech cues, 4,176 words; estimated 39:59 with questions.
+- 18 tests / 2,211 assertions passed; the release compiled with zero warnings. The offline
+  speaker PDF contains all 36 slide scripts and 85 cues.
+- Focused offline and public browser checks passed for slides 31–36 and the matching plant
+  and solver-attribution presenter speech. Slides 31–34 fit at 1600×900, 1920×1080 and
+  1024×768; screenshots of the solver roles and savings slide were visually inspected.
+  This was a focused check of the revised section, not a new exhaustive all-phase audit.
+- Refreshed the existing public preview without changing its tunnel configuration:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plant-evidence-20261023#s31
+  README records the distinction between OMIE wholesale prices and renewable PPA prices,
+  with links to the market operator and a renewable supplier's contract explanation.
