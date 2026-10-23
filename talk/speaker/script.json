@@ -327,7 +327,7 @@
           "from": 2,
           "to": 2,
           "cue": "Right. Follow the wrappers inside out; read the measured table.",
-          "speech": "The base step performs descent; momentum wraps it; clamped wraps the result. Clamping clips position but keeps velocity. The chart compares the same cost, start, rate and stopping test. Momentum uses fewer updates here; that is not a general guarantee or a wall-clock benchmark. We have changed the solver’s update without changing the model. Now let’s replay the plain solver’s resulting day.",
+          "speech": "The base step performs descent; momentum wraps it; clamped wraps the result. Clamping clips position but keeps velocity. We have changed the solver’s update without changing the model. Now let’s replay the plain solver’s resulting day.",
           "hold_seconds": 3
         }
       ]
@@ -339,15 +339,15 @@
         {
           "from": 1,
           "to": 1,
-          "cue": "Let the hour marker cross several columns.",
-          "speech": "Now we play a day through a fixed schedule. The red rectangle marks the current hour. First, every turbine retains all available generation.",
+          "cue": "Watch the highlighted bird reach the rotor, flash red and fall.",
+          "speech": "Now we play a day through a fixed schedule. The red rectangle marks the current hour. First, every turbine runs. Watch the highlighted bird hit a moving rotor and fall. This is an illustrative strike; our cost model measures exposure, not fatalities.",
           "hold_seconds": 7
         },
         {
           "from": 2,
           "to": 2,
-          "cue": "Right. Point between the current column and the turbines.",
-          "speech": "With the penalty, the chosen schedule curtails exposed turbines during busy hours. The clock is advancing; the plan is no longer changing. The optimizer produced the data being replayed. The moving birds illustrate that model, not measured field results.",
+          "cue": "Right. Watch the same crossing during busy hours when the exposed turbine is stopped.",
+          "speech": "With the penalty, the chosen schedule stops this exposed turbine during busy hours. The same illustrated bird now passes through. When the turbine runs again, the strike can still appear. The clock is advancing; the plan is no longer changing. The optimizer produced the schedule being replayed.",
           "hold_seconds": 7
         }
       ]

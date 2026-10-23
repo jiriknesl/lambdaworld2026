@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,084 spoken words. Planning pace: 125 words/minute, plus 04:32 of pauses and visual holds. Speech and holds: 37:12; with 02:00 for questions: 39:12. This is an estimate, not an aloud rehearsal.
+4,085 spoken words. Planning pace: 125 words/minute, plus 04:32 of pauses and visual holds. Speech and holds: 37:13; with 02:00 for questions: 39:13. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -262,7 +262,7 @@ Compare the final generation and exposure. The penalty buys a reduction in expos
 
 ## 15 Can momentum reduce the number of updates?
 
-13:48–14:46 · 109 words · 6s visual holds
+13:48–14:34 · 83 words · 6s visual holds
 
 ### Phase 1
 
@@ -274,27 +274,27 @@ We have just watched plain gradient descent on the bird-aware cost. Here is a di
 
 [Right. Follow the wrappers inside out; read the measured table.]
 
-The base step performs descent; momentum wraps it; clamped wraps the result. Clamping clips position but keeps velocity. The chart compares the same cost, start, rate and stopping test. Momentum uses fewer updates here; that is not a general guarantee or a wall-clock benchmark. We have changed the solver’s update without changing the model. Now let’s replay the plain solver’s resulting day.
+The base step performs descent; momentum wraps it; clamped wraps the result. Clamping clips position but keeps velocity. We have changed the solver’s update without changing the model. Now let’s replay the plain solver’s resulting day.
 
 ## 16 Play the resulting day
 
-14:46–15:30 · 62 words · 14s visual holds
+14:34–15:30 · 89 words · 14s visual holds
 
 ### Phase 1
 
-[Let the hour marker cross several columns.]
+[Watch the highlighted bird reach the rotor, flash red and fall.]
 
-Now we play a day through a fixed schedule. The red rectangle marks the current hour. First, every turbine retains all available generation.
+Now we play a day through a fixed schedule. The red rectangle marks the current hour. First, every turbine runs. Watch the highlighted bird hit a moving rotor and fall. This is an illustrative strike; our cost model measures exposure, not fatalities.
 
 ### Phase 2
 
-[Right. Point between the current column and the turbines.]
+[Right. Watch the same crossing during busy hours when the exposed turbine is stopped.]
 
-With the penalty, the chosen schedule curtails exposed turbines during busy hours. The clock is advancing; the plan is no longer changing. The optimizer produced the data being replayed. The moving birds illustrate that model, not measured field results.
+With the penalty, the chosen schedule stops this exposed turbine during busy hours. The same illustrated bird now passes through. When the turbine runs again, the strike can still appear. The clock is advancing; the plan is no longer changing. The optimizer produced the schedule being replayed.
 
 ## 17 Buy hydrogen before the customers arrive
 
-15:30–17:35 · 236 words · 12s visual holds
+15:30–17:36 · 236 words · 12s visual holds
 
 ### Phase 1
 
@@ -324,7 +324,7 @@ We sell each unit for ten, so this outcome earns twenty minus the purchase cost 
 
 ## 18 Buy for this week—or the next?
 
-17:35–18:27 · 96 words · 6s visual holds
+17:36–18:28 · 96 words · 6s visual holds
 
 ### Phase 1
 
@@ -342,7 +342,7 @@ That extra unit may avoid an expensive future purchase, or it may sit unsold and
 
 ## 19 Future values change the order
 
-18:27–21:08 · 303 words · 15s visual holds
+18:28–21:08 · 303 words · 15s visual holds
 
 ### Phase 1
 
@@ -376,7 +376,7 @@ To choose an order, use best-order with the model and V. Max keeps the highest s
 
 ## 20 Hydrogen: iterate the value table
 
-21:08–22:41 · 166 words · 14s visual holds
+21:08–22:42 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -398,7 +398,7 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 21 The best order depends on the supply window
 
-22:41–24:01 · 154 words · 6s visual holds
+22:42–24:02 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -414,7 +414,7 @@ There is a less obvious recommendation here. With an empty tank in a tight week,
 
 ## 22 Validate the turbine controller
 
-24:01–26:08 · 239 words · 12s visual holds
+24:02–26:08 · 239 words · 12s visual holds
 
 ### Phase 1
 
@@ -442,7 +442,7 @@ With-shield wraps the decision function. In known situations it delegates to tha
 
 ## 23 Can any event sequence reach RUN + confident bird?
 
-26:08–28:44 · 269 words · 27s visual holds
+26:08–28:45 · 269 words · 27s visual holds
 
 ### Phase 1
 
@@ -502,7 +502,7 @@ The set is now closed under every encoded successor, without a failure. That est
 
 ## 24 iterate underneath all three
 
-28:44–29:36 · 101 words · 3s visual holds
+28:45–29:36 · 101 words · 3s visual holds
 
 ### Phase 1
 
@@ -528,7 +528,7 @@ This observer records costs in an atom, Clojure’s explicit mutable reference. 
 
 ## 26 Rainbow
 
-30:42–30:55 · 22 words · 3s visual holds
+30:42–30:56 · 22 words · 3s visual holds
 
 ### Phase 1
 
@@ -538,7 +538,7 @@ Rainbow is a theorem prover written in Clojure. We’ll read a small proof, exam
 
 ## 27 A proof is a function
 
-30:55–31:49 · 99 words · 6s visual holds
+30:56–31:49 · 99 words · 6s visual holds
 
 ### Phase 1
 
@@ -572,7 +572,7 @@ Start one table at zero everywhere and the other at ten. Bellman reduces the gap
 
 ## 29 The proof follows the code
 
-32:29–34:00 · 166 words · 12s visual holds
+32:29–34:01 · 166 words · 12s visual holds
 
 ### Phase 1
 
@@ -600,7 +600,7 @@ Swap V and W to get the reverse inequality. Together they bound the absolute dif
 
 ## 30 What the kernel checked
 
-34:00–34:34 · 63 words · 3s visual holds
+34:01–34:34 · 63 words · 3s visual holds
 
 ### Phase 1
 
@@ -634,7 +634,7 @@ So our algorithm produces the evidence, and our checker checks it. HiGHS supplie
 
 ## 33 San Roque: what can scheduling save?
 
-35:33–36:07 · 65 words · 3s visual holds
+35:33–36:08 · 65 words · 3s visual holds
 
 ### Phase 1
 
@@ -644,7 +644,7 @@ For financial scale, take our separate e-SAF model at San Roque, by the Bay of A
 
 ## 34 How much cheaper could it be?
 
-36:07–36:39 · 60 words · 3s visual holds
+36:08–36:39 · 60 words · 3s visual holds
 
 ### Phase 1
 
@@ -664,7 +664,7 @@ Today I concentrated on iterate. My book, Applied Higher-Order Functions, develo
 
 ## 36 Thank you
 
-37:01–37:12 · 18 words · 3s visual holds
+37:01–37:13 · 18 words · 3s visual holds
 
 ### Phase 1
 

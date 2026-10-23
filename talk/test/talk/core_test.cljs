@@ -46,6 +46,30 @@
     (is (< (abs (- (c/bird-risk half) (/ (c/bird-risk on) 2))) 1e-8))
     (is (= (c/electricity-lost half) ((:objective c/day-plan) half)))))
 
+(deftest playback-encounter-follows-the-schedule
+  (c/finish! :plain)
+  (let [on (zipmap c/slots (repeat 1))
+        off (zipmap c/slots (repeat 0))
+        noon (* c/seconds-per-hour (+ (.indexOf c/hours 12) 0.65))
+        before-contact (* c/seconds-per-hour (+ (.indexOf c/hours 12) 0.2))
+        hit (c/illustrated-encounter on noon)
+        safe (c/illustrated-encounter off noon)
+        planned (c/illustrated-encounter (:plan (c/run-summary :plain)) noon)]
+    (is (= :approach (:mode (c/illustrated-encounter on before-contact))))
+    (is (= :strike (:mode hit)))
+    (is (= :pass (:mode safe)))
+    (is (= 12 (:hour hit)))
+    (is (= (:contact hit) (:contact safe) (:contact planned))
+        "before/after use the same crossing, not different bird routes")
+    (is (< (last (:position hit)) (last (:contact hit))) "struck bird falls")
+    (is (< (abs (- (:fall hit) (/ 0.2 0.55))) 1e-9)
+        "playback's fractional seconds are normalized to the 1.5-second hour")
+    (is (< (:fall (c/illustrated-encounter on (* c/seconds-per-hour 4.99))) 1)
+        "fall animation remains visible until the next hour")
+    (is (= :pass (:mode planned)) "optimized noon schedule stops the featured turbine")
+    (is (= :strike (:mode (c/illustrated-encounter (zipmap c/slots (repeat 0.1)) noon)))
+        "partial curtailment is not illustrated as guaranteed safe")))
+
 (deftest optimise
   (doseq [k [:crowd :plain :momentum :adam]] (c/finish! k))
   (testing "advance is fixed-point one state at a time"

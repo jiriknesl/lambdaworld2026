@@ -613,10 +613,45 @@
         (mapv + a (mapv #(* (/ left (max l 1e-9)) %) (mapv - b a)))
         (recur more ls (- left l))))))
 
+(defn illustrated-encounter
+  "A scripted rotor crossing for playback, not a collision or fatality model.
+  The same bird crosses the same turbine each hour in both schedules."
+  [plan t]
+  (let [tb (apply max-key exposure turbines)
+        [tx ty] tb
+        {:keys [hour frac]} (time-of-day t)
+        setting (if plan (plan [tb hour]) 1)
+        contact [(+ tx (* 0.5 rotor)) ty (+ (ground tb) hub-height (* 0.4 rotor))]
+        since (- (/ frac seconds-per-hour) 0.45)
+        hit? (and (>= since 0) (> setting 1e-6))
+        fall (max 0 (/ since 0.55))]
+    {:turbine tb :hour hour :contact contact
+     :mode (cond hit? :strike (neg? since) :approach :else :pass)
+     :fall fall
+     :position (if hit?
+                 (mapv + contact [(* 0.5 fall) 0 (- (* 2.6 fall fall))])
+                 (update contact 1 + (* 4 since)))}))
+
+(defn- encounter-glyph [plan t P]
+  (let [{:keys [position contact mode fall turbine]} (illustrated-encounter plan t)
+        [x y] (P position)
+        [hx hy] (P contact)
+        hit? (= mode :strike)]
+    [:g.encounter {:data-mode (name mode) :data-turbine (label-of turbine)}
+     (when hit?
+       [:g.strike-flash {:opacity (- 1 (* 0.35 fall))}
+        [:circle {:cx (n1 hx) :cy (n1 hy) :r (+ 12 (* 30 fall))}]
+        [:path {:d (str "M " (n1 (- hx 9)) " " (n1 (- hy 9))
+                       " l 18 18 m 0 -18 l -18 18")}]
+        [:text {:x (n1 (+ hx 20)) :y (n1 (- hy 20))} "Bird strike"]])
+     [:g {:transform (str "translate(" (n1 x) "," (n1 y) ") rotate(" (if hit? (* 150 fall) 0) ")")
+          :opacity (if hit? (- 1 (* 0.35 fall)) 1)}
+      (bird-glyph 0 0 {:cls (if hit? "bird struck" "bird encounter-bird") :scale 0.85})]]))
+
 (defn scene
   "The hills in 3D, at time t of tomorrow played fast: turbines turn as hard as the plan
   says (a nil plan runs them all), and birds pass along the flyway as the forecast says."
-  [plan t {:keys [w h] :or {w 660 h 470}}]
+  [plan t {:keys [w h encounters?] :or {w 660 h 470}}]
   (let [[mx my] (:size hills)
         P (project (camera t w))
         xy (fn [p] (let [[x y] (P p)] [x y]))
@@ -654,6 +689,7 @@
                            [0 (* 0.35 (js/Math.sin (* 3.1 k))) (* 0.3 (js/Math.cos (* 1.7 k)))])
                    [x y depth] (P b)]]
          (bird-glyph x y {:cls "bird flying" :scale (/ (* 0.03 w) depth)})))
+     (when encounters? (encounter-glyph plan t P))
      [:text.clock {:x (n1 (+ (- (/ w 2)) 10)) :y (n1 (+ (- (/ h 2)) 40))} (str hour ":00")]]))
 
 ;; =============================================================================
@@ -1553,14 +1589,13 @@
                  (for [[k label] [[:plain "plain"] [:momentum "momentum"]]
                        :let [run (run-of k)]]
                    [:tr [:td label] [:td (dec (count run))]
-                    [:td (fmt (risk-cost (:x (peek run))) 1)]])]
-                [:p.caption "Same cost, rate, start and stopping test. Momentum helps this run; it can hurt others."]]])
+                    [:td (fmt (risk-cost (:x (peek run))) 1)]])]]])
     :notes "Continue the risk-aware run just shown: can another step reach a settled plan in fewer updates? with-momentum accepts a state-update function and returns another. It calls the base update once, measures that proposal's displacement, adds 90 percent of stored velocity, and returns new position and velocity. The outer clamped wrapper clips position to the allowed range; it does not reset velocity at a bound. The chart and table use actual runs. Fewer updates reach the same movement tolerance here; that does not prove a better optimum, general convergence, or a wall-clock speedup. The second reveal shows exactly what wraps what. The iteration remains unchanged."}
 
    {:section "Optimise" :title "Play the resulting day" :steps 2 :runs [:plain]
     :live (fn [frame t]
             (let [plan (if (zero? frame) (zipmap slots (repeat 1)) (:plan (run-summary :plain)))]
-              {"played-3d" (scene plan t {:w 700 :h 500})
+              {"played-3d" (scene plan t {:w 700 :h 500 :encounters? true})
                "played-schedule" (schedule plan {:w 700 :now (:hour (time-of-day t))})}))
     :render (fn [frame]
               (let [plan (if (zero? frame) (zipmap slots (repeat 1)) (:plan (run-summary :plain)))
@@ -1569,8 +1604,10 @@
                  [:div [:p.aside (if (zero? frame) "Before: every turbine runs." "After: the optimized schedule.")]
                   [:div#played-schedule (schedule plan {:w 700 :now (:hour (time-of-day t))})]
                   (plan-metrics plan)]
-                 [:div#played-3d (scene plan t {:w 700 :h 500})]]))
-    :notes "Now time really is passing through a day. First reveal is full power; second is the risk-aware plan. Contrast that with the previous slide, where an update changed the plan rather than advancing the clock. The red hubs mark stopped turbines. The example shows what the supplied cost function changes in the real-world interpretation of the state."}
+                 [:div
+                  [:div#played-3d (scene plan t {:w 700 :h 500 :encounters? true})]
+                  [:p.caption "Illustrative strikes; the model scores exposure."]]]))
+    :notes "Now time really is passing through a day. First reveal is full power; second is the risk-aware plan. The prominent bird follows the same scripted crossing of the most exposed turbine each hour. At the rotor, a moving turbine produces a red impact flash and a falling bird; a fully stopped turbine lets this illustrated bird continue. The setting is read from the displayed schedule at the current hour. This is an explanatory animation, not geometric blade collision physics, a fatality estimate, or proof that stopped turbines cannot harm birds. Partial curtailment is not treated as guaranteed safe. The optimizer still scores the existing exposure index; the animation does not change its objective or results. The red schedule rectangle tracks the same clock as the encounter."}
 
    {:section "Decide" :title "Buy hydrogen before the customers arrive" :steps 4
     :render (fn [frame]

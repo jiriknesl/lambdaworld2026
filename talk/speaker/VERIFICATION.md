@@ -186,3 +186,24 @@ the original editorial review; these later user-directed revisions are recorded 
 - The published edition passed 21 focused frames at the same three sizes, including both
   slide 12 reveals and presenter synchronization. The existing tunnel configuration is unchanged.
   URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=shorter-steps-20261023
+
+## Bird-strike playback — 2026-10-23
+
+- Removed the requested comparison/warning caption from slide 15 and shortened its speech.
+- Slide 16 now highlights a scripted bird crossing at the most exposed turbine, with an
+  impact ring, red strike label, rotation and fall when that turbine is operating. The same
+  crossing continues when the displayed schedule stops it. The visual reads the schedule's
+  current hour; it does not alter optimization or represent a fatality model. That boundary
+  is visible on the slide and explained in presenter notes.
+- 19 tests / 2,218 assertions pass, including the actual optimized noon schedule, matching
+  before/after paths, a running/partly curtailed/stopped rotor, and the fall's time scale.
+  Release compiled without warnings. Initial compile caught a missing cond default keyword;
+  visual inspection caught fractional seconds being mistaken for an hour fraction. Both
+  were fixed before publication, with a regression assertion for the latter.
+- Offline browser checks passed 18 controlled frames at 1600×900, 1920×1080 and 1024×768:
+  approach, impact, falling bird, passage at the stopped turbine, synchronized clock/hour
+  marker, caption removal and presenter speech. Impact and fall screenshots were inspected.
+- Speaker PDF regenerated: 36 slides, 84 cues, 4,085 spoken words; estimated 39:13 with
+  visual holds and questions. Published HTML, JavaScript and CSS were fetched and matched
+  byte-for-byte against the tested release. No tunnel configuration change.
+  URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-strike-20261023#s16
