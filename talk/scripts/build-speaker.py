@@ -36,8 +36,8 @@ def main():
     data = json.loads(SOURCE.read_text())
     slides = data['slides']
     titles = re.findall(r':section "[^"]+" :title "([^"]+)"', (TALK / 'src/talk/core.cljs').read_text())
-    assert len(slides) == len(titles) == 32
-    assert [s['slide'] for s in slides] == list(range(1, 33))
+    assert len(slides) == len(titles) and slides
+    assert [s['slide'] for s in slides] == list(range(1, len(slides) + 1))
     for s, title in zip(slides, titles):
         assert s['title'] == title, (s['slide'], s['title'], title)
         for p in s['phases']:
@@ -113,7 +113,7 @@ h1{font-size:28px;line-height:1.2}h2{font-size:18px;margin-top:24px}.cue,.timing
         dest = ROOT / 'artifacts/lambda-world-current-speaker-script.html'
         dest.parent.mkdir(exist_ok=True)
         dest.write_text(printable)
-    print(('Checked' if args.check else 'Built') + f' 32 slides, {sum(len(s["phases"]) for s in slides)} speech cues, {total_words} words, {len(review)} revision passes.')
+    print(('Checked' if args.check else 'Built') + f' {len(slides)} slides, {sum(len(s["phases"]) for s in slides)} speech cues, {total_words} words, {len(review)} revision passes.')
     print(intro)
 
 if __name__ == '__main__':

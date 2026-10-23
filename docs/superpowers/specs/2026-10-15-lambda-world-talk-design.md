@@ -1,6 +1,6 @@
 # Lambda World 2026: presentation design
 
-Revision 5, 2026-10-22. This replaces the earlier macro-first and Function Observatory outlines.
+Revision 6, 2026-10-23. This replaces the earlier macro-first and Function Observatory outlines.
 Talk: **Rebuilding Operations Research in Higher-Order Functions in Clojure**, Jiri Knesl, 40 minutes.
 
 ## Audience and purpose
@@ -19,11 +19,11 @@ states, and understand why separating the update from traversal helps them chang
 6. Decision-making: hydrogen delivery and customer trucks; uncertain demand; improved value estimates and orders.
 7. Validation: search reachable states for confident detection + RUN; compare controllers and shield.
 8. Name `iterate` underneath all three, then show observation through the common step interface.
-9. Rainbow: a theorem prover written in Clojure; actual proof syntax; Bellman property and evidence.
+9. Rainbow: actual proof syntax; Bellman property and evidence; a concise e-methanol certificate example with explicit proof boundaries.
 10. Book: more than `iterate`, about twelve HOFs and their composition; photo placeholder.
 11. Thank you: jiri@flexiana.com.
 
-The 32-slide timing worksheet is the table in `talk/README.md`. Step size and momentum belong within optimization; the shared structure is named after all three
+The 34-slide timing worksheet is the table in `talk/README.md`. Step size and momentum belong within optimization; the shared structure is named after all three
 examples. Avoid teaching a custom macro language or implying that functional languages
 other than Clojure cannot express the same ideas.
 
@@ -139,3 +139,17 @@ value table → value table. The returned table stores profit estimates, not ord
 reveal 4 shows actual old/new values; reveal 5 shows the exact best-order source and how max-key
 retains an order. Slide 20 labels best-order as the producer of its order column. Hydrogen now
 occupies slides 17–21 and validation 22–24. The script has 81 cues for 445 rendered phases.
+
+
+## Industrial certificate example — 2026-10-23
+
+Add two slides after the Bellman proof, before the book: a plant flow (120 MW electrolyser →
+20 t hydrogen tank → 10 t/h methanol loop, 588 t weekly contract), then reported weekly
+certificate results. Jiri supplied the benchmark account; no weekly schedule or chart is invented.
+Keep the open acceptance-implies-optimality theorem visible. A kernel-certified checker program
+is not, by itself, a proof of its soundness as an optimality checker. Label the older Bellman
+receipt as historical with post-repair replay pending.
+
+The deck now has 34 slides and 83 speech cues. Shortening the surrounding Rainbow speech keeps
+the estimate at 39:50 including two minutes for questions, at 125 words/minute. New cases add
+context without introducing a fourth algorithm or another live demo.

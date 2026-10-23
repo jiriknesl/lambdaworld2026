@@ -10,10 +10,11 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=flow-20261022).
-Updated 2026-10-22: step size and momentum now sit inside the optimization example (slides 12
-and 15). The Bellman walkthrough shows its value-table input/output and the separate best-order
-extraction (slide 19, reveals 4–5). The spoken script and PDF follow the new order.
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=methanol-20261023).
+Updated 2026-10-23: slides 31–32 add the e-methanol scheduling example and reported weekly
+certificate results. The open checker-soundness theorem is visible on the results slide.
+The Bellman receipt is labelled historical, with replay after the kernel repair pending.
+The spoken script and PDF follow the new order.
 This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, the full spoken script, technical reference notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
@@ -84,10 +85,10 @@ Optimise section. After a hot reload they start again.
 overlay and the last good build keeps running: undo, save. If the watch process or the editor fails,
 open the release build (`public/index.html`) — it needs nothing else.
 
-## Talk arc — revised 2026-10-22
+## Talk arc — revised 2026-10-23
 
 HOFs are the subject. Step size and momentum are integrated into optimization; observation follows the three examples.
-The deck has 32 slides; reveals are steps within a slide, not additional topics.
+The deck has 34 slides; reveals are steps within a slide, not additional topics.
 
 | Slides | Estimated time | What the audience sees |
 | --- | ---: | --- |
@@ -99,17 +100,17 @@ The deck has 32 slides; reveals are steps within a slide, not additional topics.
 | 17–21: Decision-making | 8:31 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 22–24: Validation | 5:35 | Controller rule, reachable states and shared iterate. |
 | 25: Observation | 1:06 | Observe a supplied step without changing its result. |
-| 26–30: Rainbow | 5:26 | Composition proof, Bellman bound and its exact residual consequence. |
-| 31–32: Book and thanks | 0:51 | Broader toolkit and contact. |
+| 26–32: Rainbow | 5:27 | Composition proof, Bellman bound, plant scheduling and certificate results with their limits. |
+| 33–34: Book and thanks | 0:51 | Broader toolkit and contact. |
 
-The current 4,179-word script estimates **37:49 including visual holds**, or **39:49 with two
+The current 4,169-word script estimates **37:50 including visual holds**, or **39:50 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 32 slides, 81 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 34 slides, 83 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -328,9 +329,30 @@ Bellman function; it is an illustration, not a proof for every input.
 
 The Bellman receipt is the existing `../resources/rainbow-evidence.edn`, recorded 2026-10-09 at
 Rainbow `3f411ae`: `value/signed-optimality-step-additively-contractive`, with empty axiom closure.
-That exact-term theorem was **not rerun in this revision**. No correspondence proof to the
+That exact-term theorem was **not rerun in this revision**. Its receipt predates Rainbow’s
+documented kernel repair, so replay on the repaired kernel is pending; the slide and speech say so. No correspondence proof to the
 floating-point ClojureScript implementation is asserted. Gradient and momentum have no general
 convergence guarantee here. Illustrative forecasts and synthetic bird data remain illustrative.
+
+## E-methanol certificate example
+
+Slides 31–32 condense Jiri’s supplied benchmark account (2026-10-23), not a newly audited run.
+The plant diagram shows 120 MW of electrolysis, a 20 t hydrogen tank and a 10 t/h methanol loop,
+with a 588 t weekly contract. Minimum loads and start-up costs make the schedule mixed-integer.
+The speaker’s technical notes retain the tank’s initial/terminal inventory, conversion rates,
+turndown and start-up assumptions.
+
+Reported results: 52/52 weekly certificates accepted for 2023; largest reported gap EUR 0.26 on
+an approximately EUR 388,000 week; relative tolerance one part per million; median check 0.64 s.
+The four-stack variant reaches 51/52 weeks, with a 15 s median check. No weekly chart or hourly
+schedule is invented: the underlying certificates and per-week measurements were not supplied.
+
+**Scope:** the checker runs as a kernel-certified program, but the theorem that acceptance
+implies optimality is still open. These are reported certificate-checking results, not completed
+end-to-end formal optimality proofs. The model knows a whole week of prices in advance and omits
+ramp limits, degradation, CO₂/compressor limits, grid fees and renewable-fuel sourcing rules.
+Monthly certificates remain out of reach. The work checks solver answers; it does not claim to
+outperform HiGHS at finding them. The visible slide copy and speaker script preserve these boundaries.
 
 ## Typography and slide copy
 
@@ -341,7 +363,7 @@ faces are used, with browser-synthesized bold. Bundled DejaVu remains for missin
 its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
 
 Visible text is intentionally brief; fuller explanations and proof assumptions remain in
-speaker notes. OR's opening slide does not reveal the concrete examples. Slide 31 reserves a
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 33 reserves a
 390 × 520 area for the book photograph; replace its `.book-photo` placeholder with the supplied
 image when available.
 

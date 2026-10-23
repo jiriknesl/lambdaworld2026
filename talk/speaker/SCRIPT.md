@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,179 spoken words. Planning pace: 125 words/minute, plus 04:23 of pauses and visual holds. Speech and holds: 37:49; with 02:00 for questions: 39:49. This is an estimate, not an aloud rehearsal.
+4,169 spoken words. Planning pace: 125 words/minute, plus 04:29 of pauses and visual holds. Speech and holds: 37:50; with 02:00 for questions: 39:50. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -536,43 +536,41 @@ This observer records costs in an atom, Clojure’s explicit mutable reference. 
 
 ## 26 Rainbow
 
-31:32–32:10 · 74 words · 3s visual holds
+31:32–31:54 · 40 words · 3s visual holds
 
 ### Phase 1
 
 [Pause before moving from examples to proof.]
 
-Clojure is dynamically typed. Some of you prefer static types, which catch useful classes of mistakes. Proof lets us state a more specific property of an update and check a term that establishes it. This is available to users of static languages too.
-
-Rainbow is a theorem prover written in Clojure. I’ll show a small proof so you can read the notation, then return to a property of the Bellman operator we just used.
+Rainbow is a theorem prover written in Clojure. Static types catch useful mistakes; a proof checks a specific mathematical claim. First, a small proof to read the notation. Then, a property of our Bellman update, and an industrial scheduling example.
 
 ## 27 A proof is a function
 
-32:10–33:30 · 154 words · 6s visual holds
+31:54–32:47 · 99 words · 6s visual holds
 
 ### Phase 1
 
 [Follow the right-hand diagram, then match it to the left.]
 
-Suppose P, Q, and R are propositions. We have a function taking a proof of P to a proof of Q, another taking a proof of Q to a proof of R, and a proof of P. How do we produce R? Apply f, then g. It is function composition.
+P, Q and R are propositions. We have f taking evidence of P to evidence of Q, g taking Q to R, and p proving P. Apply f, then g: function composition.
 
-This is actual Rainbow term syntax. Forall introduces arbitrary propositions; the arrow states implications. Fn binds the proof arguments, and app applies them. The body is g applied to f applied to p. The universals are part of the statement: the term must work for arbitrary P, Q, and R. Rainbow checked it in an empty environment, with no axioms.
+This is actual Rainbow syntax. Forall binds the propositions; arrows state implications. Fn binds proof arguments, and app applies them. The body produces evidence of R for arbitrary P, Q and R. Rainbow checked this term in an empty environment, with no axioms.
 
 ### Phase 2
 
 [Right. Point to the shortened, rejected term.]
 
-If I offer only f of p, I have produced Q, while the statement asks for R. The checker rejects it. Those two verdicts are recorded from the kernel. This is a small proof we can read completely, before looking at a larger theorem.
+Return only f of p and we have Q, while the statement requires R. The checker rejects it. Both verdicts are recorded kernel results.
 
 ## 28 Bellman shrinks disagreement
 
-33:30–34:29 · 110 words · 6s visual holds
+32:47–33:34 · 85 words · 6s visual holds
 
 ### Phase 1
 
 [Point back to the hydrogen value table; define the gap.]
 
-Take two estimates of future profit, V and W. Call their largest difference across all states epsilon. That is the worst disagreement between corresponding entries, not an average. For our discounted Bellman operator, one update makes that difference at most gamma times epsilon. Gamma is point nine in the station model. The claim needs the same model, valid probabilities, and a nonempty set of feasible actions.
+Take two value tables, V and W. Their largest difference is epsilon. One discounted Bellman update bounds that gap by gamma times epsilon. Here gamma is point nine. We need the same model, normalized nonnegative probabilities and nonempty legal action sets.
 
 ### Phase 2
 
@@ -582,7 +580,7 @@ For illustration, start one table at zero everywhere and the other at ten. Apply
 
 ## 29 The proof follows the code
 
-34:29–36:01 · 166 words · 12s visual holds
+33:34–35:06 · 166 words · 12s visual holds
 
 ### Phase 1
 
@@ -610,19 +608,41 @@ Swap V and W to get the reverse inequality. Together they bound the absolute dif
 
 ## 30 What the kernel checked
 
-36:01–36:58 · 113 words · 3s visual holds
+35:06–35:39 · 63 words · 3s visual holds
 
 ### Phase 1
 
-[Point to the checked theorem, then its scope.]
+[Distinguish the historical receipt, pending replay and browser implementation.]
 
-Rainbow checked an exact arithmetic version of this bound, with no axioms in its dependency closure. This receipt names that theorem. It does not certify the floating-point JavaScript implementation running these slides. Connecting that program to the mathematical operator would require a separate argument.
+This historical receipt records a check of the exact Bellman bound. It predates a kernel repair, so replay is still pending. It also does not certify our floating-point browser code.
 
-There is a useful mathematical consequence. For an exact candidate value table, measure its residual: the difference from one more Bellman update. With discount point nine, an exact residual below point zero zero one bounds its error from the fixed point by point zero one. The shrinking gaps form a geometric series. That explains what a stopping tolerance can mean; it is not a certificate for our floating-point run.
+Mathematically, with discount point nine, an exact residual of point zero zero one bounds value error by point zero one. That consequence needs an exact operator; our browser run has no such certificate.
 
-## 31 Applied Higher-Order Functions
+## 31 When should a methanol plant buy power?
 
-36:58–37:37 · 76 words · 3s visual holds
+35:39–36:11 · 61 words · 3s visual holds
+
+### Phase 1
+
+[Follow electricity through hydrogen storage to methanol.]
+
+Here is a larger application. We model a methanol plant buying electricity at hourly Spanish market prices. The electrolyser makes hydrogen; the tank lets production and consumption happen at different times. We must deliver 588 tonnes of methanol per week at minimum cost. Minimum loads and start-up costs make switching decisions matter. This benchmark knows the whole week’s prices in advance.
+
+## 32 Check the schedule's certificate
+
+36:11–36:59 · 93 words · 3s visual holds
+
+### Phase 1
+
+[Read the weekly results, then explicitly state the open soundness theorem.]
+
+HiGHS finds schedules; Rainbow checks certificates with exact arithmetic. In our reported runs, all 52 weekly certificates were accepted. The largest reported gap was 26 cents on a 388-thousand-euro week; the median check took 0.64 seconds. Four separately switched stacks reached 51 weeks out of 52.
+
+The checker runs as a kernel-certified program, but the theorem that acceptance implies optimality remains open. These are certificate-checking results, not completed end-to-end optimality proofs. They concern an illustrative model with known prices, not a real plant or live trading strategy. Monthly certificates remain out of reach.
+
+## 33 Applied Higher-Order Functions
+
+36:59–37:38 · 76 words · 3s visual holds
 
 ### Phase 1
 
@@ -630,9 +650,9 @@ There is a useful mathematical consequence. For an exact candidate value table, 
 
 Today I concentrated on iterate, but you’ve also seen map, reduce, function composition, and functions that return other functions. My book, Applied Higher-Order Functions, develops a chosen toolkit of about twelve higher-order functions and their composition. That is the book’s organizing choice, not a claim that all of operations research reduces to twelve functions. If you want to build more of these algorithms and work through the examples, that is where I’ve put the longer treatment.
 
-## 32 Thank you
+## 34 Thank you
 
-37:37–37:49 · 18 words · 3s visual holds
+37:38–37:50 · 18 words · 3s visual holds
 
 ### Phase 1
 

@@ -101,3 +101,24 @@ text on the first penalty reveal; correcting that expectation made the check pas
 The regenerated PDF contains all 81 speech cues in the new order. The script has 4,179 words:
 37:49 including planned holds, or 39:49 with questions, at 125 wpm. The earlier 21-pass log describes
 the original editorial review; these later user-directed revisions are recorded here separately.
+
+
+## E-methanol example — 2026-10-23
+
+- Added two concise Rainbow slides (31–32) from Jiri's supplied benchmark account: plant flow,
+  then reported certificate acceptance, gap and timing. No numerical run or schedule was invented.
+- The open acceptance-implies-optimality theorem is visible and spoken. The historical Bellman
+  receipt now explicitly requires replay after the kernel repair. Neither gap is claimed resolved.
+- 34 slides, 447 rendered phases, 83 speech cues; 4,169 spoken words plus 4:29 visual holds.
+  Estimate at 125 wpm: 37:50, or 39:50 with two minutes for questions.
+- 18 tests / 2,205 assertions passed; release build completed with no warnings.
+- Offline Chromium smoke checked 267 frames: every slide and short reveal, sampled long traces,
+  at 1600×900, 1920×1080 and 1024×768. No overflow or external requests; hash recovery,
+  presenter controls, phase speech and the day marker passed. This is not a fresh exhaustive
+  1,341-frame audit; the numerical algorithms were unchanged.
+- New slide screenshots inspected at 1600×900; plant diagram, results and proof boundary fit.
+- Speaker PDF regenerated offline with all 34 slide scripts and 83 cues.
+- Existing public ngrok preview refreshed without changing tunnel configuration. Five public
+  content checks (slides 30–34), matching plant/certificate speaker notes and the versioned
+  release passed. The check uses the closing slide's actual heading rather than assuming the
+  standard title element. Public URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=methanol-20261023#s31

@@ -1881,14 +1881,43 @@
               [:div.two.even
                [:div
                 (code "value/signed-optimality-step-\n  additively-contractive\n\nstatus: checked\naxioms: []\nchecked: 2026-10-09")
-                [:p.caption "Recorded: rainbow-evidence.edn · 3f411ae. Identifier wrapped."]]
+                [:p.caption "Historical receipt · replay after kernel repair pending."]]
                [:div.aside
-                [:p "Exact operator: bound proved."]
+                [:p "Exact operator: mathematical bound."]
                 [:p "Floating-point browser code: correspondence unproved."]
                 [:p "An exact residual can bound value error."]
                 [:p.caption "With γ = 0.9: residual ≤ 0.001 ⇒ value error ≤ 0.01."]
                 [:p.caption "Mathematical consequence; not a certificate for this browser run."]]])
-    :notes "One minute. The recorded check is the signed Bellman additive-closeness theorem with empty axiom closure. We did not check the JavaScript program against it. Point to that boundary rather than implying that a theorem name certifies a renderer. The epsilon-to-gamma-epsilon statement is what is checked; fixed-point existence and convergence use the usual finite discounted model assumptions. The residual-to-error bound is a mathematical consequence of contraction, not a recorded certificate for this floating-point run. Residual refers to a candidate table versus one more update, not the size of a chosen action."}
+    :notes "This historical receipt predates the documented kernel repair; replay on the repaired kernel is pending. The recorded check is the signed Bellman additive-closeness theorem with empty axiom closure. We did not check the JavaScript program against it. Point to that boundary rather than implying that a theorem name certifies a renderer. The epsilon-to-gamma-epsilon statement is what is checked; fixed-point existence and convergence use the usual finite discounted model assumptions. The residual-to-error bound is a mathematical consequence of contraction, not a recorded certificate for this floating-point run. Residual refers to a candidate table versus one more update, not the size of a chosen action."}
+
+   {:section "Rainbow" :title "When should a methanol plant buy power?"
+    :render (fn [_]
+              [:div
+               [:div.plant-flow
+                [:div.plant-node [:strong "Electrolyser"] [:span "120 MW"]]
+                [:span.plant-arrow "→"]
+                [:div.plant-node [:strong "Hydrogen tank"] [:span "20 t"]]
+                [:span.plant-arrow "→"]
+                [:div.plant-node [:strong "Methanol loop"] [:span "10 t/h"]]]
+               [:p.aside "Deliver 588 t per week at minimum cost."]
+               [:p.aside "Buy power in cheap hours. Store hydrogen for later."]
+               [:p.aside "Minimum loads and start-up costs make switching matter."]
+               [:p.caption "Illustrative model · OMIE Spain, 2023 · full week of prices known"]])
+    :notes "Reported plant benchmark supplied by Jiri. Electricity use is 50 MWh per tonne of hydrogen; methanol consumes 0.19 tonnes of hydrogen per tonne. The tank starts at 10 tonnes and must finish at least there. The loop has 50% turndown and a EUR 1,000 start cost. The four-stack variant has four 30 MW stacks, 20% turndown and EUR 500 per stack start. No ramp limits, degradation, CO₂ or compressor limits, grid fees or renewable-fuel sourcing rules are represented. This is a model with known weekly prices, not a live day-ahead trading strategy. No operating trace is drawn because the underlying hourly schedules were not supplied."}
+
+   {:section "Rainbow" :title "Check the schedule's certificate"
+    :render (fn [_]
+              [:div
+               [:p.aside "HiGHS finds a schedule. Rainbow checks its certificate with exact arithmetic."]
+               [:div.certificate-results
+                [:div [:strong "52 / 52"] [:span "weekly certificates accepted"]]
+                [:div [:strong "€0.26"] [:span "largest reported optimality gap"]]
+                [:div [:strong "0.64 s"] [:span "median check per week"]]]
+               [:p.caption "2023 benchmark · €0.26 on a €388,000 week · tolerance: one part per million"]
+               [:p.aside "Four stacks: 51 of 52 weeks accepted; median check 15 s."]
+               [:p.certificate-boundary "Still open: proving that checker acceptance implies optimality."]
+               [:p.caption "Model, not plant · known weekly prices · monthly certificates still out of reach"]])
+    :notes "These are Jiri's supplied benchmark results, not a benchmark rerun in this deck. The certificates describe a search tree with bounds at its leaves and accounted-for splits. Exact checking tests the submitted evidence rather than trusting a solver status. The checker runs as a kernel-certified program, but its acceptance-implies-optimality soundness theorem remains open. Do not call these end-to-end formal optimality proofs. A reported nonzero tolerance also does not mean no cheaper schedule exists. One four-stack week remains unaccepted; no monthly certificate result is claimed. HiGHS is faster at solving; this work is about checking answers. Proof coverage concerns the model, not the real plant."}
 
    ;; ---------------------------------------------------------------- The book (2 min)
    {:section "The book" :title "Applied Higher-Order Functions"
