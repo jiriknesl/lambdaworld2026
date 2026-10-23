@@ -42,6 +42,7 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
           const body = document.querySelector('.body'), stage = document.querySelector('#stage').getBoundingClientRect();
           return {
             text: body.textContent,
+            title: !!document.querySelector('.title'),
             flash: !!body.querySelector('.strike-flash'),
             fallen: !!body.querySelector('.bird.struck'),
             clock: body.querySelector('.clock')?.textContent,
@@ -61,7 +62,7 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
           if (Math.abs(Number(result.marker) - 312) > 0.01) throw Error('Hour marker mismatch');
           if (mode === 'strike' && Math.abs(Number(result.ring) - (12 + 30 * ((time / 1500 - 4 - 0.45) / 0.55))) > 0.01) throw Error('Impact timing mismatch');
           if (result.flash !== (mode === 'strike') || result.fallen !== (mode === 'strike')) throw Error('Strike graphics mismatch');
-          if (!result.text.includes('Illustrative strikes')) throw Error('Missing illustration label');
+          if (result.title || result.text.includes('Illustrative strikes')) throw Error('Removed slide copy remains');
           if (width === 1600 && target.startsWith('file:')) {
             await page.screenshot({path: '/private/tmp/playback-' + phase + '-' + time + '.png'});
           }

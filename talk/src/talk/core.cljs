@@ -1592,7 +1592,7 @@
                     [:td (fmt (risk-cost (:x (peek run))) 1)]])]]])
     :notes "Continue the risk-aware run just shown: can another step reach a settled plan in fewer updates? with-momentum accepts a state-update function and returns another. It calls the base update once, measures that proposal's displacement, adds 90 percent of stored velocity, and returns new position and velocity. The outer clamped wrapper clips position to the allowed range; it does not reset velocity at a bound. The chart and table use actual runs. Fewer updates reach the same movement tolerance here; that does not prove a better optimum, general convergence, or a wall-clock speedup. The second reveal shows exactly what wraps what. The iteration remains unchanged."}
 
-   {:section "Optimise" :title "Play the resulting day" :steps 2 :runs [:plain]
+   {:section "Optimise" :title "Play the resulting day" :hide-title? true :steps 2 :runs [:plain]
     :live (fn [frame t]
             (let [plan (if (zero? frame) (zipmap slots (repeat 1)) (:plan (run-summary :plain)))]
               {"played-3d" (scene plan t {:w 700 :h 500 :encounters? true})
@@ -1604,9 +1604,7 @@
                  [:div [:p.aside (if (zero? frame) "Before: every turbine runs." "After: the optimized schedule.")]
                   [:div#played-schedule (schedule plan {:w 700 :now (:hour (time-of-day t))})]
                   (plan-metrics plan)]
-                 [:div
-                  [:div#played-3d (scene plan t {:w 700 :h 500 :encounters? true})]
-                  [:p.caption "Illustrative strikes; the model scores exposure."]]]))
+                 [:div#played-3d (scene plan t {:w 700 :h 500 :encounters? true})]]))
     :notes "Now time really is passing through a day. First reveal is full power; second is the risk-aware plan. The prominent bird follows the same scripted crossing of the most exposed turbine each hour. At the rotor, a moving turbine produces a red impact flash and a falling bird; a fully stopped turbine lets this illustrated bird continue. The setting is read from the displayed schedule at the current hour. This is an explanatory animation, not geometric blade collision physics, a fatality estimate, or proof that stopped turbines cannot harm birds. Partial curtailment is not treated as guaranteed safe. The optimizer still scores the existing exposure index; the animation does not change its objective or results. The red schedule rectangle tracks the same clock as the encounter."}
 
    {:section "Decide" :title "Buy hydrogen before the customers arrive" :steps 4
@@ -1641,8 +1639,8 @@
                   [:p.caption "Sell for 10; holding cost 1 per leftover unit/week. Future discount 0.9."])]])
     :notes "The station buys hydrogen from a supplier and sells it to customer trucks. The tank always holds four units, while supplier capacity changes: regular weeks offer at most three units at price two, tight weeks at most one at price six. Weeks alternate predictably; this is a two-period model, not a general market price forecast. Customer demand is a discrete mixture: no arrivals with probability .4, one truck with .15, a three-truck convoy with .45. There is no demand of two in this teaching distribution. The two peaks represent quiet weeks and convoy arrivals, and the same distribution applies in both supply weeks. Mean demand is 1.5 but does not capture the convoy risk. Each week, observe phase and stock, choose a feasible order, receive it, serve uncertain customers and carry leftovers. No evaporation, backlog or fixed delivery fee is included. Walk through one regular-week outcome: stock one, order one, demand three, profit 20 minus 2 = 18. Last reveal shows the actual reward and state transition: leftover inventory plus the next supply phase. The optimization goal is expected discounted profit over repeated weeks, not simply serving every truck."}
 
-   {:section "Decide" :title "Buy for this week—or the next?" :steps 2
-    :render (fn [frame]
+   {:section "Decide" :title "Buy for this week—or the next?"
+    :render (fn [_]
               [:div.two.even
                [:div
                 (code 'supply-calendar {:size :small})
@@ -1658,11 +1656,7 @@
                    [:tr [:td d]
                     [:td (second (next-state station-start 2 d))]
                     [:td (second (next-state station-start 3 d))]])]
-                [:p.caption "Every row leads to a tight week: price 6, at most 1 unit available."]
-                (when (pos? frame)
-                  [:div
-                   [:p.aside "The extra unit may avoid an expensive purchase—or sit unsold."]
-                   [:p.caption "We need the value of each possible next state, not just this week’s sales."]])]])
+                [:p.caption "Every row leads to a tight week: price 6, at most 1 unit available."]]])
     :notes "This is why the new problem cannot be reduced to ordering the maximum customer demand. We could buy two and reach three units, enough for any current-week arrival. Or buy three and reach four, even though only three trucks can arrive this week. Carrying an extra unit is costly if demand is quiet but useful before the expensive, capacity-limited supply week. Show all demand branches and their resulting stocks. The next supply phase is part of the state, so identical stock can justify different orders. In Bellman, future values are indexed by [week stock]. Adding the phase makes the repeating time-varying problem a fixed state-transition model; the same update can be iterated."}
 
    {:section "Decide" :title "Future values change the order" :steps 5
@@ -2011,13 +2005,13 @@
 (defn clamp [x lo hi] (max lo (min hi x)))
 
 (defn slide-view [{:keys [slide step help]}]
-  (let [{:keys [section title render]} (nth slides slide)
+  (let [{:keys [section title render hide-title?]} (nth slides slide)
         steps (steps-of (nth slides slide))]
-    [:div.slide
+    [:div.slide {:class (when hide-title? "no-title")}
      [:div.top
       [:div.sections (for [s section-order] [:span {:class (when (= s section) "on")} s])]
       [:div.count (str (inc slide) " / " (count slides))]]
-     (when-not (#{"Hello" "Thank you"} section) [:h2.title title])
+     (when-not (or hide-title? (#{"Hello" "Thank you"} section)) [:h2.title title])
      (when (and (#{"Hello" "Thank you"} section) (pos? slide) (< slide (dec (count slides)))) [:h2.title title])
      [:div.body (try (render step)
                      (catch :default e [:pre.error (str "This slide failed to render:\n" (.-message e))]))]

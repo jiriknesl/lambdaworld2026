@@ -10,10 +10,12 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-strike-20261023).
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=trimmed-20261023).
 Updated 2026-10-23: the biography shows a plain-text YouTube address; the fixed-point example
 follows one trajectory; the turbine introduction has one reveal. Slide 16 now illustrates a
-bird strike with a rotor impact and falling bird, driven by the displayed schedule. Slides 31–34 tell the plant story, explain the solver/checker split, and distinguish
+bird strike with a rotor impact and falling bird, driven by the displayed schedule.
+Its heading and explanatory caption are removed; the model-scope explanation remains in presenter notes.
+Slide 18 now has one reveal, retaining the order comparison. Slides 31–34 tell the plant story, explain the solver/checker split, and distinguish
 modeled savings from the weekly certificate bound. The open checker-soundness theorem is visible on the results slide.
 The Bellman receipt is labelled historical, with replay after the kernel repair pending.
 The spoken script and PDF follow the new order.
@@ -106,20 +108,20 @@ The deck has 36 slides; reveals are steps within a slide, not additional topics.
 | 4: OR | 0:38 | What optimization, decisions and validation ask. |
 | 5–8: HOFs | 4:35 | Function construction, map, iterate and stopping. |
 | 9–16: Optimization | 9:08 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
-| 17–21: Decision-making | 8:32 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
+| 17–21: Decision-making | 8:12 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 22–24: Validation | 5:34 | Controller rule, reachable states and shared iterate. |
 | 25: Observation | 1:06 | Observe a supplied step without changing its result. |
-| 26–34: Rainbow | 5:57 | Composition proof, Bellman bound, plant scheduling and certificate results with their limits. |
-| 35–36: Book and thanks | 0:34 | Broader toolkit and contact. |
+| 26–34: Rainbow | 5:58 | Composition proof, Bellman bound, plant scheduling and certificate results with their limits. |
+| 35–36: Book and thanks | 0:33 | Broader toolkit and contact. |
 
-The current 4,085-word script estimates **37:13 including visual holds**, or **39:13 with two
+The current 4,050-word script estimates **36:53 including visual holds**, or **38:53 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 36 slides, 84 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 36 slides, 83 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.

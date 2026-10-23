@@ -396,13 +396,6 @@
           "cue": "Read the state and compare the two order columns.",
           "speech": "The state is a pair: supply week and stock. Orders returns feasible purchase quantities.\n\nIn a regular week with one unit already in stock, buying two covers the largest possible convoy this week. Buying three fills the tank to four. Why carry more than any current convoy needs? Look at the leftovers: either way, the next week has expensive, limited supply.",
           "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Right. Pause for the tradeoff.",
-          "speech": "That extra unit may avoid an expensive future purchase, or it may sit unsold and incur holding cost. We need a value for each possible next state. That is what the Bellman calculation will build.",
-          "hold_seconds": 3
         }
       ]
     },

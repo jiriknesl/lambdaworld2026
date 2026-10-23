@@ -1,7 +1,7 @@
 {
-  "spoken_words": 4085,
+  "spoken_words": 4050,
   "pace_wpm": 125,
-  "holds_seconds": 272,
+  "holds_seconds": 269,
   "questions_seconds": 120,
   "slides": [
     {
@@ -125,142 +125,142 @@
     },
     {
       "slide": 18,
-      "words": 96,
-      "hold_seconds": 6,
+      "words": 61,
+      "hold_seconds": 3,
       "start_seconds": 1056,
-      "end_seconds": 1108
+      "end_seconds": 1088
     },
     {
       "slide": 19,
       "words": 303,
       "hold_seconds": 15,
-      "start_seconds": 1108,
-      "end_seconds": 1268
+      "start_seconds": 1088,
+      "end_seconds": 1248
     },
     {
       "slide": 20,
       "words": 166,
       "hold_seconds": 14,
-      "start_seconds": 1268,
-      "end_seconds": 1362
+      "start_seconds": 1248,
+      "end_seconds": 1342
     },
     {
       "slide": 21,
       "words": 154,
       "hold_seconds": 6,
-      "start_seconds": 1362,
-      "end_seconds": 1442
+      "start_seconds": 1342,
+      "end_seconds": 1422
     },
     {
       "slide": 22,
       "words": 239,
       "hold_seconds": 12,
-      "start_seconds": 1442,
-      "end_seconds": 1568
+      "start_seconds": 1422,
+      "end_seconds": 1549
     },
     {
       "slide": 23,
       "words": 269,
       "hold_seconds": 27,
-      "start_seconds": 1568,
-      "end_seconds": 1725
+      "start_seconds": 1549,
+      "end_seconds": 1705
     },
     {
       "slide": 24,
       "words": 101,
       "hold_seconds": 3,
-      "start_seconds": 1725,
-      "end_seconds": 1776
+      "start_seconds": 1705,
+      "end_seconds": 1756
     },
     {
       "slide": 25,
       "words": 125,
       "hold_seconds": 6,
-      "start_seconds": 1776,
-      "end_seconds": 1842
+      "start_seconds": 1756,
+      "end_seconds": 1822
     },
     {
       "slide": 26,
       "words": 22,
       "hold_seconds": 3,
-      "start_seconds": 1842,
-      "end_seconds": 1856
+      "start_seconds": 1822,
+      "end_seconds": 1836
     },
     {
       "slide": 27,
       "words": 99,
       "hold_seconds": 6,
-      "start_seconds": 1856,
-      "end_seconds": 1909
+      "start_seconds": 1836,
+      "end_seconds": 1889
     },
     {
       "slide": 28,
       "words": 71,
       "hold_seconds": 6,
-      "start_seconds": 1909,
-      "end_seconds": 1949
+      "start_seconds": 1889,
+      "end_seconds": 1929
     },
     {
       "slide": 29,
       "words": 166,
       "hold_seconds": 12,
-      "start_seconds": 1949,
-      "end_seconds": 2041
+      "start_seconds": 1929,
+      "end_seconds": 2021
     },
     {
       "slide": 30,
       "words": 63,
       "hold_seconds": 3,
-      "start_seconds": 2041,
-      "end_seconds": 2074
+      "start_seconds": 2021,
+      "end_seconds": 2054
     },
     {
       "slide": 31,
       "words": 46,
       "hold_seconds": 3,
-      "start_seconds": 2074,
-      "end_seconds": 2099
+      "start_seconds": 2054,
+      "end_seconds": 2079
     },
     {
       "slide": 32,
       "words": 65,
       "hold_seconds": 3,
-      "start_seconds": 2099,
-      "end_seconds": 2133
+      "start_seconds": 2079,
+      "end_seconds": 2114
     },
     {
       "slide": 33,
       "words": 65,
       "hold_seconds": 3,
-      "start_seconds": 2133,
-      "end_seconds": 2168
+      "start_seconds": 2114,
+      "end_seconds": 2148
     },
     {
       "slide": 34,
       "words": 60,
       "hold_seconds": 3,
-      "start_seconds": 2168,
-      "end_seconds": 2199
+      "start_seconds": 2148,
+      "end_seconds": 2180
     },
     {
       "slide": 35,
       "words": 39,
       "hold_seconds": 3,
-      "start_seconds": 2199,
-      "end_seconds": 2221
+      "start_seconds": 2180,
+      "end_seconds": 2201
     },
     {
       "slide": 36,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 2221,
-      "end_seconds": 2233
+      "start_seconds": 2201,
+      "end_seconds": 2213
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 2620,
-    "125": 2353,
-    "140": 2143
+    "110": 2598,
+    "125": 2333,
+    "140": 2125
   },
-  "script_sha256": "7291bf7560ddafd8e574ac5112d2d23a81e0f3281d2c7895442ee6ff77c94d92"
+  "script_sha256": "eed43fccab493ba167ea32bb76cd8d96cbf4e1326ea1481bc1f4b256d53dcd0a"
 }

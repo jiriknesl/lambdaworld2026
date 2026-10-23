@@ -74,6 +74,7 @@ body { font-family: var(--sans); color: var(--ink); }
 .sections span.on { color: var(--accent); font-weight: 700; }
 .count { font-variant-numeric: tabular-nums; }
 .title { font-size: 46px; line-height: 1.1; margin: 42px 0 30px; font-weight: 700; letter-spacing: -.01em; }
+.slide.no-title .body { margin-top: 42px; }
 .body { flex: 1; min-height: 0; position: relative; font-size: 28px; line-height: 1.35; }
 
 .two { display: grid; grid-template-columns: 56fr 44fr; gap: 44px; height: 100%; align-items: start; }

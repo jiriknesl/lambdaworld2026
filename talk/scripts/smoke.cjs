@@ -64,7 +64,7 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
         checkedFrames++;
         if (info.title === 'Same updates, different objectives') traceSlide = s;
         if (info.title === 'Hydrogen: iterate the value table') valueSlide = s;
-        if (info.title === 'Play the resulting day') playbackSlide = s;
+        if (await page.locator('#played-3d').count()) playbackSlide = s;
         if (info.error) problems.push(`${w}x${h} slide ${s}: render error`);
         if (info.over.length) problems.push(`${w}x${h} slide ${s} (${info.title}): overflow ${info.over.join(', ')}`);
       }

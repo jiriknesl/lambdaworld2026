@@ -207,3 +207,19 @@ the original editorial review; these later user-directed revisions are recorded 
   visual holds and questions. Published HTML, JavaScript and CSS were fetched and matched
   byte-for-byte against the tested release. No tunnel configuration change.
   URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-strike-20261023#s16
+
+## Remove playback copy and the second supply reveal — 2026-10-23
+
+- Slide 16 no longer renders its heading or illustration caption. Its internal presenter
+  title and explanation remain; the content has a 42 px gap below the agenda. Updated the
+  playback browser check to require both removals and the general smoke check to identify
+  this slide by its visualization rather than a visible heading.
+- Slide 18 retains its first view only. Removed the second reveal's two sentences and its
+  speech cue. The comparison table and transition to the Bellman value table remain.
+- 19 tests / 2,215 assertions pass; release has no warnings. Speaker PDF regenerated with
+  36 slides and 83 cues; 4,050 words, estimated 38:53 including holds and questions.
+- Offline playback checks passed 18 frames at three sizes after the slide 16 layout change;
+  screenshot inspected. After the slide 18 removal, public checks covered both edited slides
+  at 1600×900, 1920×1080 and 1024×768, including the single reveal, presenter speech and
+  navigation to slide 19. Existing tunnel configuration unchanged.
+  URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=trimmed-20261023
