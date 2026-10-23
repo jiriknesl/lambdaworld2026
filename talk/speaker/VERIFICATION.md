@@ -223,3 +223,19 @@ the original editorial review; these later user-directed revisions are recorded 
   at 1600×900, 1920×1080 and 1024×768, including the single reveal, presenter speech and
   navigation to slide 19. Existing tunnel configuration unchanged.
   URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=trimmed-20261023
+
+## Bellman explanation for reveals 19a4–5 — 2026-10-23
+
+- Expanded the speech to explain q = expected-return, its inputs, max retaining a score,
+  and max-key retaining the order. Clarified that best-order returns a callable Clojure map
+  and uses the same V as the preceding reveal, not its newly computed output.
+- Recomputed the example from the model equations: V3([regular,1]) = 23.0567; action scores
+  for orders 0–3 are 19.1038925, 23.6422925, 28.0375925 and 28.3500785. The new value is a
+  four-week value, not a measured 5.29 saving from choosing a different order.
+- Regenerated the presenter data, script, timing and PDF; opened SCRIPT.md in TextEdit.
+  4,147 spoken words; estimated 39:40 including holds and questions. Script consistency
+  validation and release compilation passed with no warnings. Algorithms and phases are
+  unchanged; no additional numerical test suite or layout audit was necessary.
+- Refreshed the existing public preview and fetched its JavaScript, matching the local
+  release byte-for-byte. URL:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bellman-script-20261023#s19a4

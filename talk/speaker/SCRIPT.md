@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,050 spoken words. Planning pace: 125 words/minute, plus 04:29 of pauses and visual holds. Speech and holds: 36:53; with 02:00 for questions: 38:53. This is an estimate, not an aloud rehearsal.
+4,147 spoken words. Planning pace: 125 words/minute, plus 04:29 of pauses and visual holds. Speech and holds: 37:40; with 02:00 for questions: 39:40. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -336,7 +336,7 @@ In a regular week with one unit already in stock, buying two covers the largest 
 
 ## 19 Future values change the order
 
-18:08–20:48 · 303 words · 15s visual holds
+18:08–21:35 · 400 words · 15s visual holds
 
 ### Phase 1
 
@@ -358,19 +358,25 @@ We skip update two on this slide. After three updates, V accounts for three week
 
 ### Phase 4
 
-[Right. Point to fn, then max, then zipmap.]
+[Identify q as expected-return. Read the order scores, then distinguish the three-week and four-week horizons.]
 
-There are two levels here. Bellman accepts the model and returns an update function. That returned function accepts V, a table of ten profit estimates. For every state it scores feasible orders using V, takes the maximum, and builds a new table of best scores. Read the old and new profit estimate for our state below. The output contains money values, not orders.
+Here, q is the model’s expected-return function. Give it V, a state and a proposed order. It averages this week’s profit plus the discounted value of next week’s leftover stock over the possible demands.
+
+For regular week, stock one, the four orders score 19.10, 23.64, 28.04 and 28.35. Max keeps 28.35. Bellman repeats that calculation for all ten states—two supply weeks times five stock levels—and returns a new value table.
+
+The old entry was 23.06. It covered three weeks from this state. The new entry covers four: this week plus the three-week values of possible next states. That increase is not a measured saving from changing the order. No hydrogen has been bought; we are extending the planning horizon.
 
 ### Phase 5
 
-[Right. Compare max with max-key; point to order 3 in the scores table.]
+[Keep the same V. Contrast the winning score, 28.35, with the winning purchase quantity, 3.]
 
-To choose an order, use best-order with the model and V. Max keeps the highest score. Max-key keeps the order whose score is highest. For this state it returns three. Applying that to every state produces the policy: a table of purchase quantities. We use the same scoring function for both jobs.
+Now we use the same input V and the same scores, but keep the winning order instead. Max-key returns three because ordering three scored 28.35. Three means units to buy, not profit or target stock. We already hold one unit, so buying three fills the tank to four.
+
+Best-order does this for every state and returns a map from state to order—a policy. Clojure maps support function calls, so the expression below looks up this state and returns three. It neither updates V nor uses the new value table from the preceding reveal.
 
 ## 20 Hydrogen: iterate the value table
 
-20:48–22:22 · 166 words · 14s visual holds
+21:35–23:09 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -392,7 +398,7 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 21 The best order depends on the supply window
 
-22:22–23:42 · 154 words · 6s visual holds
+23:09–24:29 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -408,7 +414,7 @@ There is a less obvious recommendation here. With an empty tank in a tight week,
 
 ## 22 Validate the turbine controller
 
-23:42–25:49 · 239 words · 12s visual holds
+24:29–26:35 · 239 words · 12s visual holds
 
 ### Phase 1
 
@@ -436,7 +442,7 @@ With-shield wraps the decision function. In known situations it delegates to tha
 
 ## 23 Can any event sequence reach RUN + confident bird?
 
-25:49–28:25 · 269 words · 27s visual holds
+26:35–29:11 · 269 words · 27s visual holds
 
 ### Phase 1
 
@@ -496,7 +502,7 @@ The set is now closed under every encoded successor, without a failure. That est
 
 ## 24 iterate underneath all three
 
-28:25–29:16 · 101 words · 3s visual holds
+29:11–30:03 · 101 words · 3s visual holds
 
 ### Phase 1
 
@@ -506,7 +512,7 @@ Underneath all three examples is iterate. What changes is what a state means. A 
 
 ## 25 Observe each update
 
-29:16–30:22 · 125 words · 6s visual holds
+30:03–31:09 · 125 words · 6s visual holds
 
 ### Phase 1
 
@@ -522,7 +528,7 @@ This observer records costs in an atom, Clojure’s explicit mutable reference. 
 
 ## 26 Rainbow
 
-30:22–30:36 · 22 words · 3s visual holds
+31:09–31:22 · 22 words · 3s visual holds
 
 ### Phase 1
 
@@ -532,7 +538,7 @@ Rainbow is a theorem prover written in Clojure. We’ll read a small proof, exam
 
 ## 27 A proof is a function
 
-30:36–31:29 · 99 words · 6s visual holds
+31:22–32:16 · 99 words · 6s visual holds
 
 ### Phase 1
 
@@ -550,7 +556,7 @@ Return only f of p and we have Q, while the statement requires R. The checker re
 
 ## 28 Bellman shrinks disagreement
 
-31:29–32:09 · 71 words · 6s visual holds
+32:16–32:56 · 71 words · 6s visual holds
 
 ### Phase 1
 
@@ -566,7 +572,7 @@ Start one table at zero everywhere and the other at ten. Bellman reduces the gap
 
 ## 29 The proof follows the code
 
-32:09–33:41 · 166 words · 12s visual holds
+32:56–34:28 · 166 words · 12s visual holds
 
 ### Phase 1
 
@@ -594,7 +600,7 @@ Swap V and W to get the reverse inequality. Together they bound the absolute dif
 
 ## 30 What the kernel checked
 
-33:41–34:14 · 63 words · 3s visual holds
+34:28–35:01 · 63 words · 3s visual holds
 
 ### Phase 1
 
@@ -606,7 +612,7 @@ Mathematically, with discount point nine, an exact residual of point zero zero o
 
 ## 31 Scheduling an e-methanol plant
 
-34:14–34:39 · 46 words · 3s visual holds
+35:01–35:26 · 46 words · 3s visual holds
 
 ### Phase 1
 
@@ -616,7 +622,7 @@ I built a purchasing model for an illustrative e-methanol plant using Spain’s 
 
 ## 32 Our code and the solver
 
-34:39–35:14 · 65 words · 3s visual holds
+35:26–36:00 · 65 words · 3s visual holds
 
 ### Phase 1
 
@@ -628,7 +634,7 @@ So our algorithm produces the evidence, and our checker checks it. HiGHS supplie
 
 ## 33 San Roque: what can scheduling save?
 
-35:14–35:48 · 65 words · 3s visual holds
+36:00–36:34 · 65 words · 3s visual holds
 
 ### Phase 1
 
@@ -638,7 +644,7 @@ For financial scale, take our separate e-SAF model at San Roque, by the Bay of A
 
 ## 34 How much cheaper could it be?
 
-35:48–36:20 · 60 words · 3s visual holds
+36:34–37:06 · 60 words · 3s visual holds
 
 ### Phase 1
 
@@ -648,7 +654,7 @@ Back to the methanol benchmark: every one of the 52 tested weeks has a reported 
 
 ## 35 Applied Higher-Order Functions
 
-36:20–36:41 · 39 words · 3s visual holds
+37:06–37:28 · 39 words · 3s visual holds
 
 ### Phase 1
 
@@ -658,7 +664,7 @@ Today I concentrated on iterate. My book, Applied Higher-Order Functions, develo
 
 ## 36 Thank you
 
-36:41–36:53 · 18 words · 3s visual holds
+37:28–37:40 · 18 words · 3s visual holds
 
 ### Phase 1
 

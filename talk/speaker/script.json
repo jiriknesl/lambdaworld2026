@@ -427,15 +427,15 @@
         {
           "from": 4,
           "to": 4,
-          "cue": "Right. Point to fn, then max, then zipmap.",
-          "speech": "There are two levels here. Bellman accepts the model and returns an update function. That returned function accepts V, a table of ten profit estimates. For every state it scores feasible orders using V, takes the maximum, and builds a new table of best scores. Read the old and new profit estimate for our state below. The output contains money values, not orders.",
+          "cue": "Identify q as expected-return. Read the order scores, then distinguish the three-week and four-week horizons.",
+          "speech": "Here, q is the model’s expected-return function. Give it V, a state and a proposed order. It averages this week’s profit plus the discounted value of next week’s leftover stock over the possible demands.\n\nFor regular week, stock one, the four orders score 19.10, 23.64, 28.04 and 28.35. Max keeps 28.35. Bellman repeats that calculation for all ten states—two supply weeks times five stock levels—and returns a new value table.\n\nThe old entry was 23.06. It covered three weeks from this state. The new entry covers four: this week plus the three-week values of possible next states. That increase is not a measured saving from changing the order. No hydrogen has been bought; we are extending the planning horizon.",
           "hold_seconds": 3
         },
         {
           "from": 5,
           "to": 5,
-          "cue": "Right. Compare max with max-key; point to order 3 in the scores table.",
-          "speech": "To choose an order, use best-order with the model and V. Max keeps the highest score. Max-key keeps the order whose score is highest. For this state it returns three. Applying that to every state produces the policy: a table of purchase quantities. We use the same scoring function for both jobs.",
+          "cue": "Keep the same V. Contrast the winning score, 28.35, with the winning purchase quantity, 3.",
+          "speech": "Now we use the same input V and the same scores, but keep the winning order instead. Max-key returns three because ordering three scored 28.35. Three means units to buy, not profit or target stock. We already hold one unit, so buying three fills the tank to four.\n\nBest-order does this for every state and returns a map from state to order—a policy. Clojure maps support function calls, so the expression below looks up this state and returns three. It neither updates V nor uses the new value table from the preceding reveal.",
           "hold_seconds": 3
         }
       ]
