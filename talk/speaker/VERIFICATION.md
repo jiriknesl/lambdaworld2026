@@ -162,3 +162,27 @@ the original editorial review; these later user-directed revisions are recorded 
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plant-evidence-20261023#s31
   README records the distinction between OMIE wholesale prices and renewable PPA prices,
   with links to the market operator and a renewable supplier's contract explanation.
+
+## Biography, fixed points and shorter optimization introduction — 2026-10-23
+
+- Slide 2 displays `(youtube.com/@flexianadev)` as text, without a hyperlink.
+- Slide 7 follows successive Newton updates from three toward two and explains why the
+  solution is unchanged by this particular update. Speech distinguishes the properties of
+  this step from any guarantee by iterate; technical notes include the positive-domain limit.
+- Slide 9 now has one reveal with six turbines, twelve hourly decisions and 72 settings.
+  The removed reveal's vector/as-plan implementation is no longer displayed. The model still
+  uses hourly slots 08:00–19:00, so these are not relabelled as two-hour intervals.
+- Removed the quoted three-paragraph slope calculation from slide 11, retaining the plotted
+  cost and running gradient implementation. Shortened the matching speech.
+- Slide 12 also drops the argument/iteration slogan and the step-size warning at Jiri's request;
+  its speech now describes the changed number and moves to the bird tradeoff.
+- 18 tests / 2,208 assertions passed; release compiled without warnings. Speaker PDF rebuilt
+  with 36 slides / 84 cues. Current estimate: 4,084 words, 39:12 including holds and questions.
+- Offline browser check passed 15 frames across 1600×900, 1920×1080 and 1024×768, checking
+  copy, removals, the single turbine reveal and matching presenter speech. Screenshots of
+  the biography, fixed-point example and turbine introduction were visually inspected.
+  One initial browser assertion expected a trailing zero that fmt intentionally omits; the
+  corrected assertion passed. No algorithm change or all-phase audit was needed.
+- The published edition passed 21 focused frames at the same three sizes, including both
+  slide 12 reveals and presenter synchronization. The existing tunnel configuration is unchanged.
+  URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=shorter-steps-20261023

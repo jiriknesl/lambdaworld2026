@@ -1,7 +1,7 @@
 {
-  "spoken_words": 4176,
+  "spoken_words": 4084,
   "pace_wpm": 125,
-  "holds_seconds": 275,
+  "holds_seconds": 272,
   "questions_seconds": 120,
   "slides": [
     {
@@ -48,219 +48,219 @@
     },
     {
       "slide": 7,
-      "words": 66,
+      "words": 110,
       "hold_seconds": 6,
       "start_seconds": 247,
-      "end_seconds": 284
+      "end_seconds": 306
     },
     {
       "slide": 8,
       "words": 140,
       "hold_seconds": 9,
-      "start_seconds": 284,
-      "end_seconds": 361
+      "start_seconds": 306,
+      "end_seconds": 382
     },
     {
       "slide": 9,
-      "words": 116,
-      "hold_seconds": 6,
-      "start_seconds": 361,
-      "end_seconds": 422
+      "words": 46,
+      "hold_seconds": 3,
+      "start_seconds": 382,
+      "end_seconds": 407
     },
     {
       "slide": 10,
       "words": 171,
       "hold_seconds": 9,
-      "start_seconds": 422,
-      "end_seconds": 513
+      "start_seconds": 407,
+      "end_seconds": 498
     },
     {
       "slide": 11,
-      "words": 239,
+      "words": 194,
       "hold_seconds": 9,
-      "start_seconds": 513,
-      "end_seconds": 637
+      "start_seconds": 498,
+      "end_seconds": 600
     },
     {
       "slide": 12,
-      "words": 72,
+      "words": 51,
       "hold_seconds": 6,
-      "start_seconds": 637,
-      "end_seconds": 678
+      "start_seconds": 600,
+      "end_seconds": 630
     },
     {
       "slide": 13,
       "words": 209,
       "hold_seconds": 9,
-      "start_seconds": 678,
-      "end_seconds": 787
+      "start_seconds": 630,
+      "end_seconds": 740
     },
     {
       "slide": 14,
       "words": 150,
       "hold_seconds": 16,
-      "start_seconds": 787,
-      "end_seconds": 875
+      "start_seconds": 740,
+      "end_seconds": 828
     },
     {
       "slide": 15,
       "words": 109,
       "hold_seconds": 6,
-      "start_seconds": 875,
-      "end_seconds": 933
+      "start_seconds": 828,
+      "end_seconds": 886
     },
     {
       "slide": 16,
       "words": 62,
       "hold_seconds": 14,
-      "start_seconds": 933,
-      "end_seconds": 977
+      "start_seconds": 886,
+      "end_seconds": 930
     },
     {
       "slide": 17,
       "words": 236,
       "hold_seconds": 12,
-      "start_seconds": 977,
-      "end_seconds": 1102
+      "start_seconds": 930,
+      "end_seconds": 1055
     },
     {
       "slide": 18,
       "words": 96,
       "hold_seconds": 6,
-      "start_seconds": 1102,
-      "end_seconds": 1154
+      "start_seconds": 1055,
+      "end_seconds": 1107
     },
     {
       "slide": 19,
       "words": 303,
       "hold_seconds": 15,
-      "start_seconds": 1154,
-      "end_seconds": 1315
+      "start_seconds": 1107,
+      "end_seconds": 1268
     },
     {
       "slide": 20,
       "words": 166,
       "hold_seconds": 14,
-      "start_seconds": 1315,
-      "end_seconds": 1409
+      "start_seconds": 1268,
+      "end_seconds": 1361
     },
     {
       "slide": 21,
       "words": 154,
       "hold_seconds": 6,
-      "start_seconds": 1409,
-      "end_seconds": 1488
+      "start_seconds": 1361,
+      "end_seconds": 1441
     },
     {
       "slide": 22,
       "words": 239,
       "hold_seconds": 12,
-      "start_seconds": 1488,
-      "end_seconds": 1615
+      "start_seconds": 1441,
+      "end_seconds": 1568
     },
     {
       "slide": 23,
       "words": 269,
       "hold_seconds": 27,
-      "start_seconds": 1615,
-      "end_seconds": 1771
+      "start_seconds": 1568,
+      "end_seconds": 1724
     },
     {
       "slide": 24,
       "words": 101,
       "hold_seconds": 3,
-      "start_seconds": 1771,
-      "end_seconds": 1823
+      "start_seconds": 1724,
+      "end_seconds": 1776
     },
     {
       "slide": 25,
       "words": 125,
       "hold_seconds": 6,
-      "start_seconds": 1823,
-      "end_seconds": 1889
+      "start_seconds": 1776,
+      "end_seconds": 1842
     },
     {
       "slide": 26,
       "words": 22,
       "hold_seconds": 3,
-      "start_seconds": 1889,
-      "end_seconds": 1902
+      "start_seconds": 1842,
+      "end_seconds": 1855
     },
     {
       "slide": 27,
       "words": 99,
       "hold_seconds": 6,
-      "start_seconds": 1902,
-      "end_seconds": 1956
+      "start_seconds": 1855,
+      "end_seconds": 1909
     },
     {
       "slide": 28,
       "words": 71,
       "hold_seconds": 6,
-      "start_seconds": 1956,
-      "end_seconds": 1996
+      "start_seconds": 1909,
+      "end_seconds": 1949
     },
     {
       "slide": 29,
       "words": 166,
       "hold_seconds": 12,
-      "start_seconds": 1996,
-      "end_seconds": 2088
+      "start_seconds": 1949,
+      "end_seconds": 2040
     },
     {
       "slide": 30,
       "words": 63,
       "hold_seconds": 3,
-      "start_seconds": 2088,
-      "end_seconds": 2121
+      "start_seconds": 2040,
+      "end_seconds": 2074
     },
     {
       "slide": 31,
       "words": 46,
       "hold_seconds": 3,
-      "start_seconds": 2121,
-      "end_seconds": 2146
+      "start_seconds": 2074,
+      "end_seconds": 2099
     },
     {
       "slide": 32,
       "words": 65,
       "hold_seconds": 3,
-      "start_seconds": 2146,
-      "end_seconds": 2180
+      "start_seconds": 2099,
+      "end_seconds": 2133
     },
     {
       "slide": 33,
       "words": 65,
       "hold_seconds": 3,
-      "start_seconds": 2180,
-      "end_seconds": 2214
+      "start_seconds": 2133,
+      "end_seconds": 2167
     },
     {
       "slide": 34,
       "words": 60,
       "hold_seconds": 3,
-      "start_seconds": 2214,
-      "end_seconds": 2246
+      "start_seconds": 2167,
+      "end_seconds": 2199
     },
     {
       "slide": 35,
       "words": 39,
       "hold_seconds": 3,
-      "start_seconds": 2246,
-      "end_seconds": 2268
+      "start_seconds": 2199,
+      "end_seconds": 2221
     },
     {
       "slide": 36,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 2268,
-      "end_seconds": 2279
+      "start_seconds": 2221,
+      "end_seconds": 2232
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 2673,
-    "125": 2399,
-    "140": 2185
+    "110": 2620,
+    "125": 2352,
+    "140": 2142
   },
-  "script_sha256": "fac67831123b159865f139df4ad2c26b6fc99b64c10cbaa7bffa417b8a497dfa"
+  "script_sha256": "86cb8ec04ae25a8f6262d906c49be43258de9e0fb2c7e9cbe8c4e5c27ed86f63"
 }

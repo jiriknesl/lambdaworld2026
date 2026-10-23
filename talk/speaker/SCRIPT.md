@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,176 spoken words. Planning pace: 125 words/minute, plus 04:35 of pauses and visual holds. Speech and holds: 37:59; with 02:00 for questions: 39:59. This is an estimate, not an aloud rehearsal.
+4,084 spoken words. Planning pace: 125 words/minute, plus 04:32 of pauses and visual holds. Speech and holds: 37:12; with 02:00 for questions: 39:12. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -108,23 +108,23 @@ Take asks for five states from this lazy sequence. Iterate itself has no idea wh
 
 ## 07 A fixed point stays the same
 
-04:07–04:44 · 66 words · 6s visual holds
+04:07–05:06 · 110 words · 6s visual holds
 
 ### Phase 1
 
-[Point out that this example switches to the square root of FOUR.]
+[Follow one trajectory from the starting guess of three.]
 
-For an exact example, let’s ask for the square root of four. Starting at three, the update gives about two point one six seven. The value changes, so we could keep going.
+Let’s find the positive square root of four. This function averages our guess with four divided by that guess. If the guess is too high, that second number is too low. Starting at three, repeated updates give about two point one six seven, then two point zero zero six four, then almost two. These are successive calls, each using the previous result.
 
 ### Phase 2
 
-[Right. Point to 2 on both sides.]
+[Right. Explain why the solution is also a fixed point.]
 
-Starting at two, the update returns two. Two is a fixed point of this particular function: applying the function leaves it unchanged. That definition does not promise that every starting point will reach it.
+At two, the same calculation returns two. More generally, a positive number left unchanged by this update must satisfy x squared equals four. That is why finding its fixed point solves our equation. The connection depends on the step we wrote. Iterate itself promises neither improvement nor convergence.
 
 ## 08 step + converged?
 
-04:44–06:01 · 140 words · 9s visual holds
+05:06–06:22 · 140 words · 9s visual holds
 
 ### Phase 1
 
@@ -146,23 +146,17 @@ The change is below ten to the minus twelve. Successive change does not automati
 
 ## 09 Plan tomorrow’s turbine settings
 
-06:01–07:02 · 116 words · 6s visual holds
+06:22–06:47 · 46 words · 3s visual holds
 
 ### Phase 1
 
 [Point to the forecast and the turbine scene.]
 
-Our first problem is a wind farm. A forecast tells us the available generation; we choose how much to retain at each turbine and hour. At noon, this example offers eighty-four kilowatt-hours per turbine. Setting one retains it all; one half retains forty-two. We share one illustrative generation forecast across all six turbines. We choose curtailment, not wind speed.
-
-### Phase 2
-
-[Right. Point to the vector and then the whole farm.]
-
-Six turbines over twelve hours gives seventy-two settings, stored under the keyword x in a map. A colon marks a keyword: a label used as a key. As-plan pairs those vector entries with turbine-hour keys. It changes the representation, not the settings. Half everywhere is just an interior starting guess for the search, not a recommended policy.
+Our first problem is a wind farm. Six turbines, twelve hourly decisions each: seventy-two settings to choose. Wind sets the available electricity; we choose how much to retain. At noon, this example offers eighty-four kilowatt-hours per turbine. Setting one retains it all; one half retains forty-two.
 
 ## 10 What makes one plan better?
 
-07:02–08:33 · 171 words · 9s visual holds
+06:47–08:18 · 171 words · 9s visual holds
 
 ### Phase 1
 
@@ -184,15 +178,13 @@ Neither column alone tells us which compromise to choose. First I’ll show how 
 
 ## 11 Optimization is iterate
 
-08:33–10:37 · 239 words · 9s visual holds
+08:18–10:00 · 194 words · 9s visual holds
 
 ### Phase 1
 
-[Point to the two sampled costs, then the returned fn.]
+[Point to the slope on the graph, then the returned fn.]
 
-Suppose we score only electricity lost. How do we know which way to move a setting? Hold seventy-one settings fixed, and nudge the remaining one a little below and above its current value. Compare the two costs. Their difference, divided by the change in the setting, estimates a slope. Here it is minus eighty-four. Increasing this setting reduces lost electricity.
-
-Those slopes form the gradient vector. Gradient takes a cost function and returns a function that estimates that vector at any supplied plan. It samples numbers; there is no symbolic differentiation here.
+Suppose we score only electricity lost. The graph shows how that cost changes when one setting changes. A downhill direction reduces the cost. Gradient takes our cost function and returns a function that estimates the slopes at a supplied plan. It does that numerically, without symbolic differentiation.
 
 ### Phase 2
 
@@ -208,7 +200,7 @@ Clamped takes that update function and returns another function. It calls the up
 
 ## 12 How far should one update move?
 
-10:37–11:18 · 72 words · 6s visual holds
+10:00–10:30 · 51 words · 6s visual holds
 
 ### Phase 1
 
@@ -220,11 +212,11 @@ The rate we just supplied controls the movement. Keep turbine one at noon, with 
 
 [Right. Point to the changed rate and result.]
 
-Double the rate and this proposed movement doubles. A larger rate can overshoot on other objectives. The useful interface is the function argument: we change it without editing iterate. For this electricity-only cost, running everything is obviously best. Now let’s supply the tradeoff with birds.
+Double the rate and this proposed movement doubles. For this electricity-only cost, running everything is obviously best. Now let’s supply the tradeoff with birds.
 
 ## 13 Which plan should win?
 
-11:18–13:07 · 209 words · 9s visual holds
+10:30–12:20 · 209 words · 9s visual holds
 
 ### Phase 1
 
@@ -248,7 +240,7 @@ Here is the wrapper. It receives the original cost, a risk function, and the par
 
 ## 14 Same updates, different objectives
 
-13:07–14:35 · 150 words · 16s visual holds
+12:20–13:48 · 150 words · 16s visual holds
 
 ### Phase 1
 
@@ -270,7 +262,7 @@ Compare the final generation and exposure. The penalty buys a reduction in expos
 
 ## 15 Can momentum reduce the number of updates?
 
-14:35–15:33 · 109 words · 6s visual holds
+13:48–14:46 · 109 words · 6s visual holds
 
 ### Phase 1
 
@@ -286,7 +278,7 @@ The base step performs descent; momentum wraps it; clamped wraps the result. Cla
 
 ## 16 Play the resulting day
 
-15:33–16:17 · 62 words · 14s visual holds
+14:46–15:30 · 62 words · 14s visual holds
 
 ### Phase 1
 
@@ -302,7 +294,7 @@ With the penalty, the chosen schedule curtails exposed turbines during busy hour
 
 ## 17 Buy hydrogen before the customers arrive
 
-16:17–18:22 · 236 words · 12s visual holds
+15:30–17:35 · 236 words · 12s visual holds
 
 ### Phase 1
 
@@ -332,7 +324,7 @@ We sell each unit for ten, so this outcome earns twenty minus the purchase cost 
 
 ## 18 Buy for this week—or the next?
 
-18:22–19:14 · 96 words · 6s visual holds
+17:35–18:27 · 96 words · 6s visual holds
 
 ### Phase 1
 
@@ -350,7 +342,7 @@ That extra unit may avoid an expensive future purchase, or it may sit unsold and
 
 ## 19 Future values change the order
 
-19:14–21:55 · 303 words · 15s visual holds
+18:27–21:08 · 303 words · 15s visual holds
 
 ### Phase 1
 
@@ -384,7 +376,7 @@ To choose an order, use best-order with the model and V. Max keeps the highest s
 
 ## 20 Hydrogen: iterate the value table
 
-21:55–23:29 · 166 words · 14s visual holds
+21:08–22:41 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -406,7 +398,7 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 21 The best order depends on the supply window
 
-23:29–24:48 · 154 words · 6s visual holds
+22:41–24:01 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -422,7 +414,7 @@ There is a less obvious recommendation here. With an empty tank in a tight week,
 
 ## 22 Validate the turbine controller
 
-24:48–26:55 · 239 words · 12s visual holds
+24:01–26:08 · 239 words · 12s visual holds
 
 ### Phase 1
 
@@ -450,7 +442,7 @@ With-shield wraps the decision function. In known situations it delegates to tha
 
 ## 23 Can any event sequence reach RUN + confident bird?
 
-26:55–29:31 · 269 words · 27s visual holds
+26:08–28:44 · 269 words · 27s visual holds
 
 ### Phase 1
 
@@ -510,7 +502,7 @@ The set is now closed under every encoded successor, without a failure. That est
 
 ## 24 iterate underneath all three
 
-29:31–30:23 · 101 words · 3s visual holds
+28:44–29:36 · 101 words · 3s visual holds
 
 ### Phase 1
 
@@ -520,7 +512,7 @@ Underneath all three examples is iterate. What changes is what a state means. A 
 
 ## 25 Observe each update
 
-30:23–31:29 · 125 words · 6s visual holds
+29:36–30:42 · 125 words · 6s visual holds
 
 ### Phase 1
 
@@ -536,7 +528,7 @@ This observer records costs in an atom, Clojure’s explicit mutable reference. 
 
 ## 26 Rainbow
 
-31:29–31:42 · 22 words · 3s visual holds
+30:42–30:55 · 22 words · 3s visual holds
 
 ### Phase 1
 
@@ -546,7 +538,7 @@ Rainbow is a theorem prover written in Clojure. We’ll read a small proof, exam
 
 ## 27 A proof is a function
 
-31:42–32:36 · 99 words · 6s visual holds
+30:55–31:49 · 99 words · 6s visual holds
 
 ### Phase 1
 
@@ -564,7 +556,7 @@ Return only f of p and we have Q, while the statement requires R. The checker re
 
 ## 28 Bellman shrinks disagreement
 
-32:36–33:16 · 71 words · 6s visual holds
+31:49–32:29 · 71 words · 6s visual holds
 
 ### Phase 1
 
@@ -580,7 +572,7 @@ Start one table at zero everywhere and the other at ten. Bellman reduces the gap
 
 ## 29 The proof follows the code
 
-33:16–34:48 · 166 words · 12s visual holds
+32:29–34:00 · 166 words · 12s visual holds
 
 ### Phase 1
 
@@ -608,7 +600,7 @@ Swap V and W to get the reverse inequality. Together they bound the absolute dif
 
 ## 30 What the kernel checked
 
-34:48–35:21 · 63 words · 3s visual holds
+34:00–34:34 · 63 words · 3s visual holds
 
 ### Phase 1
 
@@ -620,7 +612,7 @@ Mathematically, with discount point nine, an exact residual of point zero zero o
 
 ## 31 Scheduling an e-methanol plant
 
-35:21–35:46 · 46 words · 3s visual holds
+34:34–34:59 · 46 words · 3s visual holds
 
 ### Phase 1
 
@@ -630,7 +622,7 @@ I built a purchasing model for an illustrative e-methanol plant using Spain’s 
 
 ## 32 Our code and the solver
 
-35:46–36:20 · 65 words · 3s visual holds
+34:59–35:33 · 65 words · 3s visual holds
 
 ### Phase 1
 
@@ -642,7 +634,7 @@ So our algorithm produces the evidence, and our checker checks it. HiGHS supplie
 
 ## 33 San Roque: what can scheduling save?
 
-36:20–36:54 · 65 words · 3s visual holds
+35:33–36:07 · 65 words · 3s visual holds
 
 ### Phase 1
 
@@ -652,7 +644,7 @@ For financial scale, take our separate e-SAF model at San Roque, by the Bay of A
 
 ## 34 How much cheaper could it be?
 
-36:54–37:26 · 60 words · 3s visual holds
+36:07–36:39 · 60 words · 3s visual holds
 
 ### Phase 1
 
@@ -662,7 +654,7 @@ Back to the methanol benchmark: every one of the 52 tested weeks has a reported 
 
 ## 35 Applied Higher-Order Functions
 
-37:26–37:48 · 39 words · 3s visual holds
+36:39–37:01 · 39 words · 3s visual holds
 
 ### Phase 1
 
@@ -672,7 +664,7 @@ Today I concentrated on iterate. My book, Applied Higher-Order Functions, develo
 
 ## 36 Thank you
 
-37:48–37:59 · 18 words · 3s visual holds
+37:01–37:12 · 18 words · 3s visual holds
 
 ### Phase 1
 

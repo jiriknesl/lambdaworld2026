@@ -1308,8 +1308,8 @@
                         "Using Clojure for 14 years"
                         "Economist by education"
                         "Started Barcelona Meetup Group 13 years ago"
-                        [:a {:href "https://www.youtube.com/@flexianadev/videos"}
-                         "Interviews with Clojure open-source authors"])])
+                        [:span "Interviews with Clojure open-source authors"
+                         [:br] "(youtube.com/@flexianadev)"])])
     :notes "Started programming 34 years ago; using Clojure for 14 years. Economist by education. Started Barcelona Meetup Group 13 years ago. Interviews many Clojure open-source authors on the Flexiana YouTube channel. Next: why I work in Clojure."}
 
    {:section "Clojure" :title "Why Clojure?"
@@ -1363,15 +1363,19 @@
                 [:div.two.even
                  [:div (code 'newton-sqrt)
                   (code "(def step (newton-sqrt 4))")
-                  [:p.aside "This step improves a guess for √4."]]
+                  [:p.aside "Find a positive x with x² = 4."]
+                  [:p.caption "If x is too high, 4/x is too low. Average them."]]
                  [:div
-                  [:div.fixed-example [:span "(step 3)"] [:strong (str "→ " (fmt (step 3) 6))]
-                   [:span.caption "Changed. Keep going."]]
+                  [:p.aside "Start at 3. Feed each result back."]
+                  [:table.trace
+                   (for [[i x] (map-indexed vector (take 4 (iterate step 3)))]
+                     [:tr [:td.k (if (zero? i) "start" (str "update " i))]
+                      [:td.v (fmt x 6)]])]
                   (when (pos? frame)
-                    [:div.fixed-example.fixed-example-same
-                     [:span "(step 2)"] [:strong (str "→ " (fmt (step 2)))]
-                     [:span "2 is a fixed point: input = output."]])]]))
-    :notes "Use the same Newton step, this time for the square root of four. Three changes to about 2.166667. Two maps exactly to two: applying the step again changes nothing. That is all fixed point means. It does not claim that every starting value reaches one. In the next slide the square root of two cannot be represented exactly, so we supply a tolerance instead of exact equality."}
+                    [:div.callout
+                     [:p "At x = 2: (2 + 4/2) / 2 = 2"]
+                     [:p "The update leaves the solution unchanged."]])]]))
+    :notes "We seek the positive square root of four. Newton averages x and 4/x. These straddle two for positive x. In exact arithmetic the new error is (x−2)²/(2x), so the first update is at least two and subsequent updates decrease toward two. A tiny positive initial guess can become farther away on its first update: do not claim every update improves every positive guess. The displayed trace starts at three and approaches two through repeated calls, rather than jumping to an independently chosen input. A positive fixed point satisfies x=(x+4/x)/2, hence x²=4. This connection comes from this specific step; iterate alone guarantees neither improvement nor convergence. The table rounds for display. Next use a tolerance for the square root of two."}
 
    {:section "HOFs" :title "step + converged?" :steps (count sqrt-run)
     :render (fn [step]
@@ -1389,23 +1393,18 @@
                   [:p.aside "Change < 10⁻¹². Stop."])]])
     :notes "This is the pattern of the whole talk. A state, a step from state to state, a test for done. iterate makes the lazy sequence of states. take-while stops it. take and take-while are lazy. count eagerly walks only the non-converged prefix; it must inspect the first converged pair to stop. vec collects the retained states, including both states of that pair, from the already realized sequence without rerunning step. The default cap is 1000 updates, not a request to perform them all. A checked example with max-steps 10000 converges after 12 calls and returns 13 states including the start. Optimising, deciding and verifying are all this loop with different arguments."}
 
-   {:section "Optimise" :title "Plan tomorrow’s turbine settings" :steps 2
-    :live (fn [frame t] {"farm-context" (scene (when (pos? frame) (as-plan (:x first-guess))) t {:w 700 :h 510})})
-    :render (fn [frame]
+   {:section "Optimise" :title "Plan tomorrow’s turbine settings"
+    :live (fn [_ t] {"farm-context" (scene nil t {:w 700 :h 510})})
+    :render (fn [_]
               [:div.two.even
                [:div
                 [:p.aside "Wind sets the available electricity. We choose how much to use."]
                 (kv-table [["noon forecast, per turbine" (str (energy 12) " kWh")]
                            ["setting 1: use all of it" (str (energy 12) " kWh")]
                            ["setting 0.5: use half" (str (* 0.5 (energy 12)) " kWh")]])
-                (when (pos? frame)
-                  [:div
-                   (code "{:x [0.5 0.5 0.5 …]}" {:size :small})
-                   (code 'as-plan {:size :small})
-                   [:p.aside "50% everywhere is an arbitrary starting plan for the search."]
-                   [:p.caption "6 turbines × 12 hours = 72 settings to improve."]])
-                [:p.caption "Demo: one generation forecast shared by all six turbines."]]
-               [:div#farm-context (scene (when (pos? frame) (as-plan (:x first-guess))) (now-s) {:w 700 :h 510})]])
+                [:p.aside "6 turbines × 12 hourly decisions"]
+                [:p.aside "72 settings to improve."]]
+               [:div#farm-context (scene nil (now-s) {:w 700 :h 510})]])
     :notes "Distinguish the forecast from the decision. energy is an illustrative forecast of electricity available if a turbine operates fully during an hour; in practice it would come from wind and a power curve. This demo supplies that forecast directly, with the same values for all six turbines. We do not optimize wind speed or forecast generation. We choose a retained fraction of available generation for every turbine-hour. At noon the forecast is 84 kWh; retaining half means 42 kWh, not an assertion that the wind is at half strength. The 0.5 vector is only an arbitrary interior starting guess for the numerical search, not a physical initial condition or a recommended policy. Other starting plans are possible. The optimization revises all 72 settings for the same future day."}
 
    {:section "Optimise" :title "What makes one plan better?" :steps 3
@@ -1438,8 +1437,7 @@
 
    {:section "Optimise" :title "Optimization is iterate" :steps 3
     :render (fn [frame]
-              (let [{:keys [low high slope next]} (coordinate-update energy-cost)
-                    updated ((solver-step energy-cost) first-guess)]
+              (let [updated ((solver-step energy-cost) first-guess)]
                 [:div.two.even
                  [:div
                   (case frame
@@ -1450,10 +1448,7 @@
                   (code "(iterate (solver-step energy-cost) first-guess)" {:size :small :marks #{"iterate"}})]
                  [:div
                   (case frame
-                    0 [:div (coordinate-plot energy-cost)
-                       [:p.aside "To measure one slope, hold 71 settings fixed. Nudge turbine 1 at noon."]
-                       [:p.caption (str "At 0.49999: " (fmt low 6) " kWh lost. At 0.50001: " (fmt high 6) ".")]
-                       [:p.caption "Slope = cost difference ÷ 0.00002 = −84. Repeat for each of the 72 settings."]]
+                    0 [:div (coordinate-plot energy-cost)]
                     1 [:div
                        [:p.aside "One call updates all 72 settings from the same old plan."]
                        [:table.levels
@@ -1480,9 +1475,7 @@
                  [:div (code 'descent-step {:size :small})
                   (code (str "(def step\n  (clamped\n    (descent-step (gradient energy-cost) " rate ")\n    0 1))\n\n(iterate step first-guess)") {:size :small})]
                  [:div [:p.aside "Turbine 1 at noon: the same slope, −84."]
-                  (kv-table [["rate" rate] ["old setting" "0.5"] ["new setting" (fmt next 4)]])
-                  [:p.aside "Change the argument. Keep the iteration."]
-                  [:p.caption "A larger step can overshoot. Faster movement does not guarantee faster convergence."]]]))
+                  (kv-table [["rate" rate] ["old setting" "0.5"] ["new setting" (fmt next 4)]])]]))
     :notes "Immediately after constructing gradient descent, explain the rate parameter using the same coordinate and slope. To change the pace, pass a different rate to the function that constructs the update. The same coordinate moves twice as far; the iteration and stopping test do not change. This is the electricity-only cost, chosen to keep the arithmetic familiar. Larger rates can overshoot; this is an interface demonstration, not a recommendation to double every learning rate."}
 
    {:section "Optimise" :title "Which plan should win?" :steps 3

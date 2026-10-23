@@ -131,15 +131,15 @@
         {
           "from": 1,
           "to": 1,
-          "cue": "Point out that this example switches to the square root of FOUR.",
-          "speech": "For an exact example, let’s ask for the square root of four. Starting at three, the update gives about two point one six seven. The value changes, so we could keep going.",
+          "cue": "Follow one trajectory from the starting guess of three.",
+          "speech": "Let’s find the positive square root of four. This function averages our guess with four divided by that guess. If the guess is too high, that second number is too low. Starting at three, repeated updates give about two point one six seven, then two point zero zero six four, then almost two. These are successive calls, each using the previous result.",
           "hold_seconds": 3
         },
         {
           "from": 2,
           "to": 2,
-          "cue": "Right. Point to 2 on both sides.",
-          "speech": "Starting at two, the update returns two. Two is a fixed point of this particular function: applying the function leaves it unchanged. That definition does not promise that every starting point will reach it.",
+          "cue": "Right. Explain why the solution is also a fixed point.",
+          "speech": "At two, the same calculation returns two. More generally, a positive number left unchanged by this update must satisfy x squared equals four. That is why finding its fixed point solves our equation. The connection depends on the step we wrote. Iterate itself promises neither improvement nor convergence.",
           "hold_seconds": 3
         }
       ]
@@ -179,14 +179,7 @@
           "from": 1,
           "to": 1,
           "cue": "Point to the forecast and the turbine scene.",
-          "speech": "Our first problem is a wind farm. A forecast tells us the available generation; we choose how much to retain at each turbine and hour. At noon, this example offers eighty-four kilowatt-hours per turbine. Setting one retains it all; one half retains forty-two. We share one illustrative generation forecast across all six turbines. We choose curtailment, not wind speed.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Right. Point to the vector and then the whole farm.",
-          "speech": "Six turbines over twelve hours gives seventy-two settings, stored under the keyword x in a map. A colon marks a keyword: a label used as a key. As-plan pairs those vector entries with turbine-hour keys. It changes the representation, not the settings. Half everywhere is just an interior starting guess for the search, not a recommended policy.",
+          "speech": "Our first problem is a wind farm. Six turbines, twelve hourly decisions each: seventy-two settings to choose. Wind sets the available electricity; we choose how much to retain. At noon, this example offers eighty-four kilowatt-hours per turbine. Setting one retains it all; one half retains forty-two.",
           "hold_seconds": 3
         }
       ]
@@ -225,8 +218,8 @@
         {
           "from": 1,
           "to": 1,
-          "cue": "Point to the two sampled costs, then the returned fn.",
-          "speech": "Suppose we score only electricity lost. How do we know which way to move a setting? Hold seventy-one settings fixed, and nudge the remaining one a little below and above its current value. Compare the two costs. Their difference, divided by the change in the setting, estimates a slope. Here it is minus eighty-four. Increasing this setting reduces lost electricity.\n\nThose slopes form the gradient vector. Gradient takes a cost function and returns a function that estimates that vector at any supplied plan. It samples numbers; there is no symbolic differentiation here.",
+          "cue": "Point to the slope on the graph, then the returned fn.",
+          "speech": "Suppose we score only electricity lost. The graph shows how that cost changes when one setting changes. A downhill direction reduces the cost. Gradient takes our cost function and returns a function that estimates the slopes at a supplied plan. It does that numerically, without symbolic differentiation.",
           "hold_seconds": 3
         },
         {
@@ -260,7 +253,7 @@
           "from": 2,
           "to": 2,
           "cue": "Right. Point to the changed rate and result.",
-          "speech": "Double the rate and this proposed movement doubles. A larger rate can overshoot on other objectives. The useful interface is the function argument: we change it without editing iterate. For this electricity-only cost, running everything is obviously best. Now let’s supply the tradeoff with birds.",
+          "speech": "Double the rate and this proposed movement doubles. For this electricity-only cost, running everything is obviously best. Now let’s supply the tradeoff with birds.",
           "hold_seconds": 3
         }
       ]
