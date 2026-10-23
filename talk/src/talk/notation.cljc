@@ -82,6 +82,13 @@
 
 #?(:clj
    (do
+     (defmacro embedded-book-photo []
+       (with-open [in (io/input-stream (io/resource "talk/book-photo.webp"))
+                   out (java.io.ByteArrayOutputStream.)]
+         (io/copy in out)
+         (str "data:image/webp;base64,"
+              (.encodeToString (java.util.Base64/getEncoder) (.toByteArray out)))))
+
      (defmacro checked-composition []
        (let [source (slurp (io/resource "talk/composition.edn"))
              receipt (edn/read-string

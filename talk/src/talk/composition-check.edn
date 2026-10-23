@@ -1,4 +1,4 @@
-{:checked-at "2026-10-19T09:10:29.258956Z",
+{:checked-at "2026-10-23T10:29:42.560915Z",
  :negative-proof
  [:fn
   [[P Prop] [Q Prop] [R Prop] [f [:-> P Q]] [g [:-> Q R]] [p P]]

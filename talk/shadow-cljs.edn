@@ -12,6 +12,9 @@
          :asset-path "js"
          :modules {:main {:init-fn talk.core/init}}
          :devtools {:after-load talk.core/reload!}}
+  :study {:target :node-script
+          :main talk.study/main
+          :output-to "out/study.js"}
   :test {:target :node-test
          :output-to "out/test.js"
          :ns-regexp "-test$"}}}

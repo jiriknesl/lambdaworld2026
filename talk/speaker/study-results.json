@@ -1,0 +1,124 @@
+{
+  "input": {
+    "ctx": "unseen",
+    "det": 0,
+    "u": 0.3,
+    "action": "run",
+    "minute": 1,
+    "waiting": null
+  },
+  "event": {
+    "type": "detect",
+    "level": 2
+  },
+  "stop-table": {
+    "seen": {
+      "0": 0.05,
+      "1": 0.6,
+      "2": 1
+    }
+  },
+  "controller-results": {
+    "tick-only": {
+      "ctx": "unseen",
+      "det": 2,
+      "u": 0.3,
+      "action": "run",
+      "minute": 1,
+      "waiting": null
+    },
+    "reacting": {
+      "ctx": "unseen",
+      "det": 2,
+      "u": 0.3,
+      "action": "run",
+      "minute": 1,
+      "waiting": null
+    },
+    "shielded": {
+      "ctx": "unseen",
+      "det": 2,
+      "u": 0.3,
+      "action": "stop",
+      "minute": 1,
+      "waiting": null
+    }
+  },
+  "reachability": [
+    {
+      "controller": "tick-only",
+      "initial-count": 6,
+      "first-round-counts": [
+        6,
+        24,
+        47,
+        75
+      ],
+      "updates": 22,
+      "reachable-count": 473,
+      "failure-count": 275,
+      "closed": true
+    },
+    {
+      "controller": "reacting",
+      "initial-count": 6,
+      "first-round-counts": [
+        6,
+        24,
+        45,
+        69
+      ],
+      "updates": 22,
+      "reachable-count": 343,
+      "failure-count": 165,
+      "closed": true
+    },
+    {
+      "controller": "shielded",
+      "initial-count": 6,
+      "first-round-counts": [
+        6,
+        24,
+        42,
+        60
+      ],
+      "updates": 22,
+      "reachable-count": 241,
+      "failure-count": 0,
+      "closed": true
+    }
+  ],
+  "tiny-reachability": [
+    [
+      "a"
+    ],
+    [
+      "a",
+      "b"
+    ],
+    [
+      "a",
+      "b",
+      "c"
+    ],
+    [
+      "a",
+      "b",
+      "c"
+    ]
+  ],
+  "shield-limitation": {
+    "input": {
+      "ctx": "seen",
+      "det": 2,
+      "u": 0.3
+    },
+    "action": "run",
+    "reason": "The shield delegates known contexts, even if that row is wrong."
+  },
+  "bellman": {
+    "before": 10,
+    "after": 9.000000000000004,
+    "discount": 0.9
+  }
+}

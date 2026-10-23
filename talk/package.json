@@ -6,6 +6,7 @@
     "watch": "shadow-cljs watch talk",
     "release": "shadow-cljs release talk",
     "test": "shadow-cljs compile test && node out/test.js",
+    "study": "shadow-cljs compile study && node out/study.js",
     "speaker:build": "python3 scripts/build-speaker.py",
     "pretest": "python3 scripts/build-speaker.py --check",
     "prerelease": "python3 scripts/build-speaker.py --check"

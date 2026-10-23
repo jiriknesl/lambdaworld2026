@@ -239,3 +239,31 @@ the original editorial review; these later user-directed revisions are recorded 
 - Refreshed the existing public preview and fetched its JavaScript, matching the local
   release byte-for-byte. URL:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bellman-script-20261023#s19a4
+
+## Book photo, study guide and plant outcomes — 2026-10-23
+
+- Replaced slide 35's placeholder with the supplied wooden-table photograph from
+  flexiana-web. The source copy is byte-identical and a compile-time macro embeds the WebP
+  as a data URL. No photo service or extra ngrok asset endpoint is needed.
+- Added VALIDATE-RAINBOW-STUDY.md, an offline HTML reading copy and a printable PDF. It
+  explains the controller state/table/call flow, reachability, proof syntax, contraction,
+  residuals, certificate bounds and the limits of the current evidence, with practice answers.
+  Opened the guide in TextEdit. Guide prose was checked against the deck and Rainbow sources;
+  the reading layout was visually inspected and its PDF printed with networking disabled.
+- Added `npm run study`, importing the deck's actual functions. It asserts closure, expected
+  controller verdicts, the bad-known-row shield counterexample and numerical Bellman contraction.
+  Recorded results: 473/343/241 reachable states and 275/165/0 failures. Study compilation
+  and execution passed; output is retained in speaker/study-results.json.
+- Rechecked the exact composition term on clean Rainbow d9080c7: accepted; wrong return
+  type rejected; empty environment and no axioms. Updated the receipt. This does not replay
+  the historical Bellman artifact or close the plant checker's soundness theorem.
+- Slides 31–32 now state the reported outcome immediately: 52 weekly schedules/certificates,
+  a largest reported gap of EUR 0.26, and a median check of 0.64 s per week. Checking time
+  is distinguished from solving/producing time, and the open theorem remains visible.
+- 19 tests / 2,215 assertions passed; release builds with no warnings. Updated speaker PDF:
+  36 slides, 83 cues, 4,164 words; estimated 39:48 with holds and questions.
+- Offline and public browser checks each covered nine frames at 1600×900, 1920×1080 and
+  1024×768, including photo decoding/source equality and matching plant presenter speech.
+  The final public check includes the expanded “gap to optimal cost” label. Screenshots of
+  both result slides and the book slide were inspected. No tunnel configuration changes.
+  URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=book-study-20261023

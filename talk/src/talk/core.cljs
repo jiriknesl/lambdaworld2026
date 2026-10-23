@@ -1917,21 +1917,24 @@
    {:section "Rainbow" :title "Scheduling an e-methanol plant"
     :render (fn [_]
               [:div
-               [:p.aside "I built a purchasing model using Spain’s wholesale electricity prices."]
+               [:p.aside "Deliver 588 tonnes of methanol a week at minimum modeled cost."]
                [:div.plant-flow
                 [:div.plant-node [:strong "Electrolyser"] [:span "120 MW"]]
                 [:span.plant-arrow "→"]
                 [:div.plant-node [:strong "Hydrogen tank"] [:span "20 t"]]
                 [:span.plant-arrow "→"]
                 [:div.plant-node [:strong "Methanol loop"] [:span "10 t/h"]]]
-               [:p.aside "Electricity prices change every hour. The plant still has to deliver."]
-               [:p.aside "When should we buy power, make hydrogen, and use the tank?"]
-               [:p.caption "588 t/week · illustrative plant · known OMIE prices · no local weather inputs"]])
+               [:div.certificate-results.plant-results
+                [:div [:strong "52 weeks"] [:span "schedules and accepted certificates"]]
+                [:div [:strong "€0.26"] [:span "largest reported gap to optimal cost"]]]
+               [:p.caption "2023 OMIE prices · illustrative plant · full week known"]
+               [:p.caption "The checker’s soundness theorem is still open."]])
     :notes "This illustrative methanol model has no municipality, named physical plant or weather inputs. Spain refers to the OMIE peninsular wholesale bidding zone, not a uniform renewable PPA price. Plant model and certificate producer: ../rh2edin-challenge/proofs/rainbow_bb_export.clj. HiGHS supplies the MIP incumbent; our Clojure branch-and-bound constructs a certificate using HiGHS LP relaxations. The Rainbow checker validates that certificate. This is not the slide gradient-descent or Bellman solver. Reported plant benchmark supplied by Jiri. Electricity use is 50 MWh per tonne of hydrogen; methanol consumes 0.19 tonnes of hydrogen per tonne. The tank starts at 10 tonnes and must finish at least there. The loop has 50% turndown and a EUR 1,000 start cost. The four-stack variant has four 30 MW stacks, 20% turndown and EUR 500 per stack start. No ramp limits, degradation, CO₂ or compressor limits, grid fees or renewable-fuel sourcing rules are represented. This is a model with known weekly prices, not a live day-ahead trading strategy. No operating trace is drawn because the underlying hourly schedules were not supplied."}
 
-   {:section "Rainbow" :title "Our code and the solver"
+   {:section "Rainbow" :title "52 weekly certificates accepted"
     :render (fn [_]
-              [:div.proof-steps
+              [:div
+               [:div.proof-steps
                [:div.proof-row.revealed [:strong "Our model"]
                 [:div [:b "Prices, equipment, storage, production"]]]
                [:div.proof-row.revealed [:strong "HiGHS"]
@@ -1940,7 +1943,8 @@
                 [:div [:b "Builds the certificate tree"]
                  [:p "HiGHS solves the smaller problems inside it."]]]
                [:div.proof-row.revealed [:strong "Rainbow"]
-                [:div [:b "Checks the certificate with exact arithmetic"]]]])
+                [:div [:b "Checks the certificate with exact arithmetic"]]]]
+               [:p.aside "Median check: 0.64 seconds per week."]])
     :notes "Verified against ../rh2edin-challenge/proofs/rainbow_bb_export.clj, especially the incumbent at line 84 and the branch-and-bound loop near line 162. Our contribution includes the plant formulation, branch selection, exact certificate construction and checker. HiGHS supplies both the MIP incumbent and LP relaxation solves. HiGHS is a third-party open-source solver from the Edinburgh optimization community. No claim that our gradient descent or Bellman demo generated this schedule."}
 
    {:section "Rainbow" :title "San Roque: what can scheduling save?"
@@ -1973,14 +1977,16 @@
    {:section "The book" :title "Applied Higher-Order Functions"
     :render (fn [_]
               [:div.two.even
-               [:div.book-photo {:role "img" :aria-label "Space reserved for the book photo"}
-                [:span "Book photo"]]
+               [:div.book-photo
+                [:img {:src (n/embedded-book-photo)
+                       :alt "Jiri Knesl’s Applied Higher Order Functions hardback on a wooden table"
+                       :width 390 :height 520}]]
                [:div
                 [:p.aside "There is more than iterate."]
                 [:p "About twelve HOFs, and their composition."]
                 (code "map · reduce · filter · comp\npartial · iterate …" {:size :small})
                 [:p.goal "flexiana.com/book"]]])
-    :notes "The talk centered on iterate. The book develops a broader toolkit of roughly twelve higher-order functions and their composition across optimization, decision-making and validation. Every listing runs with the companion library orhof. Book text: CC BY-SA 4.0; library: MIT. Replace the reserved photo area with Jiri's supplied book photograph."}
+    :notes "The talk centered on iterate. The book develops a broader toolkit of roughly twelve higher-order functions and their composition across optimization, decision-making and validation. Every listing runs with the companion library orhof. Book text: CC BY-SA 4.0; library: MIT. Photograph from flexiana-web/site/src/assets/book/book-wood-angle.web.webp, embedded in the release for offline use."}
 
    ;; ---------------------------------------------------------------- Closing
    {:section "Thank you" :title "Thank you"

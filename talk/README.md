@@ -10,7 +10,7 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bellman-script-20261023).
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=book-study-20261023).
 Updated 2026-10-23: the biography shows a plain-text YouTube address; the fixed-point example
 follows one trajectory; the turbine introduction has one reveal. Slide 16 now illustrates a
 bird strike with a rotor impact and falling bird, driven by the displayed schedule.
@@ -19,7 +19,9 @@ Slide 18 now has one reveal, retaining the order comparison. Slide 19 presenter 
 q, score versus order, and the three-week versus four-week value comparison. Slides 31–34 tell the plant story, explain the solver/checker split, and distinguish
 modeled savings from the weekly certificate bound. The open checker-soundness theorem is visible on the results slide.
 The Bellman receipt is labelled historical, with replay after the kernel repair pending.
-The spoken script and PDF follow the new order.
+Slides 31–32 now state the reported benchmark outcomes immediately: 52 accepted weekly
+certificates, a largest reported gap of EUR 0.26, and a median check of 0.64 seconds per week.
+The book photograph is embedded for offline use. The spoken script and PDF follow the new order.
 This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, the full spoken script, technical reference notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
@@ -112,10 +114,10 @@ The deck has 36 slides; reveals are steps within a slide, not additional topics.
 | 17–21: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 22–24: Validation | 5:34 | Controller rule, reachable states and shared iterate. |
 | 25: Observation | 1:06 | Observe a supplied step without changing its result. |
-| 26–34: Rainbow | 5:57 | Composition proof, Bellman bound, plant scheduling and certificate results with their limits. |
+| 26–34: Rainbow | 6:05 | Composition proof, Bellman bound, plant scheduling and certificate results with their limits. |
 | 35–36: Book and thanks | 0:34 | Broader toolkit and contact. |
 
-The current 4,147-word script estimates **37:40 including visual holds**, or **39:40 with two
+The current 4,164-word script estimates **37:48 including visual holds**, or **39:48 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
@@ -410,9 +412,25 @@ faces are used, with browser-synthesized bold. Bundled DejaVu remains for missin
 its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
 
 Visible text is intentionally brief; fuller explanations and proof assumptions remain in
-speaker notes. OR's opening slide does not reveal the concrete examples. Slide 35 reserves a
-390 × 520 area for the book photograph; replace its `.book-photo` placeholder with the supplied
-image when available.
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 35 uses the
+supplied `../flexiana-web/site/src/assets/book/book-wood-angle.web.webp` photograph in its
+390 × 520 area. A byte-identical copy lives at `src/talk/book-photo.webp`; the build embeds it
+as a data URL, so the book slide also works offline without adding a public asset endpoint.
+
+## Study Validate and Rainbow
+
+[Study guide](speaker/VALIDATE-RAINBOW-STUDY.md) and
+[printable PDF](../artifacts/validate-rainbow-study.pdf) cover slides 22–34: state fields,
+the decision table and controller call flow, reachability closure, proof syntax, Bellman
+contraction and residuals, solver attribution, and the precise boundaries of each claim.
+Practice questions include answer checks. The full spoken script remains in `speaker/SCRIPT.md`.
+
+`npm run study` runs examples against the deck's actual functions, including a counterexample
+showing that the shield still trusts bad known rows. The checked output is in
+`speaker/study-results.json`; regenerate with `npm run study -- speaker/study-results.json`.
+`python3 scripts/build-study.py` builds the offline HTML reading copy using pandoc.
+`node scripts/print-study.cjs /path/to/playwright` regenerates its PDF with networking disabled.
+These study files are kept outside the copied ngrok directory.
 
 ## Verification and remaining delivery work
 
@@ -430,7 +448,6 @@ purchase limits, compare finite-horizon policies against optimal backups, check 
 calculations, and verify observer effects. The full script distinguishes numerical convergence,
 model exploration, exact theorems and the unproved correspondence to browser arithmetic.
 
-- Supply the book photograph to replace its placeholder.
 - Jiri: rehearse aloud against the 40-minute target.
 - At the venue: check projector readability and controls.
 

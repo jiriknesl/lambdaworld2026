@@ -91,6 +91,8 @@ body { font-family: var(--sans); color: var(--ink); }
 .certificate-results strong, .certificate-results span { display: block; }
 .certificate-results strong { font-size: 84px; line-height: 1.1; margin-bottom: 12px; }
 .certificate-results span { font-size: 23px; }
+.certificate-results.plant-results { margin: 24px 0 20px; }
+.certificate-results.plant-results strong { font-size: 68px; }
 .certificate-boundary { border-left: 4px solid var(--accent); padding: 12px 18px; margin: 24px 0 12px; background: var(--accent-soft); font-size: 26px; }
 
 .bullets { margin: 0; padding-left: 1.1em; }
@@ -297,10 +299,9 @@ svg.scene path.bird.struck { stroke: var(--bad); stroke-width: 4; }
 svg.scene .strike-flash circle, svg.scene .strike-flash path { fill: none; stroke: var(--bad); stroke-width: 3; }
 svg.scene .strike-flash text { fill: var(--bad); font: 700 18px var(--sans); }
 
-/* Reserved until Jiri supplies the book photograph. */
-.book-photo { width: 390px; height: 520px; margin: 12px auto; display: grid; place-items: center;
-  border: 2px dashed var(--line); border-radius: 8px; background: var(--wash); color: var(--muted); font-size: 22px; }
-.book-photo img { width: 100%; height: 100%; object-fit: contain; }
+/* Supplied photograph is embedded in the compiled deck for offline use. */
+.book-photo { width: 390px; height: 520px; margin: 12px auto; border-radius: 8px; overflow: hidden; }
+.book-photo img { display: block; width: 100%; height: 100%; object-fit: contain; }
 
 /* Separate the agenda, heading and opening prompt. */
 p.aside + .bullets { margin-top: 36px; }

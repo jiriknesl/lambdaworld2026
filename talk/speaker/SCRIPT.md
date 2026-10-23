@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,147 spoken words. Planning pace: 125 words/minute, plus 04:29 of pauses and visual holds. Speech and holds: 37:40; with 02:00 for questions: 39:40. This is an estimate, not an aloud rehearsal.
+4,164 spoken words. Planning pace: 125 words/minute, plus 04:29 of pauses and visual holds. Speech and holds: 37:48; with 02:00 for questions: 39:48. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -612,29 +612,27 @@ Mathematically, with discount point nine, an exact residual of point zero zero o
 
 ## 31 Scheduling an e-methanol plant
 
-35:01–35:26 · 46 words · 3s visual holds
+35:01–35:34 · 62 words · 3s visual holds
 
 ### Phase 1
 
-[Start with the plant and your work; use the diagram only to explain the scheduling problem.]
+[Explain the scheduling problem, then state the measured benchmark outcome.]
 
-I built a purchasing model for an illustrative e-methanol plant using Spain’s wholesale electricity prices. Production still has to happen, but the tank lets us buy power earlier and use hydrogen later. This benchmark knows the week’s prices. It models neither local weather nor renewable-electricity contracts.
+I built this illustrative methanol model to meet a weekly production contract while choosing when to buy electricity and use the hydrogen tank. For all fifty-two tested weeks of 2023, we obtained a schedule and an accepted certificate. The largest reported cost gap was twenty-six cents. The benchmark knows the whole week’s prices, and the checker’s general soundness proof is still open.
 
-## 32 Our code and the solver
+## 32 52 weekly certificates accepted
 
-35:26–36:00 · 65 words · 3s visual holds
+35:34–36:08 · 66 words · 3s visual holds
 
 ### Phase 1
 
-[Distinguish the model, solver, certificate-producing algorithm and checker.]
+[Attribute each contribution, then give the measured checking time.]
 
-Our Clojure code builds the plant model: prices, equipment, storage and production requirements. HiGHS, an existing open-source solver, finds the schedule. Our branch-and-bound algorithm builds the certificate tree. It chooses branches and constructs exact bounds, calling HiGHS for the smaller optimization problems inside the search. Rainbow checks that certificate.
-
-So our algorithm produces the evidence, and our checker checks it. HiGHS supplies the proposed schedule.
+HiGHS finds the proposed schedule from our Clojure model. Our branch-and-bound algorithm builds the certificate tree, choosing branches and constructing exact bounds with HiGHS solving the smaller problems. Rainbow checks that evidence with exact arithmetic. All fifty-two weekly certificates were accepted; the median check took point six four seconds per week. That is checking time, not the time to find a schedule or build its certificate.
 
 ## 33 San Roque: what can scheduling save?
 
-36:00–36:34 · 65 words · 3s visual holds
+36:08–36:43 · 65 words · 3s visual holds
 
 ### Phase 1
 
@@ -644,7 +642,7 @@ For financial scale, take our separate e-SAF model at San Roque, by the Bay of A
 
 ## 34 How much cheaper could it be?
 
-36:34–37:06 · 60 words · 3s visual holds
+36:43–37:14 · 60 words · 3s visual holds
 
 ### Phase 1
 
@@ -654,7 +652,7 @@ Back to the methanol benchmark: every one of the 52 tested weeks has a reported 
 
 ## 35 Applied Higher-Order Functions
 
-37:06–37:28 · 39 words · 3s visual holds
+37:14–37:36 · 39 words · 3s visual holds
 
 ### Phase 1
 
@@ -664,7 +662,7 @@ Today I concentrated on iterate. My book, Applied Higher-Order Functions, develo
 
 ## 36 Thank you
 
-37:28–37:40 · 18 words · 3s visual holds
+37:36–37:48 · 18 words · 3s visual holds
 
 ### Phase 1
 

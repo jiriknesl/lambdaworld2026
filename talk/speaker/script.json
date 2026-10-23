@@ -729,21 +729,21 @@
         {
           "from": 1,
           "to": 1,
-          "cue": "Start with the plant and your work; use the diagram only to explain the scheduling problem.",
-          "speech": "I built a purchasing model for an illustrative e-methanol plant using Spain’s wholesale electricity prices. Production still has to happen, but the tank lets us buy power earlier and use hydrogen later. This benchmark knows the week’s prices. It models neither local weather nor renewable-electricity contracts.",
+          "cue": "Explain the scheduling problem, then state the measured benchmark outcome.",
+          "speech": "I built this illustrative methanol model to meet a weekly production contract while choosing when to buy electricity and use the hydrogen tank. For all fifty-two tested weeks of 2023, we obtained a schedule and an accepted certificate. The largest reported cost gap was twenty-six cents. The benchmark knows the whole week’s prices, and the checker’s general soundness proof is still open.",
           "hold_seconds": 3
         }
       ],
       "slide": 31
     },
     {
-      "title": "Our code and the solver",
+      "title": "52 weekly certificates accepted",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Distinguish the model, solver, certificate-producing algorithm and checker.",
-          "speech": "Our Clojure code builds the plant model: prices, equipment, storage and production requirements. HiGHS, an existing open-source solver, finds the schedule. Our branch-and-bound algorithm builds the certificate tree. It chooses branches and constructs exact bounds, calling HiGHS for the smaller optimization problems inside the search. Rainbow checks that certificate.\n\nSo our algorithm produces the evidence, and our checker checks it. HiGHS supplies the proposed schedule.",
+          "cue": "Attribute each contribution, then give the measured checking time.",
+          "speech": "HiGHS finds the proposed schedule from our Clojure model. Our branch-and-bound algorithm builds the certificate tree, choosing branches and constructing exact bounds with HiGHS solving the smaller problems. Rainbow checks that evidence with exact arithmetic. All fifty-two weekly certificates were accepted; the median check took point six four seconds per week. That is checking time, not the time to find a schedule or build its certificate.",
           "hold_seconds": 3
         }
       ],
