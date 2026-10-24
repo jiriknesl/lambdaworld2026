@@ -1,7 +1,7 @@
 {
-  "spoken_words": 4048,
+  "spoken_words": 4044,
   "pace_wpm": 125,
-  "holds_seconds": 265,
+  "holds_seconds": 256,
   "questions_seconds": 120,
   "slides": [
     {
@@ -181,79 +181,79 @@
     },
     {
       "slide": 26,
-      "words": 119,
-      "hold_seconds": 9,
+      "words": 74,
+      "hold_seconds": 3,
       "start_seconds": 1820,
-      "end_seconds": 1886
+      "end_seconds": 1859
     },
     {
       "slide": 27,
-      "words": 71,
-      "hold_seconds": 6,
-      "start_seconds": 1886,
-      "end_seconds": 1926
+      "words": 107,
+      "hold_seconds": 9,
+      "start_seconds": 1859,
+      "end_seconds": 1919
     },
     {
       "slide": 28,
-      "words": 166,
-      "hold_seconds": 12,
-      "start_seconds": 1926,
-      "end_seconds": 2018
+      "words": 127,
+      "hold_seconds": 6,
+      "start_seconds": 1919,
+      "end_seconds": 1986
     },
     {
       "slide": 29,
-      "words": 43,
+      "words": 79,
       "hold_seconds": 3,
-      "start_seconds": 2018,
-      "end_seconds": 2042
+      "start_seconds": 1986,
+      "end_seconds": 2027
     },
     {
       "slide": 30,
       "words": 62,
       "hold_seconds": 3,
-      "start_seconds": 2042,
-      "end_seconds": 2074
+      "start_seconds": 2027,
+      "end_seconds": 2060
     },
     {
       "slide": 31,
       "words": 66,
       "hold_seconds": 3,
-      "start_seconds": 2074,
-      "end_seconds": 2109
+      "start_seconds": 2060,
+      "end_seconds": 2094
     },
     {
       "slide": 32,
       "words": 65,
       "hold_seconds": 3,
-      "start_seconds": 2109,
-      "end_seconds": 2143
+      "start_seconds": 2094,
+      "end_seconds": 2129
     },
     {
       "slide": 33,
       "words": 59,
       "hold_seconds": 3,
-      "start_seconds": 2143,
-      "end_seconds": 2175
+      "start_seconds": 2129,
+      "end_seconds": 2160
     },
     {
       "slide": 34,
-      "words": 39,
+      "words": 47,
       "hold_seconds": 3,
-      "start_seconds": 2175,
-      "end_seconds": 2196
+      "start_seconds": 2160,
+      "end_seconds": 2185
     },
     {
       "slide": 35,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 2196,
-      "end_seconds": 2208
+      "start_seconds": 2185,
+      "end_seconds": 2197
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 2593,
-    "125": 2328,
-    "140": 2120
+    "110": 2582,
+    "125": 2317,
+    "140": 2109
   },
-  "script_sha256": "0f41bdab2ac0a4817723fff7171c91431fc6391f7c8cf6ae63f03172a746d8fb"
+  "script_sha256": "f5bd24598f716f5332359173a798a5a8ab40ba892f6169ee940590ca5f792bdf"
 }

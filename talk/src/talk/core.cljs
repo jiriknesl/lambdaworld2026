@@ -1846,6 +1846,20 @@
                 [:p "Its purpose is not to match or beat Lean."]]])
     :notes "Clojure code has a data representation; Rainbow proof terms are EDN data too. This invites ordinary functions to inspect, render and transform them. A transformation can produce an invalid proof: only a new check establishes whether the new term has the claimed type. Static typing and theorem proving are complementary, not competing language claims. The structural view on the next slide is implemented in this talk; a general visual proof editor is a direction, not a shipped Rainbow feature. Other provers also have structured terms and visualization tools."}
 
+   {:section "Rainbow" :title "How Rainbow differs from Lean"
+    :render (fn [_]
+              [:div
+               [:table.levels
+                [:tr [:th ""] [:th "Lean"] [:th "Rainbow"]]
+                [:tr [:td "Focus"] [:td "General-purpose proving and programming"]
+                 [:td "Clojure and operations research"]]
+                [:tr [:td "Work with"] [:td "Lean definitions, tactics and metaprograms"]
+                 [:td "EDN proof terms, manipulated in Clojure"]]
+                [:tr [:td "Code"] [:td "Lean programs compile to native code"]
+                 [:td "Generate Clojure for a modeled subset"]]]
+               [:p.aside "Both check proof terms with a kernel."]])
+    :notes "Lean is a general-purpose theorem prover and programming language. It has proof objects, metaprogramming, code generation and visualization tools too. The distinction is focus and workflow: Rainbow is written in Clojure, exposes explicit EDN proof terms to Clojure tooling, and targets OR models and selected generated programs. Do not claim that Lean cannot do OR, that only Rainbow represents proofs as data, or that a dynamic implementation means an untyped proof logic. Both use typed proof terms. Rainbow's code generation concerns a modeled subset, not arbitrary Clojure. Sources: https://lean-lang.org/faq/ and https://lean-lang.org/doc/reference/latest/; Rainbow README, doc/maturity-levels.md and the internal north-star direction. No speed, size, maturity or proof-power superiority is claimed."}
+
    {:section "Rainbow" :title "A proof we can edit" :steps 3
     :render (fn [step]
               (let [receipt (n/checked-composition)
@@ -1878,50 +1892,51 @@
                   [:p.caption "Recorded kernel check · this exact term"]]]))
     :notes "P, Q and R are arbitrary propositions. Given f from P to Q, g from Q to R, and p proving P, function composition proves R. forall binds propositions; fn binds arguments; app applies a term. The right-hand tree is rendered recursively from the actual body, not drawn separately. Phase two calls remove-outer: update-in selects the body at [:value 2], and nth selects the application argument, dropping g. The result proves Q and the recorded kernel check rejects it against R. Phase three passes a function to update-in that wraps that body in an application of g. Immutable data: the original remains available. The same shared Clojure/ClojureScript functions run in the JVM receipt generator and in the browser. Each runtime term must equal the term recorded in the receipt. This is a small structural-edit demonstration, not a general type-aware editor or a browser kernel. Editing arbitrary terms also requires respecting scope and binders. Check results are evidence from the recorded kernel revision, not a proof of the kernel's own soundness."}
 
-   {:section "Rainbow" :title "Bellman shrinks disagreement" :steps 2
+   {:section "Rainbow" :title "What we have proved" :steps 2
     :render (fn [step]
-              (let [B (bellman restock)
-                    V (zipmap (:states restock) (repeat 0))
-                    W (zipmap (:states restock) (repeat 10))
-                    before (largest-change V W)
-                    after (largest-change (B V) (B W))]
-                [:div.two.even
-                 [:div [:pre.sig "B : Values → Values\n\nIf V and W differ by at most ε,\nB(V) and B(W) differ\nby at most γ × ε."]
-                  [:p.caption "Finite model · p ≥ 0 · Σp = 1 · admissible actions nonempty · 0 ≤ γ < 1."]]
-                 [:div
-                  [:div.proof-flow [:div (str "two value tables: gap " (fmt before))]
-                   [:span "↓ Bellman on both"]
-                   (when (= step 1) [:div (str "new gap: " (fmt after) " = 0.9 × " (fmt before))])]
-                  [:p.aside "One example. The proof must cover every V, W."]]]))
-    :notes "One minute. We are back at the restocking example, not learning another OR problem. The left is a mathematical statement about an operator. The right really applies our browser Bellman function to two value tables. It is an example, not evidence that all inputs satisfy it. Now show why the general bound holds."}
-
-   {:section "Rainbow" :title "The proof follows the code" :steps 4
-    :render (fn [step]
-              (let [rows [["1 · map outcomes" "Identical rewards cancel." "Future-value gap ≤ ε."]
-                          ["2 · weighted reduce" "Σ p × γ × ε = γ × ε" "Nonnegative, normalized probabilities."]
-                          ["3 · max over actions" "best score with V ≤ best score with W + γ × ε" "The winning actions may differ."]
-                          ["4 · swap V and W" "|B(V)(s) − B(W)(s)| ≤ γ × ε" "Both directions, every state."]]]
+              (let [receipt (n/checked-or-examples)
+                    scores [["A" 4] ["B" 7] ["C" 5]]
+                    winner (apply max-key second scores)]
                 [:div
-                 [:div.proof-steps
-                  (for [[i [label statement reason]] (map-indexed vector rows)]
-                    [:div.proof-row {:class (if (<= i step) "revealed" "pending")}
-                     [:strong label] [:div [:b statement] [:p reason]]])]
-                 [:p.caption "Proof outline · Rainbow checks the formal exact-rational term."]]))
-    :notes "Two minutes. Reveal one row at a time. Fix a state and an action. Subtract the two backups: immediate reward is identical, so it cancels. Future values differ by at most epsilon; multiply by nonnegative probabilities and discount and sum. Normalization makes the sum gamma epsilon. For each action QV is at most QW plus this bound, hence at most max QW plus the bound; take max QV. Reverse V and W for the other inequality. This is a proof for all admissible inputs, organised exactly like the nested map, weighted reduce and max. Different best actions do not break the argument."}
+                 (if (zero? step)
+                   [:div.two.even
+                    [:div [:p.aside "Selecting the best action"]
+                     [:p "For every finite, nonempty action set: the selected action scores at least as high as every candidate."]
+                     [:p.caption "Exact nonnegative rational scores."]]
+                    [:div
+                     [:table.levels [:tr [:th "action"] [:th "score"]]
+                      (for [[action score] scores]
+                        [:tr {:class (when (= action (first winner)) "ok")}
+                         [:td action] [:td score]])]
+                     [:p.aside (str (first winner) " wins this example. The theorem covers every allowed input.")]]]
+                   [:div.two.even
+                    [:div [:p.aside "Bounding the best possible profit"]
+                     [:p "For every feasible plan and dual certificate: the certificate bounds the plan’s objective from above."]
+                     [:p.caption "LP weak duality · nonnegative rational model."]]
+                    [:div
+                     [:div.certificate-results
+                      [:div [:strong "10"] [:span "profit from a feasible plan"]]
+                      [:div [:strong "10"] [:span "valid upper bound"]]]
+                     [:p.aside "If both are valid, no feasible plan can earn more."]]])
+                 [:p.caption (str "Kernel rechecked " (subs (:checked-at receipt) 0 10)
+                                  " · illustrations of general theorems")]]))
+    :notes "Two results freshly rechecked from the pinned Rainbow source snapshot named in or-checks.edn. decision/finite-nnrat-argmax-dominates quantifies over the finite set, score function, initial member and candidate; the chosen score dominates each candidate. It concerns exact nonnegative rational scores, not the browser best-order function or signed profit values without a correspondence argument. The three-row picture is computed in ClojureScript and illustrates the statement. nnrat/lp-weak-duality states c.x <= b.y from primal and dual feasibility in a finite nonnegative-rational maximization model. Its nonnegative coefficients/variables and feasibility assumptions matter. The pair of 10s is a conditional illustration, not an independently checked LP instance: if a feasible plan and valid bound agree, they establish optimality in that model. This theorem is one mathematical ingredient of certificate checking; it does not close the plant checker's program-soundness theorem. The recorded checks have empty transitive axiom profiles. No claim that arbitrary real plants or the browser implementation are proved."}
 
-   {:section "Rainbow" :title "What the kernel checked"
+   {:section "Rainbow" :title "From a specification to Clojure"
     :render (fn [_]
-              [:div.two.even
-               [:div
-                (code "value/signed-optimality-step-\n  additively-contractive\n\nstatus: checked\naxioms: []\nchecked: 2026-10-09")
-                [:p.caption "Historical receipt · replay after kernel repair pending."]]
-               [:div.aside
-                [:p "Exact operator: mathematical bound."]
-                [:p "Floating-point browser code: correspondence unproved."]
-                [:p "An exact residual can bound value error."]
-                [:p.caption "With γ = 0.9: residual ≤ 0.001 ⇒ value error ≤ 0.01."]
-                [:p.caption "Mathematical consequence; not a certificate for this browser run."]]])
-    :notes "This historical receipt predates the documented kernel repair; replay on the repaired kernel is pending. The recorded check is the signed Bellman additive-closeness theorem with empty axiom closure. We did not check the JavaScript program against it. Point to that boundary rather than implying that a theorem name certifies a renderer. The epsilon-to-gamma-epsilon statement is what is checked; fixed-point existence and convergence use the usual finite discounted model assumptions. The residual-to-error bound is a mathematical consequence of contraction, not a recorded certificate for this floating-point run. Residual refers to a candidate table versus one more update, not the size of a chosen action."}
+              (let [receipt (n/checked-or-examples)]
+                [:div.two.even
+                 [:div [:p.aside "Generated clamp function"]
+                  (code (get-in receipt [:generated :display-source]) {:size :small})
+                  [:p.caption "Actual Rainbow output · recorded JVM results"]]
+                 [:div
+                  [:p.aside "Keep a value between 0 and 1."]
+                  [:table.levels [:tr [:th "input"] [:th "output"]]
+                   (for [{:keys [input output]} (:examples receipt)]
+                     [:tr [:td input] [:td output]])]
+                  [:p "Proved: the modeled program implements clamp, and scoped compilation preserves its meaning."]
+                  [:p.caption "The printer, exact-arithmetic primitives and runtime remain trusted."]]]))
+    :notes "This is actual emit/render output for clj/clamp-program with parameters lower, upper, value, not hand-written illustrative code. The receipt contains the emitted form, original source, display-only pretty printing and three exact JVM results. clj/clamp-program-denotes-clamp proves the modeled Expr program equals the clamp specification for every store. clj/compile-correct-scoped proves preservation from scoped Expr programs to modeled Form semantics. These two theorems were freshly rechecked with no axioms. The example uses ordered bounds 0 and 1. The final printed Clojure/runtime link is not certified by these two theorems, and the three executions are examples rather than a proof of that link. This does not prove unrestricted Clojure, floats, the JVM, or the entire earlier optimization solver. The local dataflow and clamp operation should be familiar from the turbine setting bounds."}
 
    {:section "Rainbow" :title "Scheduling an e-methanol plant"
     :render (fn [_]
@@ -1990,11 +2005,11 @@
                        :alt "Jiri Knesl’s Applied Higher Order Functions hardback on a wooden table"
                        :width 390 :height 520}]]
                [:div
-                [:p.aside "There is more than iterate."]
-                [:p "About twelve HOFs, and their composition."]
+                [:p.aside "I wrote this book about using higher-order functions in operations research."]
+                [:p "The ideas apply more broadly to designing algorithms that optimize or help make decisions."]
                 (code "map · reduce · filter · comp\npartial · iterate …" {:size :small})
                 [:p.goal "flexiana.com/book"]]])
-    :notes "The talk centered on iterate. The book develops a broader toolkit of roughly twelve higher-order functions and their composition across optimization, decision-making and validation. Every listing runs with the companion library orhof. Book text: CC BY-SA 4.0; library: MIT. Photograph from flexiana-web/site/src/assets/book/book-wood-angle.web.webp, embedded in the release for offline use."}
+    :notes "The book explains how to use higher-order functions in operations research. The ideas also apply more broadly to designing algorithms that optimize or support decision-making. Every listing runs with the companion library orhof. Book text: CC BY-SA 4.0; library: MIT. Photograph from flexiana-web/site/src/assets/book/book-wood-angle.web.webp, embedded in the release for offline use."}
 
    ;; ---------------------------------------------------------------- Closing
    {:section "Thank you" :title "Thank you"

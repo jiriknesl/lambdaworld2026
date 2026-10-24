@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,048 spoken words. Planning pace: 125 words/minute, plus 04:25 of pauses and visual holds. Speech and holds: 36:48; with 02:00 for questions: 38:48. This is an estimate, not an aloud rehearsal.
+4,044 spoken words. Planning pace: 125 words/minute, plus 04:16 of pauses and visual holds. Speech and holds: 36:37; with 02:00 for questions: 38:37. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -516,89 +516,71 @@ Underneath all three examples is iterate. What changes is what a state means. A 
 
 ### Phase 1
 
-[Introduce Rainbow’s focus, then move to the small proof example.]
+[Introduce Rainbow’s focus; then distinguish it from Lean.]
 
-Rainbow is a theorem prover and code generator focused on Clojure, operations research and related fields. Its purpose is not to match or beat Lean. Here is a small example of how we can work with its proofs as Clojure data.
+Rainbow is a theorem prover and code generator focused on Clojure, operations research and related fields. Its purpose is not to match or beat Lean. I want to show you what that focus means, and a few things we have proved.
 
-## 26 A proof we can edit
+## 26 How Rainbow differs from Lean
 
-30:20–31:26 · 119 words · 9s visual holds
+30:20–30:59 · 74 words · 3s visual holds
+
+### Phase 1
+
+[Compare focus and workflow; acknowledge the shared capabilities.]
+
+Lean is a general-purpose theorem prover and programming language. It already has proof objects, metaprogramming and native compilation. Rainbow focuses on Clojure and operations research. Its explicit proof terms are EDN values we can manipulate with Clojure functions. Its code generator works with a modeled subset of Clojure. Both systems check typed proof terms with a kernel. I am choosing a particular workflow and application area, not claiming that Lean cannot do this work.
+
+## 27 A proof we can edit
+
+30:59–31:59 · 107 words · 9s visual holds
 
 ### Phase 1
 
 [Read the composition, then match the app nodes to the term.]
 
-P, Q and R are propositions. Given f from P to Q, g from Q to R, and evidence p of P, apply f then g. This proves R. In Rainbow syntax, fn binds arguments and app applies them. The tree comes directly from this term.
+Here is a small proof in Rainbow syntax. Given f from P to Q, g from Q to R, and evidence p of P, apply f then g to produce evidence of R. This is function composition. The tree is drawn from the proof term itself.
 
 ### Phase 2
 
 [Right. The outer application disappears from both the term and its tree.]
 
-Remove the outer application. Update-in selects the body; our function returns its argument, f of p. We now have Q, but need R. The kernel rejects it. The diagram changes because the data changed.
+Remove g and the term produces Q, while the claim requires R. The kernel rejects it. A well-formed piece of data is not necessarily a valid proof.
 
 ### Phase 3
 
 [Right. Point to the function passed to update-in; g returns to the tree.]
 
-Now pass update-in a function that wraps the body in an application of g. The original remains unchanged. This new term checks. The browser edits and draws; kernel checks are recorded. A structural editor could make the same edit.
+Use update-in to insert g again. The resulting term checks. These are recorded kernel results; the browser edits and draws the data. This is how ordinary Clojure functions can help us work with proofs.
 
-## 27 Bellman shrinks disagreement
+## 28 What we have proved
 
-31:26–32:06 · 71 words · 6s visual holds
+31:59–33:06 · 127 words · 6s visual holds
 
 ### Phase 1
 
-[Point back to the hydrogen value table; define the gap.]
+[Read the action scores, then widen the claim from this example to every allowed input.]
 
-Take two value tables, V and W. Their largest difference is epsilon. One discounted Bellman update bounds that gap by gamma times epsilon. Here gamma is point nine. We need the same model, normalized nonnegative probabilities and nonempty legal action sets.
+One result says that selecting the best action from a finite set really returns a score at least as high as every candidate. B wins these three scores. The theorem covers every allowed finite set and exact nonnegative rational score function. That is a property of the mathematical selector, not a proof of our browser code.
 
 ### Phase 2
 
-[Right. Point to the computed 10 to 9 example.]
+[Explain the upper bound before interpreting the matching numbers.]
 
-Start one table at zero everywhere and the other at ten. Bellman reduces the gap to nine. This illustrates the claim; the proof must cover every admissible pair of tables.
+Another result is LP weak duality. Given a feasible plan and a valid dual certificate, the certificate bounds the plan’s objective. Suppose a plan earns ten and a certificate says no feasible plan can earn more than ten. Then that plan is optimal for the model. Rainbow has checked the general theorem under its exact nonnegative-rational assumptions. The plant checker still needs the connection from this mathematics to its own program.
 
-## 28 The proof follows the code
+## 29 From a specification to Clojure
 
-32:06–33:38 · 166 words · 12s visual holds
-
-### Phase 1
-
-[Fix a state and one order before comparing the two calculations.]
-
-Pick one state, one order and one demand outcome. Compare the score using V with the score using W. The immediate reward is identical, so it cancels. Only the estimate of future value differs, by at most epsilon.
-
-### Phase 2
-
-[Right. Point to normalized probabilities.]
-
-Multiply by the discount and average over outcomes. Probabilities are nonnegative and sum to one, so the bound becomes gamma times epsilon. This is the weighted reduce in the code.
-
-### Phase 3
-
-[Right. Pause here; this is the mathematical jump.]
-
-Now take the best action. Take the order that wins using V. Its score can beat that same order under W by at most our bound. The best order under W is at least as good as that particular order. So taking a maximum cannot enlarge the bound. The maximizing actions do not have to be the same.
-
-### Phase 4
-
-[Right. Point to the absolute value.]
-
-Swap V and W to get the reverse inequality. Together they bound the absolute difference for every state. The argument follows the structure of the operator: outcomes, weighted sum, maximum. That makes the proof easier to relate to the code.
-
-## 29 What the kernel checked
-
-33:38–34:02 · 43 words · 3s visual holds
+33:06–33:47 · 79 words · 3s visual holds
 
 ### Phase 1
 
-[Distinguish the historical receipt, pending replay and browser implementation.]
+[Recall the turbine bounds. Read the generated function and three example inputs.]
 
-This historical receipt records the exact Bellman bound. Replay after a kernel repair is pending; it does not certify our floating-point browser code. Mathematically, with discount point nine, an exact residual of point zero zero one bounds value error by point zero one.
+This is Clojure generated by Rainbow for a clamp function. We used the same operation to keep turbine settings between zero and one. Minus one becomes zero; one half stays one half; two becomes one. These are recorded executions of this generated function. Separately, Rainbow checked that the modeled program implements clamp, and that compilation preserves the meaning of properly scoped programs. The printer, exact-arithmetic primitives and runtime remain trusted. This is a small generated program with specific guarantees.
 
 ## 30 Scheduling an e-methanol plant
 
-34:02–34:34 · 62 words · 3s visual holds
+33:47–34:20 · 62 words · 3s visual holds
 
 ### Phase 1
 
@@ -608,7 +590,7 @@ I built this illustrative methanol model to meet a weekly production contract wh
 
 ## 31 52 weekly certificates accepted
 
-34:34–35:09 · 66 words · 3s visual holds
+34:20–34:54 · 66 words · 3s visual holds
 
 ### Phase 1
 
@@ -618,7 +600,7 @@ HiGHS finds the proposed schedule from our Clojure model. Our branch-and-bound a
 
 ## 32 San Roque: what can scheduling save?
 
-35:09–35:43 · 65 words · 3s visual holds
+34:54–35:29 · 65 words · 3s visual holds
 
 ### Phase 1
 
@@ -628,7 +610,7 @@ For financial scale, take our separate e-SAF model at San Roque, by the Bay of A
 
 ## 33 Where I want to take Rainbow
 
-35:43–36:15 · 59 words · 3s visual holds
+35:29–36:00 · 59 words · 3s visual holds
 
 ### Phase 1
 
@@ -638,17 +620,17 @@ I want an operator to open a certificate and ask: which constraint ruled out thi
 
 ## 34 Applied Higher-Order Functions
 
-36:15–36:36 · 39 words · 3s visual holds
+36:00–36:25 · 47 words · 3s visual holds
 
 ### Phase 1
 
-[Gesture to the reserved book image; leave the URL visible.]
+[Gesture to the book photograph; leave the URL visible.]
 
-Today I concentrated on iterate. My book, Applied Higher-Order Functions, develops about twelve higher-order functions and their composition across operations research. It has the longer explanations and runnable examples. You can find it at flexiana dot com slash book.
+I wrote Applied Higher-Order Functions about using higher-order functions in operations research. But the ideas apply more broadly, especially if you design algorithms that optimize or help make decisions. The book has longer explanations and runnable examples. You can find it at flexiana dot com slash book.
 
 ## 35 Thank you
 
-36:36–36:48 · 18 words · 3s visual holds
+36:25–36:37 · 18 words · 3s visual holds
 
 ### Phase 1
 

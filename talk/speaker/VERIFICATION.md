@@ -322,3 +322,40 @@ the original editorial review; these later user-directed revisions are recorded 
   Both PDFs printed offline. Numerical implementations were unchanged; no new tests added.
 - Published by refreshing the copied static release; tunnel configuration unchanged:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=without-observer-20261024#s25
+
+## Rainbow overview, fresh OR checks and book description — 2026-10-24
+
+- Rewrote the book description around using higher-order functions in OR and more broadly
+  in algorithms that optimize or help make decisions. Updated the spoken book passage.
+- Recast Rainbow as purpose (25), a Lean comparison (26), one short proof/edit example (27),
+  two checked OR theorems (28), actual generated Clojure (29), then the existing plant
+  results (30–32) and future direction (33). The longer Bellman derivation and historical
+  receipt remain optional study material. No claim that Lean lacks proof objects,
+  metaprogramming, compilation or visualization; comparison grounded in its official FAQ
+  and language reference, with links in the README/study guide and technical notes.
+- Read the live Rainbow worker and committed sources. Exported commit
+  0257fd657d897843f8f2c3acbf19115631ebcfb1 into a scratch directory, including its pinned
+  D63 checkpoint. Did not edit the worker checkout. An initial empty-environment install
+  refused missing rational foundations; the successful run replays the checkpoint first.
+- `check-rainbow-examples.clj` freshly checked finite rational argmax dominance, nonnegative
+  rational LP weak duality, clamp-program refinement and scoped compiler correctness.
+  All four passed with empty transitive axiom profiles. `or-checks.edn` retains theorem
+  ids/types, check time, source-tree/checkpoint hashes, actual emitted clamp form/source
+  and JVM outputs at bounds 0/1 for inputs -1, 1/2, 2 (outputs 0, 1/2, 1).
+- The build checks the required theorem names, verdicts and axiom profiles, and that emitted
+  and displayed source parse to the same form. The generated program was run, not rewritten
+  by hand. Neither those examples nor the modeled compiler theorems prove the printer,
+  runtime, unrestricted Clojure or the complete browser/plant implementation.
+- 20 tests / 2,213 assertions passed; the count change reflects fewer slide phases, not
+  removed numerical checks. Release compilation passed with no warnings. Offline Chromium
+  checked 255 frames at 1600×900, 1920×1080 and 1024×768: all slides and short reveals,
+  sampled long traces; no overflow, clipping, render errors or external requests. Presenter
+  controls, speech, hash restore, playback/hour marker and proof trees passed. Inspected
+  screenshots of the comparison, LP explanation, emitted Clojure and book page.
+- Regenerated script, presenter data, study guide and both offline PDFs: 35 slides, 79 cues,
+  4,044 words; estimated 38:37 including holds and two minutes for questions.
+- Refreshed the same public static preview without changing the tunnel configuration.
+  Its JavaScript matched the release byte-for-byte. Fourteen public frames at 1920×1080
+  and 1024×768 passed, including both theorem phases, generated source/results, book photo
+  and matching theorem/code-generation presenter speech.
+  URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-overview-20261024#s25

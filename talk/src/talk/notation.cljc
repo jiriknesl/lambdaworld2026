@@ -99,6 +99,19 @@
                  "The rendered proof data must match the checked source")
          (list 'quote receipt)))
 
+     (defmacro checked-or-examples []
+       (let [receipt (edn/read-string (slurp (io/resource "talk/or-checks.edn")))
+             theorems (:theorems receipt)
+             generated (:generated receipt)]
+         (assert (= #{'decision/finite-nnrat-argmax-dominates 'nnrat/lp-weak-duality
+                      'clj/clamp-program-denotes-clamp 'clj/compile-correct-scoped}
+                    (set (map :name theorems))))
+         (assert (every? #(and (= :checked (:status %)) (empty? (:axioms %))) theorems))
+         (assert (= (:form generated)
+                    (edn/read-string (:source generated))
+                    (edn/read-string (:display-source generated))))
+         (list 'quote receipt)))
+
      (defn- current-file []
        (some-> (find-ns 'cljs.analyzer) (ns-resolve '*cljs-file*) deref str))
 

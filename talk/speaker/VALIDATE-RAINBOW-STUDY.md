@@ -2,7 +2,7 @@
 
 The Validate section executes a controller against every event sequence represented by a finite model. The Rainbow section checks mathematical proof terms. These are different forms of evidence. Neither automatically proves that a physical turbine is safe or that the browser implements an exact mathematical theorem.
 
-Read the controller example first, then the small composition proof, then Bellman contraction. Finally read the plant example. Each section gives you a sentence you can say on stage, the mechanism behind it, and the boundary of the claim.
+Read the controller example first, then the Rainbow introduction, composition proof, checked OR results and code generation. Finally read the plant example. The longer Bellman argument remains as optional background. Each section gives you a sentence you can say on stage, the mechanism behind it, and the boundary of the claim.
 
 The slide numbers refer to the current 35-slide deck. This is a study companion; the shorter spoken script remains in `SCRIPT.md`.
 
@@ -185,15 +185,21 @@ The fixed-point helper has a work cap. In general, reaching that cap would not e
 
 Small numerical movement and exact set closure are different conditions. `iterate` does not supply the argument that a stopping condition proves what we want. We supply that argument for each problem.
 
-## Slides 25 and 26 introduce Rainbow
+## Slides 25 to 27 introduce Rainbow
 
 **Say:** “Rainbow is a theorem prover and code generator focused on Clojure, operations research and related fields. Its purpose is not to match or beat Lean.”
 
 A kernel is the small program implementing the logical checking rules. Proof search and tactics may propose a term; the kernel is responsible for accepting or rejecting it. Choosing Clojure does not itself supply proofs. You must state the property and construct evidence for it. Static typing and theorem proving provide different guarantees and can be used together.
 
+### How Rainbow differs from Lean (slide 26)
+
+Lean is a general-purpose theorem prover and programming language. Its proof scripts produce terms checked by a kernel; it has metaprogramming and compiles programs to native code. These capabilities are described in the [official Lean FAQ](https://lean-lang.org/faq/) and [language reference](https://lean-lang.org/doc/reference/latest/).
+
+Rainbow's distinction here is its Clojure workflow and operations-research focus: explicit EDN proof terms manipulated with Clojure, and code generation for a modeled subset. Do not say that Lean cannot handle OR or that only Rainbow has proof objects, code generation or visual tools. Rainbow's implementation language being dynamically typed does not make its proof logic untyped. Do not claim superiority in speed, maturity or mathematical power.
+
 ### Read the exact proof syntax
 
-This is the source shown on slide 26:
+This is the source shown on slide 27:
 
 ```clojure
 {:type
@@ -239,7 +245,7 @@ The tiny composition proof and this negative control were checked again on 23 Oc
 
 “No axioms” means no additional axiom declarations were required by this proof. It does not eliminate trust in the kernel, runtime or logical rules. The argument parameters f, g and p are explicit assumptions inside the implication, not secretly introduced global axioms.
 
-### Edit the proof as data (slide 26, third phase)
+### Edit the proof as data (slide 27, third phase)
 
 **Say:** “The editor proposes a new term. The kernel checks it. We can change the interface without changing what counts as a proof.”
 
@@ -274,7 +280,42 @@ A visual tool could select a subtree, insert a step, show a dependency, or propo
 
 On slide 33, “Where I want to take Rainbow,” describe the broader OR tools as future work. The small tree/edit demo exists in this talk. A general visual editor, certificate tree replay and assumption-oriented OR views are not demonstrated as released Rainbow products. Visualization is not exclusive to Rainbow or Clojure; the opportunity is an interface grounded in the actual proof data and the operator's questions.
 
-## Slides 27 to 29 explain Bellman contraction
+## Slide 28: two checked OR theorems
+
+**Say:** “We can prove a property for every input the model allows. A worked example only helps us see what that property means.”
+
+The four results in `src/talk/or-checks.edn` were freshly checked on 24 October from the committed Rainbow snapshot `0257fd657d897843f8f2c3acbf19115631ebcfb1`. The base checkpoint was replayed through that snapshot's kernel, then the modules installed and each named theorem checked again. Every recorded transitive axiom profile is empty. The receipt includes the source-tree and checkpoint hashes. This does not establish kernel soundness or prove arbitrary software.
+
+**Finite action selection:** `decision/finite-nnrat-argmax-dominates`. Given a finite action set, an initial member, an exact nonnegative rational score function and any candidate in the set, the selected action's score is at least the candidate's score. The starting member ensures a choice exists. The score table A=4, B=7, C=5 illustrates this universal statement. It is not the proof itself, and the theorem does not automatically certify our browser `best-order` code or arbitrary signed profit scores.
+
+**LP weak duality:** `nnrat/lp-weak-duality`. For a finite nonnegative-rational maximization model, primal feasibility `Ax ≤ b` and dual feasibility `Aᵀy ≥ c` imply `c·x ≤ b·y`. The coefficients and variables are in the nonnegative-rational model, and the feasibility conditions are premises. The dual certificate supplies an upper bound on every feasible plan's profit.
+
+The two 10s on the slide are a conditional illustration: **if** a feasible plan earns 10 and a valid certificate bounds all feasible plans by 10, the plan is optimal for that model. We did not add a separate checked numerical LP instance for that picture. This mathematical theorem is an ingredient of certificate verification; it does not by itself prove the plant checker's implementation or every MILP certificate.
+
+## Slide 29: generated Clojure
+
+**Say:** “Rainbow generated this clamp function. The checked theorems connect the modeled program to its specification and preserve meaning through the modeled compiler. The final runtime still has a trust boundary.”
+
+The displayed function comes from `rainbow.emit/render` for `clj/clamp-program`, with arguments `lower`, `upper`, `value`. It is not a hand-written approximation. `or-checks.edn` keeps the emitted form, emitted source and a pretty-printed copy. The build checks that both source strings read back to the same form.
+
+Two fresh checks support the explanation:
+
+- `clj/clamp-program-denotes-clamp`: the modeled Expr program evaluates to the clamp specification for every input store.
+- `clj/compile-correct-scoped`: compiling a properly scoped Expr preserves its meaning under the modeled Form semantics. The scoping premise matters; arbitrary variable capture is not allowed.
+
+The checker script actually emits the function and evaluates it at bounds 0 and 1: input −1 gives 0, input 1/2 gives 1/2, input 2 gives 1. These recorded JVM executions illustrate the program. They do not prove the printer, Clojure primitives or JVM correct. The result concerns the modeled subset and exact arithmetic, not unrestricted Clojure, floating-point code, or the whole wind-farm optimizer.
+
+To reproduce, export the pinned commit's `src/` and `artifacts/ahof/d63-eligibility-traces/checkpoint.edn.gz` into a scratch directory (put the checkpoint at that directory's root). Run from this presentation repository with the exported `src/` on the classpath:
+
+```sh
+clojure -J-Xmx2g -Sdeps '{:paths ["/path/to/snapshot/src"]}' -M \
+  talk/scripts/check-rainbow-examples.clj /path/to/snapshot \
+  0257fd657d897843f8f2c3acbf19115631ebcfb1
+```
+
+This writes the talk's receipt and reads the isolated Rainbow snapshot. It does not modify the active Rainbow worker's checkout. The earlier attempt to install the modules into an empty environment failed on missing rational foundations; the successful check explicitly replays the pinned base checkpoint first.
+
+## Optional background: Bellman contraction (offstage)
 
 **Say:** “Suppose two tables disagree about future profit. Applying the same Bellman update brings their largest disagreement to at most ninety percent of its previous size.”
 
@@ -323,9 +364,9 @@ The residual compares a candidate with one more update. A change between two con
 
 ### What the talk can claim about the formal proof
 
-The composition example has a fresh kernel check. The Bellman theorem has a historical receipt dated 9 October 2026, named `value/signed-optimality-step-additively-contractive`, with an empty recorded axiom profile.
+The composition and new OR/code-generation examples have fresh kernel checks. The Bellman theorem has a historical receipt dated 9 October 2026, named `value/signed-optimality-step-additively-contractive`, with an empty recorded axiom profile.
 
-That Bellman receipt predates a documented kernel repair. The kernel’s trusted-base document says an earlier bug could accept a proof of False and requires affected artifacts to be replayed after repair. This talk does not have a completed repaired-kernel replay of the Bellman artifact. Slide 29 correctly labels it historical and pending replay.
+That Bellman receipt predates a documented kernel repair. The kernel’s trusted-base document says an earlier bug could accept a proof of False and requires affected artifacts to be replayed after repair. This talk does not have a completed repaired-kernel replay of the Bellman artifact. The historical receipt remains pending replay; it is no longer a stage slide.
 
 **Say:** “The contraction argument is the mathematics we want checked. This is a historical Rainbow receipt; replay after the kernel repair is pending. The browser’s floating-point implementation is not proved equivalent to that exact operator.”
 
@@ -384,7 +425,7 @@ Try each answer without looking at the earlier sections. A short accurate answer
 8. What cancels in the Bellman proof? Why can the maximizing action change?
 9. Does a larger value table necessarily represent a better policy?
 10. What does residual 0.001 imply when γ is 0.9, and under what arithmetic assumptions?
-11. Which proof is freshly checked, which receipt is historical, and which theorem is open?
+11. Which results are freshly checked, which receipt is historical, and which theorem is open?
 12. What does HiGHS do, and what did we implement?
 13. How do the €4.4m saving and the €0.26 gap differ?
 
@@ -400,7 +441,7 @@ Try each answer without looking at the earlier sections. A short accurate answer
 8. The same immediate reward cancels. Each action’s score satisfies the bound, so taking maxima preserves the bound without requiring the same winner.
 9. No. Value iteration also extends the planning horizon; a value is a money estimate and a policy is an action choice.
 10. An exact candidate’s value error is at most 0.01 under the discounted-model assumptions. Floating-point rounding needs separate treatment.
-11. Composition: fresh accepted/rejected check. Bellman: historical receipt pending repaired-kernel replay. Plant checker: acceptance-implies-optimality theorem open.
+11. Composition, finite action selection, LP weak duality, clamp refinement and scoped compilation have fresh checks. Bellman remains a historical receipt pending replay. The plant checker’s acceptance-implies-optimality theorem is open.
 12. HiGHS supplies the candidate and LP solves. Our code supplies the model, certificate-producing search and checking machinery.
 13. €4.4m is a separate e-SAF baseline comparison. €0.26 is the largest reported methanol certificate gap, not baseline savings.
 
@@ -432,6 +473,7 @@ The main references are:
 - [Deck code and controller implementation](../src/talk/core.cljs).
 - [Runnable study examples](../src/talk/study.cljs) and [recorded output](study-results.json).
 - [Exact composition term](../src/talk/composition.edn) and [fresh check receipt](../src/talk/composition-check.edn).
+- [Fresh OR and code-generation receipt](../src/talk/or-checks.edn).
 - [Historical Bellman receipt](../../resources/rainbow-evidence.edn).
 - [Plant and savings provenance](plant-case-evidence.json).
 - Rainbow checkout: `../rainbow/rainbow/doc/trusted-base.md` and `doc/claims.md`.

@@ -1,0 +1,390 @@
+{:checked-at "2026-10-24T17:44:10.008978Z",
+ :rainbow-revision "0257fd657d897843f8f2c3acbf19115631ebcfb1",
+ :source-tree-sha256
+ "004c8637186d6a7e564b3b05e328451e748c73c6410d292560f840003f6b3635",
+ :checkpoint-sha256
+ "f1364a86730247d0a472918e406d9bff40cd070e8371712e9e6acd3d49896524",
+ :theorems
+ [{:name decision/finite-nnrat-argmax-dominates,
+   :id
+   "sha256:d7a6ffa7f569a185f9982b16d048269a953a4be887c8f31300ed4ac74677b745",
+   :type
+   [:pi
+    [:sort [:succ [:param u]]]
+    [:pi
+     [:app
+      [:const
+       "sha256:e641eb28d3a310e08ac5f697294a1d430356ba47e79bb9f8f55d0855a2bd0614"
+       [[:param u]]]
+      [:bound 0]]
+     [:pi
+      [:bound 1]
+      [:pi
+       [:pi
+        [:bound 2]
+        [:const
+         "sha256:8458754f34599f950eb249a0b0a2bf78a72bbadc503355bc4ce6b0b59b9ee740"
+         []]
+        :explicit]
+       [:pi
+        [:bound 3]
+        [:pi
+         [:app
+          [:app
+           [:app
+            [:const
+             "sha256:4a3201c78a718b1bdbfe75631f71872078eaacb05bb329515c224ba517edb397"
+             [[:param u]]]
+            [:bound 4]]
+           [:bound 3]]
+          [:bound 0]]
+         [:app
+          [:app
+           [:const
+            "sha256:47647b2c8768d200717fbe6fa0133a9b9151aa562ac9acdc7cdec251f6ceb1eb"
+            []]
+           [:app [:bound 2] [:bound 1]]]
+          [:app
+           [:bound 2]
+           [:app
+            [:app
+             [:app
+              [:app
+               [:const
+                "sha256:dce721c5757c009beddd3114cb52a40d5a768c5bed457e02950103e80ae7fc8f"
+                [[:param u]]]
+               [:bound 5]]
+              [:bound 4]]
+             [:bound 3]]
+            [:bound 2]]]]
+         :explicit]
+        :explicit]
+       :explicit]
+      :explicit]
+     :explicit]
+    :explicit],
+   :status :checked,
+   :axioms #{}}
+  {:name nnrat/lp-weak-duality,
+   :id
+   "sha256:b83c36cb0363fa88c191d3d041d67d007dd155847ba6272374b6ca0b8e5f8d68",
+   :type
+   [:pi
+    [:sort [:succ [:param u]]]
+    [:pi
+     [:sort [:succ [:param u]]]
+     [:pi
+      [:pi
+       [:bound 1]
+       [:pi
+        [:bound 1]
+        [:const
+         "sha256:8458754f34599f950eb249a0b0a2bf78a72bbadc503355bc4ce6b0b59b9ee740"
+         []]
+        :explicit]
+       :explicit]
+      [:pi
+       [:pi
+        [:bound 2]
+        [:const
+         "sha256:8458754f34599f950eb249a0b0a2bf78a72bbadc503355bc4ce6b0b59b9ee740"
+         []]
+        :explicit]
+       [:pi
+        [:pi
+         [:bound 2]
+         [:const
+          "sha256:8458754f34599f950eb249a0b0a2bf78a72bbadc503355bc4ce6b0b59b9ee740"
+          []]
+         :explicit]
+        [:pi
+         [:pi
+          [:bound 3]
+          [:const
+           "sha256:8458754f34599f950eb249a0b0a2bf78a72bbadc503355bc4ce6b0b59b9ee740"
+           []]
+          :explicit]
+         [:pi
+          [:pi
+           [:bound 5]
+           [:const
+            "sha256:8458754f34599f950eb249a0b0a2bf78a72bbadc503355bc4ce6b0b59b9ee740"
+            []]
+           :explicit]
+          [:pi
+           [:app
+            [:const
+             "sha256:b9d6012691ac361594d3772f8aa8ec77db3b73bf7ea1d93877689aaea4349a53"
+             [[:succ [:param u]]]]
+            [:bound 6]]
+           [:pi
+            [:app
+             [:const
+              "sha256:b9d6012691ac361594d3772f8aa8ec77db3b73bf7ea1d93877689aaea4349a53"
+              [[:succ [:param u]]]]
+             [:bound 6]]
+            [:pi
+             [:pi
+              [:bound 8]
+              [:app
+               [:app
+                [:const
+                 "sha256:47647b2c8768d200717fbe6fa0133a9b9151aa562ac9acdc7cdec251f6ceb1eb"
+                 []]
+                [:app
+                 [:app
+                  [:app
+                   [:const
+                    "sha256:d2b7ad5f29eaef1ca5c5eeaa5403ce15fd2f72f8badf529faaf486c4b172d375"
+                    [[:param u]]]
+                   [:bound 8]]
+                  [:lam
+                   [:bound 8]
+                   [:app
+                    [:app
+                     [:const
+                      "sha256:711405a66efd0fe98e4161a11527148a7607c055b87aae1f72b547eb661523a5"
+                      []]
+                     [:app [:app [:bound 8] [:bound 1]] [:bound 0]]]
+                    [:app [:bound 5] [:bound 0]]]
+                   :explicit]]
+                 [:bound 1]]]
+               [:app [:bound 6] [:bound 0]]]
+              :explicit]
+             [:pi
+              [:pi
+               [:bound 8]
+               [:app
+                [:app
+                 [:const
+                  "sha256:47647b2c8768d200717fbe6fa0133a9b9151aa562ac9acdc7cdec251f6ceb1eb"
+                  []]
+                 [:app [:bound 6] [:bound 0]]]
+                [:app
+                 [:app
+                  [:app
+                   [:const
+                    "sha256:d2b7ad5f29eaef1ca5c5eeaa5403ce15fd2f72f8badf529faaf486c4b172d375"
+                    [[:param u]]]
+                   [:bound 10]]
+                  [:lam
+                   [:bound 10]
+                   [:app
+                    [:app
+                     [:const
+                      "sha256:711405a66efd0fe98e4161a11527148a7607c055b87aae1f72b547eb661523a5"
+                      []]
+                     [:app [:app [:bound 9] [:bound 0]] [:bound 1]]]
+                    [:app [:bound 5] [:bound 0]]]
+                   :explicit]]
+                 [:bound 3]]]
+               :explicit]
+              [:app
+               [:app
+                [:const
+                 "sha256:47647b2c8768d200717fbe6fa0133a9b9151aa562ac9acdc7cdec251f6ceb1eb"
+                 []]
+                [:app
+                 [:app
+                  [:app
+                   [:const
+                    "sha256:d2b7ad5f29eaef1ca5c5eeaa5403ce15fd2f72f8badf529faaf486c4b172d375"
+                    [[:param u]]]
+                   [:bound 9]]
+                  [:lam
+                   [:bound 9]
+                   [:app
+                    [:app
+                     [:const
+                      "sha256:711405a66efd0fe98e4161a11527148a7607c055b87aae1f72b547eb661523a5"
+                      []]
+                     [:app [:bound 7] [:bound 0]]]
+                    [:app [:bound 6] [:bound 0]]]
+                   :explicit]]
+                 [:bound 2]]]
+               [:app
+                [:app
+                 [:app
+                  [:const
+                   "sha256:d2b7ad5f29eaef1ca5c5eeaa5403ce15fd2f72f8badf529faaf486c4b172d375"
+                   [[:param u]]]
+                  [:bound 10]]
+                 [:lam
+                  [:bound 10]
+                  [:app
+                   [:app
+                    [:const
+                     "sha256:711405a66efd0fe98e4161a11527148a7607c055b87aae1f72b547eb661523a5"
+                     []]
+                    [:app [:bound 8] [:bound 0]]]
+                   [:app [:bound 5] [:bound 0]]]
+                  :explicit]]
+                [:bound 3]]]
+              :explicit]
+             :explicit]
+            :explicit]
+           :explicit]
+          :explicit]
+         :explicit]
+        :explicit]
+       :explicit]
+      :explicit]
+     :explicit]
+    :explicit],
+   :status :checked,
+   :axioms #{}}
+  {:name clj/clamp-program-denotes-clamp,
+   :id
+   "sha256:6a504f064c419b069a39bcbaf4555ab17ee0171ac9e04dfadb3641ebb8231b07",
+   :type
+   [:pi
+    [:pi
+     [:const
+      "sha256:3506a443d496ca97e5476cbbb47baadc33ccaef5a3e9717e4bcac7c83acc1453"
+      []]
+     [:const
+      "sha256:b6515bd9239fe03526a85566a2fba8d412bd58b8bf4a8e72432218c3efc6ae48"
+      []]
+     :explicit]
+    [:app
+     [:app
+      [:app
+       [:const
+        "sha256:2d47fcd5253cdc0f5e0c62e79782ace49ee9d55c714521dc2d420111d3828beb"
+        [[:succ [:zero]]]]
+       [:const
+        "sha256:b6515bd9239fe03526a85566a2fba8d412bd58b8bf4a8e72432218c3efc6ae48"
+        []]]
+      [:app
+       [:app
+        [:const
+         "sha256:143716774762596623d010a632f05c6ff970034961065468cb5d6d3321500ff2"
+         []]
+        [:bound 0]]
+       [:const
+        "sha256:7512e4f2169a3d4d21dc97f443db65d0d8f3af9c1fa373346848480fead6e479"
+        []]]]
+     [:app
+      [:app
+       [:app
+        [:const
+         "sha256:61687e2642f52c53e2e5cf7b1d5d1f1ce2ec45059572170fead36311afb201d3"
+         []]
+        [:app
+         [:bound 0]
+         [:const
+          "sha256:11ea4dcb19455ac6d98fa23f4a631c8e72e1d5158d55f35d15a6891da156837a"
+          []]]]
+       [:app
+        [:bound 0]
+        [:app
+         [:const
+          "sha256:2c087b95d40cd6088f7ed5b2c005939be25c07dd402f56d99fa9cd076fa760b5"
+          []]
+         [:const
+          "sha256:11ea4dcb19455ac6d98fa23f4a631c8e72e1d5158d55f35d15a6891da156837a"
+          []]]]]
+      [:app
+       [:bound 0]
+       [:app
+        [:const
+         "sha256:2c087b95d40cd6088f7ed5b2c005939be25c07dd402f56d99fa9cd076fa760b5"
+         []]
+        [:app
+         [:const
+          "sha256:2c087b95d40cd6088f7ed5b2c005939be25c07dd402f56d99fa9cd076fa760b5"
+          []]
+         [:const
+          "sha256:11ea4dcb19455ac6d98fa23f4a631c8e72e1d5158d55f35d15a6891da156837a"
+          []]]]]]]
+    :explicit],
+   :status :checked,
+   :axioms #{}}
+  {:name clj/compile-correct-scoped,
+   :id
+   "sha256:a8b7881f36dddc8990b4fe34f105d1e941f2b28dcc2a819af7fa23793cd4a69d",
+   :type
+   [:pi
+    [:const
+     "sha256:3506a443d496ca97e5476cbbb47baadc33ccaef5a3e9717e4bcac7c83acc1453"
+     []]
+    [:pi
+     [:pi
+      [:const
+       "sha256:3506a443d496ca97e5476cbbb47baadc33ccaef5a3e9717e4bcac7c83acc1453"
+       []]
+      [:const
+       "sha256:b6515bd9239fe03526a85566a2fba8d412bd58b8bf4a8e72432218c3efc6ae48"
+       []]
+      :explicit]
+     [:pi
+      [:const
+       "sha256:a63a7e4aba3056aaac260a48b1dbee8012566a8453e41a7c1fc3b788b64d4131"
+       []]
+      [:pi
+       [:app
+        [:app
+         [:const
+          "sha256:da23d2f40c6112038474761dec6c90f7678bd3a38e3404e22bc637a980f46231"
+          []]
+         [:bound 2]]
+        [:bound 0]]
+       [:app
+        [:app
+         [:app
+          [:const
+           "sha256:2d47fcd5253cdc0f5e0c62e79782ace49ee9d55c714521dc2d420111d3828beb"
+           [[:succ [:zero]]]]
+          [:const
+           "sha256:b6515bd9239fe03526a85566a2fba8d412bd58b8bf4a8e72432218c3efc6ae48"
+           []]]
+         [:app
+          [:app
+           [:const
+            "sha256:05dda4f09df074d1ab3529118dfeb43540d3855b8deda6524c50b2e870d0a341"
+            []]
+           [:bound 2]]
+          [:app
+           [:app
+            [:app
+             [:const
+              "sha256:cfe89dd35dc8fa7f5fe481145394a0f5362d88e29baba21d380894c44a3009e8"
+              []]
+             [:bound 3]]
+            [:const
+             "sha256:df30e93b4e27058417b7564c7032a8263ea3f418bee2658c89a5eb9d4224da57"
+             []]]
+           [:bound 1]]]]
+        [:app
+         [:app
+          [:const
+           "sha256:143716774762596623d010a632f05c6ff970034961065468cb5d6d3321500ff2"
+           []]
+          [:bound 2]]
+         [:bound 1]]]
+       :explicit]
+      :explicit]
+     :explicit]
+    :explicit],
+   :status :checked,
+   :axioms #{}}],
+ :generated
+ {:alias clj/clamp-program,
+  :declaration/id
+  "sha256:7512e4f2169a3d4d21dc97f443db65d0d8f3af9c1fa373346848480fead6e479",
+  :parameters [lower upper value],
+  :via :kernel-checked-compile,
+  :form
+  (fn
+   [lower upper value]
+   (let
+    [clj-let-3 (if (<= lower value) value lower)]
+    (if (<= clj-let-3 upper) clj-let-3 upper))),
+  :source
+  "(fn [lower upper value] (let [clj-let-3 (if (<= lower value) value lower)] (if (<= clj-let-3 upper) clj-let-3 upper)))",
+  :display-source
+  "(fn\n [lower upper value]\n (let\n  [clj-let-3 (if (<= lower value) value lower)]\n  (if (<= clj-let-3 upper) clj-let-3 upper)))\n"},
+ :examples
+ [{:input "-1", :output "0"}
+  {:input "1/2", :output "1/2"}
+  {:input "2", :output "1"}]}

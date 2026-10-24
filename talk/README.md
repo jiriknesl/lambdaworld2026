@@ -10,18 +10,12 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=book-study-20261023).
-Updated 2026-10-23: the biography shows a plain-text YouTube address; the fixed-point example
-follows one trajectory; the turbine introduction has one reveal. Slide 16 now illustrates a
-bird strike with a rotor impact and falling bird, driven by the displayed schedule.
-Its heading and explanatory caption are removed; the model-scope explanation remains in presenter notes.
-Slide 18 now has one reveal, retaining the order comparison. Slide 19 presenter speech explains
-q, score versus order, and the three-week versus four-week value comparison. Slides 30–32 tell the plant story, explain the solver/checker split, and distinguish
-modeled savings from the weekly certificate bound. The open checker-soundness theorem is visible on the results slide.
-The Bellman receipt is labelled historical, with replay after the kernel repair pending.
-Slides 30–31 now state the reported benchmark outcomes immediately: 52 accepted weekly
-certificates, a largest reported gap of EUR 0.26, and a median check of 0.64 seconds per week.
-The book photograph is embedded for offline use. The spoken script and PDF follow the new order.
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-overview-20261024).
+Updated 2026-10-24: 35 slides. Rainbow now introduces its purpose, compares its focus and
+workflow with Lean, shows a short proof-data example, presents two freshly checked OR
+theorems, and generates a clamp function before the plant results. The longer Bellman
+proof remains in the study guide. The book slide describes the broader use of higher-order
+functions in algorithm design. The spoken script, study guide and PDFs follow this order.
 This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, the full spoken script, technical reference notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
@@ -113,17 +107,17 @@ The deck has 35 slides; reveals are steps within a slide, not additional topics.
 | 9–16: Optimization | 9:08 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
 | 17–21: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 22–24: Validation | 5:29 | Controller rule, reachable states and shared iterate. |
-| 25–33: Rainbow | 6:16 | Proof editing, Bellman bound, plant results and future OR interfaces. |
-| 34–35: Book and thanks | 0:34 | Broader toolkit and contact. |
+| 25–33: Rainbow | 6:01 | Purpose, Lean comparison, checked OR theorems, generated Clojure and plant results. |
+| 34–35: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
 
-The current 4,048-word script estimates **36:48 including visual holds**, or **38:48 with two
+The current 4,044-word script estimates **36:37 including visual holds**, or **38:37 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 35 slides, 82 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 35 slides, 79 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -312,14 +306,17 @@ Slide 23 has three reveals per controller (nine total), with selected expansion 
 Slide 24 names `iterate` underneath optimization, value iteration and reachability. Their states,
 update functions and stopping tests differ. Rate and momentum demonstrate composition within the optimization example.
 
-## Rainbow: proofs as data — 2026-10-23
+## Rainbow: purpose and checked examples — 2026-10-24
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=without-observer-20261024#s25).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-overview-20261024#s25).
 It remains publicly accessible without authentication.
 
 Slide 25 introduces Rainbow as a theorem prover and code generator focused on Clojure,
 operations research and related fields, without the ambition to match or beat Lean.
-Slide 26 executes two structural edits with `update-in`: remove the outer application,
+Slide 26 compares focus, proof workflow and code generation with Lean. The comparison uses
+the [official Lean FAQ](https://lean-lang.org/faq/) and [language reference](https://lean-lang.org/doc/reference/latest/);
+proof objects, metaprogramming and compilation are not claimed as unique to Rainbow.
+Slide 27 executes two structural edits with `update-in`: remove the outer application,
 then wrap the remaining body in an application of `g`. A tree is rendered from the current
 body. Recorded verdicts are displayed only after checking that the browser's terms match
 those checked on the JVM. This is a talk demo, not a general visual editor.
@@ -338,7 +335,7 @@ no commercial roadmap or unsupported competitive claims were imported.
 
 ## The proof examples and their limits
 
-Slide 26 shows actual Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
+Slide 27 shows actual Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
 function composition for arbitrary propositions P, Q, R: given `f : P → Q`, `g : Q → R` and `p : P`,
 `g(f(p))` proves R. `:forall` binds propositions, `:->` is implication, `:fn` binds arguments and
 `:app` applies a term. The containing `:type`/`:value` map is the checker script's input.
@@ -356,19 +353,34 @@ clojure -Sdeps '{:paths ["../rainbow/rainbow/src" "talk/src"]}' -M talk/scripts/
 The build embeds the exact checked file and fails if it differs from the receipt. This small
 proof teaches the syntax; it is not presented as a proof of the optimization or Bellman code.
 
-Slides 27–29 return to the **Bellman contraction bound**: if two value functions are pointwise
-within ε, one update puts them within γ × ε. The four-step mathematical outline cancels identical
-rewards, averages bounded future differences with normalized nonnegative probabilities, takes
-max over the same nonempty action sets, then swaps V/W for the reverse inequality. Strict
-contraction additionally requires 0 ≤ γ < 1. The numerical 10 → 9 example runs the browser's
-Bellman function; it is an illustration, not a proof for every input.
+Slide 28 presents two general theorems about exact models: finite action selection dominates
+every candidate's score, and LP weak duality bounds every feasible primal objective by a
+feasible dual objective. Both are stated with their nonnegative-rational assumptions.
+The pictures illustrate the statements; they are not additional kernel-checked instances.
 
-The Bellman receipt is the existing `../resources/rainbow-evidence.edn`, recorded 2026-10-09 at
-Rainbow `3f411ae`: `value/signed-optimality-step-additively-contractive`, with empty axiom closure.
-That exact-term theorem was **not rerun in this revision**. Its receipt predates Rainbow’s
-documented kernel repair, so replay on the repaired kernel is pending; the slide and speech say so. No correspondence proof to the
-floating-point ClojureScript implementation is asserted. Gradient and momentum have no general
-convergence guarantee here. Illustrative forecasts and synthetic bird data remain illustrative.
+Slide 29 displays actual generated Clojure for `clj/clamp-program`, with recorded executions
+at bounds 0 and 1. It distinguishes the modeled program's refinement and the compiler's
+scoped-correctness theorem from the trusted printer/primitives/runtime boundary. It does not
+claim that arbitrary Clojure or the browser optimizer is proved.
+
+`src/talk/or-checks.edn` records four fresh checks from Rainbow snapshot
+`0257fd657d897843f8f2c3acbf19115631ebcfb1`, with source-tree and checkpoint SHA-256 hashes:
+
+- `decision/finite-nnrat-argmax-dominates`
+- `nnrat/lp-weak-duality`
+- `clj/clamp-program-denotes-clamp`
+- `clj/compile-correct-scoped`
+
+Each was checked after replaying the pinned base checkpoint and installing its modules;
+each has an empty transitive axiom profile. `scripts/check-rainbow-examples.clj` reproduces
+the checks and generated function, reading an isolated source snapshot. See the study guide
+for the command. The build checks that emitted and displayed source read to the recorded form.
+This run does not prove kernel soundness or close the plant checker's soundness theorem.
+
+The Bellman contraction explanation is now optional study material, not a stage walkthrough.
+Its 2026-10-09 receipt at Rainbow `3f411ae` remains historical and pending repaired-kernel replay.
+No correspondence proof to floating-point ClojureScript is asserted. Gradient and momentum
+have no general convergence guarantee here. Forecasts and bird data remain illustrative.
 
 ## E-methanol certificate example
 
@@ -443,7 +455,7 @@ as a data URL, so the book slide also works offline without adding a public asse
 
 [Study guide](speaker/VALIDATE-RAINBOW-STUDY.md) and
 [printable PDF](../artifacts/validate-rainbow-study.pdf) cover slides 22–33: state fields,
-the decision table and controller call flow, reachability closure, proof syntax, Bellman
+the decision table and controller call flow, reachability closure, proof syntax, OR theorem scope, generated Clojure, optional Bellman
 contraction and residuals, solver attribution, and the precise boundaries of each claim.
 Practice questions include answer checks. The full spoken script remains in `speaker/SCRIPT.md`.
 
