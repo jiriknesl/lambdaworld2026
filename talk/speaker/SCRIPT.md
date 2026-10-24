@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-4,182 spoken words. Planning pace: 125 words/minute, plus 04:31 of pauses and visual holds. Speech and holds: 37:58; with 02:00 for questions: 39:58. This is an estimate, not an aloud rehearsal.
+4,048 spoken words. Planning pace: 125 words/minute, plus 04:25 of pauses and visual holds. Speech and holds: 36:48; with 02:00 for questions: 38:48. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -502,43 +502,27 @@ The set is now closed under every encoded successor, without a failure. That est
 
 ## 24 iterate underneath all three
 
-29:11–30:03 · 101 words · 3s visual holds
+29:11–29:59 · 92 words · 3s visual holds
 
 ### Phase 1
 
 [Read across each row; do not repeat the whole story.]
 
-Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. We already used that interface to change the optimizer’s pace and add momentum. We can also use it to observe a run.
+Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. We already used that interface to change the optimizer’s pace and add momentum.
 
-## 25 Observe each update
+## 25 Rainbow
 
-30:03–31:09 · 125 words · 6s visual holds
-
-### Phase 1
-
-[Point to the return value after the observer call.]
-
-The same step interface gives us a place to observe any of these iterations. Call the supplied step, give the old and new states to an observer, then return the new state unchanged. Here the observer records the turbine cost. It is the deliberate effect; the numerical step stays pure.
-
-### Phase 2
-
-[Right. Point to the atom and four logged rows.]
-
-This observer records costs in an atom, Clojure’s explicit mutable reference. Taking five states includes the starting state, so it runs four updates and records four costs. The vector forces the lazy sequence to be realized. The starting state itself causes no log entry. Reusing the same realized sequence reuses its cached values; constructing and consuming a fresh sequence runs the effects again. We can observe the algorithm without weaving logging through its numerical code.
-
-## 26 Rainbow
-
-31:09–31:31 · 41 words · 2s visual holds
+29:59–30:20 · 41 words · 2s visual holds
 
 ### Phase 1
 
-[Recall code as data from Why Clojure; introduce proofs as data.]
+[Introduce Rainbow’s focus, then move to the small proof example.]
 
-Rainbow is a theorem prover written in Clojure. Its proofs are data. We can write functions to inspect them, draw them, or change a part. A changed term still needs checking. That lets us experiment with how we work on proofs.
+Rainbow is a theorem prover and code generator focused on Clojure, operations research and related fields. Its purpose is not to match or beat Lean. Here is a small example of how we can work with its proofs as Clojure data.
 
-## 27 A proof we can edit
+## 26 A proof we can edit
 
-31:31–32:37 · 119 words · 9s visual holds
+30:20–31:26 · 119 words · 9s visual holds
 
 ### Phase 1
 
@@ -558,9 +542,9 @@ Remove the outer application. Update-in selects the body; our function returns i
 
 Now pass update-in a function that wraps the body in an application of g. The original remains unchanged. This new term checks. The browser edits and draws; kernel checks are recorded. A structural editor could make the same edit.
 
-## 28 Bellman shrinks disagreement
+## 27 Bellman shrinks disagreement
 
-32:37–33:17 · 71 words · 6s visual holds
+31:26–32:06 · 71 words · 6s visual holds
 
 ### Phase 1
 
@@ -574,9 +558,9 @@ Take two value tables, V and W. Their largest difference is epsilon. One discoun
 
 Start one table at zero everywhere and the other at ten. Bellman reduces the gap to nine. This illustrates the claim; the proof must cover every admissible pair of tables.
 
-## 29 The proof follows the code
+## 28 The proof follows the code
 
-33:17–34:48 · 166 words · 12s visual holds
+32:06–33:38 · 166 words · 12s visual holds
 
 ### Phase 1
 
@@ -602,9 +586,9 @@ Now take the best action. Take the order that wins using V. Its score can beat t
 
 Swap V and W to get the reverse inequality. Together they bound the absolute difference for every state. The argument follows the structure of the operator: outcomes, weighted sum, maximum. That makes the proof easier to relate to the code.
 
-## 30 What the kernel checked
+## 29 What the kernel checked
 
-34:48–35:12 · 43 words · 3s visual holds
+33:38–34:02 · 43 words · 3s visual holds
 
 ### Phase 1
 
@@ -612,9 +596,9 @@ Swap V and W to get the reverse inequality. Together they bound the absolute dif
 
 This historical receipt records the exact Bellman bound. Replay after a kernel repair is pending; it does not certify our floating-point browser code. Mathematically, with discount point nine, an exact residual of point zero zero one bounds value error by point zero one.
 
-## 31 Scheduling an e-methanol plant
+## 30 Scheduling an e-methanol plant
 
-35:12–35:45 · 62 words · 3s visual holds
+34:02–34:34 · 62 words · 3s visual holds
 
 ### Phase 1
 
@@ -622,9 +606,9 @@ This historical receipt records the exact Bellman bound. Replay after a kernel r
 
 I built this illustrative methanol model to meet a weekly production contract while choosing when to buy electricity and use the hydrogen tank. For all fifty-two tested weeks of 2023, we obtained a schedule and an accepted certificate. The largest reported cost gap was twenty-six cents. The benchmark knows the whole week’s prices, and the checker’s general soundness proof is still open.
 
-## 32 52 weekly certificates accepted
+## 31 52 weekly certificates accepted
 
-35:45–36:19 · 66 words · 3s visual holds
+34:34–35:09 · 66 words · 3s visual holds
 
 ### Phase 1
 
@@ -632,9 +616,9 @@ I built this illustrative methanol model to meet a weekly production contract wh
 
 HiGHS finds the proposed schedule from our Clojure model. Our branch-and-bound algorithm builds the certificate tree, choosing branches and constructing exact bounds with HiGHS solving the smaller problems. Rainbow checks that evidence with exact arithmetic. All fifty-two weekly certificates were accepted; the median check took point six four seconds per week. That is checking time, not the time to find a schedule or build its certificate.
 
-## 33 San Roque: what can scheduling save?
+## 32 San Roque: what can scheduling save?
 
-36:19–36:54 · 65 words · 3s visual holds
+35:09–35:43 · 65 words · 3s visual holds
 
 ### Phase 1
 
@@ -642,9 +626,9 @@ HiGHS finds the proposed schedule from our Clojure model. Our branch-and-bound a
 
 For financial scale, take our separate e-SAF model at San Roque, by the Bay of Algeciras, using local wind and solar data. Planning forty-eight hours ahead saves a modeled average of 4.4 million euros annually in energy and backup hydrogen against the best tuned operating rule. This excludes missed-delivery penalties. These are model estimates, not measured factory savings or results covered by the methanol certificate.
 
-## 34 Where I want to take Rainbow
+## 33 Where I want to take Rainbow
 
-36:54–37:25 · 59 words · 3s visual holds
+35:43–36:15 · 59 words · 3s visual holds
 
 ### Phase 1
 
@@ -652,9 +636,9 @@ For financial scale, take our separate e-SAF model at San Roque, by the Bay of A
 
 I want an operator to open a certificate and ask: which constraint ruled out this schedule? Which assumption supports this bound? We could show the relevant part, insert a step, then check the result. Text need not be the only interface. Our tiny example does that for composition. The broader OR views and editing tools are still to build.
 
-## 35 Applied Higher-Order Functions
+## 34 Applied Higher-Order Functions
 
-37:25–37:47 · 39 words · 3s visual holds
+36:15–36:36 · 39 words · 3s visual holds
 
 ### Phase 1
 
@@ -662,9 +646,9 @@ I want an operator to open a certificate and ask: which constraint ruled out thi
 
 Today I concentrated on iterate. My book, Applied Higher-Order Functions, develops about twelve higher-order functions and their composition across operations research. It has the longer explanations and runnable examples. You can find it at flexiana dot com slash book.
 
-## 36 Thank you
+## 35 Thank you
 
-37:47–37:58 · 18 words · 3s visual holds
+36:36–36:48 · 18 words · 3s visual holds
 
 ### Phase 1
 

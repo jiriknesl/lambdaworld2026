@@ -16,10 +16,10 @@ follows one trajectory; the turbine introduction has one reveal. Slide 16 now il
 bird strike with a rotor impact and falling bird, driven by the displayed schedule.
 Its heading and explanatory caption are removed; the model-scope explanation remains in presenter notes.
 Slide 18 now has one reveal, retaining the order comparison. Slide 19 presenter speech explains
-q, score versus order, and the three-week versus four-week value comparison. Slides 31–33 tell the plant story, explain the solver/checker split, and distinguish
+q, score versus order, and the three-week versus four-week value comparison. Slides 30–32 tell the plant story, explain the solver/checker split, and distinguish
 modeled savings from the weekly certificate bound. The open checker-soundness theorem is visible on the results slide.
 The Bellman receipt is labelled historical, with replay after the kernel repair pending.
-Slides 31–32 now state the reported benchmark outcomes immediately: 52 accepted weekly
+Slides 30–31 now state the reported benchmark outcomes immediately: 52 accepted weekly
 certificates, a largest reported gap of EUR 0.26, and a median check of 0.64 seconds per week.
 The book photograph is embedded for offline use. The spoken script and PDF follow the new order.
 This URL is **public and unauthenticated**;
@@ -99,10 +99,10 @@ Optimise section. After a hot reload they start again.
 overlay and the last good build keeps running: undo, save. If the watch process or the editor fails,
 open the release build (`public/index.html`) — it needs nothing else.
 
-## Talk arc — revised 2026-10-23
+## Talk arc — revised 2026-10-24
 
-HOFs are the subject. Step size and momentum are integrated into optimization; observation follows the three examples.
-The deck has 36 slides; reveals are steps within a slide, not additional topics.
+HOFs are the subject. Step size and momentum are integrated into optimization; Rainbow follows the three examples.
+The deck has 35 slides; reveals are steps within a slide, not additional topics.
 
 | Slides | Estimated time | What the audience sees |
 | --- | ---: | --- |
@@ -112,19 +112,18 @@ The deck has 36 slides; reveals are steps within a slide, not additional topics.
 | 5–8: HOFs | 4:35 | Function construction, map, iterate and stopping. |
 | 9–16: Optimization | 9:08 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
 | 17–21: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
-| 22–24: Validation | 5:34 | Controller rule, reachable states and shared iterate. |
-| 25: Observation | 1:06 | Observe a supplied step without changing its result. |
-| 26–34: Rainbow | 6:16 | Proof editing, Bellman bound, plant results and future OR interfaces. |
-| 35–36: Book and thanks | 0:34 | Broader toolkit and contact. |
+| 22–24: Validation | 5:29 | Controller rule, reachable states and shared iterate. |
+| 25–33: Rainbow | 6:16 | Proof editing, Bellman bound, plant results and future OR interfaces. |
+| 34–35: Book and thanks | 0:34 | Broader toolkit and contact. |
 
-The current 4,182-word script estimates **37:58 including visual holds**, or **39:58 with two
+The current 4,048-word script estimates **36:48 including visual holds**, or **38:48 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 36 slides, 84 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 35 slides, 82 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -311,24 +310,24 @@ before a separate tick resets it; a regression test prevents a reset from hiding
 Slide 23 has three reveals per controller (nine total), with selected expansion rounds.
 
 Slide 24 names `iterate` underneath optimization, value iteration and reachability. Their states,
-update functions and stopping tests differ. Slide 25 observes an update through the common interface;
-rate and momentum have already demonstrated composition within the optimization example.
+update functions and stopping tests differ. Rate and momentum demonstrate composition within the optimization example.
 
 ## Rainbow: proofs as data — 2026-10-23
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=proof-data-20261023#s26).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=without-observer-20261024#s25).
 It remains publicly accessible without authentication.
 
-Slides 26–27 connect Clojure's data representation of code to Rainbow's EDN proof terms.
-Slide 27 executes two structural edits with `update-in`: remove the outer application,
+Slide 25 introduces Rainbow as a theorem prover and code generator focused on Clojure,
+operations research and related fields, without the ambition to match or beat Lean.
+Slide 26 executes two structural edits with `update-in`: remove the outer application,
 then wrap the remaining body in an application of `g`. A tree is rendered from the current
 body. Recorded verdicts are displayed only after checking that the browser's terms match
 those checked on the JVM. This is a talk demo, not a general visual editor.
 
-Slide 34 replaces the repeated benchmark summary with the intended direction: inspect a
+Slide 33 replaces the repeated benchmark summary with the intended direction: inspect a
 certificate's constraints and assumptions, edit a part, and check the new term. Broader OR
 views and editing tools are future work. The 52-week results, cost gap, HiGHS attribution
-and unfinished checker soundness remain on slides 31–32 and in the study guide.
+and unfinished checker soundness remain on slides 30–31 and in the study guide.
 
 Direction was reconciled with the live `rainbow-claude-4` worker and
 `../rainbow/internal-rfnbo/doc/north-star-2026-10-23.md` plus `BACKLOG.md`, at
@@ -339,7 +338,7 @@ no commercial roadmap or unsupported competitive claims were imported.
 
 ## The proof examples and their limits
 
-Slide 27 shows actual Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
+Slide 26 shows actual Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
 function composition for arbitrary propositions P, Q, R: given `f : P → Q`, `g : Q → R` and `p : P`,
 `g(f(p))` proves R. `:forall` binds propositions, `:->` is implication, `:fn` binds arguments and
 `:app` applies a term. The containing `:type`/`:value` map is the checker script's input.
@@ -357,7 +356,7 @@ clojure -Sdeps '{:paths ["../rainbow/rainbow/src" "talk/src"]}' -M talk/scripts/
 The build embeds the exact checked file and fails if it differs from the receipt. This small
 proof teaches the syntax; it is not presented as a proof of the optimization or Bellman code.
 
-Slides 28–30 return to the **Bellman contraction bound**: if two value functions are pointwise
+Slides 27–29 return to the **Bellman contraction bound**: if two value functions are pointwise
 within ε, one update puts them within γ × ε. The four-step mathematical outline cancels identical
 rewards, averages bounded future differences with normalized nonnegative probabilities, takes
 max over the same nonempty action sets, then swaps V/W for the reverse inequality. Strict
@@ -373,7 +372,7 @@ convergence guarantee here. Illustrative forecasts and synthetic bird data remai
 
 ## E-methanol certificate example
 
-Slides 31–33 tell the plant story, distinguish solver and certificate algorithms, and separate
+Slides 30–32 tell the plant story, distinguish solver and certificate algorithms, and separate
 savings from the distance to optimal cost, using Jiri’s supplied
 benchmark account (2026-10-23). This revision inspected the producer and design record, but did
 not rerun the benchmark.
@@ -404,7 +403,7 @@ outperform HiGHS at finding them. The visible slide copy and speaker script pres
 
 ### Savings are a separate comparison
 
-Slide 33 quotes the San Roque e-SAF operations study, not the methanol certificate benchmark.
+Slide 32 quotes the San Roque e-SAF operations study, not the methanol certificate benchmark.
 The weather point is 36.18° N, 5.40° W, in the San Roque / Los Barrios area by the Bay of Algeciras
 (`../rh2edin-challenge/data/manifest.json`). It uses local ERA5/Open-Meteo wind and solar data,
 PVGIS calibration and a generic wind power curve. Equipment and costs are model assumptions,
@@ -435,7 +434,7 @@ faces are used, with browser-synthesized bold. Bundled DejaVu remains for missin
 its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
 
 Visible text is intentionally brief; fuller explanations and proof assumptions remain in
-speaker notes. OR's opening slide does not reveal the concrete examples. Slide 35 uses the
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 34 uses the
 supplied `../flexiana-web/site/src/assets/book/book-wood-angle.web.webp` photograph in its
 390 × 520 area. A byte-identical copy lives at `src/talk/book-photo.webp`; the build embeds it
 as a data URL, so the book slide also works offline without adding a public asset endpoint.
@@ -443,7 +442,7 @@ as a data URL, so the book slide also works offline without adding a public asse
 ## Study Validate and Rainbow
 
 [Study guide](speaker/VALIDATE-RAINBOW-STUDY.md) and
-[printable PDF](../artifacts/validate-rainbow-study.pdf) cover slides 22–34: state fields,
+[printable PDF](../artifacts/validate-rainbow-study.pdf) cover slides 22–33: state fields,
 the decision table and controller call flow, reachability closure, proof syntax, Bellman
 contraction and residuals, solver attribution, and the precise boundaries of each claim.
 Practice questions include answer checks. The full spoken script remains in `speaker/SCRIPT.md`.

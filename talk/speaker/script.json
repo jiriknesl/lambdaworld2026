@@ -598,46 +598,26 @@
           "from": 1,
           "to": 1,
           "cue": "Read across each row; do not repeat the whole story.",
-          "speech": "Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. We already used that interface to change the optimizer’s pace and add momentum. We can also use it to observe a run.",
+          "speech": "Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. We already used that interface to change the optimizer’s pace and add momentum.",
           "hold_seconds": 3
         }
       ]
     },
     {
       "slide": 25,
-      "title": "Observe each update",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Point to the return value after the observer call.",
-          "speech": "The same step interface gives us a place to observe any of these iterations. Call the supplied step, give the old and new states to an observer, then return the new state unchanged. Here the observer records the turbine cost. It is the deliberate effect; the numerical step stays pure.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Right. Point to the atom and four logged rows.",
-          "speech": "This observer records costs in an atom, Clojure’s explicit mutable reference. Taking five states includes the starting state, so it runs four updates and records four costs. The vector forces the lazy sequence to be realized. The starting state itself causes no log entry. Reusing the same realized sequence reuses its cached values; constructing and consuming a fresh sequence runs the effects again. We can observe the algorithm without weaving logging through its numerical code.",
-          "hold_seconds": 3
-        }
-      ]
-    },
-    {
-      "slide": 26,
       "title": "Rainbow",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Recall code as data from Why Clojure; introduce proofs as data.",
-          "speech": "Rainbow is a theorem prover written in Clojure. Its proofs are data. We can write functions to inspect them, draw them, or change a part. A changed term still needs checking. That lets us experiment with how we work on proofs.",
+          "cue": "Introduce Rainbow’s focus, then move to the small proof example.",
+          "speech": "Rainbow is a theorem prover and code generator focused on Clojure, operations research and related fields. Its purpose is not to match or beat Lean. Here is a small example of how we can work with its proofs as Clojure data.",
           "hold_seconds": 2
         }
       ]
     },
     {
-      "slide": 27,
+      "slide": 26,
       "title": "A proof we can edit",
       "phases": [
         {
@@ -664,7 +644,7 @@
       ]
     },
     {
-      "slide": 28,
+      "slide": 27,
       "title": "Bellman shrinks disagreement",
       "phases": [
         {
@@ -684,7 +664,7 @@
       ]
     },
     {
-      "slide": 29,
+      "slide": 28,
       "title": "The proof follows the code",
       "phases": [
         {
@@ -718,7 +698,7 @@
       ]
     },
     {
-      "slide": 30,
+      "slide": 29,
       "title": "What the kernel checked",
       "phases": [
         {
@@ -741,7 +721,7 @@
           "hold_seconds": 3
         }
       ],
-      "slide": 31
+      "slide": 30
     },
     {
       "title": "52 weekly certificates accepted",
@@ -754,7 +734,7 @@
           "hold_seconds": 3
         }
       ],
-      "slide": 32
+      "slide": 31
     },
     {
       "title": "San Roque: what can scheduling save?",
@@ -767,7 +747,7 @@
           "hold_seconds": 3
         }
       ],
-      "slide": 33
+      "slide": 32
     },
     {
       "title": "Where I want to take Rainbow",
@@ -780,10 +760,10 @@
           "hold_seconds": 3
         }
       ],
-      "slide": 34
+      "slide": 33
     },
     {
-      "slide": 35,
+      "slide": 34,
       "title": "Applied Higher-Order Functions",
       "phases": [
         {
@@ -796,7 +776,7 @@
       ]
     },
     {
-      "slide": 36,
+      "slide": 35,
       "title": "Thank you",
       "phases": [
         {

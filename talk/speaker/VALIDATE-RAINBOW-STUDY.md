@@ -4,7 +4,7 @@ The Validate section executes a controller against every event sequence represen
 
 Read the controller example first, then the small composition proof, then Bellman contraction. Finally read the plant example. Each section gives you a sentence you can say on stage, the mechanism behind it, and the boundary of the claim.
 
-The slide numbers refer to the current 36-slide deck. This is a study companion; the shorter spoken script remains in `SCRIPT.md`.
+The slide numbers refer to the current 35-slide deck. This is a study companion; the shorter spoken script remains in `SCRIPT.md`.
 
 ## Slides 22 and 23 validate a controller
 
@@ -173,7 +173,7 @@ These are counts of distinct states, not probabilities, incidents, or birds. All
 
 The fixed-point helper has a work cap. In general, reaching that cap would not establish closure. The study runner explicitly checks that applying the expansion once more adds no state.
 
-## Slides 24 and 25 connect the examples
+## Slide 24 connects the examples
 
 **Say:** “Underneath each example is iterate. We changed the state and the function it repeatedly applies.”
 
@@ -185,17 +185,15 @@ The fixed-point helper has a work cap. In general, reaching that cap would not e
 
 Small numerical movement and exact set closure are different conditions. `iterate` does not supply the argument that a stopping condition proves what we want. We supply that argument for each problem.
 
-`with-observer` is another wrapper: it calls a step, reports old and new states to an observer, and returns the new state. The displayed example realizes five states, including the initial state, so it logs four updates. The logging effect occurs when the lazy sequence is consumed.
+## Slides 25 and 26 introduce Rainbow
 
-## Slides 26 and 27 introduce Rainbow
-
-**Say:** “Rainbow is a theorem prover written in Clojure. Proofs are data, and a kernel checks whether a proposed term establishes its stated theorem.”
+**Say:** “Rainbow is a theorem prover and code generator focused on Clojure, operations research and related fields. Its purpose is not to match or beat Lean.”
 
 A kernel is the small program implementing the logical checking rules. Proof search and tactics may propose a term; the kernel is responsible for accepting or rejecting it. Choosing Clojure does not itself supply proofs. You must state the property and construct evidence for it. Static typing and theorem proving provide different guarantees and can be used together.
 
 ### Read the exact proof syntax
 
-This is the source shown on slide 27:
+This is the source shown on slide 26:
 
 ```clojure
 {:type
@@ -241,7 +239,7 @@ The tiny composition proof and this negative control were checked again on 23 Oc
 
 “No axioms” means no additional axiom declarations were required by this proof. It does not eliminate trust in the kernel, runtime or logical rules. The argument parameters f, g and p are explicit assumptions inside the implication, not secretly introduced global axioms.
 
-### Edit the proof as data (slide 27, third phase)
+### Edit the proof as data (slide 26, third phase)
 
 **Say:** “The editor proposes a new term. The kernel checks it. We can change the interface without changing what counts as a proof.”
 
@@ -274,9 +272,9 @@ Clojure forms have a data representation. Rainbow explicit proof terms use vecto
 
 A visual tool could select a subtree, insert a step, show a dependency, or propose an edit from a drawing gesture. Each creates a candidate term requiring a check. Editing means producing a new immutable value, not modifying the accepted artifact in place. The verdict on an old term does not certify a changed term.
 
-On slide 34, “Where I want to take Rainbow,” describe the broader OR tools as future work. The small tree/edit demo exists in this talk. A general visual editor, certificate tree replay and assumption-oriented OR views are not demonstrated as released Rainbow products. Visualization is not exclusive to Rainbow or Clojure; the opportunity is an interface grounded in the actual proof data and the operator's questions.
+On slide 33, “Where I want to take Rainbow,” describe the broader OR tools as future work. The small tree/edit demo exists in this talk. A general visual editor, certificate tree replay and assumption-oriented OR views are not demonstrated as released Rainbow products. Visualization is not exclusive to Rainbow or Clojure; the opportunity is an interface grounded in the actual proof data and the operator's questions.
 
-## Slides 28 to 30 explain Bellman contraction
+## Slides 27 to 29 explain Bellman contraction
 
 **Say:** “Suppose two tables disagree about future profit. Applying the same Bellman update brings their largest disagreement to at most ninety percent of its previous size.”
 
@@ -327,13 +325,13 @@ The residual compares a candidate with one more update. A change between two con
 
 The composition example has a fresh kernel check. The Bellman theorem has a historical receipt dated 9 October 2026, named `value/signed-optimality-step-additively-contractive`, with an empty recorded axiom profile.
 
-That Bellman receipt predates a documented kernel repair. The kernel’s trusted-base document says an earlier bug could accept a proof of False and requires affected artifacts to be replayed after repair. This talk does not have a completed repaired-kernel replay of the Bellman artifact. Slide 30 correctly labels it historical and pending replay.
+That Bellman receipt predates a documented kernel repair. The kernel’s trusted-base document says an earlier bug could accept a proof of False and requires affected artifacts to be replayed after repair. This talk does not have a completed repaired-kernel replay of the Bellman artifact. Slide 29 correctly labels it historical and pending replay.
 
 **Say:** “The contraction argument is the mathematics we want checked. This is a historical Rainbow receipt; replay after the kernel repair is pending. The browser’s floating-point implementation is not proved equivalent to that exact operator.”
 
 Do not describe the Bellman browser demo as certified by the theorem. Nor should a theorem that merely unfolds an update definition be described as proving its convergence or optimality.
 
-## Slides 31 to 33 explain the plant work
+## Slides 30 to 32 explain the plant work
 
 ### The physical interpretation of the model
 
@@ -368,7 +366,7 @@ Avoid “I have a complete formal proof that the real plant is always within 10�
 
 ### The San Roque savings slide is a separate study
 
-Slide 33 concerns an assumed e-SAF design near San Roque / Los Barrios, at 36.18° N, 5.40° W. It uses local wind and solar data. The modeled mean saving of €4.4m/year concerns energy and backup hydrogen versus the best tuned operating rule; the reported interval is €2.5–6.3m.
+Slide 32 concerns an assumed e-SAF design near San Roque / Los Barrios, at 36.18° N, 5.40° W. It uses local wind and solar data. The modeled mean saving of €4.4m/year concerns energy and backup hydrogen versus the best tuned operating rule; the reported interval is €2.5–6.3m.
 
 These are modeled savings, not measured customer savings. The nine cases combine weather and price years; price years were also used in tuning, so they are not nine independent future years. The methanol certificate result does not certify this separate e-SAF comparison.
 

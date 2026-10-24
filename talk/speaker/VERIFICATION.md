@@ -304,3 +304,21 @@ the original editorial review; these later user-directed revisions are recorded 
   JavaScript matched the local release byte-for-byte; 12 frames at 1920×1080 and 1024×768,
   all three proof-edit phases, presenter speech and refresh passed.
   URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=proof-data-20261023#s26
+
+## Remove observer slide and revise Rainbow introduction — 2026-10-24
+
+- Removed “Observe each update” (old slide 25), its two speech cues and the Compose agenda
+  entry. Slide 24 now leads directly into Rainbow. Subsequent slides and study references
+  are renumbered; the deck has 35 slides and 82 speech cues.
+- Rainbow's introduction now says it is a theorem prover and code generator focused on
+  Clojure, operations research and related fields, with no purpose to match or beat Lean.
+  Removed the interface/tree/editor introductory copy and updated the spoken introduction.
+- Regenerated the script, presenter data, timing, study guide and both PDFs. Current
+  estimate: 4,048 words, 38:48 including visual holds and two minutes for questions.
+- Script consistency and release compilation passed (zero warnings). Targeted offline and
+  public browser checks each covered eight frames at 1920×1080 and 1024×768: the transition
+  from slide 24, Rainbow, the proof example and the closing slide. Correct numbering,
+  removed agenda entry, requested introduction, layout and matching presenter speech passed.
+  Both PDFs printed offline. Numerical implementations were unchanged; no new tests added.
+- Published by refreshing the copied static release; tunnel configuration unchanged:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=without-observer-20261024#s25

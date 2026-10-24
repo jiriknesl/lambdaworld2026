@@ -1335,7 +1335,7 @@
 
 (defn bullets [& items] [:ul.bullets (for [i items] [:li i])])
 
-(def section-order ["Hello" "Clojure" "OR" "HOFs" "Optimise" "Decide" "Validate" "Compose" "Rainbow" "The book" "Thank you"])
+(def section-order ["Hello" "Clojure" "OR" "HOFs" "Optimise" "Decide" "Validate" "Rainbow" "The book" "Thank you"])
 
 (def slides
   [
@@ -1835,32 +1835,15 @@
                 [:tr [:td "validate"] [:td "set of reached states"] [:td "expand with successors"] [:td "set equality"]]]
                [:div.promise "(iterate step start)"]
                [:p.caption "fixed-point takes this sequence until the supplied stopping test passes."]])
-    :notes "One minute. This is the payoff. Point back to each animation: a schedule, values and actions, a growing set. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. The optimizer has already demonstrated rate and momentum changes. Next observe a supplied update without changing its result."}
-
-   {:section "Compose" :title "Observe each update" :steps 2
-    :render (fn [frame]
-              [:div.two.even
-               [:div (code 'with-observer {:size :small :marks #{"step" "observe!" "fn"}})
-                (when (pos? frame)
-                  [:div (code 'observed-costs {:size :small})
-                   (code 'record-cost! {:size :small})])
-                (code "(vec\n  (take 5\n    (iterate (with-observer risk-step record-cost!)\n             first-guess)))" {:size :small})]
-               [:div [:p.aside "The wrapper calls the observer, then returns the new state."]
-                [:table.levels [:tr [:th "update"] [:th "recorded cost"]]
-                 (for [[i value] (map-indexed vector @observed-costs)]
-                   [:tr [:td (inc i)] [:td (fmt value 2)]])]
-                [:p.caption "Five states, including the start. Four updates logged."]
-                [:p.caption "Logging happens when the lazy sequence is realized."]]])
-    :notes "with-observer wraps any step. It calls the supplied observer with old and new state, and returns the new state unchanged. record-cost! is shown in full: it appends the actual cost to an atom. The demo realizes take 5 once and displays those four log entries. The computation stays in the original pure step; the observer deliberately performs an effect. Laziness matters: creating the sequence does not run the log. Reusing realized states does not repeat the log, but constructing and realizing a fresh sequence does. This is the composition payoff: change the update or observe it without editing the traversal."}
+    :notes "One minute. This is the payoff. Point back to each animation: a schedule, values and actions, a growing set. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. The optimizer has already demonstrated rate and momentum changes. Next introduce Rainbow and proofs as data."}
 
    {:section "Rainbow" :title "Rainbow"
     :render (fn [_]
               [:div.two.even
-               [:div [:p.aside "A theorem prover written in Clojure."]
+               [:div [:p.aside "A theorem prover & code generator."]
                 [:p.aside [:a {:href "https://flexiana.com/rainbow"} "flexiana.com/rainbow"]]]
-               [:div [:p.aside "A proof can have more than one interface."]
-                [:p "Text. A tree. A structural editor."]
-                [:p.caption "The editor proposes a term. The kernel checks it."]]])
+               [:div [:p.aside "Focused on Clojure, operations research and related fields."]
+                [:p "Its purpose is not to match or beat Lean."]]])
     :notes "Clojure code has a data representation; Rainbow proof terms are EDN data too. This invites ordinary functions to inspect, render and transform them. A transformation can produce an invalid proof: only a new check establishes whether the new term has the claimed type. Static typing and theorem proving are complementary, not competing language claims. The structural view on the next slide is implemented in this talk; a general visual proof editor is a direction, not a shipped Rainbow feature. Other provers also have structured terms and visualization tools."}
 
    {:section "Rainbow" :title "A proof we can edit" :steps 3
