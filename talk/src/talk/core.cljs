@@ -1955,46 +1955,23 @@
                [:p.caption "The checker’s soundness theorem is still open."]])
     :notes "This illustrative methanol model has no municipality, named physical plant or weather inputs. Spain refers to the OMIE peninsular wholesale bidding zone, not a uniform renewable PPA price. Plant model and certificate producer: ../rh2edin-challenge/proofs/rainbow_bb_export.clj. HiGHS supplies the MIP incumbent; our Clojure branch-and-bound constructs a certificate using HiGHS LP relaxations. The Rainbow checker validates that certificate. This is not the slide gradient-descent or Bellman solver. Reported plant benchmark supplied by Jiri. Electricity use is 50 MWh per tonne of hydrogen; methanol consumes 0.19 tonnes of hydrogen per tonne. The tank starts at 10 tonnes and must finish at least there. The loop has 50% turndown and a EUR 1,000 start cost. The four-stack variant has four 30 MW stacks, 20% turndown and EUR 500 per stack start. No ramp limits, degradation, CO₂ or compressor limits, grid fees or renewable-fuel sourcing rules are represented. This is a model with known weekly prices, not a live day-ahead trading strategy. No operating trace is drawn because the underlying hourly schedules were not supplied."}
 
-   {:section "Rainbow" :title "52 weekly certificates accepted"
-    :render (fn [_]
-              [:div
-               [:div.proof-steps
-               [:div.proof-row.revealed [:strong "Our model"]
-                [:div [:b "Prices, equipment, storage, production"]]]
-               [:div.proof-row.revealed [:strong "HiGHS"]
-                [:div [:b "Finds the proposed schedule"]]]
-               [:div.proof-row.revealed [:strong "Our search"]
-                [:div [:b "Builds the certificate tree"]
-                 [:p "HiGHS solves the smaller problems inside it."]]]
-               [:div.proof-row.revealed [:strong "Rainbow"]
-                [:div [:b "Checks the certificate with exact arithmetic"]]]]
-               [:p.aside "Median check: 0.64 seconds per week."]
-               [:p.caption "Reported relative cost gap ≤ 10⁻⁶ in all 52 weeks."]])
-    :notes "Verified against ../rh2edin-challenge/proofs/rainbow_bb_export.clj, especially the incumbent at line 84 and the branch-and-bound loop near line 162. Our contribution includes the plant formulation, branch selection, exact certificate construction and checker. HiGHS supplies both the MIP incumbent and LP relaxation solves. HiGHS is a third-party open-source solver from the Edinburgh optimization community. No claim that our gradient descent or Bellman demo generated this schedule."}
-
-   {:section "Rainbow" :title "San Roque: what can scheduling save?"
-    :render (fn [_]
-              [:div
-               [:p.aside "e-SAF model · Bay of Algeciras · local wind and solar data"]
-               [:div.certificate-results
-                [:div [:strong "€4.4m/year"] [:span "mean modeled saving"]]
-                [:div [:strong "€2.5–6.3m"] [:span "reported 95% interval"]]]
-               [:p.aside "Energy and backup hydrogen, compared with the best tuned operating rule."]
-               [:p.caption "Excludes the assumed cost of missed deliveries. Not savings measured at a factory."]
-               [:p.caption "Nine weather/price combinations · price years also used in tuning"]
-               [:p.caption "Separate study from the methanol certificate benchmark."]])
-    :notes "Site point: 36.18 N, 5.40 W in data/manifest.json. The study concerns the San Roque / Los Barrios industrial area, not a named operating factory or customer engineering model. Open-Meteo/ERA5 weather 2015–2025 at that point; PV calibrated to PVGIS; wind uses a generic power curve. Equipment and cost inputs are labelled assumptions in esaf/assumptions.clj. It is not an average Spanish weather profile. Source: ../rh2edin-challenge/challenge-1-esaf/README.md section 5.1 and results/results.json operations. Energy/backup component = total value_vs_rule minus shortfall component, mean 4.388895399574215 M EUR/year; the reported lower interval endpoint is 2.4782220376606423 M EUR/year. This is a modeled comparison, not realized customer savings or a guarantee. Nine cases combine three held-out weather years with three price years reused in tuning; do not call them nine independent future years. Baseline is the strongest of three tuned rule families. The full 9.3 M EUR figure includes modeled missed-delivery penalties; we deliberately quote energy/backup only. This study uses e-SAF, not the e-methanol weekly certificate model, and is not covered by that 1e-6 bound. No commercial relationship or customer outcome is asserted."}
-
-   {:section "Rainbow" :title "Where I want to take Rainbow"
+   {:section "Rainbow" :title "Where we use Rainbow now?"
     :render (fn [_]
               [:div.two.even
-               [:div [:p.aside "Open a certificate."]
-                [:p "Which constraint ruled out this schedule?"]
-                [:p "Which assumptions does this bound depend on?"]]
-               [:div [:p.aside "Work with its structure."]
-                [:p "Select a part. Insert a step. Check again."]
-                [:p.caption "Next: views and editing tools built from proof data."]]])
-    :notes "This is a direction, not a released general editor. The talk's small term tree already comes from the actual EDN body; future views should preserve that link to the checked artifact. For OR, meaningful nodes include constraints, dual bounds, search-tree branches and cited assumptions. Inserting or replacing a part constructs a candidate; the previous verdict does not transfer. Bindings, dependencies and the exact statement must be checked again. A drawing gesture could propose an edit, but is not itself evidence. Visual proof tools also exist in other ecosystems; the opportunity is making OR evidence understandable and reusable through Clojure data. The preceding plant results remain reported certificate checks, with end-to-end checker soundness unfinished. No claim about savings is upgraded by this roadmap."}
+               [:div
+                [:p.aside "An e-SAF plant model in the Bay of Algeciras."]
+                [:div.certificate-results {:style {:grid-template-columns "1fr"}}
+                 [:div [:strong "€7.9m/year"]
+                  [:span "estimated saving from better plant design"]]]
+                [:p.caption "Compared with a design based on an average year."]
+                [:p "50,000 tonnes of synthetic aviation fuel per year."]]
+               [:div
+                [:p.aside "Hourly OMIE electricity prices. Local wind and solar history."]
+                [:p "We model electrolysis, storage, CO₂ supply and fuel production, including operating limits and costs."]
+                [:p "We compare how to size the plant, buy electricity and run production."]
+                [:p "Rainbow checks the proof of the modeled fuel-blending optimum."]
+                [:p.caption "Annual savings are model estimates; the proof covers a specific decision."]]])
+    :notes "Business case from challenge-1-esaf, separate from the preceding e-methanol benchmark. The site is San Roque / Los Barrios, Bay of Algeciras, at 36.18 N, -5.40 W. This is a modeled 50,000 t/year plant, not a named operating customer's installation. OMIE Spanish-zone hourly prices cover 2023–2025; local ERA5/Open-Meteo weather covers 2015–2025 with PVGIS calibration. Equipment costs and efficiencies are explicit assumptions, not vendor quotes. The figure is the paired out-of-sample mean cost difference between average-year design B1 and the stochastic design: 157.2451162402811 EUR/t times the assumed 50,000 t/year target = 7.862255812014055 M EUR/year. It includes the study's modeled costs and shortfall assumptions; it is distinct from the earlier 4.4 M energy/backup-only operating-policy comparison. Nine weather/price combinations reuse the price years used in tuning; do not call them nine independent unseen years. The annual saving is an evaluated model result, not a formal theorem or realized customer saving. The user-suggested 74 M EUR/year figure has not been traced to a result/baseline and is not asserted. The recorded Rainbow result certifies the specified 60-unit fuel-blending model's optimum: at most 28 units of e-SPK under the supplied properties/constraints. The 24 operating LP certificates use a separate exact checker; do not attribute their implementation verification or the whole annual saving to Rainbow. HiGHS solves the LPs; our modeling/search and verification work use it. Sources and pending-figure status are in speaker/plant-case-evidence.json and the study guide."}
 
    ;; ---------------------------------------------------------------- The book (2 min)
    {:section "The book" :title "Applied Higher-Order Functions"

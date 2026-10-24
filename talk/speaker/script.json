@@ -703,46 +703,20 @@
       "slide": 30
     },
     {
-      "title": "52 weekly certificates accepted",
+      "title": "Where we use Rainbow now?",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Attribute each contribution, then give the measured checking time.",
-          "speech": "HiGHS finds the proposed schedule from our Clojure model. Our branch-and-bound algorithm builds the certificate tree, choosing branches and constructing exact bounds with HiGHS solving the smaller problems. Rainbow checks that evidence with exact arithmetic. All fifty-two weekly certificates were accepted; the median check took point six four seconds per week. That is checking time, not the time to find a schedule or build its certificate.",
-          "hold_seconds": 3
+          "cue": "Tell the business story; distinguish the modeled saving from the decision that has a proof.",
+          "speech": "We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-SAF is synthetic aviation fuel. We use real hourly electricity prices from OMIE and local wind and solar history. The model includes electrolysis, storage, carbon dioxide supply, production limits and costs. We compare how to size the plant, buy electricity and run it. Against a plant designed for an average year, our model estimates about 7.9 million euros less cost annually. That is a modeled comparison, not a promise to an operating factory. Rainbow currently checks the proof of the fuel-blending optimum. We are building evidence for specific decisions; the annual saving itself is not yet a proved claim.",
+          "hold_seconds": 4
         }
       ],
       "slide": 31
     },
     {
-      "title": "San Roque: what can scheduling save?",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Say this is a separate e-SAF model, a baseline comparison and a modeled result.",
-          "speech": "For financial scale, take our separate e-SAF model at San Roque, by the Bay of Algeciras, using local wind and solar data. Planning forty-eight hours ahead saves a modeled average of 4.4 million euros annually in energy and backup hydrogen against the best tuned operating rule. This excludes missed-delivery penalties. These are model estimates, not measured factory savings or results covered by the methanol certificate.",
-          "hold_seconds": 3
-        }
-      ],
-      "slide": 32
-    },
-    {
-      "title": "Where I want to take Rainbow",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Return to proofs as data. Describe a direction, not a finished editor.",
-          "speech": "I want an operator to open a certificate and ask: which constraint ruled out this schedule? Which assumption supports this bound? We could show the relevant part, insert a step, then check the result. Text need not be the only interface. Our tiny example does that for composition. The broader OR views and editing tools are still to build.",
-          "hold_seconds": 3
-        }
-      ],
-      "slide": 33
-    },
-    {
-      "slide": 34,
+      "slide": 32,
       "title": "Applied Higher-Order Functions",
       "phases": [
         {
@@ -755,7 +729,7 @@
       ]
     },
     {
-      "slide": 35,
+      "slide": 33,
       "title": "Thank you",
       "phases": [
         {

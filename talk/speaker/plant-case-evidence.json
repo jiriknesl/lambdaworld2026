@@ -18,6 +18,15 @@
     },
     "../rh2edin-challenge/data/manifest.json": {
       "sha256": "216bf8cddc63fcb34d4fa7029c29f334d77a64a99edaa370c71b2ce39e1a2dc6"
+    },
+    "../rh2edin-challenge/challenge-1-esaf/proofs/rainbow-results.edn": {
+      "sha256": "a027c38c5bf0e064a5d5c78c5168e6de60d0bd412194b70b825d023e425b8feb"
+    },
+    "../rh2edin-challenge/challenge-1-esaf/proofs/bundles/c1_blend.bundle.edn": {
+      "sha256": "8e258a39b1ea6e83f11d8e08e95d31d9ad189f136c2c086a7a8428e71757b54c"
+    },
+    "../rh2edin-challenge/challenge-1-esaf/results/verify_summary.json": {
+      "sha256": "b71137afe06514e25aacc2e4f979656371537be8598513e7625093abcaa8d5e6"
     }
   },
   "baseline": "Best of three tuned rule families: level control, daily schedule and pacing.",
@@ -66,5 +75,21 @@
     "plant": "Assumed e-SAF design, not identified customer engineering data",
     "weather": "Open-Meteo/ERA5 at the site, 2015–2025; PVGIS calibration; generic wind power curve",
     "methanol_benchmark": "No physical site or weather inputs; OMIE Spain wholesale prices, not renewable-specific prices"
+  },
+  "historical_comparison": "Top-level policy and energy-saving fields describe the former operations slide. Current slide 31 uses current_stage_case instead.",
+  "current_stage_case": {
+    "title": "Where we use Rainbow now?",
+    "source": "../rh2edin-challenge/challenge-1-esaf/results/results.json",
+    "field": "out_of_sample.paired_B1_minus_main_eur_t.mean",
+    "baseline": "B1: deterministic average-year plant design",
+    "alternative": "Stochastic plant design, lambda 1",
+    "saving_eur_t": 157.2451162402811,
+    "assumed_annual_output_t": 50000,
+    "annual_saving_meur": 7.862255812014055,
+    "display": "€7.9m/year estimated saving from better plant design",
+    "scope": "Modeled total-cost comparison, including shortfall assumptions; not realized savings or a formally proved annual saving. Not the historical energy/backup-only operations comparison.",
+    "rainbow_proof": "Recorded c1/blend proof: 28 units e-SPK is optimal in a 60-unit modeled fuel blend; no axioms reported.",
+    "other_checks": "24 operating LP certificates checked by a separate exact checker; not a proof of the annual saving.",
+    "requested_74_meur": "Source and baseline not found; clarification requested. Not asserted on stage."
   }
 }

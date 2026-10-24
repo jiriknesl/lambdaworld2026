@@ -10,8 +10,8 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-overview-20261024).
-Updated 2026-10-24: 35 slides. Rainbow now introduces its purpose, compares its focus and
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=business-case-20261024).
+Updated 2026-10-24: 33 slides. Rainbow now introduces its purpose, compares its focus and
 workflow with Lean, shows a short proof-data example, presents two freshly checked OR
 theorems, and generates a clamp function before the plant results. The longer Bellman
 proof remains in the study guide. The book slide describes the broader use of higher-order
@@ -96,7 +96,7 @@ open the release build (`public/index.html`) — it needs nothing else.
 ## Talk arc — revised 2026-10-24
 
 HOFs are the subject. Step size and momentum are integrated into optimization; Rainbow follows the three examples.
-The deck has 35 slides; reveals are steps within a slide, not additional topics.
+The deck has 33 slides; reveals are steps within a slide, not additional topics.
 
 | Slides | Estimated time | What the audience sees |
 | --- | ---: | --- |
@@ -107,17 +107,17 @@ The deck has 35 slides; reveals are steps within a slide, not additional topics.
 | 9–16: Optimization | 9:08 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
 | 17–21: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 22–24: Validation | 5:29 | Controller rule, reachable states and shared iterate. |
-| 25–33: Rainbow | 6:01 | Purpose, Lean comparison, checked OR theorems, generated Clojure and plant results. |
-| 34–35: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
+| 25–31: Rainbow | 5:20 | Purpose, Lean comparison, checked OR theorems, generated Clojure and plant results. |
+| 32–33: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
 
-The current 4,044-word script estimates **36:37 including visual holds**, or **38:37 with two
+The current 3,970-word script estimates **35:57 including visual holds**, or **37:57 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 35 slides, 79 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 33 slides, 77 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -308,7 +308,7 @@ update functions and stopping tests differ. Rate and momentum demonstrate compos
 
 ## Rainbow: purpose and checked examples — 2026-10-24
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-overview-20261024#s25).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=business-case-20261024#s25).
 It remains publicly accessible without authentication.
 
 Slide 25 introduces Rainbow as a theorem prover and code generator focused on Clojure,
@@ -321,10 +321,9 @@ then wrap the remaining body in an application of `g`. A tree is rendered from t
 body. Recorded verdicts are displayed only after checking that the browser's terms match
 those checked on the JVM. This is a talk demo, not a general visual editor.
 
-Slide 33 replaces the repeated benchmark summary with the intended direction: inspect a
-certificate's constraints and assumptions, edit a part, and check the new term. Broader OR
-views and editing tools are future work. The 52-week results, cost gap, HiGHS attribution
-and unfinished checker soundness remain on slides 30–31 and in the study guide.
+Slide 31 replaces the previous slides 31–33 with one business case: the Algeciras
+e-SAF model, its data sources and estimated design saving. The proof's scope is stated
+separately. The e-methanol benchmark remains on slide 30, with details in the study guide.
 
 Direction was reconciled with the live `rainbow-claude-4` worker and
 `../rainbow/internal-rfnbo/doc/north-star-2026-10-23.md` plus `BACKLOG.md`, at
@@ -384,8 +383,7 @@ have no general convergence guarantee here. Forecasts and bird data remain illus
 
 ## E-methanol certificate example
 
-Slides 30–32 tell the plant story, distinguish solver and certificate algorithms, and separate
-savings from the distance to optimal cost, using Jiri’s supplied
+Slide 30 introduces the methanol benchmark, using Jiri’s supplied
 benchmark account (2026-10-23). This revision inspected the producer and design record, but did
 not rerun the benchmark.
 The plant diagram shows 120 MW of electrolysis, a 20 t hydrogen tank and a 10 t/h methanol loop,
@@ -415,27 +413,38 @@ outperform HiGHS at finding them. The visible slide copy and speaker script pres
 
 ### Savings are a separate comparison
 
-Slide 32 quotes the San Roque e-SAF operations study, not the methanol certificate benchmark.
-The weather point is 36.18° N, 5.40° W, in the San Roque / Los Barrios area by the Bay of Algeciras
-(`../rh2edin-challenge/data/manifest.json`). It uses local ERA5/Open-Meteo wind and solar data,
-PVGIS calibration and a generic wind power curve. Equipment and costs are model assumptions,
-not a named factory’s engineering data. The methanol benchmark has no site or weather input: it
-uses OMIE’s Spanish wholesale price, which is not a renewable-specific supply-contract price.
-The peninsular Spanish bidding zone shares a day-ahead clearing price for each trading period
-([OMIE market explanation](https://www.omie.es/en/mercado-de-electricidad)). Renewable PPAs
-have separately agreed prices, which may be fixed or indexed
-([Iberdrola España PPA explanation](https://www.iberdrolaespana.com/about-us/business-lines/energy-solutions-customers-spain/ppas-energy-spain)).
-A 48-hour rolling-horizon policy reduces modeled energy and backup-hydrogen costs by a mean
-EUR 4.4m/year versus the best of three tuned rule families; the study reports a 95% interval of
-EUR 2.5–6.3m. The full EUR 9.3m result includes assumed missed-delivery penalties, which this
-slide excludes. These are model estimates, not savings realized at a customer factory. Nine
-cases combine three held-out weather years with three price years reused in tuning; they are
-not nine independent future years. The weekly methanol certificates do not certify this result.
+Slide 31 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
+in the Bay of Algeciras (36.18° N, 5.40° W). It combines historical hourly OMIE Spanish prices
+for 2023–2025 with local ERA5/Open-Meteo wind and solar history and PVGIS calibration.
+Electrolysis, storage, CO₂ supply and fuel production have explicit limits and costs;
+equipment sizes and costs are assumptions, not a named customer's engineering design.
 
-Source: `../rh2edin-challenge/challenge-1-esaf/README.md` section 5.1 and
-`results/results.json` → `operations`; the energy component is total value minus the shortfall
-component in each paired case. `speaker/plant-case-evidence.json` records the extraction, source
-hashes and attribution boundary. The model/certificate pipelines were inspected, not rerun.
+The displayed **€7.9m/year** is a design comparison: stochastic plant design versus B1,
+a deterministic design based on an average year. The source value is
+`out_of_sample.paired_B1_minus_main_eur_t.mean = 157.2451162402811` in
+`../rh2edin-challenge/challenge-1-esaf/results/results.json`.
+Multiplying by the assumed 50,000 tonnes/year gives €7,862,255.81/year. This total-cost
+comparison includes modeled shortfall assumptions. Nine weather/price combinations
+are evaluated; the price years were reused in tuning. It is an estimate, not realized
+customer savings or a formal proof of annual savings.
+
+Rainbow's recorded `c1/blend` result proves the modeled fuel-blending optimum:
+28 units of e-SPK in a 60-unit blend, with no axioms reported. See
+`challenge-1-esaf/proofs/rainbow-results.edn` and `proofs/bundles/c1_blend.bundle.edn`
+in the sibling `rh2edin-challenge` repository. A separate exact checker accepted 24
+operating LP certificates. Neither result certifies the full annual savings comparison.
+These existing records were inspected, not rerun for this copy change.
+
+The earlier €4.4m/year energy/backup-hydrogen operating comparison remains in
+`speaker/plant-case-evidence.json` as historical evidence; it is a different baseline.
+The requested €74m/year figure has not been traced to a result or baseline and is not
+asserted. The source question remains pending.
+
+Data references: [OMIE market results](https://www.omie.es/en/market-results/daily/daily-market/day-ahead-price?scope=daily),
+[PVGIS hourly data](https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/using-pvgis-5/pvgis-5-tools/hourly-radiation_en),
+and `../rh2edin-challenge/data/manifest.json`. OMIE wholesale prices are not a
+renewable-specific supply-contract price. The separate methanol benchmark does not
+certify this e-SAF study.
 
 ## Typography and slide copy
 
@@ -446,7 +455,7 @@ faces are used, with browser-synthesized bold. Bundled DejaVu remains for missin
 its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
 
 Visible text is intentionally brief; fuller explanations and proof assumptions remain in
-speaker notes. OR's opening slide does not reveal the concrete examples. Slide 34 uses the
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 32 uses the
 supplied `../flexiana-web/site/src/assets/book/book-wood-angle.web.webp` photograph in its
 390 × 520 area. A byte-identical copy lives at `src/talk/book-photo.webp`; the build embeds it
 as a data URL, so the book slide also works offline without adding a public asset endpoint.

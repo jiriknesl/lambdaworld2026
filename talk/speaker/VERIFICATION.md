@@ -359,3 +359,29 @@ the original editorial review; these later user-directed revisions are recorded 
   and 1024×768 passed, including both theorem phases, generated source/results, book photo
   and matching theorem/code-generation presenter speech.
   URL: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-overview-20261024#s25
+
+
+## 2026-10-24 — Algeciras business case
+
+- Replaced former slides 31–33 with “Where we use Rainbow now?”; book and thanks
+  are now 32–33. OMIE prices, local weather, plant constraints and business decisions
+  are described alongside the estimated saving and the specific Rainbow proof.
+- Traced €7.9m/year to the mean paired design cost difference of €157.2451162402811/t
+  times the assumed 50,000 t/year target. This is the stochastic-versus-average-year
+  design comparison, including modeled shortfall assumptions. Preserved the earlier
+  operations comparison as historical evidence rather than reusing its baseline.
+  €74m/year remains untraced; the source question is pending and that figure is not asserted.
+- Inspected the e-SAF result records, input manifest and recorded Rainbow blend proof.
+  Added source hashes and explicit scope to plant-case-evidence.json. Did not rerun
+  the plant optimization or proof pipeline. Annual savings are not claimed as proved.
+- Release compilation: 51 files, 3 compiled, zero warnings. Script consistency passed:
+  33 slides, 77 cues, 3,970 words; 35:57 with holds, 37:57 with two minutes for questions.
+- Offline Chromium: 249 frames at 1600×900, 1920×1080 and 1024×768; all slides and
+  short reveals, sampled long traces. No overflow or external requests. Hash recovery,
+  presenter controls and synchronized day marker passed. Inspected slide 31 screenshot.
+- Regenerated the speech/study HTML and both PDFs; offline print checks passed.
+- Refreshed the existing public static preview without changing tunnel configuration.
+  Public JavaScript matches the release byte-for-byte; business case and neighboring
+  slides passed at 1920×1080 and 1024×768, with book photo and matching presenter speech.
+  Public unauthenticated URL:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=business-case-20261024#s31

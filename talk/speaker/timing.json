@@ -1,7 +1,7 @@
 {
-  "spoken_words": 4044,
+  "spoken_words": 3970,
   "pace_wpm": 125,
-  "holds_seconds": 256,
+  "holds_seconds": 251,
   "questions_seconds": 120,
   "slides": [
     {
@@ -216,44 +216,30 @@
     },
     {
       "slide": 31,
-      "words": 66,
-      "hold_seconds": 3,
+      "words": 116,
+      "hold_seconds": 4,
       "start_seconds": 2060,
-      "end_seconds": 2094
+      "end_seconds": 2119
     },
     {
       "slide": 32,
-      "words": 65,
+      "words": 47,
       "hold_seconds": 3,
-      "start_seconds": 2094,
-      "end_seconds": 2129
+      "start_seconds": 2119,
+      "end_seconds": 2145
     },
     {
       "slide": 33,
-      "words": 59,
-      "hold_seconds": 3,
-      "start_seconds": 2129,
-      "end_seconds": 2160
-    },
-    {
-      "slide": 34,
-      "words": 47,
-      "hold_seconds": 3,
-      "start_seconds": 2160,
-      "end_seconds": 2185
-    },
-    {
-      "slide": 35,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 2185,
-      "end_seconds": 2197
+      "start_seconds": 2145,
+      "end_seconds": 2157
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 2582,
-    "125": 2317,
-    "140": 2109
+    "110": 2536,
+    "125": 2277,
+    "140": 2072
   },
-  "script_sha256": "f5bd24598f716f5332359173a798a5a8ab40ba892f6169ee940590ca5f792bdf"
+  "script_sha256": "bbbba582b00b1d5736e520258dc96a7d9763d9ef9ff3ace5717933b12d24c538"
 }

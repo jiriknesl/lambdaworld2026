@@ -278,7 +278,7 @@ Clojure forms have a data representation. Rainbow explicit proof terms use vecto
 
 A visual tool could select a subtree, insert a step, show a dependency, or propose an edit from a drawing gesture. Each creates a candidate term requiring a check. Editing means producing a new immutable value, not modifying the accepted artifact in place. The verdict on an old term does not certify a changed term.
 
-On slide 33, “Where I want to take Rainbow,” describe the broader OR tools as future work. The small tree/edit demo exists in this talk. A general visual editor, certificate tree replay and assumption-oriented OR views are not demonstrated as released Rainbow products. Visualization is not exclusive to Rainbow or Clojure; the opportunity is an interface grounded in the actual proof data and the operator's questions.
+
 
 ## Slide 28: two checked OR theorems
 
@@ -372,7 +372,7 @@ That Bellman receipt predates a documented kernel repair. The kernel’s trusted
 
 Do not describe the Bellman browser demo as certified by the theorem. Nor should a theorem that merely unfolds an update definition be described as proving its convergence or optimality.
 
-## Slides 30 to 32 explain the plant work
+## Slides 30 and 31 explain the plant work
 
 ### The physical interpretation of the model
 
@@ -405,11 +405,40 @@ The important unfinished piece is the checker’s **soundness theorem**: a forma
 
 Avoid “I have a complete formal proof that the real plant is always within 10⁻⁶ of optimal.” That would combine an unfinished formal link, a finite benchmark, a modeled plant and an unmodeled real operating environment.
 
-### The San Roque savings slide is a separate study
+### Algeciras: data, estimated savings and proof scope
 
-Slide 32 concerns an assumed e-SAF design near San Roque / Los Barrios, at 36.18° N, 5.40° W. It uses local wind and solar data. The modeled mean saving of €4.4m/year concerns energy and backup hydrogen versus the best tuned operating rule; the reported interval is €2.5–6.3m.
+Slide 31 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
+in the Bay of Algeciras (36.18° N, 5.40° W). It combines historical hourly OMIE Spanish prices
+for 2023–2025 with local ERA5/Open-Meteo wind and solar history and PVGIS calibration.
+Electrolysis, storage, CO₂ supply and fuel production have explicit limits and costs;
+equipment sizes and costs are assumptions, not a named customer's engineering design.
 
-These are modeled savings, not measured customer savings. The nine cases combine weather and price years; price years were also used in tuning, so they are not nine independent future years. The methanol certificate result does not certify this separate e-SAF comparison.
+The displayed **€7.9m/year** is a design comparison: stochastic plant design versus B1,
+a deterministic design based on an average year. The source value is
+`out_of_sample.paired_B1_minus_main_eur_t.mean = 157.2451162402811` in
+`../rh2edin-challenge/challenge-1-esaf/results/results.json`.
+Multiplying by the assumed 50,000 tonnes/year gives €7,862,255.81/year. This total-cost
+comparison includes modeled shortfall assumptions. Nine weather/price combinations
+are evaluated; the price years were reused in tuning. It is an estimate, not realized
+customer savings or a formal proof of annual savings.
+
+Rainbow's recorded `c1/blend` result proves the modeled fuel-blending optimum:
+28 units of e-SPK in a 60-unit blend, with no axioms reported. See
+`challenge-1-esaf/proofs/rainbow-results.edn` and `proofs/bundles/c1_blend.bundle.edn`
+in the sibling `rh2edin-challenge` repository. A separate exact checker accepted 24
+operating LP certificates. Neither result certifies the full annual savings comparison.
+These existing records were inspected, not rerun for this copy change.
+
+The earlier €4.4m/year energy/backup-hydrogen operating comparison remains in
+`plant-case-evidence.json` as historical evidence; it is a different baseline.
+The requested €74m/year figure has not been traced to a result or baseline and is not
+asserted. The source question remains pending.
+
+Data references: [OMIE market results](https://www.omie.es/en/market-results/daily/daily-market/day-ahead-price?scope=daily),
+[PVGIS hourly data](https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/using-pvgis-5/pvgis-5-tools/hourly-radiation_en),
+and `../rh2edin-challenge/data/manifest.json`. OMIE wholesale prices are not a
+renewable-specific supply-contract price. The separate methanol benchmark does not
+certify this e-SAF study.
 
 ## Questions to practise aloud
 
@@ -427,7 +456,7 @@ Try each answer without looking at the earlier sections. A short accurate answer
 10. What does residual 0.001 imply when γ is 0.9, and under what arithmetic assumptions?
 11. Which results are freshly checked, which receipt is historical, and which theorem is open?
 12. What does HiGHS do, and what did we implement?
-13. How do the €4.4m saving and the €0.26 gap differ?
+13. How do the €7.9m design saving and the €0.26 gap differ?
 
 ### Answer checks
 
@@ -443,7 +472,7 @@ Try each answer without looking at the earlier sections. A short accurate answer
 10. An exact candidate’s value error is at most 0.01 under the discounted-model assumptions. Floating-point rounding needs separate treatment.
 11. Composition, finite action selection, LP weak duality, clamp refinement and scoped compilation have fresh checks. Bellman remains a historical receipt pending replay. The plant checker’s acceptance-implies-optimality theorem is open.
 12. HiGHS supplies the candidate and LP solves. Our code supplies the model, certificate-producing search and checking machinery.
-13. €4.4m is a separate e-SAF baseline comparison. €0.26 is the largest reported methanol certificate gap, not baseline savings.
+13. €7.9m is an estimated e-SAF design saving against an average-year design. €0.26 is the largest reported methanol certificate gap, not baseline savings.
 
 ## Run the examples and inspect the evidence
 
