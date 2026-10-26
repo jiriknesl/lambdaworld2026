@@ -528,3 +528,13 @@ the original editorial review; these later user-directed revisions are recorded 
   speech passed at 1920×1080 and 1024×768. Model and proof claims unchanged.
   Existing static preview refreshed without changing the tunnel configuration:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plant-copy-20261026#s24
+
+## 2026-10-26 — Neutral example labels
+
+- Renamed the wind-farm section to “Example 1” and the hydrogen section to “Example 2”,
+  including the shared slide constructor and agenda labels. Updated README's talk arc.
+  Slide titles, numbering, algorithms and speech are unchanged.
+- Release passed without warnings. Public bundle matches; all 13 example slides show
+  the correct active section at 1920×1080 and 1024×768, with no old labels or agenda overlap.
+- Refreshed the existing static preview without changing the tunnel configuration:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=example-labels-20261026#s7

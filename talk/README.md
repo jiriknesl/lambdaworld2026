@@ -10,7 +10,7 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plant-copy-20261026).
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=example-labels-20261026).
 Updated 2026-10-26: 26 slides. The HOF introduction is two slides: iterate and its
 stopping test, using one square-root example throughout. Validation is one animated shield demonstration, followed
 by the shared iterate summary. Rainbow explains its AI-oriented design goal and information density, explains Clojure as a generation target, and presents the Algeciras case. The deeper
@@ -108,8 +108,8 @@ The deck has 26 slides; reveals are steps within a slide, not additional topics.
 | 3: Clojure | 0:27 | Why I chose it; no language prerequisite. |
 | 4: OR | 0:38 | What optimization, decisions and validation ask. |
 | 5–6: HOFs | 2:22 | Returned update function, iterate trace, fixed point and stopping test. |
-| 7–14: Optimization | 8:51 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
-| 15–19: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
+| 7–14: Example 1 — wind farm | 8:51 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
+| 15–19: Example 2 — hydrogen station | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 20–21: Validation and summary | 2:12 | Animated shield, exhaustive model result, shared iterate. |
 | 22–24: Rainbow | 2:24 | AI-oriented proving, useful progress per token, Clojure generation, business case. |
 | 25–26: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
@@ -177,7 +177,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plant-copy-20261026#s9).
+Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=example-labels-20261026#s9).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |
@@ -313,7 +313,7 @@ states, updates and stopping tests differ. Rate and momentum already demonstrate
 
 ## Rainbow: purpose and one familiar property — 2026-10-26
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plant-copy-20261026#s22).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=example-labels-20261026#s22).
 It remains publicly accessible without authentication.
 
 Slide 22 introduces Rainbow's Clojure/OR focus and its design for AI-assisted proving.
