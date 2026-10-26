@@ -2,12 +2,12 @@
 
 ## What to prepare for the current talk
 
-The main deck now has **28 slides**. Validation is one animated slide (22), followed
-by the shared `iterate` summary (23). Rainbow is three slides (24–26). You do not
+The main deck now has **26 slides**. Validation is one animated slide (20), followed
+by the shared `iterate` summary (21). Rainbow is three slides (22–24). You do not
 need to teach proof syntax, a decision table, or a search-tree algorithm on stage.
 The exact speech and click cues are in [SCRIPT.md](SCRIPT.md).
 
-### Slide 22: one shield, two views
+### Slide 20: one shield, two views
 
 **Say:** “When a bird is detected, this controller should stop. It does not. Wrap its
 decision function with a shield, and the same detection now produces STOP.”
@@ -42,16 +42,28 @@ context-dependent shield in the optional material below. It stops on any detecti
 in any context. The decision table and its random draw are not required stage content.
 Sensor accuracy, physical braking and real bird safety are outside the checked model.
 
-### Slide 23: connect the three examples
+### Slide 21: connect the three examples
 
 A vector of settings, a value table, a set of reachable states. Each supplies an
 update and a stopping test to `iterate`. The stopping tests have different meanings;
 small numerical changes are not the same guarantee as closure of a finite set.
 
-### Slides 24–25: what Rainbow is
+### Slides 22–23: what Rainbow is
 
 **Say:** “Rainbow is a theorem prover and code generator focused on Clojure and
 operations research. I can state a property, supply a proof and have it checked.”
+
+Rainbow is designed for AI-assisted proving. Information density here means useful
+statements and reusable proof steps per token. Reusing checked lemmas and doing routine
+checking locally are the mechanisms. This is a design goal, not a measured advantage
+in token count. Section 3.5 of `Rainbow_AI_Worker_Implementation_Specification.md` in the
+sibling Rainbow internal-rfnbo checkout specifies useful verified progress per AI round
+trip and per million tokens. The proposed 5:1 proof-to-generated-code ratio still needs
+a unit and example; do not present it as a universal or measured token ratio.
+
+Clojure is a useful generation target because forms are data, higher-order functions
+provide reusable structure, and the REPL lets us inspect and execute generated output.
+The proof and the emitted program have different jobs; their sizes need not match.
 
 It is not intended to match or beat Lean. It targets a particular workflow; code
 generation covers a modeled subset of Clojure, not arbitrary programs.
@@ -66,7 +78,7 @@ Proofs are EDN data. Clojure functions can build, inspect and transform them. Ev
 changed proof needs a new check. This provides a basis for visualization and structural
 editing; a general visual editor is future work. No syntax walkthrough is needed.
 
-### Slide 26: the Algeciras business case
+### Slide 24: the Algeciras business case
 
 Historical OMIE prices and local weather feed a plant model. The displayed €7.9m/year
 is an estimated design saving, not realized customer savings. Rainbow's recorded proof
@@ -79,7 +91,7 @@ are documented in the Algeciras section below. €74m/year remains unverified.
 
 The following material preserves the deeper explanations and evidence for questions.
 It is not additional material to present, and its table-specific shield differs from
-the simpler `stop-for-birds` wrapper now on slide 22.
+the simpler `stop-for-birds` wrapper now on slide 20.
 
 
 
@@ -274,7 +286,7 @@ Rainbow's distinction here is its Clojure workflow and operations-research focus
 
 ### Read the exact proof syntax
 
-This is the source shown on slide 27:
+This is the source shown on slide 25:
 
 ```clojure
 {:type
@@ -482,7 +494,7 @@ Avoid “I have a complete formal proof that the real plant is always within 10�
 
 ### Algeciras: data, estimated savings and proof scope
 
-Current slide 26 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
+Current slide 24 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
 in the Bay of Algeciras (36.18° N, 5.40° W). It combines historical hourly OMIE Spanish prices
 for 2023–2025 with local ERA5/Open-Meteo wind and solar history and PVGIS calibration.
 Electrolysis, storage, CO₂ supply and fuel production have explicit limits and costs;

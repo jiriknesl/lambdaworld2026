@@ -30,9 +30,9 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
       let unshieldedBird;
       for (const phase of [1,2]) {
         // Visit another slide first so repeated checks reset the animation's start.
-        await page.evaluate(() => {location.hash='s23';window.shieldTestTime=0;});
-        await page.waitForFunction(() => document.querySelector('.count').textContent.startsWith('23 /'));
-        await page.evaluate(p => {location.hash='s22a'+p;}, phase);
+        await page.evaluate(() => {location.hash='s21';window.shieldTestTime=0;});
+        await page.waitForFunction(() => document.querySelector('.count').textContent.startsWith('21 /'));
+        await page.evaluate(p => {location.hash='s20a'+p;}, phase);
         await page.waitForFunction(p => document.querySelector('#shield-animation > div')?.dataset.shield === String(p===2), phase);
         const before = await sample(1999), at = await sample(2000), later = await sample(4000);
         if (before.action!=='run'||before.detected!=='false'||at.detected!=='true') throw Error('Detection timing mismatch');

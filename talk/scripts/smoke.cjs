@@ -134,10 +134,10 @@ const shots = shotsAt >= 0 ? args[shotsAt + 1] : null;
     if (driven === stageCount) problems.push('keys in the notes window did not drive the stage');
     // Speech must follow reveals, not merely the slide title.
     await page.evaluate(() => { location.hash = '#s5'; });
-    await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('We use positive inputs'));
+    await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('Here is a square-root update'));
     await page.keyboard.press('ArrowRight');
-    await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('Map is higher-order'));
-    if ((await notes.locator('.n-text').innerText()).includes('We use positive inputs')) problems.push('presenter speech stayed on previous reveal');
+    await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('Each result becomes the input'));
+    if ((await notes.locator('.n-text').innerText()).includes('Here is a square-root update')) problems.push('presenter speech stayed on previous reveal');
     await page.evaluate(s => { location.hash = '#s' + s + 'a2'; }, valueSlide);
     await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('Every update revises all ten'));
     await page.keyboard.press('End');

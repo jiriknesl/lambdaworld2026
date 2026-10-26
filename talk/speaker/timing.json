@@ -1,7 +1,7 @@
 {
-  "spoken_words": 3314,
+  "spoken_words": 3093,
   "pace_wpm": 125,
-  "holds_seconds": 205,
+  "holds_seconds": 181,
   "questions_seconds": 120,
   "slides": [
     {
@@ -34,177 +34,163 @@
     },
     {
       "slide": 5,
-      "words": 144,
-      "hold_seconds": 9,
+      "words": 128,
+      "hold_seconds": 8,
       "start_seconds": 107,
-      "end_seconds": 185
+      "end_seconds": 176
     },
     {
       "slide": 6,
-      "words": 98,
-      "hold_seconds": 15,
-      "start_seconds": 185,
-      "end_seconds": 247
+      "words": 137,
+      "hold_seconds": 7,
+      "start_seconds": 176,
+      "end_seconds": 249
     },
     {
       "slide": 7,
-      "words": 110,
-      "hold_seconds": 6,
-      "start_seconds": 247,
-      "end_seconds": 306
+      "words": 46,
+      "hold_seconds": 3,
+      "start_seconds": 249,
+      "end_seconds": 274
     },
     {
       "slide": 8,
-      "words": 140,
+      "words": 171,
       "hold_seconds": 9,
-      "start_seconds": 306,
-      "end_seconds": 382
+      "start_seconds": 274,
+      "end_seconds": 365
     },
     {
       "slide": 9,
-      "words": 46,
-      "hold_seconds": 3,
-      "start_seconds": 382,
-      "end_seconds": 407
+      "words": 194,
+      "hold_seconds": 9,
+      "start_seconds": 365,
+      "end_seconds": 467
     },
     {
       "slide": 10,
-      "words": 171,
-      "hold_seconds": 9,
-      "start_seconds": 407,
+      "words": 51,
+      "hold_seconds": 6,
+      "start_seconds": 467,
       "end_seconds": 498
     },
     {
       "slide": 11,
-      "words": 194,
+      "words": 209,
       "hold_seconds": 9,
       "start_seconds": 498,
-      "end_seconds": 600
+      "end_seconds": 607
     },
     {
       "slide": 12,
-      "words": 51,
-      "hold_seconds": 6,
-      "start_seconds": 600,
-      "end_seconds": 630
+      "words": 150,
+      "hold_seconds": 16,
+      "start_seconds": 607,
+      "end_seconds": 695
     },
     {
       "slide": 13,
-      "words": 209,
-      "hold_seconds": 9,
-      "start_seconds": 630,
-      "end_seconds": 740
+      "words": 83,
+      "hold_seconds": 6,
+      "start_seconds": 695,
+      "end_seconds": 741
     },
     {
       "slide": 14,
-      "words": 150,
-      "hold_seconds": 16,
-      "start_seconds": 740,
-      "end_seconds": 828
+      "words": 89,
+      "hold_seconds": 14,
+      "start_seconds": 741,
+      "end_seconds": 797
     },
     {
       "slide": 15,
-      "words": 83,
-      "hold_seconds": 6,
-      "start_seconds": 828,
-      "end_seconds": 874
+      "words": 236,
+      "hold_seconds": 12,
+      "start_seconds": 797,
+      "end_seconds": 923
     },
     {
       "slide": 16,
-      "words": 89,
-      "hold_seconds": 14,
-      "start_seconds": 874,
-      "end_seconds": 930
+      "words": 61,
+      "hold_seconds": 3,
+      "start_seconds": 923,
+      "end_seconds": 955
     },
     {
       "slide": 17,
-      "words": 236,
-      "hold_seconds": 12,
-      "start_seconds": 930,
-      "end_seconds": 1056
+      "words": 400,
+      "hold_seconds": 15,
+      "start_seconds": 955,
+      "end_seconds": 1162
     },
     {
       "slide": 18,
-      "words": 61,
-      "hold_seconds": 3,
-      "start_seconds": 1056,
-      "end_seconds": 1088
+      "words": 166,
+      "hold_seconds": 14,
+      "start_seconds": 1162,
+      "end_seconds": 1256
     },
     {
       "slide": 19,
-      "words": 400,
-      "hold_seconds": 15,
-      "start_seconds": 1088,
-      "end_seconds": 1295
+      "words": 154,
+      "hold_seconds": 6,
+      "start_seconds": 1256,
+      "end_seconds": 1336
     },
     {
       "slide": 20,
-      "words": 166,
-      "hold_seconds": 14,
-      "start_seconds": 1295,
-      "end_seconds": 1389
+      "words": 163,
+      "hold_seconds": 12,
+      "start_seconds": 1336,
+      "end_seconds": 1426
     },
     {
       "slide": 21,
-      "words": 154,
-      "hold_seconds": 6,
-      "start_seconds": 1389,
-      "end_seconds": 1469
+      "words": 81,
+      "hold_seconds": 3,
+      "start_seconds": 1426,
+      "end_seconds": 1468
     },
     {
       "slide": 22,
-      "words": 163,
-      "hold_seconds": 12,
-      "start_seconds": 1469,
-      "end_seconds": 1559
+      "words": 85,
+      "hold_seconds": 3,
+      "start_seconds": 1468,
+      "end_seconds": 1511
     },
     {
       "slide": 23,
-      "words": 81,
-      "hold_seconds": 3,
-      "start_seconds": 1559,
-      "end_seconds": 1601
+      "words": 111,
+      "hold_seconds": 4,
+      "start_seconds": 1511,
+      "end_seconds": 1569
     },
     {
       "slide": 24,
-      "words": 81,
-      "hold_seconds": 3,
-      "start_seconds": 1601,
-      "end_seconds": 1643
+      "words": 116,
+      "hold_seconds": 4,
+      "start_seconds": 1569,
+      "end_seconds": 1628
     },
     {
       "slide": 25,
-      "words": 109,
-      "hold_seconds": 4,
-      "start_seconds": 1643,
-      "end_seconds": 1699
+      "words": 47,
+      "hold_seconds": 3,
+      "start_seconds": 1628,
+      "end_seconds": 1654
     },
     {
       "slide": 26,
-      "words": 116,
-      "hold_seconds": 4,
-      "start_seconds": 1699,
-      "end_seconds": 1759
-    },
-    {
-      "slide": 27,
-      "words": 47,
-      "hold_seconds": 3,
-      "start_seconds": 1759,
-      "end_seconds": 1784
-    },
-    {
-      "slide": 28,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 1784,
-      "end_seconds": 1796
+      "start_seconds": 1654,
+      "end_seconds": 1666
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 2133,
-    "125": 1916,
-    "140": 1745
+    "110": 1988,
+    "125": 1786,
+    "140": 1627
   },
-  "script_sha256": "d4da9068c5204dd94871224ff256caa31c3403bd87cda564d49a797bba76fac6"
+  "script_sha256": "cc3d6317c2b1fb13335187bb5ed58d82c4cf0e6df7b8a0fe96bc98646f20eac1"
 }

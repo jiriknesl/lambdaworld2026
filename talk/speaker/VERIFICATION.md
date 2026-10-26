@@ -435,3 +435,30 @@ the original editorial review; these later user-directed revisions are recorded 
   1600×900, 1920×1080 and 1024×768, including refresh and presenter speech. Inspected the
   unshielded impact screenshot. Updated only the existing preview files; no tunnel change.
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=shield-impact-20261026#s22
+
+## 2026-10-26 — Two-slide HOF introduction and AI-oriented Rainbow
+
+- Collapsed former slides 5–8 to two slides with two reveals each. One square-root-of-two
+  example shows a returned update function, iterate's initial value and successive states,
+  then the fixed-point equation, stopping predicate and actual helper source. Removed the
+  separate map lesson and switch to square root of four. Algorithms are unchanged.
+- Renumbered the deck and script: validation 20, shared iterate 21, Rainbow 22–24,
+  book 25, thanks 26. Updated browser scripts and current documentation references.
+- Rainbow now explains its AI-assisted design goal, useful verified progress per token,
+  reusable lemmas and Clojure forms/HOFs/REPL as code-generation advantages. Grounded in
+  Rainbow_AI_Worker_Implementation_Specification.md section 3.5. No measured token-efficiency
+  superiority is asserted. The proposed 5:1 proof/code ratio awaits units and an example;
+  it is not displayed. Existing clamp proof scope and trusted-runtime boundary remain.
+- Updated speech, presenter data, timing, study guide, README and both offline PDFs.
+  26 slides, 50 cues, 3,093 words: estimated 27:46 with holds, 29:46 with two minutes
+  of questions. HOF introduction: 2:22. This is a planning estimate, not an aloud rehearsal.
+- 22 tests / 2,154 assertions passed, zero warnings; reduced assertion count reflects fewer
+  slide phases. Release compiled without warnings. Offline browser check passed 156 frames
+  at 1600×900, 1920×1080 and 1024×768, with no overflow or external requests. Hash recovery,
+  presenter speech, controls and synchronized day marker passed. Inspected HOF/Rainbow images.
+- Dedicated shield check passed after renumbering: actual commands, impact/fall versus
+  passage, rotor freeze, reachability verdicts, refresh and presenter speech at three sizes.
+- Published to the existing static preview; tunnel configuration unchanged. Public bundle
+  matches local release; both HOF reveals and Rainbow/book frames passed at 1920×1080 and
+  1024×768, including matching business-case and book presenter speech.
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=hof-ai-20261026#s5

@@ -24,9 +24,9 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
     for (const [width, height] of [[1600, 900], [1920, 1080], [1024, 768]]) {
       await page.setViewportSize({width, height});
       for (const [slide, phase, time, mode] of [
-        [15, 1, 6300, null], [15, 2, 6300, null],
-        [16, 1, 6300, 'approach'], [16, 1, 6975, 'strike'],
-        [16, 1, 7350, 'strike'], [16, 2, 6975, 'pass']
+        [13, 1, 6300, null], [13, 2, 6300, null],
+        [14, 1, 6300, 'approach'], [14, 1, 6975, 'strike'],
+        [14, 1, 7350, 'strike'], [14, 2, 6975, 'pass']
       ]) {
         await page.evaluate(({slide, phase, time}) => {
           window.playbackTime = time;

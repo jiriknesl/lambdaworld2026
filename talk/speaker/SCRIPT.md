@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,314 spoken words. Planning pace: 125 words/minute, plus 03:25 of pauses and visual holds. Speech and holds: 29:56; with 02:00 for questions: 31:56. This is an estimate, not an aloud rehearsal.
+3,093 spoken words. Planning pace: 125 words/minute, plus 03:01 of pauses and visual holds. Speech and holds: 27:46; with 02:00 for questions: 29:46. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -50,103 +50,41 @@ Operations research uses models to compare choices under objectives and constrai
 
 I also include validation: checking whether a system respects its specification. Reachability usually belongs to verification; it matters here because a profitable decision system can still violate a requirement. These are different questions. We’ll use a different kind of state for each, but the same way of building an iteration.
 
-## 05 Functions in. Functions out.
+## 05 iterate takes an update function
 
-01:47–03:05 · 144 words · 9s visual holds
+01:47–02:56 · 128 words · 8s visual holds
 
 ### Phase 1
 
-[Point to the returned fn, then the captured n.]
+[Point to fn, then the function passed to iterate. The first state is the starting guess.]
 
-Let’s improve a guess for a square root. In Clojure, a call puts the function first, then its arguments. Defn names a function; square brackets list parameters. This function takes n and returns an update that averages a guess with n divided by that guess. We use positive inputs, avoiding division by zero. The outer function chooses the problem; the returned function performs one update.
+Here is a square-root update. In Clojure, a call puts the function first. Defn names a function, and fn creates a function. Newton-sqrt takes the number whose root we want and returns an update for a positive guess. That update averages the guess with the number divided by the guess. We pass it to iterate. The first element is our starting value, one.
 
 ### Phase 2
 
-[Right. Read the three independent results.]
+[Right once. Follow the complete chain; avoid reading every decimal.]
 
-Here, map applies that update separately to three guesses. Returning this function makes the constructor higher-order. Map is higher-order because it takes the returned function as an argument. Each input gets one update. There is no connection between the three results. In Clojure, fn introduces an anonymous function, just as a lambda would elsewhere.
+Each result becomes the input to the next call. One becomes one point five, then about one point four one seven. The outer function chooses the problem; iterate handles the repetition. Both are higher-order functions: one returns a function, the other accepts it. Take requests five states from this lazy sequence. Five is just a display limit. We still need to decide when to stop.
 
-### Phase 3
+## 06 Choose when to stop
 
-[Right. Point from one result back to the input.]
-
-But to solve the problem, I want the result of one update to become the input to the next. That is what iterate gives me.
-
-## 06 iterate: state → state → …
-
-03:05–04:07 · 98 words · 15s visual holds
+02:56–04:09 · 137 words · 7s visual holds
 
 ### Phase 1
 
-[Point to state 0.]
+[Connect the fixed-point equation to square root of two, then compare the final two values.]
 
-The first element of iterate is the starting value itself: one. No update has happened yet.
+A fixed point is a value the update leaves unchanged. For this particular update, that means x squared equals two. We usually cannot represent that answer exactly, so we stop when successive values are close enough. Here the change is below ten to the minus twelve. Close-enough is another function supplied to our helper. The question mark is part of its name. A small change is not automatically a bound on the error.
 
 ### Phase 2
 
-[Right once.]
+[Right once. Show the helper, pointing only to iterate and converged?.]
 
-One update gives one point five. We keep it as the next state.
+Here is the helper we will reuse. It applies the step with iterate and checks successive pairs using the supplied stopping test. It returns the states so we can draw them. The sequence is lazy: the work cap does not force a thousand updates when we converge earlier. That is the interface we need for the examples: an update function and a stopping test.
 
-### Phase 3
+## 07 Plan tomorrow’s turbine settings
 
-[Right once.]
-
-Now the function receives one point five, rather than the original one. The new guess is about one point four one seven.
-
-### Phase 4
-
-[Right once.]
-
-The next guess is closer again. Each call has exactly the same interface: a guess in, a guess out.
-
-### Phase 5
-
-[Right once. Pause on the complete chain.]
-
-Take asks for five states from this lazy sequence. Iterate itself has no idea what a square root is, or when we should stop. We supply that knowledge.
-
-## 07 A fixed point stays the same
-
-04:07–05:06 · 110 words · 6s visual holds
-
-### Phase 1
-
-[Follow one trajectory from the starting guess of three.]
-
-Let’s find the positive square root of four. This function averages our guess with four divided by that guess. If the guess is too high, that second number is too low. Starting at three, repeated updates give about two point one six seven, then two point zero zero six four, then almost two. These are successive calls, each using the previous result.
-
-### Phase 2
-
-[Right. Explain why the solution is also a fixed point.]
-
-At two, the same calculation returns two. More generally, a positive number left unchanged by this update must satisfy x squared equals four. That is why finding its fixed point solves our equation. The connection depends on the step we wrote. Iterate itself promises neither improvement nor convergence.
-
-## 08 step + converged?
-
-05:06–06:22 · 140 words · 9s visual holds
-
-### Phase 1
-
-[Point to the parameters and iterate, not every implementation line.]
-
-Now we separate two jobs. Step tells us how to update a state. Converged tells us whether two successive states are close enough. The question mark is part of the predicate’s name. This helper returns the trace, so we can inspect it. The function and stopping test are both arguments.
-
-### Phase 2–penultimate
-
-[Advance through the guesses; do not read all decimal places. This paragraph covers every intermediate numerical phase; do not narrate each number.]
-
-For the square root of two, I use a tolerance. Watch the values settle. The maximum number of updates is a cap on work, not a request to compute every one. The lazy sequence is consumed only until the stopping test succeeds or that cap is reached.
-
-### Phase last
-
-[End if needed. Pause on the stopping message.]
-
-The change is below ten to the minus twelve. Successive change does not automatically bound solution error; hitting the work cap is also different from convergence. Here is the full helper for reference. Its important interface remains the supplied step and stopping test.
-
-## 09 Plan tomorrow’s turbine settings
-
-06:22–06:47 · 46 words · 3s visual holds
+04:09–04:34 · 46 words · 3s visual holds
 
 ### Phase 1
 
@@ -154,9 +92,9 @@ The change is below ten to the minus twelve. Successive change does not automati
 
 Our first problem is a wind farm. Six turbines, twelve hourly decisions each: seventy-two settings to choose. Wind sets the available electricity; we choose how much to retain. At noon, this example offers eighty-four kilowatt-hours per turbine. Setting one retains it all; one half retains forty-two.
 
-## 10 What makes one plan better?
+## 08 What makes one plan better?
 
-06:47–08:18 · 171 words · 9s visual holds
+04:34–06:05 · 171 words · 9s visual holds
 
 ### Phase 1
 
@@ -176,9 +114,9 @@ The turbines are not equally exposed. Each cell here is exposure at full operati
 
 Neither column alone tells us which compromise to choose. First I’ll show how we improve a plan for one numerical cost. Then we’ll supply a cost that includes both concerns.
 
-## 11 Optimization is iterate
+## 09 Optimization is iterate
 
-08:18–10:00 · 194 words · 9s visual holds
+06:05–07:47 · 194 words · 9s visual holds
 
 ### Phase 1
 
@@ -198,9 +136,9 @@ Descent-step subtracts a small multiple of each slope. Half minus point zero zer
 
 Clamped takes that update function and returns another function. It calls the update, then clips every proposed setting to zero through one. The solver is now a function from a plan state to a new plan state. Iterate feeds each new state back. All the problem-specific work is inside the step we supplied. Before we change the cost, let’s look at the small multiplier that controls how far each update moves.
 
-## 12 How far should one update move?
+## 10 How far should one update move?
 
-10:00–10:30 · 51 words · 6s visual holds
+07:47–08:18 · 51 words · 6s visual holds
 
 ### Phase 1
 
@@ -214,9 +152,9 @@ The rate we just supplied controls the movement. Keep turbine one at noon, with 
 
 Double the rate and this proposed movement doubles. For this electricity-only cost, running everything is obviously best. Now let’s supply the tradeoff with birds.
 
-## 13 Which plan should win?
+## 11 Which plan should win?
 
-10:30–12:20 · 209 words · 9s visual holds
+08:18–10:07 · 209 words · 9s visual holds
 
 ### Phase 1
 
@@ -238,9 +176,9 @@ Now B wins: its reduction in exposure is worth more under this chosen score than
 
 Here is the wrapper. It receives the original cost, a risk function, and the parameters, then returns a new cost function. Comp in the definition composes functions right to left: first turn the vector into a plan, then measure its risk. Both old and new costs accept the same vector and return one number. Gradient can sample either one. We change the objective without changing the update algorithm or iterate.
 
-## 14 Same updates, different objectives
+## 12 Same updates, different objectives
 
-12:20–13:48 · 150 words · 16s visual holds
+10:07–11:35 · 150 words · 16s visual holds
 
 ### Phase 1
 
@@ -260,9 +198,9 @@ On the left, electricity alone pushes the settings upward. On the right, the bir
 
 Compare the final generation and exposure. The penalty buys a reduction in exposure by giving up some generation. Here both traces stop because the largest setting change is below point zero zero one. The cap is six hundred updates. That says the numerical search has settled under our tolerance; it is not a general proof of optimality. Could a different update reach a settled plan in fewer steps?
 
-## 15 Can momentum reduce the number of updates?
+## 13 Can momentum reduce the number of updates?
 
-13:48–14:34 · 83 words · 6s visual holds
+11:35–12:21 · 83 words · 6s visual holds
 
 ### Phase 1
 
@@ -276,9 +214,9 @@ We have just watched plain gradient descent on the bird-aware cost. Here is a di
 
 The base step performs descent; momentum wraps it; clamped wraps the result. Clamping clips position but keeps velocity. We have changed the solver’s update without changing the model. Now let’s replay the plain solver’s resulting day.
 
-## 16 Play the resulting day
+## 14 Play the resulting day
 
-14:34–15:30 · 89 words · 14s visual holds
+12:21–13:17 · 89 words · 14s visual holds
 
 ### Phase 1
 
@@ -292,9 +230,9 @@ Now we play a day through a fixed schedule. The red rectangle marks the current 
 
 With the penalty, the chosen schedule stops this exposed turbine during busy hours. The same illustrated bird now passes through. When the turbine runs again, the strike can still appear. The clock is advancing; the plan is no longer changing. The optimizer produced the schedule being replayed.
 
-## 17 Buy hydrogen before the customers arrive
+## 15 Buy hydrogen before the customers arrive
 
-15:30–17:36 · 236 words · 12s visual holds
+13:17–15:23 · 236 words · 12s visual holds
 
 ### Phase 1
 
@@ -322,9 +260,9 @@ A convoy arrives. We sell to two trucks and turn the third away. This is one pos
 
 We sell each unit for ten, so this outcome earns twenty minus the purchase cost of two: eighteen. Unsold units would cost one each to hold for the week. The next state contains leftover stock and the next supply window. Our objective is expected profit over repeated weeks, multiplying each following week’s contribution by another factor of point nine. This is a modelling preference for earlier returns, not a ten-percent hydrogen leak.
 
-## 18 Buy for this week—or the next?
+## 16 Buy for this week—or the next?
 
-17:36–18:08 · 61 words · 3s visual holds
+15:23–15:55 · 61 words · 3s visual holds
 
 ### Phase 1
 
@@ -334,9 +272,9 @@ The state is a pair: supply week and stock. Orders returns feasible purchase qua
 
 In a regular week with one unit already in stock, buying two covers the largest possible convoy this week. Buying three fills the tank to four. Why carry more than any current convoy needs? Look at the leftovers: either way, the next week has expensive, limited supply.
 
-## 19 Future values change the order
+## 17 Future values change the order
 
-18:08–21:35 · 400 words · 15s visual holds
+15:55–19:22 · 400 words · 15s visual holds
 
 ### Phase 1
 
@@ -374,9 +312,9 @@ Now we use the same input V and the same scores, but keep the winning order inst
 
 Best-order does this for every state and returns a map from state to order—a policy. Clojure maps support function calls, so the expression below looks up this state and returns three. It neither updates V nor uses the new value table from the preceding reveal.
 
-## 20 Hydrogen: iterate the value table
+## 18 Hydrogen: iterate the value table
 
-21:35–23:09 · 166 words · 14s visual holds
+19:22–20:56 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -396,9 +334,9 @@ Every update revises all ten values using the old table. Best-order then compare
 
 The largest change is now below our tolerance. In the stopping lambda, percent-one and percent-two stand for the two successive tables. With one unit in stock, the recommended action depends on the week: buy three when supply is cheap, and buy none in the tight week. For a fixed finite model and discount below one, exact value iteration has a convergence argument. Later I’ll show the bound behind it; here we are watching a floating-point calculation.
 
-## 21 The best order depends on the supply window
+## 19 The best order depends on the supply window
 
-23:09–24:29 · 154 words · 6s visual holds
+20:56–22:16 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -412,9 +350,9 @@ The policy maps supply window and stock to a purchase quantity. “This week onl
 
 There is a less obvious recommendation here. With an empty tank in a tight week, buy one, even though that purchase has negative expected profit this week. The cost is paid now. If nobody arrives, the unit carries into next week, when cheap supply is capped. That future benefit outweighs the immediate expected loss in this model. Looking only at immediate expected profit misses that value. This comes from the actual model; it is not a general claim about hydrogen markets.
 
-## 22 Stop when a bird is detected
+## 20 Stop when a bird is detected
 
-24:29–25:59 · 163 words · 12s visual holds
+22:16–23:46 · 163 words · 12s visual holds
 
 ### Phase 1
 
@@ -428,9 +366,9 @@ Back at the wind farm, suppose a bird is detected while the turbine is running. 
 
 Now wrap the decision function with a shield. If there is a detection, return stop. Otherwise, call the original decision function. We call this wrapped function as soon as a detection arrives. The animation uses that actual output. The same exhaustive check now finds no state where a confident detection leaves the command at run. Underneath, iterate keeps adding possible next states until the set stops growing. This validates the response in this finite software model. It does not tell us whether a sensor missed a bird, or how quickly a real turbine can brake.
 
-## 23 iterate underneath all three
+## 21 iterate underneath all three
 
-25:59–26:41 · 81 words · 3s visual holds
+23:46–24:28 · 81 words · 3s visual holds
 
 ### Phase 1
 
@@ -438,31 +376,31 @@ Now wrap the decision function with a shield. If there is a detection, return st
 
 Underneath all three examples is iterate. The state was a vector of turbine settings, then a value table. For validation, it was the set of states the controller could reach. Each example supplies its own update and stopping test. This is a useful way to build and inspect algorithms. It does not give them identical guarantees: a finite set stops growing, while small numerical changes need more care. We also changed the optimizer’s pace and added momentum by working with functions.
 
-## 24 Rainbow
+## 22 Rainbow
 
-26:41–27:23 · 81 words · 3s visual holds
-
-### Phase 1
-
-[Introduce its purpose without reading a definition of theorem proving.]
-
-Rainbow is a theorem prover and code generator focused on Clojure and operations research. I want to state a property of an algorithm or a model, supply a proof, and have the computer check it. I also want to generate Clojure from a program whose modeled behavior we have checked. This currently covers a limited language, not arbitrary Clojure. Its purpose is not to match or beat Lean. I am building it around the kinds of problems we have been discussing.
-
-## 25 What can we prove?
-
-27:23–28:19 · 109 words · 4s visual holds
+24:28–25:11 · 85 words · 3s visual holds
 
 ### Phase 1
 
-[Recall clamp from optimization. Explain the property, not the proof syntax.]
+[Introduce the AI-oriented design goal; explain what information density means here.]
 
-Remember keeping turbine settings between zero and one? A clamp must preserve a value inside the bounds and return the nearest bound outside them. These three outputs illustrate it. Rainbow has checked that the modeled clamp program implements that specification, not just those three examples. The final runtime is still trusted.
+Rainbow is a theorem prover and code generator focused on Clojure and operations research. I am designing it for AI-assisted proving. A small generated function can come with a much larger body of proof. That makes information density valuable: useful statements and reusable proof steps per token. The aim is more verified progress from each AI interaction. We want to reuse checked lemmas and let local tools do routine checking. Its purpose is not to match or beat Lean; it is built around this workflow.
 
-For me, another interesting part is how we work with proofs. Rainbow represents them as data. We can use Clojure functions to construct them, inspect them and change parts. A change needs a new check. This gives us a basis for visualizations and structural editing. The general editor is future work; the proof data and checker already exist.
+## 23 From proofs to Clojure
 
-## 26 Where we use Rainbow now?
+25:11–26:09 · 111 words · 4s visual holds
 
-28:19–29:19 · 116 words · 4s visual holds
+### Phase 1
+
+[Recall the clamp property, then explain forms, function composition and REPL inspection.]
+
+Remember keeping turbine settings between zero and one? Rainbow has checked that the modeled clamp implements that specification, beyond these three examples. The proof concerns the modeled program; the final runtime is still trusted.
+
+Clojure is a useful target because its code is data. We can generate forms, inspect their structure, and compose functions using the higher-order functions we have been discussing. Then we can inspect and run the result in the REPL. Rainbow proofs are data too, so Clojure tools can work with both. Code generation currently covers a modeled subset of Clojure. The goal is to make the reasoning reusable while keeping the generated program small enough to understand.
+
+## 24 Where we use Rainbow now?
+
+26:09–27:08 · 116 words · 4s visual holds
 
 ### Phase 1
 
@@ -470,9 +408,9 @@ For me, another interesting part is how we work with proofs. Rainbow represents 
 
 We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-SAF is synthetic aviation fuel. We use real hourly electricity prices from OMIE and local wind and solar history. The model includes electrolysis, storage, carbon dioxide supply, production limits and costs. We compare how to size the plant, buy electricity and run it. Against a plant designed for an average year, our model estimates about 7.9 million euros less cost annually. That is a modeled comparison, not a promise to an operating factory. Rainbow currently checks the proof of the fuel-blending optimum. We are building evidence for specific decisions; the annual saving itself is not yet a proved claim.
 
-## 27 Applied Higher-Order Functions
+## 25 Applied Higher-Order Functions
 
-29:19–29:44 · 47 words · 3s visual holds
+27:08–27:34 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -480,9 +418,9 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 I wrote Applied Higher-Order Functions about using higher-order functions in operations research. But the ideas apply more broadly, especially if you design algorithms that optimize or help make decisions. The book has longer explanations and runnable examples. You can find it at flexiana dot com slash book.
 
-## 28 Thank you
+## 26 Thank you
 
-29:44–29:56 · 18 words · 3s visual holds
+27:34–27:46 · 18 words · 3s visual holds
 
 ### Phase 1
 

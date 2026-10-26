@@ -57,122 +57,47 @@
       ]
     },
     {
-      "slide": 5,
-      "title": "Functions in. Functions out.",
+      "title": "iterate takes an update function",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Point to the returned fn, then the captured n.",
-          "speech": "Let’s improve a guess for a square root. In Clojure, a call puts the function first, then its arguments. Defn names a function; square brackets list parameters. This function takes n and returns an update that averages a guess with n divided by that guess. We use positive inputs, avoiding division by zero. The outer function chooses the problem; the returned function performs one update.",
+          "cue": "Point to fn, then the function passed to iterate. The first state is the starting guess.",
+          "speech": "Here is a square-root update. In Clojure, a call puts the function first. Defn names a function, and fn creates a function. Newton-sqrt takes the number whose root we want and returns an update for a positive guess. That update averages the guess with the number divided by the guess. We pass it to iterate. The first element is our starting value, one.",
           "hold_seconds": 3
         },
         {
           "from": 2,
           "to": 2,
-          "cue": "Right. Read the three independent results.",
-          "speech": "Here, map applies that update separately to three guesses. Returning this function makes the constructor higher-order. Map is higher-order because it takes the returned function as an argument. Each input gets one update. There is no connection between the three results. In Clojure, fn introduces an anonymous function, just as a lambda would elsewhere.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 3,
-          "to": 3,
-          "cue": "Right. Point from one result back to the input.",
-          "speech": "But to solve the problem, I want the result of one update to become the input to the next. That is what iterate gives me.",
-          "hold_seconds": 3
+          "cue": "Right once. Follow the complete chain; avoid reading every decimal.",
+          "speech": "Each result becomes the input to the next call. One becomes one point five, then about one point four one seven. The outer function chooses the problem; iterate handles the repetition. Both are higher-order functions: one returns a function, the other accepts it. Take requests five states from this lazy sequence. Five is just a display limit. We still need to decide when to stop.",
+          "hold_seconds": 5
         }
-      ]
+      ],
+      "slide": 5
     },
     {
-      "slide": 6,
-      "title": "iterate: state → state → …",
+      "title": "Choose when to stop",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Point to state 0.",
-          "speech": "The first element of iterate is the starting value itself: one. No update has happened yet.",
-          "hold_seconds": 3
+          "cue": "Connect the fixed-point equation to square root of two, then compare the final two values.",
+          "speech": "A fixed point is a value the update leaves unchanged. For this particular update, that means x squared equals two. We usually cannot represent that answer exactly, so we stop when successive values are close enough. Here the change is below ten to the minus twelve. Close-enough is another function supplied to our helper. The question mark is part of its name. A small change is not automatically a bound on the error.",
+          "hold_seconds": 4
         },
         {
           "from": 2,
           "to": 2,
-          "cue": "Right once.",
-          "speech": "One update gives one point five. We keep it as the next state.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 3,
-          "to": 3,
-          "cue": "Right once.",
-          "speech": "Now the function receives one point five, rather than the original one. The new guess is about one point four one seven.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 4,
-          "to": 4,
-          "cue": "Right once.",
-          "speech": "The next guess is closer again. Each call has exactly the same interface: a guess in, a guess out.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 5,
-          "to": 5,
-          "cue": "Right once. Pause on the complete chain.",
-          "speech": "Take asks for five states from this lazy sequence. Iterate itself has no idea what a square root is, or when we should stop. We supply that knowledge.",
+          "cue": "Right once. Show the helper, pointing only to iterate and converged?.",
+          "speech": "Here is the helper we will reuse. It applies the step with iterate and checks successive pairs using the supplied stopping test. It returns the states so we can draw them. The sequence is lazy: the work cap does not force a thousand updates when we converge earlier. That is the interface we need for the examples: an update function and a stopping test.",
           "hold_seconds": 3
         }
-      ]
+      ],
+      "slide": 6
     },
     {
       "slide": 7,
-      "title": "A fixed point stays the same",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Follow one trajectory from the starting guess of three.",
-          "speech": "Let’s find the positive square root of four. This function averages our guess with four divided by that guess. If the guess is too high, that second number is too low. Starting at three, repeated updates give about two point one six seven, then two point zero zero six four, then almost two. These are successive calls, each using the previous result.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Right. Explain why the solution is also a fixed point.",
-          "speech": "At two, the same calculation returns two. More generally, a positive number left unchanged by this update must satisfy x squared equals four. That is why finding its fixed point solves our equation. The connection depends on the step we wrote. Iterate itself promises neither improvement nor convergence.",
-          "hold_seconds": 3
-        }
-      ]
-    },
-    {
-      "slide": 8,
-      "title": "step + converged?",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Point to the parameters and iterate, not every implementation line.",
-          "speech": "Now we separate two jobs. Step tells us how to update a state. Converged tells us whether two successive states are close enough. The question mark is part of the predicate’s name. This helper returns the trace, so we can inspect it. The function and stopping test are both arguments.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": "penultimate",
-          "cue": "Advance through the guesses; do not read all decimal places. This paragraph covers every intermediate numerical phase; do not narrate each number.",
-          "speech": "For the square root of two, I use a tolerance. Watch the values settle. The maximum number of updates is a cap on work, not a request to compute every one. The lazy sequence is consumed only until the stopping test succeeds or that cap is reached.",
-          "hold_seconds": 3
-        },
-        {
-          "from": "last",
-          "to": "last",
-          "cue": "End if needed. Pause on the stopping message.",
-          "speech": "The change is below ten to the minus twelve. Successive change does not automatically bound solution error; hitting the work cap is also different from convergence. Here is the full helper for reference. Its important interface remains the supplied step and stopping test.",
-          "hold_seconds": 3
-        }
-      ]
-    },
-    {
-      "slide": 9,
       "title": "Plan tomorrow’s turbine settings",
       "phases": [
         {
@@ -185,7 +110,7 @@
       ]
     },
     {
-      "slide": 10,
+      "slide": 8,
       "title": "What makes one plan better?",
       "phases": [
         {
@@ -212,7 +137,7 @@
       ]
     },
     {
-      "slide": 11,
+      "slide": 9,
       "title": "Optimization is iterate",
       "phases": [
         {
@@ -239,7 +164,7 @@
       ]
     },
     {
-      "slide": 12,
+      "slide": 10,
       "title": "How far should one update move?",
       "phases": [
         {
@@ -259,7 +184,7 @@
       ]
     },
     {
-      "slide": 13,
+      "slide": 11,
       "title": "Which plan should win?",
       "phases": [
         {
@@ -286,7 +211,7 @@
       ]
     },
     {
-      "slide": 14,
+      "slide": 12,
       "title": "Same updates, different objectives",
       "phases": [
         {
@@ -313,7 +238,7 @@
       ]
     },
     {
-      "slide": 15,
+      "slide": 13,
       "title": "Can momentum reduce the number of updates?",
       "phases": [
         {
@@ -333,7 +258,7 @@
       ]
     },
     {
-      "slide": 16,
+      "slide": 14,
       "title": "Play the resulting day",
       "phases": [
         {
@@ -353,7 +278,7 @@
       ]
     },
     {
-      "slide": 17,
+      "slide": 15,
       "title": "Buy hydrogen before the customers arrive",
       "phases": [
         {
@@ -387,7 +312,7 @@
       ]
     },
     {
-      "slide": 18,
+      "slide": 16,
       "title": "Buy for this week—or the next?",
       "phases": [
         {
@@ -400,7 +325,7 @@
       ]
     },
     {
-      "slide": 19,
+      "slide": 17,
       "title": "Future values change the order",
       "phases": [
         {
@@ -441,7 +366,7 @@
       ]
     },
     {
-      "slide": 20,
+      "slide": 18,
       "title": "Hydrogen: iterate the value table",
       "phases": [
         {
@@ -468,7 +393,7 @@
       ]
     },
     {
-      "slide": 21,
+      "slide": 19,
       "title": "The best order depends on the supply window",
       "phases": [
         {
@@ -505,10 +430,10 @@
           "hold_seconds": 6
         }
       ],
-      "slide": 22
+      "slide": 20
     },
     {
-      "slide": 23,
+      "slide": 21,
       "title": "iterate underneath all three",
       "phases": [
         {
@@ -526,25 +451,25 @@
         {
           "from": 1,
           "to": 1,
-          "cue": "Introduce its purpose without reading a definition of theorem proving.",
-          "speech": "Rainbow is a theorem prover and code generator focused on Clojure and operations research. I want to state a property of an algorithm or a model, supply a proof, and have the computer check it. I also want to generate Clojure from a program whose modeled behavior we have checked. This currently covers a limited language, not arbitrary Clojure. Its purpose is not to match or beat Lean. I am building it around the kinds of problems we have been discussing.",
+          "cue": "Introduce the AI-oriented design goal; explain what information density means here.",
+          "speech": "Rainbow is a theorem prover and code generator focused on Clojure and operations research. I am designing it for AI-assisted proving. A small generated function can come with a much larger body of proof. That makes information density valuable: useful statements and reusable proof steps per token. The aim is more verified progress from each AI interaction. We want to reuse checked lemmas and let local tools do routine checking. Its purpose is not to match or beat Lean; it is built around this workflow.",
           "hold_seconds": 3
         }
       ],
-      "slide": 24
+      "slide": 22
     },
     {
-      "title": "What can we prove?",
+      "title": "From proofs to Clojure",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Recall clamp from optimization. Explain the property, not the proof syntax.",
-          "speech": "Remember keeping turbine settings between zero and one? A clamp must preserve a value inside the bounds and return the nearest bound outside them. These three outputs illustrate it. Rainbow has checked that the modeled clamp program implements that specification, not just those three examples. The final runtime is still trusted.\n\nFor me, another interesting part is how we work with proofs. Rainbow represents them as data. We can use Clojure functions to construct them, inspect them and change parts. A change needs a new check. This gives us a basis for visualizations and structural editing. The general editor is future work; the proof data and checker already exist.",
+          "cue": "Recall the clamp property, then explain forms, function composition and REPL inspection.",
+          "speech": "Remember keeping turbine settings between zero and one? Rainbow has checked that the modeled clamp implements that specification, beyond these three examples. The proof concerns the modeled program; the final runtime is still trusted.\n\nClojure is a useful target because its code is data. We can generate forms, inspect their structure, and compose functions using the higher-order functions we have been discussing. Then we can inspect and run the result in the REPL. Rainbow proofs are data too, so Clojure tools can work with both. Code generation currently covers a modeled subset of Clojure. The goal is to make the reasoning reusable while keeping the generated program small enough to understand.",
           "hold_seconds": 4
         }
       ],
-      "slide": 25
+      "slide": 23
     },
     {
       "title": "Where we use Rainbow now?",
@@ -557,10 +482,10 @@
           "hold_seconds": 4
         }
       ],
-      "slide": 26
+      "slide": 24
     },
     {
-      "slide": 27,
+      "slide": 25,
       "title": "Applied Higher-Order Functions",
       "phases": [
         {
@@ -573,7 +498,7 @@
       ]
     },
     {
-      "slide": 28,
+      "slide": 26,
       "title": "Thank you",
       "phases": [
         {

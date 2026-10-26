@@ -1446,68 +1446,42 @@
                         "Validation: check the rules.")])
     :notes "Two minutes. A plan is a choice; an objective scores it; constraints limit it. Uncertainty changes what a good decision means. Validation asks whether a system meets its specification. Keep the concrete examples as surprises for their sections."}
 
-   {:section "HOFs" :title "Functions in. Functions out." :steps 3
-    :render (fn [step]
-              [:div.two
-               [:div (code 'newton-sqrt {:marks #{"fn"}})
-                (code "(map (newton-sqrt 2) [1 2 4])")]
-               [:div
-                [:p.aside "newton-sqrt returns an update function."]
-                [:p.caption "(function argument …) · fn introduces a function"]
-                [:p.caption "Here: n > 0 and a positive starting guess."]
-                (when (>= step 1)
-                  [:div.callout [:p "map applies it to each guess."]
-                   [:p (pr-str (mapv (newton-sqrt 2) [1 2 4]))]])
-                (when (= step 2)
-                  [:p.aside "Feed each result back: iterate."])]] )
-    :notes "90 seconds. First show the returned fn; then map calls it on three guesses. These numbers are evaluated by the displayed function. A higher-order function accepts a function or returns one. map makes independent calls. iterate connects the calls, carrying the result forward. That distinction prepares the rest of the talk."}
-
-   {:section "HOFs" :title "iterate: state → state → …" :steps 5
-    :render (fn [step]
+   {:section "HOFs" :title "iterate takes an update function" :steps 2
+    :render (fn [phase]
               [:div
-               (code "(take 5 (iterate (newton-sqrt 2) 1.0))" {:marks #{"iterate"}})
+               [:div.two.even
+                [:div (code 'newton-sqrt {:marks #{"fn"}})
+                 [:p.caption "Find √2, starting from a positive guess."]]
+                [:div
+                 (code "(def step (newton-sqrt 2))\n\n(take 5 (iterate step 1.0))" {:marks #{"iterate"}})
+                 [:p "newton-sqrt returns a function. iterate takes it as an argument."]]]
                [:div.state-chain
-                (for [[i x] (map-indexed vector (take (inc step) sqrt-run))]
+                (for [[i x] (map-indexed vector (take (if (zero? phase) 1 5) sqrt-run))]
                   [:div.state-node [:span.caption (str "state " i)]
                    [:strong (fmt x 6)]
                    [:span.caption (if (zero? i) "initial guess" "step(previous)")]])]])
-    :notes "90 seconds. Press Right one state at a time. Say: input, call, output; the output becomes the next input. This is a trace we can replay, plot or inspect. take asks for five states. It does not claim that five is enough. Next we must choose what done means."}
+    :notes "One example throughout: positive square root of two. defn names a function; fn returns an anonymous update capturing n. The first iterate element is the initial guess, not an update. Reveal the next four states together: each output is the next input. take requests five states from a lazy sequence; it does not test convergence. No separate map lesson or switch to square root of four. The update is Newton's method for positive n and a positive starting guess; iterate itself supplies no convergence guarantee."}
 
-   {:section "HOFs" :title "A fixed point stays the same" :steps 2
-    :render (fn [frame]
-              (let [step (newton-sqrt 4)]
+   {:section "HOFs" :title "Choose when to stop" :steps 2
+    :render (fn [phase]
+              (let [[a b] (take-last 2 sqrt-run)]
                 [:div.two.even
-                 [:div (code 'newton-sqrt)
-                  (code "(def step (newton-sqrt 4))")
-                  [:p.aside "Find a positive x with x² = 4."]
-                  [:p.caption "If x is too high, 4/x is too low. Average them."]]
                  [:div
-                  [:p.aside "Start at 3. Feed each result back."]
+                  (if (zero? phase)
+                    [:div
+                     (code "(fixed-point (newton-sqrt 2)\n             close-enough?\n             1.0)")
+                     (code 'close-enough?)]
+                    (code 'fixed-point {:size :small :marks #{"iterate" "converged?"}}))]
+                 [:div
+                  [:p.aside "A fixed point is unchanged by the update."]
+                  [:p "For this step: x = (x + 2/x) / 2, so x² = 2."]
                   [:table.trace
-                   (for [[i x] (map-indexed vector (take 4 (iterate step 3)))]
-                     [:tr [:td.k (if (zero? i) "start" (str "update " i))]
-                      [:td.v (fmt x 6)]])]
-                  (when (pos? frame)
-                    [:div.callout
-                     [:p "At x = 2: (2 + 4/2) / 2 = 2"]
-                     [:p "The update leaves the solution unchanged."]])]]))
-    :notes "We seek the positive square root of four. Newton averages x and 4/x. These straddle two for positive x. In exact arithmetic the new error is (x−2)²/(2x), so the first update is at least two and subsequent updates decrease toward two. A tiny positive initial guess can become farther away on its first update: do not claim every update improves every positive guess. The displayed trace starts at three and approaches two through repeated calls, rather than jumping to an independently chosen input. A positive fixed point satisfies x=(x+4/x)/2, hence x²=4. This connection comes from this specific step; iterate alone guarantees neither improvement nor convergence. The table rounds for display. Next use a tolerance for the square root of two."}
-
-   {:section "HOFs" :title "step + converged?" :steps (count sqrt-run)
-    :render (fn [step]
-              [:div.two
-               [:div
-                (if (= step (dec (count sqrt-run)))
-                  (code 'fixed-point {:size :small :marks #{"iterate" "converged?"}})
-                  (code "(fixed-point step converged? start)\n\n(iterate step start)" {:marks #{"iterate"}}))
-                (code 'close-enough? {:size :small})]
-               [:div
-                [:div.caption "(fixed-point (newton-sqrt 2) close-enough? 1.0)"]
-                [:table.trace (for [[i x] (map-indexed vector sqrt-run) :when (<= i step)]
-                                [:tr [:td.k (str "x" i)] [:td.v (.toFixed x 12)]])]
-                (when (= step (dec (count sqrt-run)))
-                  [:p.aside "Change < 10⁻¹². Stop."])]])
-    :notes "This is the pattern of the whole talk. A state, a step from state to state, a test for done. iterate makes the lazy sequence of states. take-while stops it. take and take-while are lazy. count eagerly walks only the non-converged prefix; it must inspect the first converged pair to stop. vec collects the retained states, including both states of that pair, from the already realized sequence without rerunning step. The default cap is 1000 updates, not a request to perform them all. A checked example with max-steps 10000 converges after 12 calls and returns 13 states including the start. Optimising, deciding and verifying are all this loop with different arguments."}
+                   [:tr [:td.k "previous"] [:td.v (.toFixed a 15)]]
+                   [:tr [:td.k "next"] [:td.v (.toFixed b 15)]]]
+                  [:p.aside (str "Change: " (.toExponential (abs (- b a)) 2) " < 10⁻¹²")]
+                  [:p "The stopping test is another function we supply."]
+                  [:p.caption "Small change is a stopping rule, not a general error bound."]]]))
+    :notes "Use the same square-root-of-two trajectory. In exact arithmetic a positive fixed point satisfies x=(x+2/x)/2, hence x²=2. Floating-point iteration uses a tolerance between successive states. This alone is not a general error certificate. The second reveal shows the actual helper for reference: iterate builds the lazy sequence, take caps work, take-while checks pairs, count realizes only the prefix up to the first passing pair, vec returns the retained trace. The cap is not a convergence result. A regression with cap 10000 stops after 12 updates when the predicate passes. No need to read every implementation line aloud; the important interface is step, stopping predicate and initial state."}
 
    {:section "Optimise" :title "Plan tomorrow’s turbine settings"
     :live (fn [_ t] {"farm-context" (scene nil t {:w 700 :h 510})})
@@ -1857,12 +1831,13 @@
                [:div [:p.aside "A theorem prover & code generator."]
                 [:p "Focused on Clojure and operations research."]
                 [:p.aside "flexiana.com/rainbow"]]
-               [:div [:p "Check mathematical claims about algorithms and models."]
-                [:p "Generate Clojure from a modeled program."]
+               [:div [:p.aside "Designed for AI-assisted proving."]
+                [:p "Aim: more verified progress per token."]
+                [:p "Reuse checked lemmas instead of repeating arguments."]
                 [:p.caption "Its purpose is not to match or beat Lean."]]])
-    :notes "Introduce the tool without teaching its proof language. A statement alone is not enough: Rainbow checks a supplied proof against it. Code generation currently covers a modeled subset of Clojure. It does not prove arbitrary Clojure programs correct, replace testing, or validate a physical model's assumptions. Lean is a broader prover; no exclusive capability or superiority is claimed. The motivation is an OR workflow accessible from Clojure."}
+    :notes "Introduce the tool without teaching its proof language. A statement alone is not enough: Rainbow checks a supplied proof against it. Code generation currently covers a modeled subset of Clojure. It does not prove arbitrary Clojure programs correct, replace testing, or validate a physical model's assumptions. Lean is a broader prover; no exclusive capability or superiority is claimed. The motivation is an OR workflow accessible from Clojure. The AI emphasis is a design goal, grounded in Rainbow_AI_Worker_Implementation_Specification.md section 3.5: useful verified progress per AI round trip and per million tokens. Reuse and local checking are the mechanism; no tokenizer-specific compression, lower cost or benchmark superiority is asserted. The reported 5:1 proof-to-generated-code ratio awaits a unit and example, so it is not displayed."}
 
-   {:section "Rainbow" :title "What can we prove?"
+   {:section "Rainbow" :title "From proofs to Clojure"
     :render (fn [_]
               (let [receipt (n/checked-or-examples)]
                 [:div.two.even
@@ -1874,11 +1849,12 @@
                   [:p "The modeled clamp returns the nearest bound when outside; it keeps the value when inside."]
                   [:p.caption "Proved for the modeled program, beyond these three examples."]]
                  [:div
-                  [:p.aside "Proofs are data we can work with in Clojure."]
-                  [:p "Clojure functions can construct proof terms and submit edits for checking."]
-                  [:p "The same data can drive a visualization or structural editor."]
-                  [:p.caption "The runtime remains trusted. A general visual editor is future work."]]]))
-    :notes "One familiar example instead of proof syntax. The values are the recorded executions of the generated clamp program, read from or-checks.edn. Bounds are ordered, here 0 and 1. clj/clamp-program-denotes-clamp and clj/compile-correct-scoped were checked on 2026-10-24 with empty transitive axiom profiles. The first relates the modeled program to its specification; the second preserves meaning for scoped programs between modeled representations. This is not a theorem about all real numbers in a floating-point JVM implementation: the printer, exact-arithmetic primitives and runtime remain trusted. Three executions illustrate the result; they are not the proof. Rainbow proof terms are EDN; Clojure functions can construct and transform them, but each changed term must be checked again. This property enables visual tools; do not claim a released general editor or that other provers lack structured proof data. Full terms, generated source, selection/LP results and the earlier syntax walkthrough remain in the study material."}
+                  [:p.aside "Why generate Clojure?"]
+                  [:p "Code and proofs are data."]
+                  [:p "Generate forms. Compose them with higher-order functions."]
+                  [:p "Inspect and run the result in the REPL."]
+                  [:p.caption "Currently: a modeled subset. The runtime remains trusted."]]]))
+    :notes "One familiar example instead of proof syntax. Explain why Clojure is a useful generation target: structured forms can be constructed and traversed as data; higher-order functions provide reusable pieces; the REPL lets us inspect and run generated output. A compact representation alone does not prove token efficiency or correctness. The values are the recorded executions of the generated clamp program, read from or-checks.edn. Bounds are ordered, here 0 and 1. clj/clamp-program-denotes-clamp and clj/compile-correct-scoped were checked on 2026-10-24 with empty transitive axiom profiles. The first relates the modeled program to its specification; the second preserves meaning for scoped programs between modeled representations. This is not a theorem about all real numbers in a floating-point JVM implementation: the printer, exact-arithmetic primitives and runtime remain trusted. Three executions illustrate the result; they are not the proof. Rainbow proof terms are EDN; Clojure functions can construct and transform them, but each changed term must be checked again. This property enables visual tools; do not claim a released general editor or that other provers lack structured proof data. Full terms, generated source, selection/LP results and the earlier syntax walkthrough remain in the study material."}
 
    {:section "Rainbow" :title "Where we use Rainbow now?"
     :render (fn [_]
@@ -1896,7 +1872,7 @@
                 [:p "We compare how to size the plant, buy electricity and run production."]
                 [:p "Rainbow checks the proof of the modeled fuel-blending optimum."]
                 [:p.caption "Annual savings are model estimates; the proof covers a specific decision."]]])
-    :notes "Business case from challenge-1-esaf, separate from the preceding e-methanol benchmark. The site is San Roque / Los Barrios, Bay of Algeciras, at 36.18 N, -5.40 W. This is a modeled 50,000 t/year plant, not a named operating customer's installation. OMIE Spanish-zone hourly prices cover 2023–2025; local ERA5/Open-Meteo weather covers 2015–2025 with PVGIS calibration. Equipment costs and efficiencies are explicit assumptions, not vendor quotes. The figure is the paired out-of-sample mean cost difference between average-year design B1 and the stochastic design: 157.2451162402811 EUR/t times the assumed 50,000 t/year target = 7.862255812014055 M EUR/year. It includes the study's modeled costs and shortfall assumptions; it is distinct from the earlier 4.4 M energy/backup-only operating-policy comparison. Nine weather/price combinations reuse the price years used in tuning; do not call them nine independent unseen years. The annual saving is an evaluated model result, not a formal theorem or realized customer saving. The user-suggested 74 M EUR/year figure has not been traced to a result/baseline and is not asserted. The recorded Rainbow result certifies the specified 60-unit fuel-blending model's optimum: at most 28 units of e-SPK under the supplied properties/constraints. The 24 operating LP certificates use a separate exact checker; do not attribute their implementation verification or the whole annual saving to Rainbow. HiGHS solves the LPs; our modeling/search and verification work use it. Sources and pending-figure status are in speaker/plant-case-evidence.json and the study guide."}
+    :notes "Business case from challenge-1-esaf, separate from the optional e-methanol benchmark in the study guide. The site is San Roque / Los Barrios, Bay of Algeciras, at 36.18 N, -5.40 W. This is a modeled 50,000 t/year plant, not a named operating customer's installation. OMIE Spanish-zone hourly prices cover 2023–2025; local ERA5/Open-Meteo weather covers 2015–2025 with PVGIS calibration. Equipment costs and efficiencies are explicit assumptions, not vendor quotes. The figure is the paired out-of-sample mean cost difference between average-year design B1 and the stochastic design: 157.2451162402811 EUR/t times the assumed 50,000 t/year target = 7.862255812014055 M EUR/year. It includes the study's modeled costs and shortfall assumptions; it is distinct from the earlier 4.4 M energy/backup-only operating-policy comparison. Nine weather/price combinations reuse the price years used in tuning; do not call them nine independent unseen years. The annual saving is an evaluated model result, not a formal theorem or realized customer saving. The user-suggested 74 M EUR/year figure has not been traced to a result/baseline and is not asserted. The recorded Rainbow result certifies the specified 60-unit fuel-blending model's optimum: at most 28 units of e-SPK under the supplied properties/constraints. The 24 operating LP certificates use a separate exact checker; do not attribute their implementation verification or the whole annual saving to Rainbow. HiGHS solves the LPs; our modeling/search and verification work use it. Sources and pending-figure status are in speaker/plant-case-evidence.json and the study guide."}
 
    ;; ---------------------------------------------------------------- The book (2 min)
    {:section "The book" :title "Applied Higher-Order Functions"

@@ -10,10 +10,11 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=shield-impact-20261026).
-Updated 2026-10-26: 28 slides. Validation is one animated shield demonstration, followed
-by the shared iterate summary. Rainbow introduces its purpose, illustrates a proved clamp
-property without proof syntax, and presents the Algeciras business case. The deeper
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=hof-ai-20261026).
+Updated 2026-10-26: 26 slides. The HOF introduction is two slides: iterate and its
+stopping test, using one square-root example throughout. Validation is one animated shield demonstration, followed
+by the shared iterate summary. Rainbow explains its AI-oriented design goal and information density, illustrates a
+proved clamp property, explains Clojure as a generation target, and presents the Algeciras case. The deeper
 controller, proof-term and plant-certificate explanations remain optional study material.
 The spoken script, study guide and PDFs follow this shorter route.
 This URL is **public and unauthenticated**;
@@ -28,7 +29,7 @@ runtime files and source maps. There is no REPL or evaluation server behind this
 The ngrok inspector is on loopback port 4041; another project's tunnel on 4040 is unchanged.
 Rebuilding `talk/public` alone does not refresh this copied preview.
 
-Slide 16's highlighted bird uses a scripted crossing of the most exposed turbine. A running
+Slide 14's highlighted bird uses a scripted crossing of the most exposed turbine. A running
 rotor shows an impact flash and falling bird; the same crossing continues past a stopped rotor.
 It reads the actual displayed schedule and playback hour. This illustrates the reason for
 curtailment; it is not a blade-collision simulation or a count of predicted fatalities. The
@@ -96,28 +97,28 @@ open the release build (`public/index.html`) — it needs nothing else.
 ## Talk arc — revised 2026-10-26
 
 HOFs are the subject. Step size and momentum are integrated into optimization; Rainbow follows the three examples.
-The deck has 28 slides; reveals are steps within a slide, not additional topics.
+The deck has 26 slides; reveals are steps within a slide, not additional topics.
 
 | Slides | Estimated time | What the audience sees |
 | --- | ---: | --- |
 | 1–2: Jiri | 0:42 | Developer, economist, Barcelona meetup and interviews. |
 | 3: Clojure | 0:27 | Why I chose it; no language prerequisite. |
 | 4: OR | 0:38 | What optimization, decisions and validation ask. |
-| 5–8: HOFs | 4:35 | Function construction, map, iterate and stopping. |
-| 9–16: Optimization | 9:08 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
-| 17–21: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
-| 22–23: Validation and summary | 2:12 | Animated shield, exhaustive model result, shared iterate. |
-| 24–26: Rainbow | 2:38 | Purpose, a familiar proved property, proofs as data, business case. |
-| 27–28: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
+| 5–6: HOFs | 2:22 | Returned update function, iterate trace, fixed point and stopping test. |
+| 7–14: Optimization | 9:08 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
+| 15–19: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
+| 20–21: Validation and summary | 2:12 | Animated shield, exhaustive model result, shared iterate. |
+| 22–24: Rainbow | 2:40 | AI-oriented proving, useful progress per token, Clojure generation, business case. |
+| 25–26: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
 
-The current 3,314-word script estimates **29:56 including visual holds**, or **31:56 with two
+The current 3,093-word script estimates **27:46 including visual holds**, or **29:46 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. The shorter route leaves room within the 40-minute slot for live demonstrations and audience questions. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 28 slides, 59 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 26 slides, 50 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -173,7 +174,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 11)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=flow-20261022#s11).
+Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=hof-ai-20261026#s9).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |
@@ -195,14 +196,14 @@ for all six turbines; it does not calculate a wind field or turbine power curve.
 fixed and nudges the remaining one up and down. For turbine 1 at noon, cost changes from
 5214.00084 to 5213.99916 across a setting change of 0.00002. The slope is −84.
 Subtract rate × slope: `0.5 − 0.0001 × (−84) = 0.5084`. Every coordinate's slope uses the same
-old vector. One call returns 72 updated settings, then the clamp limits them to 0…1. Slide 11
+old vector. One call returns 72 updated settings, then the clamp limits them to 0…1. Slide 9
 shows all six noon settings changing together. Other hours update in the same call.
 
-Slide 10 visualizes all turbine-hour exposure inputs. Risk at full operation is `exposure(t) ×
+Slide 8 visualizes all turbine-hour exposure inputs. Risk at full operation is `exposure(t) ×
 birds(h)`: location relative to the flyway gives each turbine a different weight, while all share
 one hourly traffic pattern. These are exposure indices, not independent probability distributions.
 
-Slide 13 compares two real candidate plans. A retains half everywhere; B only changes T3 at noon
+Slide 11 compares two real candidate plans. A retains half everywhere; B only changes T3 at noon
 to stopped. B sacrifices another 42 kWh but lowers exposure. A wins on electricity alone; B wins
 with the chosen penalty. The target 12 and weight 100 are modelling choices. Risk 14 adds 400
 score points; risk at or below 12 adds zero. The comparison teaches the tradeoff before the HOF
@@ -219,7 +220,7 @@ of deaths. The penalty is a soft tradeoff and can settle above twelve; it is not
 Tests compare final objective values with an independent convex lower bound, not an assumption
 that all optimizers produce identical settings. Settling alone does not certify an optimum.
 
-Slide 12 changes the rate immediately after gradient descent is introduced. Slide 15 follows the
+Slide 10 changes the rate immediately after gradient descent is introduced. Slide 13 follows the
 plain risk-aware run with the question of whether momentum can reduce update count. Momentum
 calls the base step once, adds 90% of the old velocity to its proposed displacement, and returns
 new position and velocity. The outer clamp clips position, not velocity. The cost chart and update
@@ -232,7 +233,7 @@ cached states does not repeat logging. A new realization of a new sequence runs 
 
 ## Reading the decision and validation examples
 
-Slides 17–21 concern a **hydrogen filling station** throughout. The physical tank holds four
+Slides 15–19 concern a **hydrogen filling station** throughout. The physical tank holds four
 units; one customer truck uses one unit. The station observes stock and the supplier window,
 orders before demand is known, receives the delivery, serves customers and carries leftovers.
 
@@ -253,16 +254,16 @@ prices and supplier capacity. `orders` obeys both tank space and supplier availa
 advances the week and carries leftovers. `expected-return` averages current profit plus .9 times
 that next state's value. The generic `bellman` implementation remains unchanged.
 
-Slide 18 poses the non-obvious choice: in a regular week with one unit, order two to cover any
+Slide 16 poses the non-obvious choice: in a regular week with one unit, order two to cover any
 current convoy, or three to carry an extra unit into tight supply? All possible next inventories
-are shown. Slide 19 scores those orders. With zero future values order two wins; after three value
+are shown. Slide 17 scores those orders. With zero future values order two wins; after three value
 backups order three wins. The fourth reveal exposes Bellman’s two levels: the model constructs an
 update function, which maps ten old profit estimates to ten new best scores. The fifth reveal shows
 actual `best-order` source: `max-key` retains the winning order, whereas `max` retains its score.
 Both use the same q function. `best-order` returns a state-to-order map without modifying V.
 **Iterations refine a plan; they are not weeks or actual purchases.**
 
-Slide 20 shows expected future profit, in money units, with a labelled bar for each `[week stock]`.
+Slide 18 shows expected future profit, in money units, with a labelled bar for each `[week stock]`.
 Regular/tight bars are grouped by inventory. A worked table reads both stock-1 bars and the orders.
 After n backups, V is the n-week optimal value; the displayed greedy order looks one week beyond
 that table. The final policy is:
@@ -275,7 +276,7 @@ that table. The final policy is:
 | 3 | 1 | 0 |
 | 4 | 0 | 0 |
 
-Slide 21 compares five feasible rules over twenty weeks, starting at `[:regular 1]`. Expected
+Slide 19 compares five feasible rules over twenty weeks, starting at `[:regular 1]`. Expected
 discounted profit is approximately 50.11 (fill to two), 70.36 (fill to three), 66.36 (fill to four),
 70.48 (optimize this week only) and 72.20 (Bellman's stationary policy). All target rules are clipped
 to available supply and tank space. Always filling to capacity is worse than adapting to the phase;
@@ -287,7 +288,7 @@ not selected simulations. The stationary policy is evaluated over twenty weeks f
 score; it is not claimed to be the optimal finite-horizon terminal-week policy. This example is
 an illustrative procurement model, not a hydrogen price or customer forecast.
 
-Slide 22 is the entire Validation section. Two animated views send the same detection
+Slide 20 is the entire Validation section. Two animated views send the same detection
 through the original reacting controller and the simpler `stop-for-birds` wrapper.
 The wrapper stops on any detection; otherwise it delegates to the supplied decision.
 The rotor follows the actual command. Detection arrives at two seconds; the shielded
@@ -304,21 +305,25 @@ The older table-specific shield and three-controller walkthrough remain study ba
 `node scripts/shield-smoke.cjs /path/to/playwright` checks the detection boundary, real
 commands, rotor motion, model verdicts, hash recovery and matching presenter speech.
 
-Slide 23 names `iterate` underneath optimization, value iteration and reachability. Their
+Slide 21 names `iterate` underneath optimization, value iteration and reachability. Their
 states, updates and stopping tests differ. Rate and momentum already demonstrated composition.
 
 ## Rainbow: purpose and one familiar property — 2026-10-26
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=shield-impact-20261026#s24).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=hof-ai-20261026#s22).
 It remains publicly accessible without authentication.
 
-Slide 24 introduces Rainbow as a theorem prover and code generator focused on Clojure
-and operations research, without the ambition to match or beat Lean. Slide 25 illustrates
-the proved clamp property and explains why proof data can support Clojure tools. No proof
-syntax, comparison table or generated-code listing is required on stage. Slide 26 keeps
-the Algeciras business case and separates estimated savings from the recorded blend proof.
-The older composition demo, mathematical statements and code-generation source remain
-in the study guide and their checked evidence files. They are not slides in this edition.
+Slide 22 introduces Rainbow's Clojure/OR focus and its design for AI-assisted proving.
+“More verified progress per token” is a design goal, supported by section 3.5 of
+`../rainbow/internal-rfnbo/Rainbow_AI_Worker_Implementation_Specification.md`.
+This is not a measured compression ratio or a claim of superiority over another prover.
+The proposed 5:1 proof-to-generated-code ratio awaits its unit and example; it is not
+asserted on stage. Reusable statements, checked lemmas and local checking explain the goal.
+
+Slide 23 connects the proved clamp property to Clojure generation: structured forms,
+higher-order function composition and REPL inspection. The generator currently covers a
+modeled subset; the runtime remains trusted. Slide 24 keeps the Algeciras business case.
+Proof syntax, comparison tables and generated-code listings remain optional study material.
 
 Direction was reconciled with the live `rainbow-claude-4` worker and
 `../rainbow/internal-rfnbo/doc/north-star-2026-10-23.md` plus `BACKLOG.md`, at
@@ -408,7 +413,7 @@ outperform HiGHS at finding them. The study guide preserves these boundaries; th
 
 ### Savings are a separate comparison
 
-Slide 26 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
+Slide 24 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
 in the Bay of Algeciras (36.18° N, 5.40° W). It combines historical hourly OMIE Spanish prices
 for 2023–2025 with local ERA5/Open-Meteo wind and solar history and PVGIS calibration.
 Electrolysis, storage, CO₂ supply and fuel production have explicit limits and costs;
@@ -450,7 +455,7 @@ faces are used, with browser-synthesized bold. Bundled DejaVu remains for missin
 its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
 
 Visible text is intentionally brief; fuller explanations and proof assumptions remain in
-speaker notes. OR's opening slide does not reveal the concrete examples. Slide 27 uses the
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 25 uses the
 supplied `../flexiana-web/site/src/assets/book/book-wood-angle.web.webp` photograph in its
 390 × 520 area. A byte-identical copy lives at `src/talk/book-photo.webp`; the build embeds it
 as a data URL, so the book slide also works offline without adding a public asset endpoint.
@@ -458,7 +463,7 @@ as a data URL, so the book slide also works offline without adding a public asse
 ## Study Validate and Rainbow
 
 [Study guide](speaker/VALIDATE-RAINBOW-STUDY.md) and
-[printable PDF](../artifacts/validate-rainbow-study.pdf) start with the shorter stage route (22–26), followed by optional background: state fields,
+[printable PDF](../artifacts/validate-rainbow-study.pdf) start with the shorter stage route (20–24), followed by optional background: state fields,
 the decision table and controller call flow, reachability closure, proof syntax, OR theorem scope, generated Clojure, optional Bellman
 contraction and residuals, solver attribution, and the precise boundaries of each claim.
 Practice questions include answer checks. The full spoken script remains in `speaker/SCRIPT.md`.
@@ -473,8 +478,8 @@ These study files are kept outside the copied ngrok directory.
 
 ## Verification and remaining delivery work
 
-Current simplified edition (2026-10-26): **22 tests / 2,193 assertions** pass. Offline
-Chromium checks **195 frames** at three projector sizes. The dedicated shield check verifies
+Current simplified edition (2026-10-26): **22 tests / 2,154 assertions** pass. Offline
+Chromium checks **156 frames** at three projector sizes. The dedicated shield check verifies
 the detection threshold, actual commands, matching bird paths, rotor freeze, failure counts,
 refresh and presenter speech. The release builds without warnings. The public bundle matches
 the local build; current details are recorded in `speaker/VERIFICATION.md`.
