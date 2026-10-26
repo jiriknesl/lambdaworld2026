@@ -385,3 +385,39 @@ the original editorial review; these later user-directed revisions are recorded 
   slides passed at 1920×1080 and 1024×768, with book photo and matching presenter speech.
   Public unauthenticated URL:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=business-case-20261024#s31
+
+## 2026-10-26 — One-slide Validation and introductory Rainbow
+
+- Validation is slide 22 with two animated views: original reacting controller, then
+  the same detection through `stop-for-birds`. The new wrapper stops on any positive
+  detection; with none, it delegates. Both event and timer paths use the wrapper.
+  The older table-specific shield remains optional study material.
+- The SVG reads actual controller output. At two seconds the scripted bird crosses
+  the detection line; the shield issues STOP and the illustrated rotor freezes.
+  This is a command illustration, not a physical braking or bird-survival model.
+- The displayed failure count comes from exhaustive reachability of that controller.
+  Tests check closure under all modeled successors, no confident-detection/RUN states,
+  preservation without detections, and override for weak/confident detections in both
+  contexts and every encoded draw band. Original reacting-controller failures remain.
+- Slide 23 summarizes iterate. Rainbow is now slides 24–26: purpose, clamp property
+  and proofs as Clojure data, then the Algeciras business case. Removed proof syntax,
+  comparison table, generated-code listing and the separate methanol benchmark from
+  the stage. Existing evidence and deeper explanations remain optional study material.
+  No new Rainbow proof or business claim is asserted.
+- Updated script, presenter data, timing, README and study guide, including a short
+  preparation route before the optional technical material. Regenerated both PDFs
+  with networking disabled. 28 slides, 59 cues, 3,314 words: estimated 29:56 with holds,
+  31:56 including two minutes of questions. This leaves room within the 40-minute slot.
+- 21 tests / 2,185 assertions passed. Final release: zero warnings. Offline smoke check
+  covered 195 frames across 1600×900, 1920×1080 and 1024×768: no overflow or external
+  requests; hash recovery, presenter controls and day marker passed. Inspected slide
+  screenshots. After two prose-only sentence changes, rebuilt and checked the final
+  Rainbow layout at both 1920×1080 and 1024×768 through the public preview.
+- `scripts/shield-smoke.cjs` passed offline and publicly at all three sizes. Controlled
+  clock verifies the same bird path, detection boundary, real commands, rotor motion
+  versus freeze, failure counts, refresh and matching presenter speech.
+- Updated the existing six-file static preview; no tunnel configuration change. Public
+  JavaScript matches the release byte-for-byte; Rainbow slides, book photograph and
+  matching business-case/book presenter speech passed.
+  Public unauthenticated URL:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=simplified-20261026#s22

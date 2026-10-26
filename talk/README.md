@@ -10,12 +10,12 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=business-case-20261024).
-Updated 2026-10-24: 33 slides. Rainbow now introduces its purpose, compares its focus and
-workflow with Lean, shows a short proof-data example, presents two freshly checked OR
-theorems, and generates a clamp function before the plant results. The longer Bellman
-proof remains in the study guide. The book slide describes the broader use of higher-order
-functions in algorithm design. The spoken script, study guide and PDFs follow this order.
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=simplified-20261026).
+Updated 2026-10-26: 28 slides. Validation is one animated shield demonstration, followed
+by the shared iterate summary. Rainbow introduces its purpose, illustrates a proved clamp
+property without proof syntax, and presents the Algeciras business case. The deeper
+controller, proof-term and plant-certificate explanations remain optional study material.
+The spoken script, study guide and PDFs follow this shorter route.
 This URL is **public and unauthenticated**;
 the compiled deck includes all slides, displayed source, the full spoken script, technical reference notes and recorded proof evidence.
 It now serves this deck, replacing the old Function Observatory preview at the same URL.
@@ -93,10 +93,10 @@ Optimise section. After a hot reload they start again.
 overlay and the last good build keeps running: undo, save. If the watch process or the editor fails,
 open the release build (`public/index.html`) — it needs nothing else.
 
-## Talk arc — revised 2026-10-24
+## Talk arc — revised 2026-10-26
 
 HOFs are the subject. Step size and momentum are integrated into optimization; Rainbow follows the three examples.
-The deck has 33 slides; reveals are steps within a slide, not additional topics.
+The deck has 28 slides; reveals are steps within a slide, not additional topics.
 
 | Slides | Estimated time | What the audience sees |
 | --- | ---: | --- |
@@ -106,18 +106,18 @@ The deck has 33 slides; reveals are steps within a slide, not additional topics.
 | 5–8: HOFs | 4:35 | Function construction, map, iterate and stopping. |
 | 9–16: Optimization | 9:08 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
 | 17–21: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
-| 22–24: Validation | 5:29 | Controller rule, reachable states and shared iterate. |
-| 25–31: Rainbow | 5:20 | Purpose, Lean comparison, checked OR theorems, generated Clojure and plant results. |
-| 32–33: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
+| 22–23: Validation and summary | 2:12 | Animated shield, exhaustive model result, shared iterate. |
+| 24–26: Rainbow | 2:38 | Purpose, a familiar proved property, proofs as data, business case. |
+| 27–28: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
 
-The current 3,970-word script estimates **35:57 including visual holds**, or **37:57 with two
-minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. Slower
+The current 3,314-word script estimates **29:56 including visual holds**, or **31:56 with two
+minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. The shorter route leaves room within the 40-minute slot for live demonstrations and audience questions. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 33 slides, 77 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 28 slides, 59 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -287,43 +287,36 @@ not selected simulations. The stationary policy is evaluated over twenty weeks f
 score; it is not claimed to be the optimal finite-horizon terminal-week policy. This example is
 an illustrative procurement model, not a hydrogen price or customer forecast.
 
-Slides 22–23 validate controller commands: a confident detection must produce STOP in the same
-modeled minute. Slide 22 first identifies the sensor input, controller and output command,
-and demonstrates a failure before showing code. Bird recognition is assumed input; the property
-concerns the controller response. This is a separate wind-farm controller, not a verification of
-the optimized day schedule. A timer-only controller delays; immediate reactions fix delay but an unseen
-context has no row in its learned table. The shield handles that missing case. Its actual source
-and the same event's outputs with/without shielding are shown.
+Slide 22 is the entire Validation section. Two animated views send the same detection
+through the original reacting controller and the simpler `stop-for-birds` wrapper.
+The wrapper stops on any detection; otherwise it delegates to the supplied decision.
+The rotor follows the actual command. Detection arrives at two seconds; the shielded
+rotor freezes then, while the original continues. This illustrates a software command,
+not physical braking or a guarantee about bird survival.
 
-Reachability asks whether **any event sequence can reach confident detection + RUN**. Each step
-unions in successors; equality detects when no new states can be added. The graph illustrates one
-branch point; the accompanying counts cover the full finite search. Tick-only and unshielded
-controllers fail. The shielded set closes without a failure. This covers encoded command states,
-not physical braking or bird survival. The separate counterexample slide has been removed. Detection at the end of a slot is retained
-before a separate tick resets it; a regression test prevents a reset from hiding that failure.
-Slide 23 has three reveals per controller (nine total), with selected expansion rounds.
+The displayed failure counts come from exhaustive finite reachability using the same
+controller as the animation. `iterate` expands possible states until the set stops growing;
+failures have a confident detection and RUN. The shielded set closes with no failures.
+The optimized 72-setting day schedule is not what this separate model validates.
+The older table-specific shield and three-controller walkthrough remain study background.
+`node scripts/shield-smoke.cjs /path/to/playwright` checks the detection boundary, real
+commands, rotor motion, model verdicts, hash recovery and matching presenter speech.
 
-Slide 24 names `iterate` underneath optimization, value iteration and reachability. Their states,
-update functions and stopping tests differ. Rate and momentum demonstrate composition within the optimization example.
+Slide 23 names `iterate` underneath optimization, value iteration and reachability. Their
+states, updates and stopping tests differ. Rate and momentum already demonstrated composition.
 
-## Rainbow: purpose and checked examples — 2026-10-24
+## Rainbow: purpose and one familiar property — 2026-10-26
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=business-case-20261024#s25).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=simplified-20261026#s24).
 It remains publicly accessible without authentication.
 
-Slide 25 introduces Rainbow as a theorem prover and code generator focused on Clojure,
-operations research and related fields, without the ambition to match or beat Lean.
-Slide 26 compares focus, proof workflow and code generation with Lean. The comparison uses
-the [official Lean FAQ](https://lean-lang.org/faq/) and [language reference](https://lean-lang.org/doc/reference/latest/);
-proof objects, metaprogramming and compilation are not claimed as unique to Rainbow.
-Slide 27 executes two structural edits with `update-in`: remove the outer application,
-then wrap the remaining body in an application of `g`. A tree is rendered from the current
-body. Recorded verdicts are displayed only after checking that the browser's terms match
-those checked on the JVM. This is a talk demo, not a general visual editor.
-
-Slide 31 replaces the previous slides 31–33 with one business case: the Algeciras
-e-SAF model, its data sources and estimated design saving. The proof's scope is stated
-separately. The e-methanol benchmark remains on slide 30, with details in the study guide.
+Slide 24 introduces Rainbow as a theorem prover and code generator focused on Clojure
+and operations research, without the ambition to match or beat Lean. Slide 25 illustrates
+the proved clamp property and explains why proof data can support Clojure tools. No proof
+syntax, comparison table or generated-code listing is required on stage. Slide 26 keeps
+the Algeciras business case and separates estimated savings from the recorded blend proof.
+The older composition demo, mathematical statements and code-generation source remain
+in the study guide and their checked evidence files. They are not slides in this edition.
 
 Direction was reconciled with the live `rainbow-claude-4` worker and
 `../rainbow/internal-rfnbo/doc/north-star-2026-10-23.md` plus `BACKLOG.md`, at
@@ -334,7 +327,7 @@ no commercial roadmap or unsupported competitive claims were imported.
 
 ## The proof examples and their limits
 
-Slide 27 shows actual Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
+The optional study guide explains Rainbow explicit term syntax from `src/talk/composition.edn`. It proves
 function composition for arbitrary propositions P, Q, R: given `f : P → Q`, `g : Q → R` and `p : P`,
 `g(f(p))` proves R. `:forall` binds propositions, `:->` is implication, `:fn` binds arguments and
 `:app` applies a term. The containing `:type`/`:value` map is the checker script's input.
@@ -342,27 +335,27 @@ function composition for arbitrary propositions P, Q, R: given `f : P → Q`, `g
 `src/talk/composition-check.edn` records a fresh kernel check against the clean Rainbow revision
 `d9080c7285c7cd28a81e2d184b25ecae333510fd`, in an empty environment with no axioms. Returning only
 `f(p)` is rejected because Q does not establish R. The original, removed and restored proof terms are elaborated and checked;
-these verdicts are recorded in the deck, not executed by a browser kernel. Reproduce from the
+these verdicts are recorded evidence, not executed by a browser kernel. Reproduce from the
 **repository root** (requires the local Rainbow checkout):
 
 ```sh
 clojure -Sdeps '{:paths ["../rainbow/rainbow/src" "talk/src"]}' -M talk/scripts/check-proof.clj
 ```
 
-The build embeds the exact checked file and fails if it differs from the receipt. This small
-proof teaches the syntax; it is not presented as a proof of the optimization or Bellman code.
+The proof-check script and receipt preserve the original example. This optional proof teaches
+the syntax; it is not a proof of the optimization or Bellman code.
 
-Slide 28 presents two general theorems about exact models: finite action selection dominates
+The study guide retains two general theorems about exact models: finite action selection dominates
 every candidate's score, and LP weak duality bounds every feasible primal objective by a
 feasible dual objective. Both are stated with their nonnegative-rational assumptions.
 The pictures illustrate the statements; they are not additional kernel-checked instances.
 
-Slide 29 displays actual generated Clojure for `clj/clamp-program`, with recorded executions
+The study guide retains the actual generated Clojure for `clj/clamp-program`, with recorded executions
 at bounds 0 and 1. It distinguishes the modeled program's refinement and the compiler's
 scoped-correctness theorem from the trusted printer/primitives/runtime boundary. It does not
 claim that arbitrary Clojure or the browser optimizer is proved.
 
-`src/talk/or-checks.edn` records four fresh checks from Rainbow snapshot
+`src/talk/or-checks.edn` records four checks made on 2026-10-24 from Rainbow snapshot
 `0257fd657d897843f8f2c3acbf19115631ebcfb1`, with source-tree and checkpoint SHA-256 hashes:
 
 - `decision/finite-nnrat-argmax-dominates`
@@ -383,7 +376,7 @@ have no general convergence guarantee here. Forecasts and bird data remain illus
 
 ## E-methanol certificate example
 
-Slide 30 introduces the methanol benchmark, using Jiri’s supplied
+The optional study guide retains the methanol benchmark, using Jiri’s supplied
 benchmark account (2026-10-23). This revision inspected the producer and design record, but did
 not rerun the benchmark.
 The plant diagram shows 120 MW of electrolysis, a 20 t hydrogen tank and a 10 t/h methanol loop,
@@ -409,11 +402,11 @@ implies optimality is still open. These are reported certificate-checking result
 end-to-end formal optimality proofs. The model knows a whole week of prices in advance and omits
 ramp limits, degradation, CO₂/compressor limits, grid fees and renewable-fuel sourcing rules.
 Monthly certificates remain out of reach. The work checks solver answers; it does not claim to
-outperform HiGHS at finding them. The visible slide copy and speaker script preserve these boundaries.
+outperform HiGHS at finding them. The study guide preserves these boundaries; the methanol benchmark is now offstage.
 
 ### Savings are a separate comparison
 
-Slide 31 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
+Slide 26 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
 in the Bay of Algeciras (36.18° N, 5.40° W). It combines historical hourly OMIE Spanish prices
 for 2023–2025 with local ERA5/Open-Meteo wind and solar history and PVGIS calibration.
 Electrolysis, storage, CO₂ supply and fuel production have explicit limits and costs;
@@ -455,7 +448,7 @@ faces are used, with browser-synthesized bold. Bundled DejaVu remains for missin
 its license does not apply to the Aeonik assets. Emoji coverage is still platform-dependent.
 
 Visible text is intentionally brief; fuller explanations and proof assumptions remain in
-speaker notes. OR's opening slide does not reveal the concrete examples. Slide 32 uses the
+speaker notes. OR's opening slide does not reveal the concrete examples. Slide 27 uses the
 supplied `../flexiana-web/site/src/assets/book/book-wood-angle.web.webp` photograph in its
 390 × 520 area. A byte-identical copy lives at `src/talk/book-photo.webp`; the build embeds it
 as a data URL, so the book slide also works offline without adding a public asset endpoint.
@@ -463,13 +456,14 @@ as a data URL, so the book slide also works offline without adding a public asse
 ## Study Validate and Rainbow
 
 [Study guide](speaker/VALIDATE-RAINBOW-STUDY.md) and
-[printable PDF](../artifacts/validate-rainbow-study.pdf) cover slides 22–33: state fields,
+[printable PDF](../artifacts/validate-rainbow-study.pdf) start with the shorter stage route (22–26), followed by optional background: state fields,
 the decision table and controller call flow, reachability closure, proof syntax, OR theorem scope, generated Clojure, optional Bellman
 contraction and residuals, solver attribution, and the precise boundaries of each claim.
 Practice questions include answer checks. The full spoken script remains in `speaker/SCRIPT.md`.
 
 `npm run study` runs examples against the deck's actual functions, including a counterexample
-showing that the shield still trusts bad known rows. The checked output is in
+showing that the older context-specific shield trusts bad known rows. That limitation does
+not apply to the current stage wrapper, which stops on every positive detection. The checked output is in
 `speaker/study-results.json`; regenerate with `npm run study -- speaker/study-results.json`.
 `python3 scripts/build-study.py` builds the offline HTML reading copy using pandoc.
 `node scripts/print-study.cjs /path/to/playwright` regenerates its PDF with networking disabled.
@@ -477,7 +471,13 @@ These study files are kept outside the copied ngrok directory.
 
 ## Verification and remaining delivery work
 
-The flow-20261022 revision passes **18 tests / 2,199 assertions**, including a regression that first
+Current simplified edition (2026-10-26): **21 tests / 2,185 assertions** pass. Offline
+Chromium checks **195 frames** at three projector sizes. The dedicated shield check verifies
+the detection threshold, actual commands, matching bird paths, rotor freeze, failure counts,
+refresh and presenter speech. The release builds without warnings. The public bundle matches
+the local build; current details are recorded in `speaker/VERIFICATION.md`.
+
+Historical verification: the flow-20261022 revision passed **18 tests / 2,199 assertions**, including a regression that first
 failed on the old pre-tick transition, closure checks for every controller, and speech coverage for
 all **445 rendered phases**. The release builds without warnings.
 Chromium checked **1,335 frames**: every phase at 1600×900, 1920×1080 and 1024×768, with networking

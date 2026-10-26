@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,970 spoken words. Planning pace: 125 words/minute, plus 04:11 of pauses and visual holds. Speech and holds: 35:57; with 02:00 for questions: 37:57. This is an estimate, not an aloud rehearsal.
+3,314 spoken words. Planning pace: 125 words/minute, plus 03:25 of pauses and visual holds. Speech and holds: 29:56; with 02:00 for questions: 31:56. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -412,185 +412,57 @@ The policy maps supply window and stock to a purchase quantity. “This week onl
 
 There is a less obvious recommendation here. With an empty tank in a tight week, buy one, even though that purchase has negative expected profit this week. The cost is paid now. If nobody arrives, the unit carries into next week, when cheap supply is capped. That future benefit outweighs the immediate expected loss in this model. Looking only at immediate expected profit misses that value. This comes from the actual model; it is not a general claim about hydrogen markets.
 
-## 22 Validate the turbine controller
+## 22 Stop when a bird is detected
 
-24:29–26:35 · 239 words · 12s visual holds
-
-### Phase 1
-
-[Return explicitly to the wind farm; read input, controller, output.]
-
-Back at the wind farm, we ask a different question. A confident bird detection must cause a STOP command in that modelled minute. Can any event sequence leave the command at RUN instead? Detection is an input. We are validating the controller’s response, not a bird-recognition model.
-
-### Phase 2
-
-[Right. Point to tick and detect branches.]
-
-Here is one controller. A timer makes a decision every ten minutes. A detection arriving between ticks is recorded, but the action is unchanged. That can leave the turbine commanded to run after a confident detection. We have a concrete rule and a concrete failure.
-
-### Phase 3
-
-[Right. Explain the missing table row before reading the wrapper.]
-
-We can wrap the controller so a stronger detection triggers an immediate decision. But its decision table has another problem: an unfamiliar situation has no row. The default stopping probability is zero. The variable u is a sampled draw compared with that probability. Our finite exploration represents the relevant draw bands explicitly, rather than sampling during the search. Reacting sooner does not fix a bad decision. In this table, a confident detection in a known situation does stop the turbine.
-
-### Phase 4
-
-[Right. Follow with-shield and compare the two computed outputs.]
-
-With-shield wraps the decision function. In known situations it delegates to that function. In an unknown situation, any detection produces STOP. The same event now gives STOP instead of RUN. The construction below shows the wiring: the shielded decision is supplied both to the timer controller and to the immediate-reaction wrapper. One example is encouraging. Next we search all the event sequences represented by this finite model.
-
-## 23 Can any event sequence reach RUN + confident bird?
-
-26:35–29:11 · 269 words · 27s visual holds
+24:29–25:59 · 163 words · 12s visual holds
 
 ### Phase 1
 
-[Point to the rule predicate and the initial state count.]
+[Let the bird cross the detection line. Point to RUN and the failure count.]
 
-Our search state is now a set of controller states. The predicate at the bottom says what failure means: detection level two and action RUN. Keywords such as det and action select fields from a map. We start from the controller’s possible initial states.
+Back at the wind farm, suppose a bird is detected while the turbine is running. The controller should issue a stop command. Watch this one: it receives the detection but keeps running. Its decision table has no entry for this situation. The number below comes from checking every reachable state in our small model. So this is a failure found by the check, not just a worrying animation.
 
 ### Phase 2
 
-[Right. Explain the branch diagram and the set-expansion code together.]
+[Right. Let the same bird cross the line; point to STOP, then read the wrapper.]
 
-The next minute can contain no detection, a weak one, or a confident one. The diagram shows one branch; the counts cover the full exploration. Reach-step takes that successor function and returns a set update. Mapcat collects successors; into adds them to the states already known. A set removes duplicates. Detection and timer transitions are separate so a reset cannot hide a failure.
+Now wrap the decision function with a shield. If there is a detection, return stop. Otherwise, call the original decision function. We call this wrapped function as soon as a detection arrives. The animation uses that actual output. The same exhaustive check now finds no state where a confident detection leaves the command at run. Underneath, iterate keeps adding possible next states until the set stops growing. This validates the response in this finite software model. It does not tell us whether a sensor missed a bird, or how quickly a real turbine can brake.
 
-### Phase 3
+## 23 iterate underneath all three
 
-[Right. Pause on the timer-only failure count.]
-
-Repeat until adding successors changes nothing. For the timer-only controller, states violating the rule are reachable. The search has found a real problem in this model.
-
-### Phase 4
-
-[Right. Identify the change of controller.]
-
-Now swap in the controller that reacts immediately. Keep the same search, event model, and failure predicate.
-
-### Phase 5
-
-[Right. Point to the unseen-situation branch.]
-
-The unknown-context branch still leads to RUN after a confident detection. That missing table row survives the timing fix.
-
-### Phase 6
-
-[Right. Pause on the second failure verdict.]
-
-The second controller still fails. We need both the immediate reaction and a safe decision for the unknown situation.
-
-### Phase 7
-
-[Right. Identify the shielded controller.]
-
-Finally, supply the shielded controller to the same exploration.
-
-### Phase 8
-
-[Right. Point to STOP on confident detection.]
-
-The branch that failed before now issues STOP.
-
-The search continues, so we are checking more than that one branch.
-
-### Phase 9
-
-[Right. Pause on set closure.]
-
-The set is now closed under every encoded successor, without a failure. That establishes the rule for this finite model and its initial states. Set equality is the stopping test. Finiteness and the growing set guarantee eventual closure; infinite-state systems need not terminate. This says nothing about sensor accuracy or physical braking.
-
-## 24 iterate underneath all three
-
-29:11–29:59 · 92 words · 3s visual holds
+25:59–26:41 · 81 words · 3s visual holds
 
 ### Phase 1
 
 [Read across each row; do not repeat the whole story.]
 
-Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. We already used that interface to change the optimizer’s pace and add momentum.
+Underneath all three examples is iterate. The state was a vector of turbine settings, then a value table. For validation, it was the set of states the controller could reach. Each example supplies its own update and stopping test. This is a useful way to build and inspect algorithms. It does not give them identical guarantees: a finite set stops growing, while small numerical changes need more care. We also changed the optimizer’s pace and added momentum by working with functions.
 
-## 25 Rainbow
+## 24 Rainbow
 
-29:59–30:20 · 41 words · 2s visual holds
-
-### Phase 1
-
-[Introduce Rainbow’s focus; then distinguish it from Lean.]
-
-Rainbow is a theorem prover and code generator focused on Clojure, operations research and related fields. Its purpose is not to match or beat Lean. I want to show you what that focus means, and a few things we have proved.
-
-## 26 How Rainbow differs from Lean
-
-30:20–30:59 · 74 words · 3s visual holds
+26:41–27:23 · 81 words · 3s visual holds
 
 ### Phase 1
 
-[Compare focus and workflow; acknowledge the shared capabilities.]
+[Introduce its purpose without reading a definition of theorem proving.]
 
-Lean is a general-purpose theorem prover and programming language. It already has proof objects, metaprogramming and native compilation. Rainbow focuses on Clojure and operations research. Its explicit proof terms are EDN values we can manipulate with Clojure functions. Its code generator works with a modeled subset of Clojure. Both systems check typed proof terms with a kernel. I am choosing a particular workflow and application area, not claiming that Lean cannot do this work.
+Rainbow is a theorem prover and code generator focused on Clojure and operations research. I want to state a property of an algorithm or a model, supply a proof, and have the computer check it. I also want to generate Clojure from a program whose modeled behavior we have checked. This currently covers a limited language, not arbitrary Clojure. Its purpose is not to match or beat Lean. I am building it around the kinds of problems we have been discussing.
 
-## 27 A proof we can edit
+## 25 What can we prove?
 
-30:59–31:59 · 107 words · 9s visual holds
-
-### Phase 1
-
-[Read the composition, then match the app nodes to the term.]
-
-Here is a small proof in Rainbow syntax. Given f from P to Q, g from Q to R, and evidence p of P, apply f then g to produce evidence of R. This is function composition. The tree is drawn from the proof term itself.
-
-### Phase 2
-
-[Right. The outer application disappears from both the term and its tree.]
-
-Remove g and the term produces Q, while the claim requires R. The kernel rejects it. A well-formed piece of data is not necessarily a valid proof.
-
-### Phase 3
-
-[Right. Point to the function passed to update-in; g returns to the tree.]
-
-Use update-in to insert g again. The resulting term checks. These are recorded kernel results; the browser edits and draws the data. This is how ordinary Clojure functions can help us work with proofs.
-
-## 28 What we have proved
-
-31:59–33:06 · 127 words · 6s visual holds
+27:23–28:19 · 109 words · 4s visual holds
 
 ### Phase 1
 
-[Read the action scores, then widen the claim from this example to every allowed input.]
+[Recall clamp from optimization. Explain the property, not the proof syntax.]
 
-One result says that selecting the best action from a finite set really returns a score at least as high as every candidate. B wins these three scores. The theorem covers every allowed finite set and exact nonnegative rational score function. That is a property of the mathematical selector, not a proof of our browser code.
+Remember keeping turbine settings between zero and one? A clamp must preserve a value inside the bounds and return the nearest bound outside them. These three outputs illustrate it. Rainbow has checked that the modeled clamp program implements that specification, not just those three examples. The final runtime is still trusted.
 
-### Phase 2
+For me, another interesting part is how we work with proofs. Rainbow represents them as data. We can use Clojure functions to construct them, inspect them and change parts. A change needs a new check. This gives us a basis for visualizations and structural editing. The general editor is future work; the proof data and checker already exist.
 
-[Explain the upper bound before interpreting the matching numbers.]
+## 26 Where we use Rainbow now?
 
-Another result is LP weak duality. Given a feasible plan and a valid dual certificate, the certificate bounds the plan’s objective. Suppose a plan earns ten and a certificate says no feasible plan can earn more than ten. Then that plan is optimal for the model. Rainbow has checked the general theorem under its exact nonnegative-rational assumptions. The plant checker still needs the connection from this mathematics to its own program.
-
-## 29 From a specification to Clojure
-
-33:06–33:47 · 79 words · 3s visual holds
-
-### Phase 1
-
-[Recall the turbine bounds. Read the generated function and three example inputs.]
-
-This is Clojure generated by Rainbow for a clamp function. We used the same operation to keep turbine settings between zero and one. Minus one becomes zero; one half stays one half; two becomes one. These are recorded executions of this generated function. Separately, Rainbow checked that the modeled program implements clamp, and that compilation preserves the meaning of properly scoped programs. The printer, exact-arithmetic primitives and runtime remain trusted. This is a small generated program with specific guarantees.
-
-## 30 Scheduling an e-methanol plant
-
-33:47–34:20 · 62 words · 3s visual holds
-
-### Phase 1
-
-[Explain the scheduling problem, then state the measured benchmark outcome.]
-
-I built this illustrative methanol model to meet a weekly production contract while choosing when to buy electricity and use the hydrogen tank. For all fifty-two tested weeks of 2023, we obtained a schedule and an accepted certificate. The largest reported cost gap was twenty-six cents. The benchmark knows the whole week’s prices, and the checker’s general soundness proof is still open.
-
-## 31 Where we use Rainbow now?
-
-34:20–35:19 · 116 words · 4s visual holds
+28:19–29:19 · 116 words · 4s visual holds
 
 ### Phase 1
 
@@ -598,9 +470,9 @@ I built this illustrative methanol model to meet a weekly production contract wh
 
 We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-SAF is synthetic aviation fuel. We use real hourly electricity prices from OMIE and local wind and solar history. The model includes electrolysis, storage, carbon dioxide supply, production limits and costs. We compare how to size the plant, buy electricity and run it. Against a plant designed for an average year, our model estimates about 7.9 million euros less cost annually. That is a modeled comparison, not a promise to an operating factory. Rainbow currently checks the proof of the fuel-blending optimum. We are building evidence for specific decisions; the annual saving itself is not yet a proved claim.
 
-## 32 Applied Higher-Order Functions
+## 27 Applied Higher-Order Functions
 
-35:19–35:45 · 47 words · 3s visual holds
+29:19–29:44 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -608,9 +480,9 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 I wrote Applied Higher-Order Functions about using higher-order functions in operations research. But the ideas apply more broadly, especially if you design algorithms that optimize or help make decisions. The book has longer explanations and runnable examples. You can find it at flexiana dot com slash book.
 
-## 33 Thank you
+## 28 Thank you
 
-35:45–35:57 · 18 words · 3s visual holds
+29:44–29:56 · 18 words · 3s visual holds
 
 ### Phase 1
 

@@ -488,219 +488,63 @@
       ]
     },
     {
-      "slide": 22,
-      "title": "Validate the turbine controller",
+      "title": "Stop when a bird is detected",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Return explicitly to the wind farm; read input, controller, output.",
-          "speech": "Back at the wind farm, we ask a different question. A confident bird detection must cause a STOP command in that modelled minute. Can any event sequence leave the command at RUN instead? Detection is an input. We are validating the controller’s response, not a bird-recognition model.",
-          "hold_seconds": 3
+          "cue": "Let the bird cross the detection line. Point to RUN and the failure count.",
+          "speech": "Back at the wind farm, suppose a bird is detected while the turbine is running. The controller should issue a stop command. Watch this one: it receives the detection but keeps running. Its decision table has no entry for this situation. The number below comes from checking every reachable state in our small model. So this is a failure found by the check, not just a worrying animation.",
+          "hold_seconds": 6
         },
         {
           "from": 2,
           "to": 2,
-          "cue": "Right. Point to tick and detect branches.",
-          "speech": "Here is one controller. A timer makes a decision every ten minutes. A detection arriving between ticks is recorded, but the action is unchanged. That can leave the turbine commanded to run after a confident detection. We have a concrete rule and a concrete failure.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 3,
-          "to": 3,
-          "cue": "Right. Explain the missing table row before reading the wrapper.",
-          "speech": "We can wrap the controller so a stronger detection triggers an immediate decision. But its decision table has another problem: an unfamiliar situation has no row. The default stopping probability is zero. The variable u is a sampled draw compared with that probability. Our finite exploration represents the relevant draw bands explicitly, rather than sampling during the search. Reacting sooner does not fix a bad decision. In this table, a confident detection in a known situation does stop the turbine.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 4,
-          "to": 4,
-          "cue": "Right. Follow with-shield and compare the two computed outputs.",
-          "speech": "With-shield wraps the decision function. In known situations it delegates to that function. In an unknown situation, any detection produces STOP. The same event now gives STOP instead of RUN. The construction below shows the wiring: the shielded decision is supplied both to the timer controller and to the immediate-reaction wrapper. One example is encouraging. Next we search all the event sequences represented by this finite model.",
-          "hold_seconds": 3
+          "cue": "Right. Let the same bird cross the line; point to STOP, then read the wrapper.",
+          "speech": "Now wrap the decision function with a shield. If there is a detection, return stop. Otherwise, call the original decision function. We call this wrapped function as soon as a detection arrives. The animation uses that actual output. The same exhaustive check now finds no state where a confident detection leaves the command at run. Underneath, iterate keeps adding possible next states until the set stops growing. This validates the response in this finite software model. It does not tell us whether a sensor missed a bird, or how quickly a real turbine can brake.",
+          "hold_seconds": 6
         }
-      ]
+      ],
+      "slide": 22
     },
     {
       "slide": 23,
-      "title": "Can any event sequence reach RUN + confident bird?",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Point to the rule predicate and the initial state count.",
-          "speech": "Our search state is now a set of controller states. The predicate at the bottom says what failure means: detection level two and action RUN. Keywords such as det and action select fields from a map. We start from the controller’s possible initial states.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Right. Explain the branch diagram and the set-expansion code together.",
-          "speech": "The next minute can contain no detection, a weak one, or a confident one. The diagram shows one branch; the counts cover the full exploration. Reach-step takes that successor function and returns a set update. Mapcat collects successors; into adds them to the states already known. A set removes duplicates. Detection and timer transitions are separate so a reset cannot hide a failure.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 3,
-          "to": 3,
-          "cue": "Right. Pause on the timer-only failure count.",
-          "speech": "Repeat until adding successors changes nothing. For the timer-only controller, states violating the rule are reachable. The search has found a real problem in this model.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 4,
-          "to": 4,
-          "cue": "Right. Identify the change of controller.",
-          "speech": "Now swap in the controller that reacts immediately. Keep the same search, event model, and failure predicate.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 5,
-          "to": 5,
-          "cue": "Right. Point to the unseen-situation branch.",
-          "speech": "The unknown-context branch still leads to RUN after a confident detection. That missing table row survives the timing fix.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 6,
-          "to": 6,
-          "cue": "Right. Pause on the second failure verdict.",
-          "speech": "The second controller still fails. We need both the immediate reaction and a safe decision for the unknown situation.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 7,
-          "to": 7,
-          "cue": "Right. Identify the shielded controller.",
-          "speech": "Finally, supply the shielded controller to the same exploration.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 8,
-          "to": 8,
-          "cue": "Right. Point to STOP on confident detection.",
-          "speech": "The branch that failed before now issues STOP.\n\nThe search continues, so we are checking more than that one branch.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 9,
-          "to": 9,
-          "cue": "Right. Pause on set closure.",
-          "speech": "The set is now closed under every encoded successor, without a failure. That establishes the rule for this finite model and its initial states. Set equality is the stopping test. Finiteness and the growing set guarantee eventual closure; infinite-state systems need not terminate. This says nothing about sensor accuracy or physical braking.",
-          "hold_seconds": 3
-        }
-      ]
-    },
-    {
-      "slide": 24,
       "title": "iterate underneath all three",
       "phases": [
         {
           "from": 1,
           "to": 1,
           "cue": "Read across each row; do not repeat the whole story.",
-          "speech": "Underneath all three examples is iterate. What changes is what a state means. A vector of turbine settings becomes a value table, then a set of reachable states. The step changes with it, and so does the stopping test. Iterate exposes the intermediate states as a trace we can inspect. This is an implementation pattern, not a claim that the three algorithms have the same guarantees. Set closure finishes a finite search; small numerical movement needs a separate interpretation. We already used that interface to change the optimizer’s pace and add momentum.",
+          "speech": "Underneath all three examples is iterate. The state was a vector of turbine settings, then a value table. For validation, it was the set of states the controller could reach. Each example supplies its own update and stopping test. This is a useful way to build and inspect algorithms. It does not give them identical guarantees: a finite set stops growing, while small numerical changes need more care. We also changed the optimizer’s pace and added momentum by working with functions.",
           "hold_seconds": 3
         }
       ]
     },
     {
-      "slide": 25,
       "title": "Rainbow",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Introduce Rainbow’s focus; then distinguish it from Lean.",
-          "speech": "Rainbow is a theorem prover and code generator focused on Clojure, operations research and related fields. Its purpose is not to match or beat Lean. I want to show you what that focus means, and a few things we have proved.",
-          "hold_seconds": 2
-        }
-      ]
-    },
-    {
-      "title": "How Rainbow differs from Lean",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Compare focus and workflow; acknowledge the shared capabilities.",
-          "speech": "Lean is a general-purpose theorem prover and programming language. It already has proof objects, metaprogramming and native compilation. Rainbow focuses on Clojure and operations research. Its explicit proof terms are EDN values we can manipulate with Clojure functions. Its code generator works with a modeled subset of Clojure. Both systems check typed proof terms with a kernel. I am choosing a particular workflow and application area, not claiming that Lean cannot do this work.",
+          "cue": "Introduce its purpose without reading a definition of theorem proving.",
+          "speech": "Rainbow is a theorem prover and code generator focused on Clojure and operations research. I want to state a property of an algorithm or a model, supply a proof, and have the computer check it. I also want to generate Clojure from a program whose modeled behavior we have checked. This currently covers a limited language, not arbitrary Clojure. Its purpose is not to match or beat Lean. I am building it around the kinds of problems we have been discussing.",
           "hold_seconds": 3
         }
       ],
-      "slide": 26
+      "slide": 24
     },
     {
-      "slide": 27,
-      "title": "A proof we can edit",
+      "title": "What can we prove?",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Read the composition, then match the app nodes to the term.",
-          "speech": "Here is a small proof in Rainbow syntax. Given f from P to Q, g from Q to R, and evidence p of P, apply f then g to produce evidence of R. This is function composition. The tree is drawn from the proof term itself.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Right. The outer application disappears from both the term and its tree.",
-          "speech": "Remove g and the term produces Q, while the claim requires R. The kernel rejects it. A well-formed piece of data is not necessarily a valid proof.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 3,
-          "to": 3,
-          "cue": "Right. Point to the function passed to update-in; g returns to the tree.",
-          "speech": "Use update-in to insert g again. The resulting term checks. These are recorded kernel results; the browser edits and draws the data. This is how ordinary Clojure functions can help us work with proofs.",
-          "hold_seconds": 3
-        }
-      ]
-    },
-    {
-      "title": "What we have proved",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Read the action scores, then widen the claim from this example to every allowed input.",
-          "speech": "One result says that selecting the best action from a finite set really returns a score at least as high as every candidate. B wins these three scores. The theorem covers every allowed finite set and exact nonnegative rational score function. That is a property of the mathematical selector, not a proof of our browser code.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Explain the upper bound before interpreting the matching numbers.",
-          "speech": "Another result is LP weak duality. Given a feasible plan and a valid dual certificate, the certificate bounds the plan’s objective. Suppose a plan earns ten and a certificate says no feasible plan can earn more than ten. Then that plan is optimal for the model. Rainbow has checked the general theorem under its exact nonnegative-rational assumptions. The plant checker still needs the connection from this mathematics to its own program.",
-          "hold_seconds": 3
+          "cue": "Recall clamp from optimization. Explain the property, not the proof syntax.",
+          "speech": "Remember keeping turbine settings between zero and one? A clamp must preserve a value inside the bounds and return the nearest bound outside them. These three outputs illustrate it. Rainbow has checked that the modeled clamp program implements that specification, not just those three examples. The final runtime is still trusted.\n\nFor me, another interesting part is how we work with proofs. Rainbow represents them as data. We can use Clojure functions to construct them, inspect them and change parts. A change needs a new check. This gives us a basis for visualizations and structural editing. The general editor is future work; the proof data and checker already exist.",
+          "hold_seconds": 4
         }
       ],
-      "slide": 28
-    },
-    {
-      "title": "From a specification to Clojure",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Recall the turbine bounds. Read the generated function and three example inputs.",
-          "speech": "This is Clojure generated by Rainbow for a clamp function. We used the same operation to keep turbine settings between zero and one. Minus one becomes zero; one half stays one half; two becomes one. These are recorded executions of this generated function. Separately, Rainbow checked that the modeled program implements clamp, and that compilation preserves the meaning of properly scoped programs. The printer, exact-arithmetic primitives and runtime remain trusted. This is a small generated program with specific guarantees.",
-          "hold_seconds": 3
-        }
-      ],
-      "slide": 29
-    },
-    {
-      "title": "Scheduling an e-methanol plant",
-      "phases": [
-        {
-          "from": 1,
-          "to": 1,
-          "cue": "Explain the scheduling problem, then state the measured benchmark outcome.",
-          "speech": "I built this illustrative methanol model to meet a weekly production contract while choosing when to buy electricity and use the hydrogen tank. For all fifty-two tested weeks of 2023, we obtained a schedule and an accepted certificate. The largest reported cost gap was twenty-six cents. The benchmark knows the whole week’s prices, and the checker’s general soundness proof is still open.",
-          "hold_seconds": 3
-        }
-      ],
-      "slide": 30
+      "slide": 25
     },
     {
       "title": "Where we use Rainbow now?",
@@ -713,10 +557,10 @@
           "hold_seconds": 4
         }
       ],
-      "slide": 31
+      "slide": 26
     },
     {
-      "slide": 32,
+      "slide": 27,
       "title": "Applied Higher-Order Functions",
       "phases": [
         {
@@ -729,7 +573,7 @@
       ]
     },
     {
-      "slide": 33,
+      "slide": 28,
       "title": "Thank you",
       "phases": [
         {

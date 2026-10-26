@@ -932,6 +932,60 @@
   (into {} (for [{:keys [id controller]} controllers]
              [id (reachable (controller-successors controller) (initial-states controller))])))
 
+;; The stage version uses a deliberately simpler shield: every detection stops.
+;; The earlier table-specific shield remains available in the study examples.
+(src (defn stop-for-birds [decide]
+       (fn [state]
+         (if (pos? (:det state))
+           :stop
+           (decide state)))))
+
+(def bird-decision (stop-for-birds decide-by-table))
+(def bird-controller
+  (react-to-detections (tick-controller bird-decision) bird-decision))
+(def bird-reach-run
+  (reachable (controller-successors bird-controller)
+             (initial-states bird-controller)))
+
+(defn shield-frame [shield? elapsed]
+  (let [detected? (>= elapsed 2)
+        controller (if shield? bird-controller (:controller (controllers 1)))
+        after (if detected? (controller shield-input shield-event) shield-input)
+        stopped? (= :stop (:action after))]
+    {:detected? detected? :action (:action after)
+     :bird-x (+ 50 (* 90 (min 6 (max 0 elapsed))))
+     :angle (* 90 (if stopped? 2 elapsed))}))
+
+(defn shield-animation [shield? elapsed]
+  (let [{:keys [detected? action bird-x angle]} (shield-frame shield? elapsed)
+        stopped? (= action :stop)
+        reached (peek (if shield? bird-reach-run (reach-runs :reacting)))
+        failures (count (filter unanswered? reached))]
+    [:div {:data-shield (str shield?) :data-action (name action)
+           :data-detected (str detected?)}
+     [:p.aside (if shield? "With the shield" "Without the shield")]
+     [:svg.scene.shield-scene {:viewBox "0 0 680 300" :width 680 :height 300
+                               :role "img" :aria-label (str "Bird detection; turbine command " (name action))}
+      [:line {:x1 20 :y1 270 :x2 660 :y2 270 :stroke "var(--line)"}]
+      [:line.tower {:x1 450 :y1 125 :x2 450 :y2 270}]
+      [:g {:transform (str "translate(450,125) rotate(" angle ")") :data-rotor-angle angle}
+       (for [a [0 120 240]]
+         [:line.blade {:x1 0 :y1 0 :x2 0 :y2 -88 :transform (str "rotate(" a ")")}])]
+      [:circle.hub {:cx 450 :cy 125 :r 7}]
+      [:line {:x1 230 :y1 30 :x2 230 :y2 240 :stroke "var(--accent)" :stroke-dasharray "5 5"}]
+      [:text {:x 230 :y 292 :text-anchor "middle" :fill "var(--muted)" :font-size 19} "Detection"]
+      (bird-glyph bird-x 80 {:cls "bird encounter-bird" :scale 1.4})
+      [:text {:x 450 :y 32 :text-anchor "middle" :font-size 26
+              :fill (if stopped? "var(--ok)" "var(--ink)")}
+       (.toUpperCase (name action))]]
+     [:p.aside {:class (when detected? (if stopped? "ok" "bad"))}
+      (if detected?
+        (if stopped? "Bird detected → STOP command" "Bird detected → still RUN")
+        "No detection → RUN")]
+     [:p.caption (str "Exhaustive model check: " failures " states break the rule.")]]))
+
+(defonce shield-start (atom 0))
+
 (defn longest-wait-path
   "Breadth-first search with parents: the reachable path to the longest unanswered wait."
   [controller]
@@ -1753,79 +1807,23 @@
     :notes "Read the state-dependent policy before the comparison. In regular weeks fill toward four subject to the supplier's limit of three; with empty storage only three can be bought. In tight weeks buy one only when empty, otherwise wait for cheap supply. This is not simply fill to the maximum demand of three, or always fill to capacity. The five rules are evaluated for twenty weeks with the same initial state and exact weighted demand branching. This-week-only maximizes immediate expected profit; the three target rules attempt the named stock level but obey both capacity constraints. Bellman is the stationary policy from converged values, evaluated over that same twenty-week horizon. It is not claimed to be the optimal finite-horizon policy for the final week of that comparison. The table shows the actual gain, including that fill-to-three is already fairly good. We chose a compact illustrative model, not a realistic hydrogen market forecast. The HOF structure is unchanged despite time-varying prices and availability."}
 
 
-   ;; ---------------------------------------------------------------- Verify (5 min)
-   {:section "Validate" :title "Validate the turbine controller" :steps 4
+   ;; ---------------------------------------------------------------- Validate
+   {:section "Validate" :title "Stop when a bird is detected" :steps 2
     :render (fn [step]
+              (reset! shield-start (now-s))
               [:div.two.even
                [:div
-                (case step
-                  0 [:div
-                     [:p.aside "Back at the wind farm: software decides RUN or STOP."]
-                     [:div.proof-flow
-                      [:div "Sensor: confident bird detection"]
-                      [:span "↓ input event"]
-                      [:div "Turbine controller"]
-                      [:span "↓ output command"]
-                      [:div.bad (str "Timer-only controller: "
-                                     (.toUpperCase (name (:action (:tick-only shield-comparison)))))]]
-                     [:p.caption "This detection arrives between timer ticks."]]
-                  1 (code 'tick-controller {:size :small})
-                  2 [:div (code 'table-decision {:size :small})
-                     (code 'react-to-detections {:size :small})]
-                  [:div (code 'with-shield {:size :small :marks #{"decide"}})
-                   (code 'shielded-decision {:size :small})
-                   (code (:code (controllers 2)) {:size :small})])]
-               [:div
-                [:div.callout "Rule: confident detection → STOP in the same minute."]
-                (case step
-                  0 [:div
-                     [:p.aside "Can any sequence of events break this rule?"]
-                     [:p "Explore the controller’s possible states. Look for a detection followed by RUN."]
-                     [:p.caption "Bird detection is an input. We check the software’s response, not the sensor’s accuracy."]]
-                  1 [:div
-                     [:p.aside "The timer decides every 10 minutes."]
-                     [:div.proof-flow [:div "minute 1: confident detection"]
-                      [:span "↓ controller only records it"] [:div.bad "still running"]]
-                     [:p.caption "The rule concerns the controller’s command; no physical braking model."]]
-                  2 [:div
-                     [:p.aside "React immediately. But what does the table say?"]
-                     (kv-table [["known situation + confident bird" "stop probability 1"]
-                                ["unknown situation" "missing row → probability 0"]])
-                     [:p.caption "An immediate decision can still be the wrong decision."]]
-                  [:div
-                   [:p.aside "Same unseen situation. Same confident bird."]
-                   (code "{:ctx :unseen :det 2 :u 0.3}" {:size :small})
-                   [:div.shield-results
-                    [:div [:span.caption "Reacting, no shield"]
-                     [:strong.bad (name (:action (:reacting shield-comparison)))]]
-                    [:div [:span.caption "Reacting + shield"]
-                     [:strong.ok (name (:action (:shielded shield-comparison)))]]]
-                   [:p.caption "Computed by both controllers from the same detection event."]])]])
-    :notes "Return explicitly to the wind farm, with a separate controller example. The earlier optimizer chose a day schedule; this example checks a controller's response to incoming events, not the correctness of that schedule. Name the input (sensor detection), implementation (controller), output (RUN or STOP) and requirement (confident detection must yield STOP in the same modeled minute). Validation asks whether any encoded event sequence violates that requirement. We assume the sensor reports a detection; we do not validate its classifier, bird survival or turbine braking physics. The first reveal demonstrates a failure before showing code. The original controller records detection but changes action only at a ten-minute tick. react-to-detections is a HOF that returns a controller which also decides on stronger detections. Still insufficient: the learned table has no row for an unseen context, defaults to probability zero, and keeps running. with-shield wraps the decision function. For known contexts it delegates; for unseen contexts it stops on any detection. The final reveal shows the exact definition of shielded-decision and executes the same confident detection through both controllers. The following exhaustive search checks that this holds throughout the modeled state space, not just in one hand-picked example."}
+                [:p.aside "A shield wraps the decision function."]
+                (code 'stop-for-birds {:size :small :marks #{"decide" "fn"}})
+                (code "(def safe-decide\n  (stop-for-birds decide))" {:size :small})
+                [:p.caption ":det is the recorded detection level. Zero means none."]
+                [:p "On each detection, call the decision function again."]
+                [:p.caption "Check every reachable state by iterating until the set stops growing."]]
+               [:div#shield-animation (shield-animation (pos? step) 0)]])
+    :live (fn [step t] {"shield-animation" (shield-animation (pos? step) (- t @shield-start))})
+    :notes "Two views of the same detection event, not a model of bird strikes or physical braking. The first uses the reacting table controller in an unseen context: its missing row defaults to RUN. The second calls stop-for-birds around that same decision. This simpler stage shield stops on any positive detection in every context; unlike the older study example it does not consult a context table. react-to-detections invokes it on a stronger detection; tick-controller also uses it. The animation calls these actual controllers, sends the level-2 event at two seconds and freezes the illustrated rotor on the STOP command. Real turbines take time to brake. Counts come from finite reachability: the existing events, initial states and three draw bands, iterated to set equality. The on-stage rule is confident detection implies STOP in the same modeled minute; the shield is stronger and stops on weak detection too. One animated trace demonstrates the reaction; the exhaustive finite search supplies the validation result. Neither checks sensor accuracy, turbine physics, or the checker implementation. Do not claim the optimized day schedule was verified by this separate controller model."}
 
-   {:section "Validate" :title "Can any event sequence reach RUN + confident bird?" :steps 9
-    :render (fn [frame]
-              (let [ci (quot frame 3) sub (mod frame 3)
-                    {:keys [id label controller]} (controllers ci)
-                    run (reach-runs id) k (frame-of sub 3 (count run))
-                    states (nth run k) bad (filter unanswered? states)]
-                [:div.two.even
-                 [:div (code 'reach-step {:size :small :marks #{"fn" "mapcat"}})
-                  (code 'reachable {:size :small :marks #{"fixed-point" "="}})
-                  [:p.aside "Add every possible successor. Repeat until the set stops growing."]
-                  (code 'unanswered? {:size :small})
-                  [:p.caption "Failure: a confident bird was detected, but the command is RUN."]]
-                 [:div [:p.aside label]
-                  (controller-branches controller)
-                  [:p.caption "One branch point shown; counts cover all encoded initial states and events."]
-                  (kv-table [["expansion round" k] ["states reached" (count states)]
-                             ["states breaking the rule" (count bad)]])
-                  (when (= sub 2)
-                    [:p.aside {:class (if (seq bad) "bad" "ok")}
-                     (if (seq bad) "Failure is reachable." "Set closed. No failure in this model.")])]]))
-    :notes "Reachable means obtainable by some modeled sequence of events. We search for a state where detection is confident and the controller still commands RUN. The diagram shows just one branching point in an unseen situation; the counts cover the whole explored finite model. reach-step takes a successor function and returns a set-expansion function. mapcat gets successors of all current states; into keeps old states and adds new ones. fixed-point repeatedly applies it, stopping on set equality. Advance three reveals per controller: initial set, sampled expansion and closure. Tick-only and immediate reactions both have failures; the shielded controller has none. This checks the encoded events and commands, not braking physics or the checker implementation."}
-
-   {:section "Validate" :title "iterate underneath all three"
+   {:section "HOFs" :title "iterate underneath all three"
     :render (fn [_]
               [:div
                [:table.levels
@@ -1835,125 +1833,36 @@
                 [:tr [:td "validate"] [:td "set of reached states"] [:td "expand with successors"] [:td "set equality"]]]
                [:div.promise "(iterate step start)"]
                [:p.caption "fixed-point takes this sequence until the supplied stopping test passes."]])
-    :notes "One minute. This is the payoff. Point back to each animation: a schedule, values and actions, a growing set. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. The optimizer has already demonstrated rate and momentum changes. Next introduce Rainbow and proofs as data."}
+    :notes "Summarize the three uses of iterate: a schedule, a value table and the reachable-state set behind the shield check. The reusable structure accepted different functions. Our reachability result covers this finite model under its encoded events. It does not prove the checker or a physical turbine. The optimizer has already demonstrated rate and momentum changes. Next introduce Rainbow and proofs as data."}
 
    {:section "Rainbow" :title "Rainbow"
     :render (fn [_]
               [:div.two.even
                [:div [:p.aside "A theorem prover & code generator."]
-                [:p.aside [:a {:href "https://flexiana.com/rainbow"} "flexiana.com/rainbow"]]]
-               [:div [:p.aside "Focused on Clojure, operations research and related fields."]
-                [:p "Its purpose is not to match or beat Lean."]]])
-    :notes "Clojure code has a data representation; Rainbow proof terms are EDN data too. This invites ordinary functions to inspect, render and transform them. A transformation can produce an invalid proof: only a new check establishes whether the new term has the claimed type. Static typing and theorem proving are complementary, not competing language claims. The structural view on the next slide is implemented in this talk; a general visual proof editor is a direction, not a shipped Rainbow feature. Other provers also have structured terms and visualization tools."}
+                [:p "Focused on Clojure and operations research."]
+                [:p.aside "flexiana.com/rainbow"]]
+               [:div [:p "Check mathematical claims about algorithms and models."]
+                [:p "Generate Clojure from a modeled program."]
+                [:p.caption "Its purpose is not to match or beat Lean."]]])
+    :notes "Introduce the tool without teaching its proof language. A statement alone is not enough: Rainbow checks a supplied proof against it. Code generation currently covers a modeled subset of Clojure. It does not prove arbitrary Clojure programs correct, replace testing, or validate a physical model's assumptions. Lean is a broader prover; no exclusive capability or superiority is claimed. The motivation is an OR workflow accessible from Clojure."}
 
-   {:section "Rainbow" :title "How Rainbow differs from Lean"
-    :render (fn [_]
-              [:div
-               [:table.levels
-                [:tr [:th ""] [:th "Lean"] [:th "Rainbow"]]
-                [:tr [:td "Focus"] [:td "General-purpose proving and programming"]
-                 [:td "Clojure and operations research"]]
-                [:tr [:td "Work with"] [:td "Lean definitions, tactics and metaprograms"]
-                 [:td "EDN proof terms, manipulated in Clojure"]]
-                [:tr [:td "Code"] [:td "Lean programs compile to native code"]
-                 [:td "Generate Clojure for a modeled subset"]]]
-               [:p.aside "Both check proof terms with a kernel."]])
-    :notes "Lean is a general-purpose theorem prover and programming language. It has proof objects, metaprogramming, code generation and visualization tools too. The distinction is focus and workflow: Rainbow is written in Clojure, exposes explicit EDN proof terms to Clojure tooling, and targets OR models and selected generated programs. Do not claim that Lean cannot do OR, that only Rainbow represents proofs as data, or that a dynamic implementation means an untyped proof logic. Both use typed proof terms. Rainbow's code generation concerns a modeled subset, not arbitrary Clojure. Sources: https://lean-lang.org/faq/ and https://lean-lang.org/doc/reference/latest/; Rainbow README, doc/maturity-levels.md and the internal north-star direction. No speed, size, maturity or proof-power superiority is claimed."}
-
-   {:section "Rainbow" :title "A proof we can edit" :steps 3
-    :render (fn [step]
-              (let [receipt (n/checked-composition)
-                    original (:proof receipt)
-                    removed (proof-data/remove-outer original)
-                    restored (proof-data/wrap-body removed 'g)
-                    proof (nth [original removed restored] step)
-                    body (get-in proof [:value 2])
-                    verdict (nth [(:status receipt) (:negative-status receipt)
-                                  (:restored-status receipt)] step)]
-                ;; Never attach a recorded verdict to a different runtime edit.
-                (assert (= removed (:removed-proof receipt)))
-                (assert (= restored (:restored-proof receipt)))
-                [:div.two.even
-                 [:div
-                  (if (zero? step)
-                    (code (:source receipt) {:size :small})
-                    [:div
-                     (code "f : P → Q    g : Q → R    p : P\nRequired result: R" {:size :small})
-                     (code (n/source (if (= step 1) 'remove-outer 'wrap-body)) {:size :small})
-                     (code (if (= step 1)
-                             "(def shorter (remove-outer proof))"
-                             "(wrap-body shorter 'g)") {:size :small})])
-                  [:p.caption (if (zero? step) "Rainbow term syntax" "Clojure editing Rainbow data")]]
-                 [:div
-                  [:div.proof-term {:data-proof-body (pr-str body)} (proof-tree body)]
-                  (code (pr-str body) {:size :small})
-                  [:p.aside [:span {:class (if (= verdict :checked) "ok" "bad")} (name verdict)]
-                   (if (= step 1) " · produces Q; requires R" " · produces R")]
-                  [:p.caption "Recorded kernel check · this exact term"]]]))
-    :notes "P, Q and R are arbitrary propositions. Given f from P to Q, g from Q to R, and p proving P, function composition proves R. forall binds propositions; fn binds arguments; app applies a term. The right-hand tree is rendered recursively from the actual body, not drawn separately. Phase two calls remove-outer: update-in selects the body at [:value 2], and nth selects the application argument, dropping g. The result proves Q and the recorded kernel check rejects it against R. Phase three passes a function to update-in that wraps that body in an application of g. Immutable data: the original remains available. The same shared Clojure/ClojureScript functions run in the JVM receipt generator and in the browser. Each runtime term must equal the term recorded in the receipt. This is a small structural-edit demonstration, not a general type-aware editor or a browser kernel. Editing arbitrary terms also requires respecting scope and binders. Check results are evidence from the recorded kernel revision, not a proof of the kernel's own soundness."}
-
-   {:section "Rainbow" :title "What we have proved" :steps 2
-    :render (fn [step]
-              (let [receipt (n/checked-or-examples)
-                    scores [["A" 4] ["B" 7] ["C" 5]]
-                    winner (apply max-key second scores)]
-                [:div
-                 (if (zero? step)
-                   [:div.two.even
-                    [:div [:p.aside "Selecting the best action"]
-                     [:p "For every finite, nonempty action set: the selected action scores at least as high as every candidate."]
-                     [:p.caption "Exact nonnegative rational scores."]]
-                    [:div
-                     [:table.levels [:tr [:th "action"] [:th "score"]]
-                      (for [[action score] scores]
-                        [:tr {:class (when (= action (first winner)) "ok")}
-                         [:td action] [:td score]])]
-                     [:p.aside (str (first winner) " wins this example. The theorem covers every allowed input.")]]]
-                   [:div.two.even
-                    [:div [:p.aside "Bounding the best possible profit"]
-                     [:p "For every feasible plan and dual certificate: the certificate bounds the plan’s objective from above."]
-                     [:p.caption "LP weak duality · nonnegative rational model."]]
-                    [:div
-                     [:div.certificate-results
-                      [:div [:strong "10"] [:span "profit from a feasible plan"]]
-                      [:div [:strong "10"] [:span "valid upper bound"]]]
-                     [:p.aside "If both are valid, no feasible plan can earn more."]]])
-                 [:p.caption (str "Kernel rechecked " (subs (:checked-at receipt) 0 10)
-                                  " · illustrations of general theorems")]]))
-    :notes "Two results freshly rechecked from the pinned Rainbow source snapshot named in or-checks.edn. decision/finite-nnrat-argmax-dominates quantifies over the finite set, score function, initial member and candidate; the chosen score dominates each candidate. It concerns exact nonnegative rational scores, not the browser best-order function or signed profit values without a correspondence argument. The three-row picture is computed in ClojureScript and illustrates the statement. nnrat/lp-weak-duality states c.x <= b.y from primal and dual feasibility in a finite nonnegative-rational maximization model. Its nonnegative coefficients/variables and feasibility assumptions matter. The pair of 10s is a conditional illustration, not an independently checked LP instance: if a feasible plan and valid bound agree, they establish optimality in that model. This theorem is one mathematical ingredient of certificate checking; it does not close the plant checker's program-soundness theorem. The recorded checks have empty transitive axiom profiles. No claim that arbitrary real plants or the browser implementation are proved."}
-
-   {:section "Rainbow" :title "From a specification to Clojure"
+   {:section "Rainbow" :title "What can we prove?"
     :render (fn [_]
               (let [receipt (n/checked-or-examples)]
                 [:div.two.even
-                 [:div [:p.aside "Generated clamp function"]
-                  (code (get-in receipt [:generated :display-source]) {:size :small})
-                  [:p.caption "Actual Rainbow output · recorded JVM results"]]
                  [:div
-                  [:p.aside "Keep a value between 0 and 1."]
-                  [:table.levels [:tr [:th "input"] [:th "output"]]
+                  [:p.aside "Keep a turbine setting between 0 and 1."]
+                  [:table.levels [:tr [:th "input"] [:th "clamped value"]]
                    (for [{:keys [input output]} (:examples receipt)]
                      [:tr [:td input] [:td output]])]
-                  [:p "Proved: the modeled program implements clamp, and scoped compilation preserves its meaning."]
-                  [:p.caption "The printer, exact-arithmetic primitives and runtime remain trusted."]]]))
-    :notes "This is actual emit/render output for clj/clamp-program with parameters lower, upper, value, not hand-written illustrative code. The receipt contains the emitted form, original source, display-only pretty printing and three exact JVM results. clj/clamp-program-denotes-clamp proves the modeled Expr program equals the clamp specification for every store. clj/compile-correct-scoped proves preservation from scoped Expr programs to modeled Form semantics. These two theorems were freshly rechecked with no axioms. The example uses ordered bounds 0 and 1. The final printed Clojure/runtime link is not certified by these two theorems, and the three executions are examples rather than a proof of that link. This does not prove unrestricted Clojure, floats, the JVM, or the entire earlier optimization solver. The local dataflow and clamp operation should be familiar from the turbine setting bounds."}
-
-   {:section "Rainbow" :title "Scheduling an e-methanol plant"
-    :render (fn [_]
-              [:div
-               [:p.aside "Deliver 588 tonnes of methanol a week at minimum modeled cost."]
-               [:div.plant-flow
-                [:div.plant-node [:strong "Electrolyser"] [:span "120 MW"]]
-                [:span.plant-arrow "→"]
-                [:div.plant-node [:strong "Hydrogen tank"] [:span "20 t"]]
-                [:span.plant-arrow "→"]
-                [:div.plant-node [:strong "Methanol loop"] [:span "10 t/h"]]]
-               [:div.certificate-results.plant-results
-                [:div [:strong "52 weeks"] [:span "schedules and accepted certificates"]]
-                [:div [:strong "€0.26"] [:span "largest reported gap to optimal cost"]]]
-               [:p.caption "2023 OMIE prices · illustrative plant · full week known"]
-               [:p.caption "The checker’s soundness theorem is still open."]])
-    :notes "This illustrative methanol model has no municipality, named physical plant or weather inputs. Spain refers to the OMIE peninsular wholesale bidding zone, not a uniform renewable PPA price. Plant model and certificate producer: ../rh2edin-challenge/proofs/rainbow_bb_export.clj. HiGHS supplies the MIP incumbent; our Clojure branch-and-bound constructs a certificate using HiGHS LP relaxations. The Rainbow checker validates that certificate. This is not the slide gradient-descent or Bellman solver. Reported plant benchmark supplied by Jiri. Electricity use is 50 MWh per tonne of hydrogen; methanol consumes 0.19 tonnes of hydrogen per tonne. The tank starts at 10 tonnes and must finish at least there. The loop has 50% turndown and a EUR 1,000 start cost. The four-stack variant has four 30 MW stacks, 20% turndown and EUR 500 per stack start. No ramp limits, degradation, CO₂ or compressor limits, grid fees or renewable-fuel sourcing rules are represented. This is a model with known weekly prices, not a live day-ahead trading strategy. No operating trace is drawn because the underlying hourly schedules were not supplied."}
+                  [:p "The modeled clamp returns the nearest bound when outside; it keeps the value when inside."]
+                  [:p.caption "Proved for the modeled program, beyond these three examples."]]
+                 [:div
+                  [:p.aside "Proofs are data we can work with in Clojure."]
+                  [:p "Clojure functions can construct proof terms and submit edits for checking."]
+                  [:p "The same data can drive a visualization or structural editor."]
+                  [:p.caption "The runtime remains trusted. A general visual editor is future work."]]]))
+    :notes "One familiar example instead of proof syntax. The values are the recorded executions of the generated clamp program, read from or-checks.edn. Bounds are ordered, here 0 and 1. clj/clamp-program-denotes-clamp and clj/compile-correct-scoped were checked on 2026-10-24 with empty transitive axiom profiles. The first relates the modeled program to its specification; the second preserves meaning for scoped programs between modeled representations. This is not a theorem about all real numbers in a floating-point JVM implementation: the printer, exact-arithmetic primitives and runtime remain trusted. Three executions illustrate the result; they are not the proof. Rainbow proof terms are EDN; Clojure functions can construct and transform them, but each changed term must be checked again. This property enables visual tools; do not claim a released general editor or that other provers lack structured proof data. Full terms, generated source, selection/LP results and the earlier syntax walkthrough remain in the study material."}
 
    {:section "Rainbow" :title "Where we use Rainbow now?"
     :render (fn [_]

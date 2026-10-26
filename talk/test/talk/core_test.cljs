@@ -244,6 +244,28 @@
                 ((c/controller-successors controller) before))))))
 
 
+(deftest stage-shield-and-animation
+  (testing "the wrapper preserves the original policy without detections"
+    (doseq [ctx [:seen :unseen] u (vals c/draws)
+            :let [state {:ctx ctx :u u :det 0}]]
+      (is (= (c/decide-by-table state) (c/bird-decision state)))))
+  (testing "both weak and confident detections override all policy contexts"
+    (doseq [ctx [:seen :unseen] u (vals c/draws) det [1 2]]
+      (is (= :stop (c/bird-decision {:ctx ctx :u u :det det})))))
+  (testing "the displayed shield result is closed under every modeled successor"
+    (let [states (peek c/bird-reach-run)
+          expand (c/reach-step (c/controller-successors c/bird-controller))]
+      (is (= states (expand states)))
+      (is (not-any? c/unanswered? states))
+      (is (some c/unanswered? (peek (c/reach-runs :reacting))))))
+  (testing "the same detection changes the real command and freezes only the shielded rotor"
+    (is (= :run (:action (c/shield-frame true 1.99))))
+    (is (= :stop (:action (c/shield-frame true 2))))
+    (is (= :run (:action (c/shield-frame false 2))))
+    (is (= (:bird-x (c/shield-frame false 3)) (:bird-x (c/shield-frame true 3))))
+    (is (= (:angle (c/shield-frame true 2)) (:angle (c/shield-frame true 4))))
+    (is (not= (:angle (c/shield-frame false 2)) (:angle (c/shield-frame false 4))))))
+
 (deftest decide
   (let [{:keys [residual bound]} c/restock-certificate]
     (is (< residual c/epsilon))

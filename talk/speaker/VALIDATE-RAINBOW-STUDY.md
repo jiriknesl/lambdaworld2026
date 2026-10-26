@@ -1,12 +1,85 @@
 # Validate and Rainbow speaker study guide
 
-The Validate section executes a controller against every event sequence represented by a finite model. The Rainbow section checks mathematical proof terms. These are different forms of evidence. Neither automatically proves that a physical turbine is safe or that the browser implements an exact mathematical theorem.
+## What to prepare for the current talk
 
-Read the controller example first, then the Rainbow introduction, composition proof, checked OR results and code generation. Finally read the plant example. The longer Bellman argument remains as optional background. Each section gives you a sentence you can say on stage, the mechanism behind it, and the boundary of the claim.
+The main deck now has **28 slides**. Validation is one animated slide (22), followed
+by the shared `iterate` summary (23). Rainbow is three slides (24–26). You do not
+need to teach proof syntax, a decision table, or a search-tree algorithm on stage.
+The exact speech and click cues are in [SCRIPT.md](SCRIPT.md).
 
-The slide numbers refer to the current 35-slide deck. This is a study companion; the shorter spoken script remains in `SCRIPT.md`.
+### Slide 22: one shield, two views
 
-## Slides 22 and 23 validate a controller
+**Say:** “When a bird is detected, this controller should stop. It does not. Wrap its
+decision function with a shield, and the same detection now produces STOP.”
+
+```clojure
+(defn stop-for-birds [decide]
+  (fn [state]
+    (if (pos? (:det state))
+      :stop
+      (decide state))))
+```
+
+`decide` is the existing function. The result is another function accepting the same
+state. `:det` is a recorded detection level: zero means none. With no detection,
+the wrapper calls `decide`; with a positive detection, it returns `:stop`.
+
+The event handler calls this decision immediately when a stronger detection arrives.
+The animation sends the same confident detection through both real controllers:
+first the original, then the shielded one. Its rotor follows the resulting command.
+It freezes on STOP to make the response visible; physical braking is not modeled.
+
+The validation result below the animation is a separate exhaustive check. Starting
+from the allowed initial states, `iterate` expands the set of possible next states
+until adding successors changes nothing. It counts states with confident detection
+and RUN. The shielded controller has none in this finite model. One animated trace
+illustrates a reaction; it does not itself establish that all traces are safe.
+
+This stage shield is deliberately simpler and more conservative than the older
+context-dependent shield in the optional material below. It stops on any detection
+in any context. The decision table and its random draw are not required stage content.
+Sensor accuracy, physical braking and real bird safety are outside the checked model.
+
+### Slide 23: connect the three examples
+
+A vector of settings, a value table, a set of reachable states. Each supplies an
+update and a stopping test to `iterate`. The stopping tests have different meanings;
+small numerical changes are not the same guarantee as closure of a finite set.
+
+### Slides 24–25: what Rainbow is
+
+**Say:** “Rainbow is a theorem prover and code generator focused on Clojure and
+operations research. I can state a property, supply a proof and have it checked.”
+
+It is not intended to match or beat Lean. It targets a particular workflow; code
+generation covers a modeled subset of Clojure, not arbitrary programs.
+
+Use the familiar clamp operation as the only mathematical example. Between ordered
+bounds 0 and 1, it keeps an input inside them and clips an outside input to the nearest
+bound. The three displayed executions illustrate the property. The recorded theorems
+cover the modeled clamp and scoped compilation, beyond these examples; the printed
+program, arithmetic primitives and runtime remain trusted.
+
+Proofs are EDN data. Clojure functions can build, inspect and transform them. Every
+changed proof needs a new check. This provides a basis for visualization and structural
+editing; a general visual editor is future work. No syntax walkthrough is needed.
+
+### Slide 26: the Algeciras business case
+
+Historical OMIE prices and local weather feed a plant model. The displayed €7.9m/year
+is an estimated design saving, not realized customer savings. Rainbow's recorded proof
+covers a specific fuel-blending optimum, not the annual saving. The source and baseline
+are documented in the Algeciras section below. €74m/year remains unverified.
+
+---
+
+## Optional background: the earlier controller walkthrough
+
+The following material preserves the deeper explanations and evidence for questions.
+It is not additional material to present, and its table-specific shield differs from
+the simpler `stop-for-birds` wrapper now on slide 22.
+
+
 
 **Say:** “We have a controller and a rule. Can any allowed sequence of events make the controller break the rule?”
 
@@ -173,7 +246,7 @@ These are counts of distinct states, not probabilities, incidents, or birds. All
 
 The fixed-point helper has a work cap. In general, reaching that cap would not establish closure. The study runner explicitly checks that applying the expansion once more adds no state.
 
-## Slide 24 connects the examples
+## Background: connecting the examples
 
 **Say:** “Underneath each example is iterate. We changed the state and the function it repeatedly applies.”
 
@@ -185,13 +258,13 @@ The fixed-point helper has a work cap. In general, reaching that cap would not e
 
 Small numerical movement and exact set closure are different conditions. `iterate` does not supply the argument that a stopping condition proves what we want. We supply that argument for each problem.
 
-## Slides 25 to 27 introduce Rainbow
+## Background: Rainbow and proof syntax
 
 **Say:** “Rainbow is a theorem prover and code generator focused on Clojure, operations research and related fields. Its purpose is not to match or beat Lean.”
 
 A kernel is the small program implementing the logical checking rules. Proof search and tactics may propose a term; the kernel is responsible for accepting or rejecting it. Choosing Clojure does not itself supply proofs. You must state the property and construct evidence for it. Static typing and theorem proving provide different guarantees and can be used together.
 
-### How Rainbow differs from Lean (slide 26)
+### How Rainbow differs from Lean
 
 Lean is a general-purpose theorem prover and programming language. Its proof scripts produce terms checked by a kernel; it has metaprogramming and compiles programs to native code. These capabilities are described in the [official Lean FAQ](https://lean-lang.org/faq/) and [language reference](https://lean-lang.org/doc/reference/latest/).
 
@@ -245,7 +318,7 @@ The tiny composition proof and this negative control were checked again on 23 Oc
 
 “No axioms” means no additional axiom declarations were required by this proof. It does not eliminate trust in the kernel, runtime or logical rules. The argument parameters f, g and p are explicit assumptions inside the implication, not secretly introduced global axioms.
 
-### Edit the proof as data (slide 27, third phase)
+### Edit the proof as data
 
 **Say:** “The editor proposes a new term. The kernel checks it. We can change the interface without changing what counts as a proof.”
 
@@ -280,7 +353,7 @@ A visual tool could select a subtree, insert a step, show a dependency, or propo
 
 
 
-## Slide 28: two checked OR theorems
+## Background: two checked OR theorems
 
 **Say:** “We can prove a property for every input the model allows. A worked example only helps us see what that property means.”
 
@@ -292,7 +365,7 @@ The four results in `src/talk/or-checks.edn` were freshly checked on 24 October 
 
 The two 10s on the slide are a conditional illustration: **if** a feasible plan earns 10 and a valid certificate bounds all feasible plans by 10, the plan is optimal for that model. We did not add a separate checked numerical LP instance for that picture. This mathematical theorem is an ingredient of certificate verification; it does not by itself prove the plant checker's implementation or every MILP certificate.
 
-## Slide 29: generated Clojure
+## Background: generated Clojure
 
 **Say:** “Rainbow generated this clamp function. The checked theorems connect the modeled program to its specification and preserve meaning through the modeled compiler. The final runtime still has a trust boundary.”
 
@@ -372,7 +445,7 @@ That Bellman receipt predates a documented kernel repair. The kernel’s trusted
 
 Do not describe the Bellman browser demo as certified by the theorem. Nor should a theorem that merely unfolds an update definition be described as proving its convergence or optimality.
 
-## Slides 30 and 31 explain the plant work
+## Background: plant work and certificate checking
 
 ### The physical interpretation of the model
 
@@ -407,7 +480,7 @@ Avoid “I have a complete formal proof that the real plant is always within 10�
 
 ### Algeciras: data, estimated savings and proof scope
 
-Slide 31 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
+Current slide 26 describes an assumed 50,000-tonne/year e-SAF plant near San Roque / Los Barrios,
 in the Bay of Algeciras (36.18° N, 5.40° W). It combines historical hourly OMIE Spanish prices
 for 2023–2025 with local ERA5/Open-Meteo wind and solar history and PVGIS calibration.
 Electrolysis, storage, CO₂ supply and fuel production have explicit limits and costs;
