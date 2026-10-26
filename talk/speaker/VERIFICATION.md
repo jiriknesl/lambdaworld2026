@@ -501,3 +501,16 @@ the original editorial review; these later user-directed revisions are recorded 
   s19, no second reveal remains, and next-slide navigation reaches Validation.
 - Updated existing preview files only; no tunnel configuration change.
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-activity-20261026#s19
+
+## 2026-10-26 — Remove clamp detour from Rainbow
+
+- Replaced slide 23's clamp table and proof explanation with “Why generate Clojure?”:
+  structured forms, reusable HOF components and REPL inspection. Kept the modeled-subset
+  scope. The checked clamp receipt and detailed explanation remain optional study evidence.
+- Updated speech, presenter data, README, study guide and both offline PDFs. 26 slides,
+  48 cues, 3,021 words; estimated 27:08 with holds, 29:08 including questions.
+- Release passed without warnings. Targeted public browser check confirmed the final
+  bundle matches, no clamp table or old speech remains, the new content fits 1920×1080
+  and 1024×768, and the presenter speech matches. No algorithm changes or new proof claims.
+- Updated existing preview assets without changing the tunnel configuration.
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-purpose-20261026#s23

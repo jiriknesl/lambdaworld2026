@@ -1845,24 +1845,14 @@
                 [:p.caption "Its purpose is not to match or beat Lean."]]])
     :notes "Introduce the tool without teaching its proof language. A statement alone is not enough: Rainbow checks a supplied proof against it. Code generation currently covers a modeled subset of Clojure. It does not prove arbitrary Clojure programs correct, replace testing, or validate a physical model's assumptions. Lean is a broader prover; no exclusive capability or superiority is claimed. The motivation is an OR workflow accessible from Clojure. The AI emphasis is a design goal, grounded in Rainbow_AI_Worker_Implementation_Specification.md section 3.5: useful verified progress per AI round trip and per million tokens. Reuse and local checking are the mechanism; no tokenizer-specific compression, lower cost or benchmark superiority is asserted. The reported 5:1 proof-to-generated-code ratio awaits a unit and example, so it is not displayed."}
 
-   {:section "Rainbow" :title "From proofs to Clojure"
+   {:section "Rainbow" :title "Why generate Clojure?"
     :render (fn [_]
-              (let [receipt (n/checked-or-examples)]
-                [:div.two.even
-                 [:div
-                  [:p.aside "Keep a turbine setting between 0 and 1."]
-                  [:table.levels [:tr [:th "input"] [:th "clamped value"]]
-                   (for [{:keys [input output]} (:examples receipt)]
-                     [:tr [:td input] [:td output]])]
-                  [:p "The modeled clamp returns the nearest bound when outside; it keeps the value when inside."]
-                  [:p.caption "Proved for the modeled program, beyond these three examples."]]
-                 [:div
-                  [:p.aside "Why generate Clojure?"]
-                  [:p "Code and proofs are data."]
-                  [:p "Generate forms. Compose them with higher-order functions."]
-                  [:p "Inspect and run the result in the REPL."]
-                  [:p.caption "Currently: a modeled subset. The runtime remains trusted."]]]))
-    :notes "One familiar example instead of proof syntax. Explain why Clojure is a useful generation target: structured forms can be constructed and traversed as data; higher-order functions provide reusable pieces; the REPL lets us inspect and run generated output. A compact representation alone does not prove token efficiency or correctness. The values are the recorded executions of the generated clamp program, read from or-checks.edn. Bounds are ordered, here 0 and 1. clj/clamp-program-denotes-clamp and clj/compile-correct-scoped were checked on 2026-10-24 with empty transitive axiom profiles. The first relates the modeled program to its specification; the second preserves meaning for scoped programs between modeled representations. This is not a theorem about all real numbers in a floating-point JVM implementation: the printer, exact-arithmetic primitives and runtime remain trusted. Three executions illustrate the result; they are not the proof. Rainbow proof terms are EDN; Clojure functions can construct and transform them, but each changed term must be checked again. This property enables visual tools; do not claim a released general editor or that other provers lack structured proof data. Full terms, generated source, selection/LP results and the earlier syntax walkthrough remain in the study material."}
+              [:div
+               (bullets "Code is data: generate and inspect structured forms."
+                        "Higher-order functions give us reusable algorithm components."
+                        "The REPL lets us examine and run the generated code.")
+               [:p.caption "Code generation currently covers a modeled subset of Clojure."]])
+    :notes "Explain the choice of output language, without introducing another proof example. Clojure forms can be constructed and traversed as data; higher-order functions provide reusable algorithm components; the REPL lets us inspect and run generated output. Rainbow proof terms are data too, so familiar Clojure tools can work with both representations. Changed proof terms must still be checked. These are workflow advantages, not exclusive capabilities or measured token-efficiency claims. Code generation covers a modeled subset; the printer, arithmetic primitives and runtime remain trusted. The checked clamp example and its receipt remain optional study evidence, not stage material."}
 
    {:section "Rainbow" :title "Where we use Rainbow now?"
     :render (fn [_]

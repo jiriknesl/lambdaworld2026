@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,065 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:29; with 02:00 for questions: 29:29. This is an estimate, not an aloud rehearsal.
+3,021 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:08; with 02:00 for questions: 29:08. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -376,21 +376,19 @@ Underneath all three examples is iterate. The state was a vector of turbine sett
 
 Rainbow is a theorem prover and code generator focused on Clojure and operations research. I am designing it for AI-assisted proving. A small generated function can come with a much larger body of proof. That makes information density valuable: useful statements and reusable proof steps per token. The aim is more verified progress from each AI interaction. We want to reuse checked lemmas and let local tools do routine checking. Its purpose is not to match or beat Lean; it is built around this workflow.
 
-## 23 From proofs to Clojure
+## 23 Why generate Clojure?
 
-24:55–25:52 · 111 words · 4s visual holds
+24:55–25:31 · 67 words · 4s visual holds
 
 ### Phase 1
 
-[Recall the clamp property, then explain forms, function composition and REPL inspection.]
+[Explain the target language: structured forms, reusable functions, and REPL inspection.]
 
-Remember keeping turbine settings between zero and one? Rainbow has checked that the modeled clamp implements that specification, beyond these three examples. The proof concerns the modeled program; the final runtime is still trusted.
-
-Clojure is a useful target because its code is data. We can generate forms, inspect their structure, and compose functions using the higher-order functions we have been discussing. Then we can inspect and run the result in the REPL. Rainbow proofs are data too, so Clojure tools can work with both. Code generation currently covers a modeled subset of Clojure. The goal is to make the reasoning reusable while keeping the generated program small enough to understand.
+Clojure is a useful target because its code is data. We can generate forms and inspect their structure using ordinary Clojure functions. Higher-order functions give us reusable algorithm components, as we have seen throughout the talk. The REPL lets us examine and run the generated result. Rainbow proofs are data too, so familiar tools can work with both. Code generation currently covers a modeled subset of Clojure.
 
 ## 24 Where we use Rainbow now?
 
-25:52–26:52 · 116 words · 4s visual holds
+25:31–26:31 · 116 words · 4s visual holds
 
 ### Phase 1
 
@@ -400,7 +398,7 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 ## 25 Applied Higher-Order Functions
 
-26:52–27:18 · 47 words · 3s visual holds
+26:31–26:56 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -410,7 +408,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-27:18–27:29 · 18 words · 3s visual holds
+26:56–27:08 · 18 words · 3s visual holds
 
 ### Phase 1
 

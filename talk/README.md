@@ -10,11 +10,10 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-activity-20261026).
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-purpose-20261026).
 Updated 2026-10-26: 26 slides. The HOF introduction is two slides: iterate and its
 stopping test, using one square-root example throughout. Validation is one animated shield demonstration, followed
-by the shared iterate summary. Rainbow explains its AI-oriented design goal and information density, illustrates a
-proved clamp property, explains Clojure as a generation target, and presents the Algeciras case. The deeper
+by the shared iterate summary. Rainbow explains its AI-oriented design goal and information density, explains Clojure as a generation target, and presents the Algeciras case. The deeper
 controller, proof-term and plant-certificate explanations remain optional study material.
 The spoken script, study guide and PDFs follow this shorter route.
 This URL is **public and unauthenticated**;
@@ -112,10 +111,10 @@ The deck has 26 slides; reveals are steps within a slide, not additional topics.
 | 7–14: Optimization | 8:51 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
 | 15–19: Decision-making | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 20–21: Validation and summary | 2:12 | Animated shield, exhaustive model result, shared iterate. |
-| 22–24: Rainbow | 2:40 | AI-oriented proving, useful progress per token, Clojure generation, business case. |
+| 22–24: Rainbow | 2:20 | AI-oriented proving, useful progress per token, Clojure generation, business case. |
 | 25–26: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
 
-The current 3,065-word script estimates **27:29 including visual holds**, or **29:29 with two
+The current 3,021-word script estimates **27:08 including visual holds**, or **29:08 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. The shorter route leaves room within the 40-minute slot for live demonstrations and audience questions. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
@@ -178,7 +177,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-activity-20261026#s9).
+Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-purpose-20261026#s9).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |
@@ -314,7 +313,7 @@ states, updates and stopping tests differ. Rate and momentum already demonstrate
 
 ## Rainbow: purpose and one familiar property — 2026-10-26
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-activity-20261026#s22).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-purpose-20261026#s22).
 It remains publicly accessible without authentication.
 
 Slide 22 introduces Rainbow's Clojure/OR focus and its design for AI-assisted proving.
@@ -324,7 +323,7 @@ This is not a measured compression ratio or a claim of superiority over another 
 The proposed 5:1 proof-to-generated-code ratio awaits its unit and example; it is not
 asserted on stage. Reusable statements, checked lemmas and local checking explain the goal.
 
-Slide 23 connects the proved clamp property to Clojure generation: structured forms,
+Slide 23 explains Clojure as a generation target: structured forms,
 higher-order function composition and REPL inspection. The generator currently covers a
 modeled subset; the runtime remains trusted. Slide 24 keeps the Algeciras business case.
 Proof syntax, comparison tables and generated-code listings remain optional study material.
@@ -377,7 +376,7 @@ claim that arbitrary Clojure or the browser optimizer is proved.
 Each was checked after replaying the pinned base checkpoint and installing its modules;
 each has an empty transitive axiom profile. `scripts/check-rainbow-examples.clj` reproduces
 the checks and generated function, reading an isolated source snapshot. See the study guide
-for the command. The build checks that emitted and displayed source read to the recorded form.
+for the command. The saved receipt includes emitted and displayed source; earlier stage builds checked that both read to the recorded form.
 This run does not prove kernel soundness or close the plant checker's soundness theorem.
 
 The Bellman contraction explanation is now optional study material, not a stage walkthrough.

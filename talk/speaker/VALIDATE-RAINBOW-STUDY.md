@@ -68,11 +68,10 @@ The proof and the emitted program have different jobs; their sizes need not matc
 It is not intended to match or beat Lean. It targets a particular workflow; code
 generation covers a modeled subset of Clojure, not arbitrary programs.
 
-Use the familiar clamp operation as the only mathematical example. Between ordered
-bounds 0 and 1, it keeps an input inside them and clips an outside input to the nearest
-bound. The three displayed executions illustrate the property. The recorded theorems
-cover the modeled clamp and scoped compilation, beyond these examples; the printed
-program, arithmetic primitives and runtime remain trusted.
+The stage now focuses on why Clojure is the generation target: structured forms,
+reusable higher-order functions and REPL inspection. There is no clamp table or proof
+example on this slide. The checked clamp program remains optional evidence in the
+background section below; its modeled guarantee does not certify the runtime.
 
 Proofs are EDN data. Clojure functions can build, inspect and transform them. Every
 changed proof needs a new check. This provides a basis for visualization and structural

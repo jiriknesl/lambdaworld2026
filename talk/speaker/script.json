@@ -445,13 +445,13 @@
       "slide": 22
     },
     {
-      "title": "From proofs to Clojure",
+      "title": "Why generate Clojure?",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Recall the clamp property, then explain forms, function composition and REPL inspection.",
-          "speech": "Remember keeping turbine settings between zero and one? Rainbow has checked that the modeled clamp implements that specification, beyond these three examples. The proof concerns the modeled program; the final runtime is still trusted.\n\nClojure is a useful target because its code is data. We can generate forms, inspect their structure, and compose functions using the higher-order functions we have been discussing. Then we can inspect and run the result in the REPL. Rainbow proofs are data too, so Clojure tools can work with both. Code generation currently covers a modeled subset of Clojure. The goal is to make the reasoning reusable while keeping the generated program small enough to understand.",
+          "cue": "Explain the target language: structured forms, reusable functions, and REPL inspection.",
+          "speech": "Clojure is a useful target because its code is data. We can generate forms and inspect their structure using ordinary Clojure functions. Higher-order functions give us reusable algorithm components, as we have seen throughout the talk. The REPL lets us examine and run the generated result. Rainbow proofs are data too, so familiar tools can work with both. Code generation currently covers a modeled subset of Clojure.",
           "hold_seconds": 4
         }
       ],
