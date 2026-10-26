@@ -1,5 +1,5 @@
 {
-  "spoken_words": 3021,
+  "spoken_words": 3030,
   "pace_wpm": 125,
   "holds_seconds": 178,
   "questions_seconds": 120,
@@ -167,30 +167,30 @@
     },
     {
       "slide": 24,
-      "words": 116,
+      "words": 125,
       "hold_seconds": 4,
       "start_seconds": 1531,
-      "end_seconds": 1591
+      "end_seconds": 1595
     },
     {
       "slide": 25,
       "words": 47,
       "hold_seconds": 3,
-      "start_seconds": 1591,
-      "end_seconds": 1616
+      "start_seconds": 1595,
+      "end_seconds": 1621
     },
     {
       "slide": 26,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 1616,
-      "end_seconds": 1628
+      "start_seconds": 1621,
+      "end_seconds": 1632
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 1946,
-    "125": 1748,
-    "140": 1593
+    "110": 1951,
+    "125": 1752,
+    "140": 1597
   },
-  "script_sha256": "76d76b94e3ab11a23a4037b159586c7607c7fc323f23cfe3f07dd7bb506121af"
+  "script_sha256": "c79ab41800b6425ddebbe116aec56c16745dad53eebdec0261fe279a76db1636"
 }

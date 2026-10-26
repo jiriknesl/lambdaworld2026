@@ -1866,10 +1866,9 @@
                 [:p "50,000 tonnes of synthetic aviation fuel per year."]]
                [:div
                 [:p.aside "Hourly OMIE electricity prices. Local wind and solar history."]
-                [:p "We model electrolysis, storage, CO₂ supply and fuel production, including operating limits and costs."]
-                [:p "We compare how to size the plant, buy electricity and run production."]
-                [:p "Rainbow checks the proof of the modeled fuel-blending optimum."]
-                [:p.caption "Annual savings are model estimates; the proof covers a specific decision."]]])
+                [:p "Our model plans how to run the electrolyzers, storage tanks, CO₂ supply and fuel production."]
+                [:p "It helps us choose the plant’s size, when to buy electricity and how to run it day to day."]
+                [:p.caption "The savings are estimates. The proof currently covers fuel blending."]]])
     :notes "Business case from challenge-1-esaf, separate from the optional e-methanol benchmark in the study guide. The site is San Roque / Los Barrios, Bay of Algeciras, at 36.18 N, -5.40 W. This is a modeled 50,000 t/year plant, not a named operating customer's installation. OMIE Spanish-zone hourly prices cover 2023–2025; local ERA5/Open-Meteo weather covers 2015–2025 with PVGIS calibration. Equipment costs and efficiencies are explicit assumptions, not vendor quotes. The figure is the paired out-of-sample mean cost difference between average-year design B1 and the stochastic design: 157.2451162402811 EUR/t times the assumed 50,000 t/year target = 7.862255812014055 M EUR/year. It includes the study's modeled costs and shortfall assumptions; it is distinct from the earlier 4.4 M energy/backup-only operating-policy comparison. Nine weather/price combinations reuse the price years used in tuning; do not call them nine independent unseen years. The annual saving is an evaluated model result, not a formal theorem or realized customer saving. The user-suggested 74 M EUR/year figure has not been traced to a result/baseline and is not asserted. The recorded Rainbow result certifies the specified 60-unit fuel-blending model's optimum: at most 28 units of e-SPK under the supplied properties/constraints. The 24 operating LP certificates use a separate exact checker; do not attribute their implementation verification or the whole annual saving to Rainbow. HiGHS solves the LPs; our modeling/search and verification work use it. Sources and pending-figure status are in speaker/plant-case-evidence.json and the study guide."}
 
    ;; ---------------------------------------------------------------- The book (2 min)

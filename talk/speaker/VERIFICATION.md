@@ -514,3 +514,17 @@ the original editorial review; these later user-directed revisions are recorded 
   and 1024×768, and the presenter speech matches. No algorithm changes or new proof claims.
 - Updated existing preview assets without changing the tunnel configuration.
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-purpose-20261026#s23
+
+
+## 2026-10-26 — Conversational plant description
+
+- Reworded slide 24 around running electrolyzers, storage tanks, CO₂ supply and fuel
+  production; choosing plant size, electricity purchases and day-to-day operations.
+  Used “plans how to run” to avoid implying live control of an operating customer plant.
+  Kept the distinction between estimated savings and the fuel-blending proof in a caption.
+- Updated the matching speech, presenter data, README, timing and offline speaker PDF.
+  3,030 words; estimated 27:12 with holds, 29:12 including questions.
+- Release passed without warnings. Public bundle matches; updated slide and presenter
+  speech passed at 1920×1080 and 1024×768. Model and proof claims unchanged.
+  Existing static preview refreshed without changing the tunnel configuration:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=plant-copy-20261026#s24

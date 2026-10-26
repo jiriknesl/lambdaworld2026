@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,021 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:08; with 02:00 for questions: 29:08. This is an estimate, not an aloud rehearsal.
+3,030 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:12; with 02:00 for questions: 29:12. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -388,17 +388,17 @@ Clojure is a useful target because its code is data. We can generate forms and i
 
 ## 24 Where we use Rainbow now?
 
-25:31–26:31 · 116 words · 4s visual holds
+25:31–26:35 · 125 words · 4s visual holds
 
 ### Phase 1
 
 [Tell the business story; distinguish the modeled saving from the decision that has a proof.]
 
-We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-SAF is synthetic aviation fuel. We use real hourly electricity prices from OMIE and local wind and solar history. The model includes electrolysis, storage, carbon dioxide supply, production limits and costs. We compare how to size the plant, buy electricity and run it. Against a plant designed for an average year, our model estimates about 7.9 million euros less cost annually. That is a modeled comparison, not a promise to an operating factory. Rainbow currently checks the proof of the fuel-blending optimum. We are building evidence for specific decisions; the annual saving itself is not yet a proved claim.
+We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-SAF is synthetic aviation fuel. We use real hourly electricity prices from OMIE and local wind and solar history. Our model plans how to run the electrolyzers, storage tanks, carbon dioxide supply and fuel production. It helps us choose the plant’s size, when to buy electricity and how to run it day to day. Against a plant designed for an average year, our model estimates about 7.9 million euros less cost annually. That is a modeled comparison, not a promise to an operating factory. For fuel blending, Rainbow checks that our chosen mix is the best one allowed by the model. The annual saving is still an estimate.
 
 ## 25 Applied Higher-Order Functions
 
-26:31–26:56 · 47 words · 3s visual holds
+26:35–27:01 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -408,7 +408,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-26:56–27:08 · 18 words · 3s visual holds
+27:01–27:12 · 18 words · 3s visual holds
 
 ### Phase 1
 
