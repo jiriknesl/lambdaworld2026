@@ -27,7 +27,9 @@ the wrapper calls `decide`; with a positive detection, it returns `:stop`.
 The event handler calls this decision immediately when a stronger detection arrives.
 The animation sends the same confident detection through both real controllers:
 first the original, then the shielded one. Its rotor follows the resulting command.
-It freezes on STOP to make the response visible; physical braking is not modeled.
+Without the shield, the bird hits the moving rotor and falls. With the shield, the
+rotor freezes on STOP and the bird passes. This is a scripted illustration; physical
+collision and braking are not modeled.
 
 The validation result below the animation is a separate exhaustive check. Starting
 from the allowed initial states, `iterate` expands the set of possible next states

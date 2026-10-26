@@ -266,6 +266,20 @@
     (is (= (:angle (c/shield-frame true 2)) (:angle (c/shield-frame true 4))))
     (is (not= (:angle (c/shield-frame false 2)) (:angle (c/shield-frame false 4))))))
 
+(deftest shield-illustrated-impact
+  (let [contact (/ 400 90)
+        hit (c/shield-frame false contact)
+        pass (c/shield-frame true contact)
+        fallen (c/shield-frame false (+ contact 2))]
+    (is (= :approach (:mode (c/shield-frame false (- contact 0.01)))))
+    (is (= :strike (:mode hit)))
+    (is (= :pass (:mode pass)))
+    (is (= [450 80] (mapv hit [:bird-x :bird-y])))
+    (is (= [450 80] (mapv pass [:bird-x :bird-y])))
+    (is (< (abs (mod (:angle hit) 120)) 1e-9) "a moving blade is at the contact point")
+    (is (= 250 (:bird-y fallen)) "the struck bird falls to the ground and stays visible")
+    (is (= 80 (:bird-y (c/shield-frame true (+ contact 2)))))))
+
 (deftest decide
   (let [{:keys [residual bound]} c/restock-certificate]
     (is (< residual c/epsilon))

@@ -951,18 +951,26 @@
   (let [detected? (>= elapsed 2)
         controller (if shield? bird-controller (:controller (controllers 1)))
         after (if detected? (controller shield-input shield-event) shield-input)
-        stopped? (= :stop (:action after))]
+        stopped? (= :stop (:action after))
+        contact-time (/ 400 90)
+        crossed? (>= elapsed contact-time)
+        hit? (and crossed? (not stopped?))
+        fall (min 1 (max 0 (/ (- elapsed contact-time) 1.1)))]
     {:detected? detected? :action (:action after)
-     :bird-x (+ 50 (* 90 (min 6 (max 0 elapsed))))
-     :angle (* 90 (if stopped? 2 elapsed))}))
+     :mode (cond hit? :strike crossed? :pass :else :approach)
+     :bird-x (if hit? (+ 450 (* 35 fall))
+                 (+ 50 (* 90 (min 6 (max 0 elapsed)))))
+     :bird-y (if hit? (+ 80 (* 170 fall fall)) 80)
+     ;; Align a moving blade with the illustrated contact at [450, 80].
+     :angle (- (* 90 (if stopped? 2 elapsed)) 40)}))
 
 (defn shield-animation [shield? elapsed]
-  (let [{:keys [detected? action bird-x angle]} (shield-frame shield? elapsed)
+  (let [{:keys [detected? action bird-x bird-y angle mode]} (shield-frame shield? elapsed)
         stopped? (= action :stop)
         reached (peek (if shield? bird-reach-run (reach-runs :reacting)))
         failures (count (filter unanswered? reached))]
     [:div {:data-shield (str shield?) :data-action (name action)
-           :data-detected (str detected?)}
+           :data-detected (str detected?) :data-encounter (name mode)}
      [:p.aside (if shield? "With the shield" "Without the shield")]
      [:svg.scene.shield-scene {:viewBox "0 0 680 300" :width 680 :height 300
                                :role "img" :aria-label (str "Bird detection; turbine command " (name action))}
@@ -974,14 +982,22 @@
       [:circle.hub {:cx 450 :cy 125 :r 7}]
       [:line {:x1 230 :y1 30 :x2 230 :y2 240 :stroke "var(--accent)" :stroke-dasharray "5 5"}]
       [:text {:x 230 :y 292 :text-anchor "middle" :fill "var(--muted)" :font-size 19} "Detection"]
-      (bird-glyph bird-x 80 {:cls "bird encounter-bird" :scale 1.4})
+      (when (= mode :strike)
+        [:g.strike-flash
+         [:circle {:cx 450 :cy 80 :r 23}]
+         [:path {:d "M 418 80 H 430 M 470 80 H 482 M 450 48 V 60 M 450 100 V 112"}]])
+      (bird-glyph bird-x bird-y {:cls (if (= mode :strike) "bird struck" "bird encounter-bird")
+                                :scale 1.4})
       [:text {:x 450 :y 32 :text-anchor "middle" :font-size 26
               :fill (if stopped? "var(--ok)" "var(--ink)")}
        (.toUpperCase (name action))]]
      [:p.aside {:class (when detected? (if stopped? "ok" "bad"))}
-      (if detected?
-        (if stopped? "Bird detected → STOP command" "Bird detected → still RUN")
-        "No detection → RUN")]
+      (case mode
+        :strike "Still RUN → bird hits the rotor"
+        :pass "STOP → bird passes the turbine"
+        (if detected?
+          (if stopped? "Bird detected → STOP command" "Bird detected → still RUN")
+          "No detection → RUN"))]
      [:p.caption (str "Exhaustive model check: " failures " states break the rule.")]]))
 
 (defonce shield-start (atom 0))
@@ -1821,7 +1837,7 @@
                 [:p.caption "Check every reachable state by iterating until the set stops growing."]]
                [:div#shield-animation (shield-animation (pos? step) 0)]])
     :live (fn [step t] {"shield-animation" (shield-animation (pos? step) (- t @shield-start))})
-    :notes "Two views of the same detection event, not a model of bird strikes or physical braking. The first uses the reacting table controller in an unseen context: its missing row defaults to RUN. The second calls stop-for-birds around that same decision. This simpler stage shield stops on any positive detection in every context; unlike the older study example it does not consult a context table. react-to-detections invokes it on a stronger detection; tick-controller also uses it. The animation calls these actual controllers, sends the level-2 event at two seconds and freezes the illustrated rotor on the STOP command. Real turbines take time to brake. Counts come from finite reachability: the existing events, initial states and three draw bands, iterated to set equality. The on-stage rule is confident detection implies STOP in the same modeled minute; the shield is stronger and stops on weak detection too. One animated trace demonstrates the reaction; the exhaustive finite search supplies the validation result. Neither checks sensor accuracy, turbine physics, or the checker implementation. Do not claim the optimized day schedule was verified by this separate controller model."}
+    :notes "Two views of the same detection event. The illustrated bird hits a moving blade and falls in the first view; after STOP it passes in the second. This scripted encounter is not a physical collision or braking model. The first uses the reacting table controller in an unseen context: its missing row defaults to RUN. The second calls stop-for-birds around that same decision. This simpler stage shield stops on any positive detection in every context; unlike the older study example it does not consult a context table. react-to-detections invokes it on a stronger detection; tick-controller also uses it. The animation calls these actual controllers, sends the level-2 event at two seconds and freezes the illustrated rotor on the STOP command. Real turbines take time to brake. Counts come from finite reachability: the existing events, initial states and three draw bands, iterated to set equality. The on-stage rule is confident detection implies STOP in the same modeled minute; the shield is stronger and stops on weak detection too. One animated trace demonstrates the reaction; the exhaustive finite search supplies the validation result. Neither checks sensor accuracy, turbine physics, or the checker implementation. Do not claim the optimized day schedule was verified by this separate controller model."}
 
    {:section "HOFs" :title "iterate underneath all three"
     :render (fn [_]

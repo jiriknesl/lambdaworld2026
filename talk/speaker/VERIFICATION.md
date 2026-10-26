@@ -421,3 +421,17 @@ the original editorial review; these later user-directed revisions are recorded 
   matching business-case/book presenter speech passed.
   Public unauthenticated URL:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=simplified-20261026#s22
+
+## 2026-10-26 — Visible impact in slide 22
+
+- The unshielded bird now meets a moving blade at the scripted contact point, flashes
+  red and falls. With STOP, the same approach continues past the stationary rotor.
+  Controller decisions and reachability counts are unchanged. This remains an illustration,
+  not a physical collision/braking model; technical notes and the study PDF say so.
+- 22 tests / 2,193 assertions passed, zero warnings. Added checks for contact alignment,
+  shared approach, impact versus passage and the final visible fallen position.
+- Release compiled without warnings. Extended the controlled-clock browser check to cover
+  impact, red flash, fall and shielded passage. Passed offline and on the public preview at
+  1600×900, 1920×1080 and 1024×768, including refresh and presenter speech. Inspected the
+  unshielded impact screenshot. Updated only the existing preview files; no tunnel change.
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=shield-impact-20261026#s22

@@ -10,7 +10,7 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=simplified-20261026).
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=shield-impact-20261026).
 Updated 2026-10-26: 28 slides. Validation is one animated shield demonstration, followed
 by the shared iterate summary. Rainbow introduces its purpose, illustrates a proved clamp
 property without proof syntax, and presents the Algeciras business case. The deeper
@@ -291,7 +291,9 @@ Slide 22 is the entire Validation section. Two animated views send the same dete
 through the original reacting controller and the simpler `stop-for-birds` wrapper.
 The wrapper stops on any detection; otherwise it delegates to the supplied decision.
 The rotor follows the actual command. Detection arrives at two seconds; the shielded
-rotor freezes then, while the original continues. This illustrates a software command,
+rotor freezes then, while the original continues. At the rotor the unshielded bird
+shows an impact flash and falls; the shielded bird continues past it. The moving blade
+is aligned with the scripted contact point. This illustrates a software command,
 not physical braking or a guarantee about bird survival.
 
 The displayed failure counts come from exhaustive finite reachability using the same
@@ -307,7 +309,7 @@ states, updates and stopping tests differ. Rate and momentum already demonstrate
 
 ## Rainbow: purpose and one familiar property — 2026-10-26
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=simplified-20261026#s24).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=shield-impact-20261026#s24).
 It remains publicly accessible without authentication.
 
 Slide 24 introduces Rainbow as a theorem prover and code generator focused on Clojure
@@ -471,7 +473,7 @@ These study files are kept outside the copied ngrok directory.
 
 ## Verification and remaining delivery work
 
-Current simplified edition (2026-10-26): **21 tests / 2,185 assertions** pass. Offline
+Current simplified edition (2026-10-26): **22 tests / 2,193 assertions** pass. Offline
 Chromium checks **195 frames** at three projector sizes. The dedicated shield check verifies
 the detection threshold, actual commands, matching bird paths, rotor freeze, failure counts,
 refresh and presenter speech. The release builds without warnings. The public bundle matches

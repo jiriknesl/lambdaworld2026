@@ -21,7 +21,8 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
         return {action:root.dataset.action, detected:root.dataset.detected,
           angle:Number(root.querySelector('[data-rotor-angle]').dataset.rotorAngle),
           bird:root.querySelector('.bird').parentElement.getAttribute('transform'),
-          text:root.textContent};
+          text:root.textContent, encounter:root.dataset.encounter,
+          flash:!!root.querySelector('.strike-flash'), fallen:!!root.querySelector('.bird.struck')};
       });
     };
     for (const [width,height] of [[1600,900],[1920,1080],[1024,768]]) {
@@ -42,6 +43,12 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
           if (at.action!=='stop'||later.angle!==at.angle||!later.text.includes('check: 0 states')) throw Error('Shield did not stop or pass its check');
           if (later.bird!==unshieldedBird) throw Error('Different bird trajectory in comparison');
         }
+        const contact = await sample(4000 / 0.9), impact = await sample(4700), end = await sample(6000);
+        if (phase===1) {
+          if (contact.encounter!=='strike'||!impact.flash||!impact.fallen||end.encounter!=='strike') throw Error('Missing impact or falling bird');
+          if (!end.bird.includes(',250.0)')) throw Error('Struck bird did not fall');
+        } else if (contact.encounter!=='pass'||impact.flash||impact.fallen||end.encounter!=='pass') throw Error('Shielded bird did not pass');
+        await sample(4700);
         if (width===1600 && target.startsWith('file:')) await page.screenshot({path:`/private/tmp/lambda-shield-phase-${phase}.png`});
       }
     }
@@ -54,6 +61,6 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
     await page.keyboard.press('ArrowLeft');
     await notes.waitForFunction(() => document.querySelector('.n-text')?.textContent.includes('Its decision table has no entry'));
     if(errors.length) throw Error(errors.join('\n'));
-    console.log('Shield passed: same bird, detection boundary, actual RUN/STOP, rotor motion/freeze, failure counts, refresh and presenter speech at three sizes.');
+    console.log('Shield passed: same bird, detection boundary, actual RUN/STOP, rotor motion/freeze, impact/fall versus passage, failure counts, refresh and presenter speech at three sizes.');
   } finally { await browser.close(); }
 })().catch(e => {console.error(e);process.exit(1);});
