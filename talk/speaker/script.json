@@ -126,13 +126,6 @@
           "cue": "Right. Point to T2 and T3 at noon.",
           "speech": "The turbines are not equally exposed. Each cell here is exposure at full operation for a turbine and an hour. T3 is close to the flight path; T2 is farther away. The hourly traffic pattern is shared, and location scales it. So curtailing T3 at noon removes much more exposure for the same electricity loss. This is an illustrative exposure index, not a prediction of birds killed.",
           "hold_seconds": 3
-        },
-        {
-          "from": 3,
-          "to": 3,
-          "cue": "Right. Return to the tradeoff table.",
-          "speech": "Neither column alone tells us which compromise to choose. First I’ll show how we improve a plan for one numerical cost. Then we’ll supply a cost that includes both concerns.",
-          "hold_seconds": 3
         }
       ]
     },

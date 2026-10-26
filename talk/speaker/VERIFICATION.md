@@ -462,3 +462,17 @@ the original editorial review; these later user-directed revisions are recorded 
   matches local release; both HOF reveals and Rainbow/book frames passed at 1920×1080 and
   1024×768, including matching business-case and book presenter speech.
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=hof-ai-20261026#s5
+
+
+## 2026-10-26 — Remove s8a3
+
+- Removed slide 8's third reveal and its speech cue. The whole-plan comparison and
+  exposure grid remain as the two reveals. Removed the unreachable tradeoff caption.
+- Regenerated script, presenter data, timing and offline speaker PDF: 26 slides,
+  49 cues, 3,063 words; 27:28 with holds, 29:28 with two minutes of questions.
+- Release passed without warnings. Targeted public browser check at 1920×1080 and
+  1024×768 confirmed both remaining reveals, correct presenter speech, no third reveal,
+  navigation to slide 9, and recovery of the old s8a3 URL to s8a2. Public bundle matches
+  the release. Algorithms unchanged; full-suite baseline remains the preceding revision.
+- Updated the existing static preview; no tunnel configuration change.
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=trim-s8-20261026#s8

@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,093 spoken words. Planning pace: 125 words/minute, plus 03:01 of pauses and visual holds. Speech and holds: 27:46; with 02:00 for questions: 29:46. This is an estimate, not an aloud rehearsal.
+3,063 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:28; with 02:00 for questions: 29:28. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -94,7 +94,7 @@ Our first problem is a wind farm. Six turbines, twelve hourly decisions each: se
 
 ## 08 What makes one plan better?
 
-04:34–06:05 · 171 words · 9s visual holds
+04:34–05:48 · 141 words · 6s visual holds
 
 ### Phase 1
 
@@ -108,15 +108,9 @@ If electricity were our only concern, we would retain everything. Stopping turbi
 
 The turbines are not equally exposed. Each cell here is exposure at full operation for a turbine and an hour. T3 is close to the flight path; T2 is farther away. The hourly traffic pattern is shared, and location scales it. So curtailing T3 at noon removes much more exposure for the same electricity loss. This is an illustrative exposure index, not a prediction of birds killed.
 
-### Phase 3
-
-[Right. Return to the tradeoff table.]
-
-Neither column alone tells us which compromise to choose. First I’ll show how we improve a plan for one numerical cost. Then we’ll supply a cost that includes both concerns.
-
 ## 09 Optimization is iterate
 
-06:05–07:47 · 194 words · 9s visual holds
+05:48–07:30 · 194 words · 9s visual holds
 
 ### Phase 1
 
@@ -138,7 +132,7 @@ Clamped takes that update function and returns another function. It calls the up
 
 ## 10 How far should one update move?
 
-07:47–08:18 · 51 words · 6s visual holds
+07:30–08:00 · 51 words · 6s visual holds
 
 ### Phase 1
 
@@ -154,7 +148,7 @@ Double the rate and this proposed movement doubles. For this electricity-only co
 
 ## 11 Which plan should win?
 
-08:18–10:07 · 209 words · 9s visual holds
+08:00–09:49 · 209 words · 9s visual holds
 
 ### Phase 1
 
@@ -178,7 +172,7 @@ Here is the wrapper. It receives the original cost, a risk function, and the par
 
 ## 12 Same updates, different objectives
 
-10:07–11:35 · 150 words · 16s visual holds
+09:49–11:17 · 150 words · 16s visual holds
 
 ### Phase 1
 
@@ -200,7 +194,7 @@ Compare the final generation and exposure. The penalty buys a reduction in expos
 
 ## 13 Can momentum reduce the number of updates?
 
-11:35–12:21 · 83 words · 6s visual holds
+11:17–12:03 · 83 words · 6s visual holds
 
 ### Phase 1
 
@@ -216,7 +210,7 @@ The base step performs descent; momentum wraps it; clamped wraps the result. Cla
 
 ## 14 Play the resulting day
 
-12:21–13:17 · 89 words · 14s visual holds
+12:03–13:00 · 89 words · 14s visual holds
 
 ### Phase 1
 
@@ -232,7 +226,7 @@ With the penalty, the chosen schedule stops this exposed turbine during busy hou
 
 ## 15 Buy hydrogen before the customers arrive
 
-13:17–15:23 · 236 words · 12s visual holds
+13:00–15:05 · 236 words · 12s visual holds
 
 ### Phase 1
 
@@ -262,7 +256,7 @@ We sell each unit for ten, so this outcome earns twenty minus the purchase cost 
 
 ## 16 Buy for this week—or the next?
 
-15:23–15:55 · 61 words · 3s visual holds
+15:05–15:38 · 61 words · 3s visual holds
 
 ### Phase 1
 
@@ -274,7 +268,7 @@ In a regular week with one unit already in stock, buying two covers the largest 
 
 ## 17 Future values change the order
 
-15:55–19:22 · 400 words · 15s visual holds
+15:38–19:05 · 400 words · 15s visual holds
 
 ### Phase 1
 
@@ -314,7 +308,7 @@ Best-order does this for every state and returns a map from state to order—a p
 
 ## 18 Hydrogen: iterate the value table
 
-19:22–20:56 · 166 words · 14s visual holds
+19:05–20:38 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -336,7 +330,7 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 19 The best order depends on the supply window
 
-20:56–22:16 · 154 words · 6s visual holds
+20:38–21:58 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -352,7 +346,7 @@ There is a less obvious recommendation here. With an empty tank in a tight week,
 
 ## 20 Stop when a bird is detected
 
-22:16–23:46 · 163 words · 12s visual holds
+21:58–23:28 · 163 words · 12s visual holds
 
 ### Phase 1
 
@@ -368,7 +362,7 @@ Now wrap the decision function with a shield. If there is a detection, return st
 
 ## 21 iterate underneath all three
 
-23:46–24:28 · 81 words · 3s visual holds
+23:28–24:10 · 81 words · 3s visual holds
 
 ### Phase 1
 
@@ -378,7 +372,7 @@ Underneath all three examples is iterate. The state was a vector of turbine sett
 
 ## 22 Rainbow
 
-24:28–25:11 · 85 words · 3s visual holds
+24:10–24:54 · 85 words · 3s visual holds
 
 ### Phase 1
 
@@ -388,7 +382,7 @@ Rainbow is a theorem prover and code generator focused on Clojure and operations
 
 ## 23 From proofs to Clojure
 
-25:11–26:09 · 111 words · 4s visual holds
+24:54–25:51 · 111 words · 4s visual holds
 
 ### Phase 1
 
@@ -400,7 +394,7 @@ Clojure is a useful target because its code is data. We can generate forms, insp
 
 ## 24 Where we use Rainbow now?
 
-26:09–27:08 · 116 words · 4s visual holds
+25:51–26:51 · 116 words · 4s visual holds
 
 ### Phase 1
 
@@ -410,7 +404,7 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 ## 25 Applied Higher-Order Functions
 
-27:08–27:34 · 47 words · 3s visual holds
+26:51–27:17 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -420,7 +414,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-27:34–27:46 · 18 words · 3s visual holds
+27:17–27:28 · 18 words · 3s visual holds
 
 ### Phase 1
 

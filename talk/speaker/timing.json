@@ -1,7 +1,7 @@
 {
-  "spoken_words": 3093,
+  "spoken_words": 3063,
   "pace_wpm": 125,
-  "holds_seconds": 181,
+  "holds_seconds": 178,
   "questions_seconds": 120,
   "slides": [
     {
@@ -55,142 +55,142 @@
     },
     {
       "slide": 8,
-      "words": 171,
-      "hold_seconds": 9,
+      "words": 141,
+      "hold_seconds": 6,
       "start_seconds": 274,
-      "end_seconds": 365
+      "end_seconds": 348
     },
     {
       "slide": 9,
       "words": 194,
       "hold_seconds": 9,
-      "start_seconds": 365,
-      "end_seconds": 467
+      "start_seconds": 348,
+      "end_seconds": 450
     },
     {
       "slide": 10,
       "words": 51,
       "hold_seconds": 6,
-      "start_seconds": 467,
-      "end_seconds": 498
+      "start_seconds": 450,
+      "end_seconds": 480
     },
     {
       "slide": 11,
       "words": 209,
       "hold_seconds": 9,
-      "start_seconds": 498,
-      "end_seconds": 607
+      "start_seconds": 480,
+      "end_seconds": 589
     },
     {
       "slide": 12,
       "words": 150,
       "hold_seconds": 16,
-      "start_seconds": 607,
-      "end_seconds": 695
+      "start_seconds": 589,
+      "end_seconds": 677
     },
     {
       "slide": 13,
       "words": 83,
       "hold_seconds": 6,
-      "start_seconds": 695,
-      "end_seconds": 741
+      "start_seconds": 677,
+      "end_seconds": 723
     },
     {
       "slide": 14,
       "words": 89,
       "hold_seconds": 14,
-      "start_seconds": 741,
-      "end_seconds": 797
+      "start_seconds": 723,
+      "end_seconds": 780
     },
     {
       "slide": 15,
       "words": 236,
       "hold_seconds": 12,
-      "start_seconds": 797,
-      "end_seconds": 923
+      "start_seconds": 780,
+      "end_seconds": 905
     },
     {
       "slide": 16,
       "words": 61,
       "hold_seconds": 3,
-      "start_seconds": 923,
-      "end_seconds": 955
+      "start_seconds": 905,
+      "end_seconds": 938
     },
     {
       "slide": 17,
       "words": 400,
       "hold_seconds": 15,
-      "start_seconds": 955,
-      "end_seconds": 1162
+      "start_seconds": 938,
+      "end_seconds": 1145
     },
     {
       "slide": 18,
       "words": 166,
       "hold_seconds": 14,
-      "start_seconds": 1162,
-      "end_seconds": 1256
+      "start_seconds": 1145,
+      "end_seconds": 1238
     },
     {
       "slide": 19,
       "words": 154,
       "hold_seconds": 6,
-      "start_seconds": 1256,
-      "end_seconds": 1336
+      "start_seconds": 1238,
+      "end_seconds": 1318
     },
     {
       "slide": 20,
       "words": 163,
       "hold_seconds": 12,
-      "start_seconds": 1336,
-      "end_seconds": 1426
+      "start_seconds": 1318,
+      "end_seconds": 1408
     },
     {
       "slide": 21,
       "words": 81,
       "hold_seconds": 3,
-      "start_seconds": 1426,
-      "end_seconds": 1468
+      "start_seconds": 1408,
+      "end_seconds": 1450
     },
     {
       "slide": 22,
       "words": 85,
       "hold_seconds": 3,
-      "start_seconds": 1468,
-      "end_seconds": 1511
+      "start_seconds": 1450,
+      "end_seconds": 1494
     },
     {
       "slide": 23,
       "words": 111,
       "hold_seconds": 4,
-      "start_seconds": 1511,
-      "end_seconds": 1569
+      "start_seconds": 1494,
+      "end_seconds": 1551
     },
     {
       "slide": 24,
       "words": 116,
       "hold_seconds": 4,
-      "start_seconds": 1569,
-      "end_seconds": 1628
+      "start_seconds": 1551,
+      "end_seconds": 1611
     },
     {
       "slide": 25,
       "words": 47,
       "hold_seconds": 3,
-      "start_seconds": 1628,
-      "end_seconds": 1654
+      "start_seconds": 1611,
+      "end_seconds": 1637
     },
     {
       "slide": 26,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 1654,
-      "end_seconds": 1666
+      "start_seconds": 1637,
+      "end_seconds": 1648
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 1988,
-    "125": 1786,
-    "140": 1627
+    "110": 1969,
+    "125": 1768,
+    "140": 1611
   },
-  "script_sha256": "cc3d6317c2b1fb13335187bb5ed58d82c4cf0e6df7b8a0fe96bc98646f20eac1"
+  "script_sha256": "3f9aee05e59258a7a20855428e2b1931b2e2638f426f916b74b233a3c9aa5b53"
 }

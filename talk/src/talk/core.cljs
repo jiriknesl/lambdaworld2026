@@ -1497,7 +1497,7 @@
                [:div#farm-context (scene nil (now-s) {:w 700 :h 510})]])
     :notes "Distinguish the forecast from the decision. energy is an illustrative forecast of electricity available if a turbine operates fully during an hour; in practice it would come from wind and a power curve. This demo supplies that forecast directly, with the same values for all six turbines. We do not optimize wind speed or forecast generation. We choose a retained fraction of available generation for every turbine-hour. At noon the forecast is 84 kWh; retaining half means 42 kWh, not an assertion that the wind is at half strength. The 0.5 vector is only an arbitrary interior starting guess for the numerical search, not a physical initial condition or a recommended policy. Other starting plans are possible. The optimization revises all 72 settings for the same future day."}
 
-   {:section "Optimise" :title "What makes one plan better?" :steps 3
+   {:section "Optimise" :title "What makes one plan better?" :steps 2
     :render (fn [frame]
               (let [off (zipmap slots (repeat 0)) on (zipmap slots (repeat 1))
                     half (as-plan (:x first-guess))]
@@ -1522,8 +1522,8 @@
                       [:tr [:th "plan"] [:th "generated kWh"] [:th "bird risk"]]
                       (for [[label plan] [["all stopped" off] ["half retained" half] ["all retained" on]]]
                         [:tr [:td label] [:td (fmt (- full-energy (lost plan)) 0)] [:td (fmt (risk plan) 1)]])]
-                     [:p.aside (if (zero? frame) "More generation also means more bird exposure." "We need a rule for choosing between these competing goals.")]])]]))
-    :notes "First compare whole plans: retaining more electricity increases bird exposure too. Next reveal the full turbine-by-hour exposure grid. It is calculated from the actual factors used in bird-risk: a turbine's proximity weight times that hour's bird-traffic forecast. T3 is near the flyway; T2 is farther away, so curtailing T3 protects more exposure for the same sacrificed electricity at noon. Every row has the same daily shape scaled by location; these are not independently estimated probability distributions or bird fatality rates. The final reveal returns to the competing metrics before choosing a scalar score in slide 13. electricity-lost and bird-risk both score the whole 72-setting plan."}
+                     [:p.aside "More generation also means more bird exposure."]])]]))
+    :notes "First compare whole plans: retaining more electricity increases bird exposure too. Next reveal the full turbine-by-hour exposure grid. It is calculated from the actual factors used in bird-risk: a turbine's proximity weight times that hour's bird-traffic forecast. T3 is near the flyway; T2 is farther away, so curtailing T3 protects more exposure for the same sacrificed electricity at noon. Every row has the same daily shape scaled by location; these are not independently estimated probability distributions or bird fatality rates. Next we build an electricity-only update before combining both concerns in the cost function. electricity-lost and bird-risk both score the whole 72-setting plan."}
 
    {:section "Optimise" :title "Optimization is iterate" :steps 3
     :render (fn [frame]
