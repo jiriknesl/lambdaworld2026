@@ -623,20 +623,26 @@
         (mapv + a (mapv #(* (/ left (max l 1e-9)) %) (mapv - b a)))
         (recur more ls (- left l))))))
 
+(defn visible-bird-count
+  "Whole bird markers for the forecast; fractional exposure remains in the model."
+  [hour]
+  (max 0 (js/Math.floor (* 2.5 (get birds hour 0)))))
+
 (defn illustrated-encounter
   "A scripted rotor crossing for playback, not a collision or fatality model.
-  The same bird crosses the same turbine each hour in both schedules."
+  The same bird crosses in both schedules only when the forecast draws birds."
   [plan t]
   (let [tb (apply max-key exposure turbines)
         [tx ty] tb
         {:keys [hour frac]} (time-of-day t)
         setting (if plan (plan [tb hour]) 1)
+        active? (pos? (visible-bird-count hour))
         contact [(+ tx (* 0.5 rotor)) ty (+ (ground tb) hub-height (* 0.4 rotor))]
         since (- (/ frac seconds-per-hour) 0.45)
-        hit? (and (>= since 0) (> setting 1e-6))
+        hit? (and active? (>= since 0) (> setting 1e-6))
         fall (max 0 (/ since 0.55))]
     {:turbine tb :hour hour :contact contact
-     :mode (cond hit? :strike (neg? since) :approach :else :pass)
+     :mode (cond (not active?) :absent hit? :strike (neg? since) :approach :else :pass)
      :fall fall
      :position (if hit?
                  (mapv + contact [(* 0.5 fall) 0 (- (* 2.6 fall fall))])
@@ -647,7 +653,8 @@
         [x y] (P position)
         [hx hy] (P contact)
         hit? (= mode :strike)]
-    [:g.encounter {:data-mode (name mode) :data-turbine (label-of turbine)}
+    (when (not= mode :absent)
+     [:g.encounter {:data-mode (name mode) :data-turbine (label-of turbine)}
      (when hit?
        [:g.strike-flash {:opacity (- 1 (* 0.35 fall))}
         [:circle {:cx (n1 hx) :cy (n1 hy) :r (+ 12 (* 30 fall))}]
@@ -656,7 +663,7 @@
         [:text {:x (n1 (+ hx 20)) :y (n1 (- hy 20))} "Bird strike"]])
      [:g {:transform (str "translate(" (n1 x) "," (n1 y) ") rotate(" (if hit? (* 150 fall) 0) ")")
           :opacity (if hit? (- 1 (* 0.35 fall)) 1)}
-      (bird-glyph 0 0 {:cls (if hit? "bird struck" "bird encounter-bird") :scale 0.85})]]))
+      (bird-glyph 0 0 {:cls (if hit? "bird struck" "bird encounter-bird") :scale 0.85})]])))
 
 (defn scene
   "The hills in 3D, at time t of tomorrow played fast: turbines turn as hard as the plan
@@ -688,12 +695,14 @@
                           (let [[lx ly] (xy (update base 2 - 0.1))]
                             [:text.tlabel {:x (n1 lx) :y (n1 (+ ly 20))} (label-of tb)]))))]
     [:svg.scene {:viewBox (str (- (/ w 2)) " " (- (/ h 2)) " " w " " h) :width w :height h
-                 :xmlns "http://www.w3.org/2000/svg"}
+                 :xmlns "http://www.w3.org/2000/svg"
+                 :data-hour hour :data-birds (visible-bird-count hour)}
      (for [y (range my)] [:polyline.terrain {:points (pts (map #(xy (on-ground % y)) (range -0.5 (- mx 0.4) 0.25)))}])
      (for [x (range mx)] [:polyline.terrain {:points (pts (map #(xy (on-ground x %)) (range -0.5 (- my 0.4) 0.25)))}])
      [:polyline.flyway {:points (pts (map xy fly-path))}]
      (map turbine far-first)
-     (let [n (js/Math.round (* 2.5 (birds hour)))]
+     (let [total (visible-bird-count hour)
+           n (if encounters? (max 0 (dec total)) total)]
        (for [k (range n)
              :let [b (mapv + (along fly-path (mod (+ (/ t 5) (/ k n)) 1))
                            [0 (* 0.35 (js/Math.sin (* 3.1 k))) (* 0.3 (js/Math.cos (* 1.7 k)))])
@@ -1659,7 +1668,7 @@
                   [:div#played-schedule (schedule plan {:w 700 :now (:hour (time-of-day t))})]
                   (plan-metrics plan)]
                  [:div#played-3d (scene plan t {:w 700 :h 500 :encounters? true})]]))
-    :notes "Now time really is passing through a day. First reveal is full power; second is the risk-aware plan. The prominent bird follows the same scripted crossing of the most exposed turbine each hour. At the rotor, a moving turbine produces a red impact flash and a falling bird; a fully stopped turbine lets this illustrated bird continue. The setting is read from the displayed schedule at the current hour. This is an explanatory animation, not geometric blade collision physics, a fatality estimate, or proof that stopped turbines cannot harm birds. Partial curtailment is not treated as guaranteed safe. The optimizer still scores the existing exposure index; the animation does not change its objective or results. The red schedule rectangle tracks the same clock as the encounter."}
+    :notes "Now time really is passing through a day. First reveal is full power; second is the risk-aware plan. When forecast activity produces visible birds, one follows the same scripted crossing of the most exposed turbine in both plans. Both flock and featured bird use floor(2.5 times hourly activity), so the small evening tail produces no visible birds or strikes. The numeric exposure index retains that tail. At the rotor, a moving turbine produces a red impact flash and a falling bird; a fully stopped turbine lets this illustrated bird continue. The setting is read from the displayed schedule at the current hour. This is an explanatory animation, not geometric blade collision physics, a fatality estimate, or proof that stopped turbines cannot harm birds. Partial curtailment is not treated as guaranteed safe. The optimizer still scores the existing exposure index; the animation does not change its objective or results. The red schedule rectangle tracks the same clock as the encounter."}
 
    {:section "Decide" :title "Buy hydrogen before the customers arrive" :steps 4
     :render (fn [frame]
@@ -1769,10 +1778,10 @@
                   [:p.caption (str "Planning update " step " · each pair is one possible starting inventory")]
                   (when (pos? step)
                     [:p.aside (str "Largest value change: " (fmt (largest-change (nth restock-run (dec step)) V) 6))])]]))
-    :notes "Bellman takes the model and returns a value-table update. Its input and output are both maps from [week stock] to money values. best-order separately extracts actions from V and the model. Each bar is V([week stock]): an estimate of total future discounted profit in money units. It is not hydrogen volume or weekly sales. Five inventory levels each have two bars: regular delivery week in blue and tight supply week in amber. Read stock one using the table: the same inventory has different value and recommended action depending on the supply window. Every update revises all ten values together. After n backups V is the optimal n-week value; the greedy recommended order looks one step beyond that table. Space advances the planning calculation, not physical time. Stop when the largest change across the ten entries is below .001. The Rainbow section returns to why this operator reduces discrepancies between value tables."}
+    :notes "Bellman takes the model and returns a value-table update. Its input and output are both maps from [week stock] to money values. best-order separately extracts actions from V and the model. Each bar is V([week stock]): an estimate of total future discounted profit in money units. It is not hydrogen volume or weekly sales. Five inventory levels each have two bars: regular delivery week in blue and tight supply week in amber. Read stock one using the table: the same inventory has different value and recommended action depending on the supply window. Every update revises all ten values together. After n backups V is the optimal n-week value; the greedy recommended order looks one step beyond that table. Space advances the planning calculation, not physical time. Stop when the largest change across the ten entries is below .001. The optional study guide explains why this operator reduces discrepancies between value tables."}
 
-   {:section "Decide" :title "The best order depends on the supply window" :steps 2
-    :render (fn [frame]
+   {:section "Decide" :title "The best order depends on the supply window"
+    :render (fn [_]
               [:div.two.even
                [:div
                 [:p.aside "Bellman’s recommended order"]
@@ -1788,12 +1797,11 @@
                  (for [{:keys [label twenty-weeks]} policy-comparison]
                    [:tr [:td label] [:td {:class (when (= label "Bellman") "ok")} (fmt twenty-weeks 2)]])]
                 [:p.caption "Start in a regular week with 1 unit. Every rule respects tank and supplier limits."]
-                (when (pos? frame)
                   [:div
                    [:p.aside (str "Empty tank, tight week: buy 1 despite "
                                   (fmt (expected-return zero-values [:tight 0] 1) 2)
                                   " expected profit this week.")]
-                   [:p.caption "Possible leftover stock helps when next week’s cheap delivery is capped."]])]])
+                   [:p.caption "Possible leftover stock helps when next week’s cheap delivery is capped."]]]])
     :notes "Read the state-dependent policy before the comparison. In regular weeks fill toward four subject to the supplier's limit of three; with empty storage only three can be bought. In tight weeks buy one only when empty, otherwise wait for cheap supply. This is not simply fill to the maximum demand of three, or always fill to capacity. The five rules are evaluated for twenty weeks with the same initial state and exact weighted demand branching. This-week-only maximizes immediate expected profit; the three target rules attempt the named stock level but obey both capacity constraints. Bellman is the stationary policy from converged values, evaluated over that same twenty-week horizon. It is not claimed to be the optimal finite-horizon policy for the final week of that comparison. The table shows the actual gain, including that fill-to-three is already fairly good. We chose a compact illustrative model, not a realistic hydrogen market forecast. The HOF structure is unchanged despite time-varying prices and availability."}
 
 

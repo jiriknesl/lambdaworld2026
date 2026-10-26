@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,063 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:28; with 02:00 for questions: 29:28. This is an estimate, not an aloud rehearsal.
+3,065 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:29; with 02:00 for questions: 29:29. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -210,7 +210,7 @@ The base step performs descent; momentum wraps it; clamped wraps the result. Cla
 
 ## 14 Play the resulting day
 
-12:03–13:00 · 89 words · 14s visual holds
+12:03–13:01 · 91 words · 14s visual holds
 
 ### Phase 1
 
@@ -222,11 +222,11 @@ Now we play a day through a fixed schedule. The red rectangle marks the current 
 
 [Right. Watch the same crossing during busy hours when the exposed turbine is stopped.]
 
-With the penalty, the chosen schedule stops this exposed turbine during busy hours. The same illustrated bird now passes through. When the turbine runs again, the strike can still appear. The clock is advancing; the plan is no longer changing. The optimizer produced the schedule being replayed.
+With the penalty, the chosen schedule stops this exposed turbine during busy hours. The same illustrated bird now passes through. As activity drops in the evening, the birds disappear from this view. The clock is advancing; the plan is no longer changing. The optimizer produced the schedule being replayed.
 
 ## 15 Buy hydrogen before the customers arrive
 
-13:00–15:05 · 236 words · 12s visual holds
+13:01–15:06 · 236 words · 12s visual holds
 
 ### Phase 1
 
@@ -256,7 +256,7 @@ We sell each unit for ten, so this outcome earns twenty minus the purchase cost 
 
 ## 16 Buy for this week—or the next?
 
-15:05–15:38 · 61 words · 3s visual holds
+15:06–15:39 · 61 words · 3s visual holds
 
 ### Phase 1
 
@@ -268,7 +268,7 @@ In a regular week with one unit already in stock, buying two covers the largest 
 
 ## 17 Future values change the order
 
-15:38–19:05 · 400 words · 15s visual holds
+15:39–19:06 · 400 words · 15s visual holds
 
 ### Phase 1
 
@@ -308,7 +308,7 @@ Best-order does this for every state and returns a map from state to order—a p
 
 ## 18 Hydrogen: iterate the value table
 
-19:05–20:38 · 166 words · 14s visual holds
+19:06–20:39 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -330,23 +330,19 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 19 The best order depends on the supply window
 
-20:38–21:58 · 154 words · 6s visual holds
+20:39–21:59 · 154 words · 6s visual holds
 
 ### Phase 1
 
-[Read stock 1 first; compare the strongest simple rule with Bellman.]
+[Read stock 1 and the comparison, then point to the empty-tank tight-week recommendation.]
 
 The policy maps supply window and stock to a purchase quantity. “This week only” maximizes immediate expected profit, with no value assigned to leftover stock. Bellman also accounts for future weeks. We evaluate every rule over the same twenty discounted weeks, weighting all demand branches. Filling toward three is already good; Bellman does a little better. This is a comparison of stationary policies, not an optimization for a business closing after week twenty.
-
-### Phase 2
-
-[Right. Point to the empty-tank tight-week row.]
 
 There is a less obvious recommendation here. With an empty tank in a tight week, buy one, even though that purchase has negative expected profit this week. The cost is paid now. If nobody arrives, the unit carries into next week, when cheap supply is capped. That future benefit outweighs the immediate expected loss in this model. Looking only at immediate expected profit misses that value. This comes from the actual model; it is not a general claim about hydrogen markets.
 
 ## 20 Stop when a bird is detected
 
-21:58–23:28 · 163 words · 12s visual holds
+21:59–23:29 · 163 words · 12s visual holds
 
 ### Phase 1
 
@@ -362,7 +358,7 @@ Now wrap the decision function with a shield. If there is a detection, return st
 
 ## 21 iterate underneath all three
 
-23:28–24:10 · 81 words · 3s visual holds
+23:29–24:11 · 81 words · 3s visual holds
 
 ### Phase 1
 
@@ -372,7 +368,7 @@ Underneath all three examples is iterate. The state was a vector of turbine sett
 
 ## 22 Rainbow
 
-24:10–24:54 · 85 words · 3s visual holds
+24:11–24:55 · 85 words · 3s visual holds
 
 ### Phase 1
 
@@ -382,7 +378,7 @@ Rainbow is a theorem prover and code generator focused on Clojure and operations
 
 ## 23 From proofs to Clojure
 
-24:54–25:51 · 111 words · 4s visual holds
+24:55–25:52 · 111 words · 4s visual holds
 
 ### Phase 1
 
@@ -394,7 +390,7 @@ Clojure is a useful target because its code is data. We can generate forms, insp
 
 ## 24 Where we use Rainbow now?
 
-25:51–26:51 · 116 words · 4s visual holds
+25:52–26:52 · 116 words · 4s visual holds
 
 ### Phase 1
 
@@ -404,7 +400,7 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 ## 25 Applied Higher-Order Functions
 
-26:51–27:17 · 47 words · 3s visual holds
+26:52–27:18 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -414,7 +410,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-27:17–27:28 · 18 words · 3s visual holds
+27:18–27:29 · 18 words · 3s visual holds
 
 ### Phase 1
 

@@ -26,16 +26,20 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
       for (const [slide, phase, time, mode] of [
         [13, 1, 6300, null], [13, 2, 6300, null],
         [14, 1, 6300, 'approach'], [14, 1, 6975, 'strike'],
-        [14, 1, 7350, 'strike'], [14, 2, 6975, 'pass']
+        [14, 1, 7350, 'strike'], [14, 2, 6975, 'pass'],
+        [14, 1, 15975, 'absent'], [14, 2, 15975, 'absent'],
+        [14, 1, 17475, 'absent'], [14, 2, 17475, 'absent'],
+        [14, 2, 6975, 'pass']
       ]) {
         await page.evaluate(({slide, phase, time}) => {
           window.playbackTime = time;
           location.hash = 's' + slide + 'a' + phase;
         }, {slide, phase, time});
-        await page.waitForFunction(({slide, phase, mode}) =>
+        await page.waitForFunction(({slide, phase, mode, time}) =>
           document.querySelector('.count').textContent.trim().startsWith(slide + ' /') &&
           document.querySelector('.steps-text').textContent.trim().startsWith(phase + ' /') &&
-          (!mode || document.querySelector('.encounter')?.dataset.mode === mode), {slide, phase, mode});
+          (!mode || (document.querySelector('.clock')?.textContent === (8 + Math.floor(time / 1500) % 12) + ':00' &&
+            (mode === 'absent' ? !document.querySelector('.encounter') : document.querySelector('.encounter')?.dataset.mode === mode))), {slide, phase, mode, time});
         // Allow the existing live renderer to update at the requested timestamp.
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
         const result = await page.evaluate(() => {
@@ -48,6 +52,9 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
             clock: body.querySelector('.clock')?.textContent,
             marker: body.querySelector('rect.now')?.getAttribute('x'),
             ring: body.querySelector('.strike-flash circle')?.getAttribute('r'),
+            birdCount: body.querySelectorAll('path.bird').length,
+            activeTurbines: body.querySelectorAll('.hub:not(.stopped)').length,
+            markerWidth: body.querySelector('rect.now')?.getAttribute('width'),
             overflow: [...body.querySelectorAll('*')].filter(e => {
               if (e.closest('svg') && e.tagName !== 'svg') return false;
               const r = e.getBoundingClientRect();
@@ -58,10 +65,11 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
         if (result.overflow.length) throw Error('Overflow: ' + width + ' slide ' + slide);
         if (result.text.includes('Same cost, rate, start and stopping test.')) throw Error('Old momentum caption');
         if (mode) {
-          if (result.clock !== '12:00') throw Error('Clock mismatch');
-          if (Math.abs(Number(result.marker) - 312) > 0.01) throw Error('Hour marker mismatch');
+          if (result.clock !== (8 + Math.floor(time / 1500) % 12) + ':00') throw Error('Clock mismatch');
+          if (Math.abs(Number(result.marker) - (120 + (Math.floor(time / 1500) % 12) * Number(result.markerWidth))) > 0.01) throw Error('Hour marker mismatch');
           if (mode === 'strike' && Math.abs(Number(result.ring) - (12 + 30 * ((time / 1500 - 4 - 0.45) / 0.55))) > 0.01) throw Error('Impact timing mismatch');
           if (result.flash !== (mode === 'strike') || result.fallen !== (mode === 'strike')) throw Error('Strike graphics mismatch');
+          if (mode === 'absent' && (result.birdCount !== 0 || result.activeTurbines === 0)) throw Error('Evening restart must show running turbines without birds');
           if (result.title || result.text.includes('Illustrative strikes')) throw Error('Removed slide copy remains');
           if (width === 1600 && target.startsWith('file:')) {
             await page.screenshot({path: '/private/tmp/playback-' + phase + '-' + time + '.png'});
@@ -74,7 +82,7 @@ const target = process.argv[3] || 'file://' + path.resolve(__dirname, '../public
     await notes.waitForSelector('.notes-view');
     await notes.waitForFunction(() => document.querySelector('.n-text').textContent.includes('same illustrated bird'));
     if (errors.length) throw Error(errors.join('\n'));
-    console.log(`Playback passed ${frames} frames at three sizes: approach, impact, fall, stopped-turbine passage, clock and hour marker; presenter speech matches.`);
+    console.log(`Playback passed ${frames} frames at three sizes: approach, impact, fall, stopped-turbine passage, no evening birds/strikes during restart, clock and hour marker; presenter speech matches.`);
   } finally {
     await browser.close();
   }

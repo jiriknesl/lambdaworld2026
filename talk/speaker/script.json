@@ -265,7 +265,7 @@
           "from": 2,
           "to": 2,
           "cue": "Right. Watch the same crossing during busy hours when the exposed turbine is stopped.",
-          "speech": "With the penalty, the chosen schedule stops this exposed turbine during busy hours. The same illustrated bird now passes through. When the turbine runs again, the strike can still appear. The clock is advancing; the plan is no longer changing. The optimizer produced the schedule being replayed.",
+          "speech": "With the penalty, the chosen schedule stops this exposed turbine during busy hours. The same illustrated bird now passes through. As activity drops in the evening, the birds disappear from this view. The clock is advancing; the plan is no longer changing. The optimizer produced the schedule being replayed.",
           "hold_seconds": 7
         }
       ]
@@ -392,16 +392,9 @@
         {
           "from": 1,
           "to": 1,
-          "cue": "Read stock 1 first; compare the strongest simple rule with Bellman.",
-          "speech": "The policy maps supply window and stock to a purchase quantity. “This week only” maximizes immediate expected profit, with no value assigned to leftover stock. Bellman also accounts for future weeks. We evaluate every rule over the same twenty discounted weeks, weighting all demand branches. Filling toward three is already good; Bellman does a little better. This is a comparison of stationary policies, not an optimization for a business closing after week twenty.",
-          "hold_seconds": 3
-        },
-        {
-          "from": 2,
-          "to": 2,
-          "cue": "Right. Point to the empty-tank tight-week row.",
-          "speech": "There is a less obvious recommendation here. With an empty tank in a tight week, buy one, even though that purchase has negative expected profit this week. The cost is paid now. If nobody arrives, the unit carries into next week, when cheap supply is capped. That future benefit outweighs the immediate expected loss in this model. Looking only at immediate expected profit misses that value. This comes from the actual model; it is not a general claim about hydrogen markets.",
-          "hold_seconds": 3
+          "cue": "Read stock 1 and the comparison, then point to the empty-tank tight-week recommendation.",
+          "speech": "The policy maps supply window and stock to a purchase quantity. “This week only” maximizes immediate expected profit, with no value assigned to leftover stock. Bellman also accounts for future weeks. We evaluate every rule over the same twenty discounted weeks, weighting all demand branches. Filling toward three is already good; Bellman does a little better. This is a comparison of stationary policies, not an optimization for a business closing after week twenty.\n\nThere is a less obvious recommendation here. With an empty tank in a tight week, buy one, even though that purchase has negative expected profit this week. The cost is paid now. If nobody arrives, the unit carries into next week, when cheap supply is capped. That future benefit outweighs the immediate expected loss in this model. Looking only at immediate expected profit misses that value. This comes from the actual model; it is not a general claim about hydrogen markets.",
+          "hold_seconds": 6
         }
       ]
     },

@@ -476,3 +476,28 @@ the original editorial review; these later user-directed revisions are recorded 
   the release. Algorithms unchanged; full-suite baseline remains the preceding revision.
 - Updated the existing static preview; no tunnel configuration change.
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=trim-s8-20261026#s8
+
+## 2026-10-26 — Forecast-driven birds and one-view policy comparison
+
+- Fixed slide 14's highlighted bird spawning every hour independently of the forecast.
+  A shared whole-marker count, floor(2.5 × hourly activity), now governs the flock and
+  encounter. The highlighted bird replaces one flock marker instead of adding one.
+  At 18:00 and 19:00 no birds or strikes are drawn while turbines run. Numerical exposure
+  still retains the small fractional evening tail; model, solver and schedules are unchanged.
+- Added regression coverage for evening absence under running/stopped plans throughout
+  each hour, rendered SVG absence, daytime activity and consistent total marker count.
+  Existing daytime strike, passage and partial-curtailment checks remain green.
+- Merged slide 19's two reveals into one view with policy, comparison and tight-week
+  recommendation visible together. Combined its speaker passages into one cue.
+- Final 23 tests / 2,199 assertions passed; release compiled without warnings. Regenerated
+  script, presenter data, timing and offline speaker PDF: 26 slides, 48 cues, 3,065 words;
+  27:29 including holds, 29:29 with two minutes for questions.
+- Controlled-clock playback check passed 33 frames offline and publicly at 1600×900,
+  1920×1080 and 1024×768: daytime approach/strike/fall/passage, evening running turbines
+  with no birds/strike graphics, return to daytime, clock and schedule-marker agreement,
+  and presenter speech. Inspected the 19:00 optimized-schedule screenshot.
+- Public bundle matches the release. Targeted slide 19 check passed at 1920×1080 and
+  1024×768: all content fits, both speech passages share the cue, old s19a2 recovers to
+  s19, no second reveal remains, and next-slide navigation reaches Validation.
+- Updated existing preview files only; no tunnel configuration change.
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-activity-20261026#s19

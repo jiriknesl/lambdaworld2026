@@ -10,7 +10,7 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=trim-s8-20261026).
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-activity-20261026).
 Updated 2026-10-26: 26 slides. The HOF introduction is two slides: iterate and its
 stopping test, using one square-root example throughout. Validation is one animated shield demonstration, followed
 by the shared iterate summary. Rainbow explains its AI-oriented design goal and information density, illustrates a
@@ -31,7 +31,11 @@ Rebuilding `talk/public` alone does not refresh this copied preview.
 
 Slide 14's highlighted bird uses a scripted crossing of the most exposed turbine. A running
 rotor shows an impact flash and falling bird; the same crossing continues past a stopped rotor.
-It reads the actual displayed schedule and playback hour. This illustrates the reason for
+It reads the actual displayed schedule and playback hour. Both the flock and the featured
+bird use `floor(2.5 × hourly activity)` visible markers. The featured bird replaces one flock
+marker rather than appearing as an extra bird every hour. At 18:00 and 19:00 this count is
+zero, so no birds or strike graphics appear even when turbines restart. This is display
+quantization: the numerical exposure index still includes the small fractional evening tail. This illustrates the reason for
 curtailment; it is not a blade-collision simulation or a count of predicted fatalities. The
 optimization continues to use the same exposure index. `scripts/playback-smoke.cjs` checks
 both outcomes, impact timing and the synchronized schedule marker with a controlled clock.
@@ -111,14 +115,14 @@ The deck has 26 slides; reveals are steps within a slide, not additional topics.
 | 22–24: Rainbow | 2:40 | AI-oriented proving, useful progress per token, Clojure generation, business case. |
 | 25–26: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
 
-The current 3,063-word script estimates **27:28 including visual holds**, or **29:28 with two
+The current 3,065-word script estimates **27:29 including visual holds**, or **29:29 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. The shorter route leaves room within the 40-minute slot for live demonstrations and audience questions. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
 
 ## Spoken script and revision record
 
-- [Full speech](speaker/SCRIPT.md): 26 slides, 49 cues. Numerical phase ranges have one passage to
+- [Full speech](speaker/SCRIPT.md): 26 slides, 48 cues. Numerical phase ranges have one passage to
   speak over the animation, plus distinct opening and closing passages. Every actual phase is covered.
 - [Revision log](speaker/REVISIONS.md): 21 passes, each with the problem found and the applied change.
   `speaker/revisions.json` retains before/after fingerprints from those editorial passes.
@@ -174,7 +178,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=trim-s8-20261026#s9).
+Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-activity-20261026#s9).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |
@@ -276,7 +280,7 @@ that table. The final policy is:
 | 3 | 1 | 0 |
 | 4 | 0 | 0 |
 
-Slide 19 compares five feasible rules over twenty weeks, starting at `[:regular 1]`. Expected
+Slide 19 shows the policy, comparison and tight-week example together in one view. It compares five feasible rules over twenty weeks, starting at `[:regular 1]`. Expected
 discounted profit is approximately 50.11 (fill to two), 70.36 (fill to three), 66.36 (fill to four),
 70.48 (optimize this week only) and 72.20 (Bellman's stationary policy). All target rules are clipped
 to available supply and tank space. Always filling to capacity is worse than adapting to the phase;
@@ -310,7 +314,7 @@ states, updates and stopping tests differ. Rate and momentum already demonstrate
 
 ## Rainbow: purpose and one familiar property — 2026-10-26
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=trim-s8-20261026#s22).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bird-activity-20261026#s22).
 It remains publicly accessible without authentication.
 
 Slide 22 introduces Rainbow's Clojure/OR focus and its design for AI-assisted proving.

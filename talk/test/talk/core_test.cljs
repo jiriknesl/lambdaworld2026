@@ -79,6 +79,25 @@
     (is (= :strike (:mode (c/illustrated-encounter (zipmap c/slots (repeat 0.1)) noon)))
         "partial curtailment is not illustrated as guaranteed safe")))
 
+(deftest playback-birds-follow-forecast
+  (let [on (zipmap c/slots (repeat 1))
+        off (zipmap c/slots (repeat 0))]
+    (doseq [hour [18 19] plan [on off]
+            fraction [0.2 0.65 0.99]
+            :let [t (* c/seconds-per-hour (+ (.indexOf c/hours hour) fraction))
+                  svg (c/html (c/scene plan t {:encounters? true}))]]
+      (is (zero? (c/visible-bird-count hour)))
+      (is (= :absent (:mode (c/illustrated-encounter plan t))))
+      (is (not (str/includes? svg "class=\"bird")))
+      (is (not (str/includes? svg "strike-flash"))))
+    (is (pos? (c/visible-bird-count 12)))
+    (testing "the featured bird is part of the forecast flock, not an extra hourly spawn"
+      (doseq [encounters? [false true]
+              :let [svg (c/html (c/scene on (* c/seconds-per-hour 4.2)
+                                       {:encounters? encounters?}))]]
+        (is (= (c/visible-bird-count 12)
+               (count (re-seq #"class=\"bird " svg))))))))
+
 (deftest optimise
   (doseq [k [:crowd :plain :momentum :adam]] (c/finish! k))
   (testing "advance is fixed-point one state at a time"
