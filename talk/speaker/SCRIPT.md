@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,072 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:33; with 02:00 for questions: 29:33. This is an estimate, not an aloud rehearsal.
+3,104 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:48; with 02:00 for questions: 29:48. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -380,19 +380,21 @@ We also cross-check with Lean. All 1,721 theorems in our default checkpoint were
 
 On a held-out benchmark of 200 theorems from our own corpus, Rainbow solved 171 and Lean’s core automation solved 131. Each had thirty seconds per theorem, with no AI help. Lean ran without Mathlib, using the best of four setups. These are results on our corpus, not a claim that Rainbow beats Lean in general.
 
-## 23 Why generate Clojure?
+## 23 Plans for future Rainbow
 
-25:15–25:51 · 67 words · 4s visual holds
+25:15–26:07 · 99 words · 4s visual holds
 
 ### Phase 1
 
-[Explain the target language: structured forms, reusable functions, and REPL inspection.]
+[Explain the two directions. Distinguish the working explorer from the planned OR-specific views.]
 
-Clojure is a useful target because its code is data. We can generate forms and inspect their structure using ordinary Clojure functions. Higher-order functions give us reusable algorithm components, as we have seen throughout the talk. The REPL lets us examine and run the generated result. Rainbow proofs are data too, so familiar tools can work with both. Code generation currently covers a modeled subset of Clojure.
+I want to take Rainbow further in two directions. First, code generation: support more operations research algorithms, build them from reusable higher-order functions, and inspect and run the generated Clojure in the REPL. Today this covers a modeled subset of the language.
+
+Second, proof visualization. We already have a Proof Explorer where we can follow theorem dependencies, see the assumptions, open proof steps and inspect sample calculations. The next step is to make this useful for operations research: show which constraints limit a solution and how a bound establishes its quality. Those OR-specific views are still to be built.
 
 ## 24 Where we use Rainbow now?
 
-25:51–26:55 · 125 words · 4s visual holds
+26:07–27:11 · 125 words · 4s visual holds
 
 ### Phase 1
 
@@ -402,7 +404,7 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 ## 25 Applied Higher-Order Functions
 
-26:55–27:21 · 47 words · 3s visual holds
+27:11–27:36 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -412,7 +414,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-27:21–27:33 · 18 words · 3s visual holds
+27:36–27:48 · 18 words · 3s visual holds
 
 ### Phase 1
 

@@ -10,10 +10,10 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=lean-results-20261027).
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-plans-20261027).
 Updated 2026-10-27: 26 slides. The HOF introduction is two slides: iterate and its
 stopping test, using one square-root example throughout. Validation is one animated shield demonstration, followed
-by the shared iterate summary. Rainbow explains its AI-oriented design goal and information density, explains Clojure as a generation target, and presents the Algeciras case. The deeper
+by the shared iterate summary. Rainbow explains its AI-oriented design goal and information density, outlines code-generation and proof-visualization plans, and presents the Algeciras case. The deeper
 controller, proof-term and plant-certificate explanations remain optional study material.
 The spoken script, study guide and PDFs follow this shorter route.
 This URL is **public and unauthenticated**;
@@ -111,10 +111,10 @@ The deck has 26 slides; reveals are steps within a slide, not additional topics.
 | 7–14: Example 1 — wind farm | 8:51 | Build the update, choose its pace, change the objective, compare momentum, replay the day. |
 | 15–19: Example 2 — hydrogen station | 8:59 | Supply cycle, demand, value-table updates, explicit policy extraction and comparison. |
 | 20–21: Validation and summary | 2:12 | Animated shield, exhaustive model result, shared iterate. |
-| 22–24: Rainbow | 2:44 | AI-oriented proving, useful progress per token, Clojure generation, business case. |
+| 22–24: Rainbow | 3:00 | AI-oriented proving, useful progress per token, Clojure generation, business case. |
 | 25–26: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
 
-The current 3,072-word script estimates **27:33 including visual holds**, or **29:33 with two
+The current 3,104-word script estimates **27:48 including visual holds**, or **29:48 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. The shorter route leaves room within the 40-minute slot for live demonstrations and audience questions. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
@@ -177,7 +177,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=lean-results-20261027#s9).
+Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-plans-20261027#s9).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |
@@ -313,7 +313,7 @@ states, updates and stopping tests differ. Rate and momentum already demonstrate
 
 ## Rainbow: purpose and one familiar property — 2026-10-26
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=lean-results-20261027#s22).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-plans-20261027#s22).
 It remains publicly accessible without authentication.
 
 Slide 22 introduces Rainbow's Clojure/OR focus and its design for AI-assisted proving.
@@ -331,9 +331,13 @@ The script specifies best of four Lean setups. These supplied results were not r
 for this slide edit. No general speed/superiority claim or kernel-soundness claim is made.
 No private artifact link or report is being published by this edit.
 
-Slide 23 explains Clojure as a generation target: structured forms,
-higher-order function composition and REPL inspection. The generator currently covers a
-modeled subset; the runtime remains trusted. Slide 24 keeps the Algeciras business case.
+Slide 23, “Plans for future Rainbow,” has two columns: broader OR code generation using
+Clojure forms/HOFs/REPL, and proof visualization. Jiri's supplied report describes a working
+Proof Explorer with dependencies, assumptions, proof-step trees and sample calculations.
+The private Claude artifact was inaccessible through the web tool; its app and dataset are
+not embedded or republished here. The report's 155 declarations and 26 natural-number
+example theorems are distinct from the full 1,721-theorem Lean cross-check. OR-specific
+constraint/bound visualizations remain future work. Slide 24 keeps the Algeciras case.
 Proof syntax, comparison tables and generated-code listings remain optional study material.
 
 Direction was reconciled with the live `rainbow-claude-4` worker and

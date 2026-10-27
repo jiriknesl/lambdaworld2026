@@ -556,3 +556,22 @@ the original editorial review; these later user-directed revisions are recorded 
   1920×1080 and 1024×768. Inspected the slide screenshot. Public bundle matches release.
 - Refreshed the existing static preview; no tunnel configuration change.
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=lean-results-20261027#s22
+
+## 2026-10-27 — Future Rainbow: code generation and visualization
+
+- Renamed slide 23 to “Plans for future Rainbow” with two columns. Code generation
+  covers broader OR algorithms, HOF components and REPL inspection. Visualization covers
+  existing Proof Explorer capabilities, then planned OR constraint/bound views.
+- Used Jiri's supplied Explorer feature report. The private Claude artifact could not be
+  accessed through the web tool; no screenshot, application or private dataset is embedded.
+  Notes distinguish its reported 155 declarations / 26 natural-number example theorems
+  from the previous slide's 1,721-theorem cross-check. OR views and a general editor remain
+  future work. The user's trailing “and” prompted an optional clarification; proceeded
+  with the two fully specified columns, with no additional feature assumed.
+- Updated script, presenter data, study guide, README, timing and both offline PDFs.
+  26 slides, 48 cues, 3,104 words; estimated 27:48 with holds, 29:48 including questions.
+- Release passed with no warnings. Targeted offline and public browser checks confirmed
+  two columns, all visible claims, matching speech and no overflow at 1920×1080 and
+  1024×768. Inspected screenshot; public bundle matches release.
+- Refreshed existing static preview without changing tunnel configuration:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-plans-20261027#s23

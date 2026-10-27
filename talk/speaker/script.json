@@ -445,13 +445,13 @@
       "slide": 22
     },
     {
-      "title": "Why generate Clojure?",
+      "title": "Plans for future Rainbow",
       "phases": [
         {
           "from": 1,
           "to": 1,
-          "cue": "Explain the target language: structured forms, reusable functions, and REPL inspection.",
-          "speech": "Clojure is a useful target because its code is data. We can generate forms and inspect their structure using ordinary Clojure functions. Higher-order functions give us reusable algorithm components, as we have seen throughout the talk. The REPL lets us examine and run the generated result. Rainbow proofs are data too, so familiar tools can work with both. Code generation currently covers a modeled subset of Clojure.",
+          "cue": "Explain the two directions. Distinguish the working explorer from the planned OR-specific views.",
+          "speech": "I want to take Rainbow further in two directions. First, code generation: support more operations research algorithms, build them from reusable higher-order functions, and inspect and run the generated Clojure in the REPL. Today this covers a modeled subset of the language.\n\nSecond, proof visualization. We already have a Proof Explorer where we can follow theorem dependencies, see the assumptions, open proof steps and inspect sample calculations. The next step is to make this useful for operations research: show which constraints limit a solution and how a bound establishes its quality. Those OR-specific views are still to be built.",
           "hold_seconds": 4
         }
       ],

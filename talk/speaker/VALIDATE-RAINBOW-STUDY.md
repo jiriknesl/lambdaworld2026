@@ -68,14 +68,21 @@ The proof and the emitted program have different jobs; their sizes need not matc
 It is not intended to match or beat Lean. It targets a particular workflow; code
 generation covers a modeled subset of Clojure, not arbitrary programs.
 
-The stage now focuses on why Clojure is the generation target: structured forms,
-reusable higher-order functions and REPL inspection. There is no clamp table or proof
-example on this slide. The checked clamp program remains optional evidence in the
-background section below; its modeled guarantee does not certify the runtime.
+Slide 23 is now **“Plans for future Rainbow”**, with two columns:
 
-Proofs are EDN data. Clojure functions can build, inspect and transform them. Every
-changed proof needs a new check. This provides a basis for visualization and structural
-editing; a general visual editor is future work. No syntax walkthrough is needed.
+- Code generation: extend the modeled subset to more OR algorithms, using HOF composition
+  and REPL inspection. The runtime and printer remain trusted; this is an expansion plan.
+- Proof visualization: build on the existing Proof Explorer. Jiri's report describes
+  dependency graphs, axiom information, proof-step trees and kernel-computed examples.
+  Next are OR-specific views of constraints and bounds; these do not exist yet.
+
+The reported explorer dataset contains 155 declarations and examples for 26 natural-number
+equation theorems. Do not imply that it visualizes all 1,721 Lean-cross-checked theorems or
+that it already has general rational examples, an editor or OR-specific views. The private
+artifact was not accessible through the web tool during this edit; the feature description
+comes from Jiri's report. The presentation does not embed the private app or depend on it.
+
+The clamp example remains optional evidence below; no proof syntax is needed on stage.
 
 ### Results on the Rainbow introduction slide
 
