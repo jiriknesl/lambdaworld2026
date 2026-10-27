@@ -1836,14 +1836,25 @@
    {:section "Rainbow" :title "Rainbow"
     :render (fn [_]
               [:div.two.even
-               [:div [:p.aside "A theorem prover & code generator."]
+               [:div
+                [:p.aside "A theorem prover & code generator."]
                 [:p "Focused on Clojure and operations research."]
-                [:p.aside "flexiana.com/rainbow"]]
-               [:div [:p.aside "Designed for AI-assisted proving."]
+                [:p.aside "Designed for AI-assisted proving."]
                 [:p "Aim: more verified progress per token."]
-                [:p "Reuse checked lemmas instead of repeating arguments."]
-                [:p.caption "Its purpose is not to match or beat Lean."]]])
-    :notes "Introduce the tool without teaching its proof language. A statement alone is not enough: Rainbow checks a supplied proof against it. Code generation currently covers a modeled subset of Clojure. It does not prove arbitrary Clojure programs correct, replace testing, or validate a physical model's assumptions. Lean is a broader prover; no exclusive capability or superiority is claimed. The motivation is an OR workflow accessible from Clojure. The AI emphasis is a design goal, grounded in Rainbow_AI_Worker_Implementation_Specification.md section 3.5: useful verified progress per AI round trip and per million tokens. Reuse and local checking are the mechanism; no tokenizer-specific compression, lower cost or benchmark superiority is asserted. The reported 5:1 proof-to-generated-code ratio awaits a unit and example, so it is not displayed."}
+                [:p.caption "Its purpose is not to match or beat Lean."]
+                [:p.aside "flexiana.com/rainbow"]]
+               [:div
+                [:p.aside "Cross-checked with Lean"]
+                [:div.certificate-results {:style {:grid-template-columns "1fr"}}
+                 [:div [:strong "1,721 / 1,721"] [:span "theorems accepted"]]]
+                [:p.caption "Default checkpoint · exact types · matching axiom reports"]
+                [:table.levels
+                 [:tr [:th "Proof search"] [:th "Solved / 200"]]
+                 [:tr [:td "Rainbow"] [:td "171"]]
+                 [:tr [:td "Lean 4.35 core automation"] [:td "131"]]]
+                [:p.caption "Our own held-out corpus · 30 seconds per theorem"]
+                [:p.caption "No AI · Lean without Mathlib"]]])
+    :notes "Introduce Rainbow's Clojure/OR focus and AI-assisted design goal without teaching proof syntax. Useful verified progress per AI round trip and per million tokens is the design metric in Rainbow_AI_Worker_Implementation_Specification.md section 3.5, not a measured token-compression claim. Results are from Jiri's supplied 2026-10-27 report; this presentation edit did not rerun the cross-check or benchmark. All 1,721 theorems in the default checkpoint were reported accepted by Lean 4.35 with exact types and matching axiom reports. This cross-checks those exported proofs; it does not establish soundness of Rainbow's kernel for every input or certify the browser. Search used 200 held-out theorems from Rainbow's own corpus, a 30-second per-theorem limit and no AI, with Rainbow given only the inputs supplied to Lean. Rainbow solved 171; Lean 4.35 core automation solved 131 using the best of four setups, without Mathlib. The corpus is our own: no general superiority over Lean is claimed. Timing medians are omitted because common-solved-set timing has not been established here. Code generation still covers a modeled subset. The 5:1 proof/code ratio awaits a unit and example and is not displayed. Private report/artifact availability is separate from the user-authorized public presentation of these summary figures."}
 
    {:section "Rainbow" :title "Why generate Clojure?"
     :render (fn [_]

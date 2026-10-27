@@ -538,3 +538,21 @@ the original editorial review; these later user-directed revisions are recorded 
   the correct active section at 1920×1080 and 1024×768, with no old labels or agenda overlap.
 - Refreshed the existing static preview without changing the tunnel configuration:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=example-labels-20261026#s7
+
+## 2026-10-27 — Lean cross-check and search benchmark on Rainbow slide
+
+- Added Jiri's supplied results to the existing Rainbow introduction (slide 22), without
+  adding slides: 1,721/1,721 default-checkpoint theorems accepted by Lean, exact types and
+  matching axiom reports; search solved 171/200 for Rainbow versus 131/200 for Lean 4.35
+  core automation. Own held-out corpus, 30 seconds per theorem, no AI and no Mathlib are
+  visible. Speaker notes/script specify best of four Lean setups and scope limitations.
+- These are reported results supplied by Jiri on 2026-10-27. Did not rerun the cross-check
+  or benchmark, publish private artifacts, claim general superiority, or turn the result
+  into a proof of Rainbow's kernel soundness. Timing comparisons are omitted.
+- Updated script, presenter data, study guide, README, timing and both offline PDFs.
+  26 slides, 48 cues, 3,072 words; 27:33 with holds, 29:33 including questions.
+- Release passed with no warnings. Offline and public targeted browser checks confirmed
+  the figures, every benchmark condition, matching presenter speech and no overflow at
+  1920×1080 and 1024×768. Inspected the slide screenshot. Public bundle matches release.
+- Refreshed the existing static preview; no tunnel configuration change.
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=lean-results-20261027#s22

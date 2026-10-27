@@ -77,6 +77,21 @@ Proofs are EDN data. Clojure functions can build, inspect and transform them. Ev
 changed proof needs a new check. This provides a basis for visualization and structural
 editing; a general visual editor is future work. No syntax walkthrough is needed.
 
+### Results on the Rainbow introduction slide
+
+Jiri's 2026-10-27 report supplies two results now shown on slide 22:
+
+- **Lean cross-check:** all 1,721 theorems in the default checkpoint accepted by Lean
+  4.35 with exact types and matching axiom reports. This independently checks those
+  exported proofs, not the soundness of Rainbow's kernel for every possible input.
+- **Search:** 171 of 200 held-out theorems solved by Rainbow, versus 131 by Lean's core
+  automation, best of four setups. Our own corpus, 30 seconds per theorem, no AI,
+  Lean without Mathlib; Rainbow received only the inputs supplied to Lean.
+
+These are supplied report results; this presentation edit did not rerun the experiments.
+The slide omits timing comparisons and does not claim Rainbow is generally better than
+Lean. No proof syntax or explanation of Lean's implementation is needed on stage.
+
 ### Slide 24: the Algeciras business case
 
 Historical OMIE prices and local weather feed a plant model. The displayed €7.9m/year

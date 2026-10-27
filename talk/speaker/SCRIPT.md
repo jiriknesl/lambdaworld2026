@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,030 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:12; with 02:00 for questions: 29:12. This is an estimate, not an aloud rehearsal.
+3,072 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:33; with 02:00 for questions: 29:33. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -368,17 +368,21 @@ Underneath all three examples is iterate. The state was a vector of turbine sett
 
 ## 22 Rainbow
 
-24:11–24:55 · 85 words · 3s visual holds
+24:11–25:15 · 127 words · 3s visual holds
 
 ### Phase 1
 
-[Introduce the AI-oriented design goal; explain what information density means here.]
+[Introduce Rainbow, then state the Lean cross-check and the conditions of the search benchmark.]
 
-Rainbow is a theorem prover and code generator focused on Clojure and operations research. I am designing it for AI-assisted proving. A small generated function can come with a much larger body of proof. That makes information density valuable: useful statements and reusable proof steps per token. The aim is more verified progress from each AI interaction. We want to reuse checked lemmas and let local tools do routine checking. Its purpose is not to match or beat Lean; it is built around this workflow.
+Rainbow is a theorem prover and code generator focused on Clojure and operations research. I am designing it for AI-assisted proving, aiming for more useful verified progress per token. We reuse checked lemmas and let local tools do routine checking.
+
+We also cross-check with Lean. All 1,721 theorems in our default checkpoint were accepted with exact types, and Lean reports the same axioms for every one. That independently checks these exported proofs.
+
+On a held-out benchmark of 200 theorems from our own corpus, Rainbow solved 171 and Lean’s core automation solved 131. Each had thirty seconds per theorem, with no AI help. Lean ran without Mathlib, using the best of four setups. These are results on our corpus, not a claim that Rainbow beats Lean in general.
 
 ## 23 Why generate Clojure?
 
-24:55–25:31 · 67 words · 4s visual holds
+25:15–25:51 · 67 words · 4s visual holds
 
 ### Phase 1
 
@@ -388,7 +392,7 @@ Clojure is a useful target because its code is data. We can generate forms and i
 
 ## 24 Where we use Rainbow now?
 
-25:31–26:35 · 125 words · 4s visual holds
+25:51–26:55 · 125 words · 4s visual holds
 
 ### Phase 1
 
@@ -398,7 +402,7 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 ## 25 Applied Higher-Order Functions
 
-26:35–27:01 · 47 words · 3s visual holds
+26:55–27:21 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -408,7 +412,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-27:01–27:12 · 18 words · 3s visual holds
+27:21–27:33 · 18 words · 3s visual holds
 
 ### Phase 1
 
