@@ -1842,34 +1842,35 @@
                 [:p.aside "Designed for AI-assisted proving."]
                 [:p "Aim: more verified progress per token."]
                 [:p.caption "Its purpose is not to match or beat Lean."]
-                [:p.aside "flexiana.com/rainbow"]]
+                [:p.aside "flexiana.com/rainbow"]
+                [:p.aside "Compose P → Q and Q → R to prove P → R."]
+                (code (str/trim (str/replace (:source (n/checked-composition)) "\n\n" "\n"))
+                      {:size :small})
+                [:p.caption "Kernel-checked · no axioms · recorded result"]]
                [:div
-                [:p.aside "Cross-checked with Lean"]
-                [:div.certificate-results {:style {:grid-template-columns "1fr"}}
-                 [:div [:strong "1,721 / 1,721"] [:span "theorems accepted"]]]
-                [:p.caption "Default checkpoint · exact types · matching axiom reports"]
+                [:p "Lean accepted all 1,721 theorems in our default checkpoint, with exact types and matching axiom reports."]
                 [:table.levels
                  [:tr [:th "Proof search"] [:th "Solved / 200"]]
                  [:tr [:td "Rainbow"] [:td "171"]]
                  [:tr [:td "Lean 4.35 core automation"] [:td "131"]]]
                 [:p.caption "Our own held-out corpus · 30 seconds per theorem"]
                 [:p.caption "No AI · Lean without Mathlib"]]])
-    :notes "Introduce Rainbow's Clojure/OR focus and AI-assisted design goal without teaching proof syntax. Useful verified progress per AI round trip and per million tokens is the design metric in Rainbow_AI_Worker_Implementation_Specification.md section 3.5, not a measured token-compression claim. Results are from Jiri's supplied 2026-10-27 report; this presentation edit did not rerun the cross-check or benchmark. All 1,721 theorems in the default checkpoint were reported accepted by Lean 4.35 with exact types and matching axiom reports. This cross-checks those exported proofs; it does not establish soundness of Rainbow's kernel for every input or certify the browser. Search used 200 held-out theorems from Rainbow's own corpus, a 30-second per-theorem limit and no AI, with Rainbow given only the inputs supplied to Lean. Rainbow solved 171; Lean 4.35 core automation solved 131 using the best of four setups, without Mathlib. The corpus is our own: no general superiority over Lean is claimed. Timing medians are omitted because common-solved-set timing has not been established here. Code generation still covers a modeled subset. The 5:1 proof/code ratio awaits a unit and example and is not displayed. Private report/artifact availability is separate from the user-authorized public presentation of these summary figures."}
+    :notes "Introduce Rainbow's Clojure/OR focus and AI-assisted design goal. The small composition example is the exact source from composition.edn, tied to its recorded kernel receipt by checked-composition. For any propositions P, Q and R, f proves P implies Q, g proves Q implies R, and p proves P. Applying f to p gives Q; applying g gives R. The empty-environment check on 23 October 2026 used no axioms; returning only f(p) was rejected. Show the familiar composition without teaching every syntax form. The browser displays the recorded result; it does not run the kernel. Useful verified progress per AI round trip and per million tokens is the design metric in Rainbow_AI_Worker_Implementation_Specification.md section 3.5, not a measured token-compression claim. Results are from Jiri's supplied 2026-10-27 report; this presentation edit did not rerun the cross-check or benchmark. All 1,721 theorems in the default checkpoint were reported accepted by Lean 4.35 with exact types and matching axiom reports. This cross-checks those exported proofs; it does not establish soundness of Rainbow's kernel for every input or certify the browser. Search used 200 held-out theorems from Rainbow's own corpus, a 30-second per-theorem limit and no AI, with Rainbow given only the inputs supplied to Lean. Rainbow solved 171; Lean 4.35 core automation solved 131 using the best of four setups, without Mathlib. The corpus is our own: no general superiority over Lean is claimed. Timing medians are omitted because common-solved-set timing has not been established here. Code generation still covers a modeled subset. The 5:1 proof/code ratio awaits a unit and example and is not displayed. Private report/artifact availability is separate from the user-authorized public presentation of these summary figures."}
 
    {:section "Rainbow" :title "Plans for future Rainbow"
     :render (fn [_]
               [:div.two.even
                [:div
-                [:p.aside "Code generation"]
+                [:p [:strong "Code generation"]]
                 [:p "Generate Clojure for more OR algorithms."]
                 [:p "Use higher-order functions as reusable building blocks."]
                 [:p "Inspect and run generated code in the REPL."]
-                [:p.caption "Today: code generation covers a modeled subset of Clojure."]]
+                [:p "Today: code generation covers a modeled subset of Clojure."]]
                [:div
-                [:p.aside "Proof visualization"]
+                [:p [:strong "Proof visualization"]]
                 [:p "Explore theorem dependencies and assumptions."]
                 [:p "Step through proofs and sample calculations."]
-                [:p.caption "Available in the Rainbow Proof Explorer."]
+                [:p "Available in the Rainbow Proof Explorer."]
                 [:p "Next: visualize optimization proofs through their constraints and bounds."]]])
     :notes "Two directions, not a second theorem lesson. Broaden code generation to more OR algorithms using structured Clojure forms, HOF composition and REPL inspection. Current generation is a modeled subset; printer, arithmetic primitives and runtime remain trusted. The visualization column is based on Jiri's supplied Proof Explorer report: a working dependency graph with axiom status, navigable proof-step trees and kernel-computed examples for 26 natural-number equation theorems. Its described dataset has 155 declarations, not the complete 1,721-theorem checkpoint on the previous slide. The linked private Claude artifact could not be accessed through the web tool during this edit; no screenshot, private artifact or dataset is embedded or republished. OR-specific views of LP constraints, dual bounds, binding constraints and branch-and-bound trees are future work. A general structural editor is also future work; do not describe the existing explorer as an editor or the planned OR views as already built. Proof data and generated code can be processed by Clojure tools, but edits to proof terms require a fresh check."}
 

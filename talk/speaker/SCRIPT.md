@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,104 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 27:48; with 02:00 for questions: 29:48. This is an estimate, not an aloud rehearsal.
+3,152 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 28:11; with 02:00 for questions: 30:11. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -368,21 +368,21 @@ Underneath all three examples is iterate. The state was a vector of turbine sett
 
 ## 22 Rainbow
 
-24:11–25:15 · 127 words · 3s visual holds
+24:11–25:38 · 175 words · 3s visual holds
 
 ### Phase 1
 
-[Introduce Rainbow, then state the Lean cross-check and the conditions of the search benchmark.]
+[Introduce Rainbow, then state the Lean cross-check and the conditions of the search benchmark. Point to the composition proof; explain f then g without reading every syntax form.]
 
 Rainbow is a theorem prover and code generator focused on Clojure and operations research. I am designing it for AI-assisted proving, aiming for more useful verified progress per token. We reuse checked lemmas and let local tools do routine checking.
 
 We also cross-check with Lean. All 1,721 theorems in our default checkpoint were accepted with exact types, and Lean reports the same axioms for every one. That independently checks these exported proofs.
 
-On a held-out benchmark of 200 theorems from our own corpus, Rainbow solved 171 and Lean’s core automation solved 131. Each had thirty seconds per theorem, with no AI help. Lean ran without Mathlib, using the best of four setups. These are results on our corpus, not a claim that Rainbow beats Lean in general.
+On a held-out benchmark of 200 theorems from our own corpus, Rainbow solved 171 and Lean’s core automation solved 131. Each had thirty seconds per theorem, with no AI help. Lean ran without Mathlib, using the best of four setups. These are results on our corpus, not a claim that Rainbow beats Lean in general. Here is a small proof using composition. If f takes a proof of P to a proof of Q, and g takes Q to R, applying g to f of p gives a proof of R. Rainbow checked this term without axioms. The slide shows that recorded check.
 
 ## 23 Plans for future Rainbow
 
-25:15–26:07 · 99 words · 4s visual holds
+25:38–26:30 · 99 words · 4s visual holds
 
 ### Phase 1
 
@@ -394,7 +394,7 @@ Second, proof visualization. We already have a Proof Explorer where we can follo
 
 ## 24 Where we use Rainbow now?
 
-26:07–27:11 · 125 words · 4s visual holds
+26:30–27:34 · 125 words · 4s visual holds
 
 ### Phase 1
 
@@ -404,7 +404,7 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 ## 25 Applied Higher-Order Functions
 
-27:11–27:36 · 47 words · 3s visual holds
+27:34–27:59 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -414,7 +414,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-27:36–27:48 · 18 words · 3s visual holds
+27:59–28:11 · 18 words · 3s visual holds
 
 ### Phase 1
 

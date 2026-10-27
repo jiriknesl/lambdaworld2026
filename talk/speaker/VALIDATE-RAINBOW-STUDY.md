@@ -82,7 +82,7 @@ that it already has general rational examples, an editor or OR-specific views. T
 artifact was not accessible through the web tool during this edit; the feature description
 comes from Jiri's report. The presentation does not embed the private app or depend on it.
 
-The clamp example remains optional evidence below; no proof syntax is needed on stage.
+Slide 22 now shows the small composition proof from `composition.edn`: given proofs of P → Q and Q → R, and a proof of P, apply f then g to obtain R. Its exact source is tied to the recorded kernel check (23 October 2026, no axioms). The browser does not run the kernel. You can explain the composition without teaching every syntax form. The clamp example remains optional evidence below.
 
 ### Results on the Rainbow introduction slide
 

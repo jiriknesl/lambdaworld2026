@@ -10,7 +10,7 @@ Design and decisions: `../docs/superpowers/specs/2026-10-15-lambda-world-talk-de
 
 ## Public preview
 
-[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-plans-20261027).
+[Open the revised deck](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-proof-20261027).
 Updated 2026-10-27: 26 slides. The HOF introduction is two slides: iterate and its
 stopping test, using one square-root example throughout. Validation is one animated shield demonstration, followed
 by the shared iterate summary. Rainbow explains its AI-oriented design goal and information density, outlines code-generation and proof-visualization plans, and presents the Algeciras case. The deeper
@@ -114,7 +114,7 @@ The deck has 26 slides; reveals are steps within a slide, not additional topics.
 | 22–24: Rainbow | 3:00 | AI-oriented proving, useful progress per token, Clojure generation, business case. |
 | 25–26: Book and thanks | 0:38 | Higher-order functions for OR and algorithm design; contact. |
 
-The current 3,104-word script estimates **27:48 including visual holds**, or **29:48 with two
+The current 3,152-word script estimates **28:11 including visual holds**, or **30:11 with two
 minutes for questions**, at 125 words/minute. This is calculated, not an aloud rehearsal. The shorter route leaves room within the 40-minute slot for live demonstrations and audience questions. Slower
 speech needs shortening; see `speaker/timing.json` and `speaker/ANSWERS.md`. The macro compiler,
 Adam race, falsification and trailer LP remain offstage.
@@ -177,7 +177,7 @@ realize ahead, but the `iterate` pipeline here does not batch thousands of updat
 
 ## Learning the optimization example
 
-Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-plans-20261027#s9).
+Start at [Optimization is iterate (slide 9)](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-proof-20261027#s9).
 Use **Right** for each reveal and **N** for the explanation.
 
 | Function | Accepts | Returns |
@@ -313,7 +313,7 @@ states, updates and stopping tests differ. Rate and momentum already demonstrate
 
 ## Rainbow: purpose and one familiar property — 2026-10-26
 
-[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-plans-20261027#s22).
+[Current public preview](https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-proof-20261027#s22).
 It remains publicly accessible without authentication.
 
 Slide 22 introduces Rainbow's Clojure/OR focus and its design for AI-assisted proving.
@@ -338,7 +338,12 @@ The private Claude artifact was inaccessible through the web tool; its app and d
 not embedded or republished here. The report's 155 declarations and 26 natural-number
 example theorems are distinct from the full 1,721-theorem Lean cross-check. OR-specific
 constraint/bound visualizations remain future work. Slide 24 keeps the Algeciras case.
-Proof syntax, comparison tables and generated-code listings remain optional study material.
+Slide 22 also shows the composition proof from `src/talk/composition.edn`, linked at build
+time to its recorded kernel check: no axioms, and a rejected incorrect variant. Only blank
+lines are removed for display. The browser does not run the kernel. Detailed syntax and
+generated-code listings remain optional study material.
+
+Slide 23 uses one body-text size throughout both columns; column headings use bold.
 
 Direction was reconciled with the live `rainbow-claude-4` worker and
 `../rainbow/internal-rfnbo/doc/north-star-2026-10-23.md` plus `BACKLOG.md`, at

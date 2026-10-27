@@ -575,3 +575,21 @@ the original editorial review; these later user-directed revisions are recorded 
   1024×768. Inspected screenshot; public bundle matches release.
 - Refreshed existing static preview without changing tunnel configuration:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-plans-20261027#s23
+
+## 2026-10-27 — Small composition proof and consistent plan typography
+
+- Slide 22 condenses the Lean checkpoint result into one sentence, preserving exact-type
+  and axiom-report qualifications. Added the composition proof P → Q → R from
+  `composition.edn`, with blank lines removed for display. The build checks its source
+  against the existing 23 October kernel receipt; no new kernel run is claimed.
+  The reported search benchmark and all four visible conditions are unchanged.
+- Slide 23 uses 28px for every paragraph in both columns, including current-status notes;
+  column headings use bold at the same size.
+- Updated the presenter speech, study guide and both offline PDFs. There are 26 slides,
+  48 cues and 3,152 words: estimated 28:11 with holds, 30:11 including questions.
+- Final release passes without warnings. Offline browser checks at 1920×1080 and
+  1024×768 confirm consistent slide-23 text size, the checked proof text on slide 22,
+  benchmark conditions, matching presenter speech and no overflow. Screenshots inspected.
+- Refreshed the existing six-file preview without changing tunnel configuration:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-proof-20261027#s22
+- Public browser checks pass at both sizes; the served JavaScript matches the local release.
