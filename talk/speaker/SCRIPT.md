@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,226 spoken words. Planning pace: 125 words/minute, plus 03:01 of pauses and visual holds. Speech and holds: 28:49; with 02:00 for questions: 30:49. This is an estimate, not an aloud rehearsal.
+3,261 spoken words. Planning pace: 125 words/minute, plus 03:01 of pauses and visual holds. Speech and holds: 29:06; with 02:00 for questions: 31:06. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -274,11 +274,11 @@ In a regular week with one unit already in stock, buying two covers the largest 
 
 ## 17 Future values change the order
 
-16:14–19:44 · 406 words · 15s visual holds
+16:14–20:01 · 441 words · 15s visual holds
 
 ### Phase 1
 
-[Keep the state fixed throughout all four reveals.]
+[Keep the state fixed throughout all five reveals. Identify the input V lookup above the order scores.]
 
 V is a table: for each supply week and stock level, it estimates profit from then onward. Start all entries at zero. Clojure maps are functions too, so V of a state is a lookup in that table. For each possible order, average over the three demand outcomes: this week’s profit plus point nine times the value of the next state. With every future value zero, only this week matters. Order two wins.
 
@@ -290,9 +290,9 @@ After one update, the table contains optimal one-week values. Using those as the
 
 ### Phase 3
 
-[Right. Identify the jump to update three.]
+[Right. Read the input lookup, 23.06, before the four-week order scores.]
 
-We skip update two on this slide. After three updates, V accounts for three weeks; scoring an order with it looks one week further ahead. Now order three wins. The extra stock has value because it carries us into the tight supply week. We did not add an if statement saying to buy more before a tight week. The recommendation follows from the transitions, costs, and future values.
+We skip update two on this slide. After three updates, the lookup at the top is 23.06. That is the expected discounted profit over three weeks, starting in a regular week with one unit. The order scores below cover four weeks: this week’s profit plus the three-week values of the possible next states. Now order three wins. The extra stock has value because it carries us into the tight supply week. We did not add an if statement saying to buy more before a tight week. The recommendation follows from the transitions, costs, and future values.
 
 ### Phase 4
 
@@ -302,7 +302,7 @@ Here, q is the model’s expected-return function. Give it V, a state and a prop
 
 For regular week, stock one, the four orders score 19.10, 23.64, 28.04 and 28.35. We use max to select 28.35, the highest score. Bellman repeats that calculation for all ten states—two supply weeks times five stock levels—and returns a new value table.
 
-The old entry was 23.06. It covered three weeks from this state. The new entry covers four: this week plus the three-week values of possible next states. That increase is not a measured saving from changing the order. No hydrogen has been bought; we are extending the planning horizon.
+The input lookup remains 23.06, which we saw on the previous reveal. It covers three weeks from this state. The new entry covers four: this week plus the three-week values of possible next states. That increase is not a measured saving from changing the order. No hydrogen has been bought; we are extending the planning horizon.
 
 ### Phase 5
 
@@ -314,7 +314,7 @@ Best-order does this for every state and returns a map from state to order—a p
 
 ## 18 Hydrogen: iterate the value table
 
-19:44–21:18 · 166 words · 14s visual holds
+20:01–21:35 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -336,7 +336,7 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 19 The best order depends on the supply window
 
-21:18–22:38 · 154 words · 6s visual holds
+21:35–22:54 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -348,7 +348,7 @@ There is a less obvious recommendation here. With an empty tank in a tight week,
 
 ## 20 Stop when a bird is detected
 
-22:38–24:08 · 163 words · 12s visual holds
+22:54–24:25 · 163 words · 12s visual holds
 
 ### Phase 1
 
@@ -364,7 +364,7 @@ Now wrap the decision function with a shield. If there is a detection, return st
 
 ## 21 iterate underneath all three
 
-24:08–24:50 · 81 words · 3s visual holds
+24:25–25:07 · 81 words · 3s visual holds
 
 ### Phase 1
 
@@ -374,7 +374,7 @@ Underneath all three examples is iterate. The state was a vector of turbine sett
 
 ## 22 Rainbow
 
-24:50–26:17 · 175 words · 3s visual holds
+25:07–26:34 · 175 words · 3s visual holds
 
 ### Phase 1
 
@@ -388,7 +388,7 @@ On a held-out benchmark of 200 theorems from our own corpus, Rainbow solved 171 
 
 ## 23 Plans for future Rainbow
 
-26:17–27:08 · 99 words · 4s visual holds
+26:34–27:25 · 99 words · 4s visual holds
 
 ### Phase 1
 
@@ -400,7 +400,7 @@ Second, proof visualization. We already have a Proof Explorer where we can follo
 
 ## 24 Where we use Rainbow now?
 
-27:08–28:12 · 125 words · 4s visual holds
+27:25–28:29 · 125 words · 4s visual holds
 
 ### Phase 1
 
@@ -410,7 +410,7 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 ## 25 Applied Higher-Order Functions
 
-28:12–28:38 · 47 words · 3s visual holds
+28:29–28:55 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -420,7 +420,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-28:38–28:49 · 18 words · 3s visual holds
+28:55–29:06 · 18 words · 3s visual holds
 
 ### Phase 1
 

@@ -633,3 +633,19 @@ the original editorial review; these later user-directed revisions are recorded 
   verifies the sentence, matching presenter speech and no overflow at both projector sizes.
   Served JavaScript matches the release. No algorithm or tunnel configuration changes.
 - Preview: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bellman-wording-20261027#s17a4
+
+## 2026-10-27 — Introduce Bellman’s input value before updating it
+
+- Every slide-17 reveal now shows the computed `(V [:regular 1])` lookup above the order
+  scores. Reveal 3 introduces 23.06 as a three-week value; reveal 4 explains writing
+  28.35 into the new four-week table. Score-table headings state the relevant horizon.
+  Removed the unexplained input/output comparison rows. No algorithm changes.
+- Speech now introduces 23.06 before the generic Bellman reveal and distinguishes
+  extending the horizon from a measured profit improvement. Updated presenter export,
+  timing, README and speaker PDF: 3,261 words, 29:06 with holds / 31:06 with questions.
+- Release compiled without warnings. Offline checks cover all five reveals at both
+  projector sizes, numeric lookup/horizon labels, output explanation and presenter speech.
+  No overflow; screenshot inspected.
+- Refreshed the existing public preview without changing tunnel configuration:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bellman-input-20261027#s17a3
+- Public checks also pass at both sizes; served JavaScript matches the release.

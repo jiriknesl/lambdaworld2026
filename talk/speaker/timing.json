@@ -1,5 +1,5 @@
 {
-  "spoken_words": 3226,
+  "spoken_words": 3261,
   "pace_wpm": 125,
   "holds_seconds": 181,
   "questions_seconds": 120,
@@ -118,79 +118,79 @@
     },
     {
       "slide": 17,
-      "words": 406,
+      "words": 441,
       "hold_seconds": 15,
       "start_seconds": 974,
-      "end_seconds": 1184
+      "end_seconds": 1201
     },
     {
       "slide": 18,
       "words": 166,
       "hold_seconds": 14,
-      "start_seconds": 1184,
-      "end_seconds": 1278
+      "start_seconds": 1201,
+      "end_seconds": 1295
     },
     {
       "slide": 19,
       "words": 154,
       "hold_seconds": 6,
-      "start_seconds": 1278,
-      "end_seconds": 1358
+      "start_seconds": 1295,
+      "end_seconds": 1374
     },
     {
       "slide": 20,
       "words": 163,
       "hold_seconds": 12,
-      "start_seconds": 1358,
-      "end_seconds": 1448
+      "start_seconds": 1374,
+      "end_seconds": 1465
     },
     {
       "slide": 21,
       "words": 81,
       "hold_seconds": 3,
-      "start_seconds": 1448,
-      "end_seconds": 1490
+      "start_seconds": 1465,
+      "end_seconds": 1507
     },
     {
       "slide": 22,
       "words": 175,
       "hold_seconds": 3,
-      "start_seconds": 1490,
-      "end_seconds": 1577
+      "start_seconds": 1507,
+      "end_seconds": 1594
     },
     {
       "slide": 23,
       "words": 99,
       "hold_seconds": 4,
-      "start_seconds": 1577,
-      "end_seconds": 1628
+      "start_seconds": 1594,
+      "end_seconds": 1645
     },
     {
       "slide": 24,
       "words": 125,
       "hold_seconds": 4,
-      "start_seconds": 1628,
-      "end_seconds": 1692
+      "start_seconds": 1645,
+      "end_seconds": 1709
     },
     {
       "slide": 25,
       "words": 47,
       "hold_seconds": 3,
-      "start_seconds": 1692,
-      "end_seconds": 1718
+      "start_seconds": 1709,
+      "end_seconds": 1735
     },
     {
       "slide": 26,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 1718,
-      "end_seconds": 1729
+      "start_seconds": 1735,
+      "end_seconds": 1746
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 2061,
-    "125": 1849,
-    "140": 1684
+    "110": 2080,
+    "125": 1866,
+    "140": 1699
   },
-  "script_sha256": "3041ba7d42df98b12d57ed6695712b4120dd19799524bd4b776c0dd4acf3fba9"
+  "script_sha256": "c99394d66998f7ce4003435ba4c2d2913be49bcd0902480b8c98dd9767fe9d58"
 }

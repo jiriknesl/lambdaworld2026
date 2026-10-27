@@ -1753,8 +1753,13 @@
                   (code "(iterate (bellman restock) zero-values)" {:size :small :marks #{"iterate"}})
                   [:p.caption "V after n updates covers n weeks; scoring an order looks one week further."]]
                  [:div
-                  [:p.aside (str "Regular week · stock 1 · values after " n " updates")]
-                  [:table.levels [:tr [:th "order"] [:th "expected return"]]
+                  [:p.aside "Regular week · stock 1"]
+                  (code (str "(V [:regular 1]) ; " (fmt (V station-start) 2)) {:size :small})
+                  [:p.caption (if (zero? n)
+                                "Start: all future values are zero."
+                                (str "After " n (if (= n 1) " update" " updates")
+                                     ": expected profit over " n (if (= n 1) " week." " weeks.")))]
+                  [:table.levels [:tr [:th "order"] [:th (str "profit over " (inc n) (if (zero? n) " week" " weeks"))]]
                    (for [[order value] scores]
                      [:tr [:td order] [:td {:class (when (= value best) "ok")} (fmt value 2)]])]
                   [:p.caption "Average over demand: this week’s profit + 0.9 × V(next week, leftover stock)."]
@@ -1765,11 +1770,11 @@
                               (= frame 2) "With better future estimates: buy 3."
                               :else "One update: buying 2 still looks better.")]
                   (when (= frame 3)
-                    (kv-table [["input V: profit estimate at this state" (fmt (V station-start) 2)]
-                               ["output B(V): new profit estimate" (fmt best 2)]]))
+                    [:p.caption (str "Bellman writes " (fmt best 2)
+                                     " into the new table at [:regular 1]. It now covers four weeks.")])
                   (when (= frame 4)
                     [:p.caption "best-order returns state → order. The value table is unchanged."])]]))
-    :notes "Read the actual scores for the same state and same four feasible actions. With V zero, only this week counts and order two wins. After one backup the recommendation stays two. After three backups the value of inventory in the tight week changes the preferred action to three. We skip backup two here; the next slide replays every update. This is a planning update, not a sequence of real purchases. The fourth reveal shows the generic Bellman HOF and the ten-state model: two supply phases times five inventory levels. expected-return takes future values as an argument, and Bellman constructs the next values by maximizing those scores. The fifth reveal shows best-order: max-key retains the action achieving the best score, while Bellman retains only the score. Reversing the ascending actions breaks equal-score ties toward smaller orders. No Gaussian approximation or average-demand substitution is used; the reduce weights each discrete outcome explicitly."}
+    :notes "Read the actual scores for the same state and same four feasible actions. With V zero, only this week counts and order two wins. After one backup the recommendation stays two. After three backups the value of inventory in the tight week changes the preferred action to three. We skip backup two here; the next slide replays every update. Each reveal displays the actual input lookup (V [:regular 1]) above the order scores, so 23.06 is introduced on reveal three before the generic Bellman update. The table header labels the one-week-longer scoring horizon; reveal four writes 28.35 to the new table. The increase compares different planning horizons, not a realized profit improvement. This is a planning update, not a sequence of real purchases. The fourth reveal shows the generic Bellman HOF and the ten-state model: two supply phases times five inventory levels. expected-return takes future values as an argument, and Bellman constructs the next values by maximizing those scores. The fifth reveal shows best-order: max-key retains the action achieving the best score, while Bellman retains only the score. Reversing the ascending actions breaks equal-score ties toward smaller orders. No Gaussian approximation or average-demand substitution is used; the reduce weights each discrete outcome explicitly."}
 
    {:section "Example 2" :title "Hydrogen: iterate the value table" :steps (count restock-run)
     :render (fn [step]
