@@ -624,3 +624,12 @@ the original editorial review; these later user-directed revisions are recorded 
 - Existing static preview refreshed; tunnel configuration unchanged:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=algeciras-trial-20261027#s15
 - Public browser checks also pass at both sizes; served JavaScript matches the release.
+
+## 2026-10-27 — Plain wording for Bellman’s maximum
+
+- Slide 17 phase 4 now says “We use max to select the highest score for each of the ten
+  states.” This keeps scoring (`q` / `expected-return`) distinct from selecting a score.
+- Updated speech and speaker PDF. Release passes without warnings; public browser check
+  verifies the sentence, matching presenter speech and no overflow at both projector sizes.
+  Served JavaScript matches the release. No algorithm or tunnel configuration changes.
+- Preview: https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bellman-wording-20261027#s17a4

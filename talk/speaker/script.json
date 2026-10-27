@@ -353,7 +353,7 @@
           "from": 4,
           "to": 4,
           "cue": "Identify q as expected-return. Read the order scores, then distinguish the three-week and four-week horizons.",
-          "speech": "Here, q is the model’s expected-return function. Give it V, a state and a proposed order. It averages this week’s profit plus the discounted value of next week’s leftover stock over the possible demands.\n\nFor regular week, stock one, the four orders score 19.10, 23.64, 28.04 and 28.35. Max keeps 28.35. Bellman repeats that calculation for all ten states—two supply weeks times five stock levels—and returns a new value table.\n\nThe old entry was 23.06. It covered three weeks from this state. The new entry covers four: this week plus the three-week values of possible next states. That increase is not a measured saving from changing the order. No hydrogen has been bought; we are extending the planning horizon.",
+          "speech": "Here, q is the model’s expected-return function. Give it V, a state and a proposed order. It averages this week’s profit plus the discounted value of next week’s leftover stock over the possible demands.\n\nFor regular week, stock one, the four orders score 19.10, 23.64, 28.04 and 28.35. We use max to select 28.35, the highest score. Bellman repeats that calculation for all ten states—two supply weeks times five stock levels—and returns a new value table.\n\nThe old entry was 23.06. It covered three weeks from this state. The new entry covers four: this week plus the three-week values of possible next states. That increase is not a measured saving from changing the order. No hydrogen has been bought; we are extending the planning horizon.",
           "hold_seconds": 3
         },
         {

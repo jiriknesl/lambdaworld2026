@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,220 spoken words. Planning pace: 125 words/minute, plus 03:01 of pauses and visual holds. Speech and holds: 28:47; with 02:00 for questions: 30:47. This is an estimate, not an aloud rehearsal.
+3,226 spoken words. Planning pace: 125 words/minute, plus 03:01 of pauses and visual holds. Speech and holds: 28:49; with 02:00 for questions: 30:49. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -274,7 +274,7 @@ In a regular week with one unit already in stock, buying two covers the largest 
 
 ## 17 Future values change the order
 
-16:14–19:41 · 400 words · 15s visual holds
+16:14–19:44 · 406 words · 15s visual holds
 
 ### Phase 1
 
@@ -300,7 +300,7 @@ We skip update two on this slide. After three updates, V accounts for three week
 
 Here, q is the model’s expected-return function. Give it V, a state and a proposed order. It averages this week’s profit plus the discounted value of next week’s leftover stock over the possible demands.
 
-For regular week, stock one, the four orders score 19.10, 23.64, 28.04 and 28.35. Max keeps 28.35. Bellman repeats that calculation for all ten states—two supply weeks times five stock levels—and returns a new value table.
+For regular week, stock one, the four orders score 19.10, 23.64, 28.04 and 28.35. We use max to select 28.35, the highest score. Bellman repeats that calculation for all ten states—two supply weeks times five stock levels—and returns a new value table.
 
 The old entry was 23.06. It covered three weeks from this state. The new entry covers four: this week plus the three-week values of possible next states. That increase is not a measured saving from changing the order. No hydrogen has been bought; we are extending the planning horizon.
 
@@ -314,7 +314,7 @@ Best-order does this for every state and returns a map from state to order—a p
 
 ## 18 Hydrogen: iterate the value table
 
-19:41–21:15 · 166 words · 14s visual holds
+19:44–21:18 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -336,7 +336,7 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 19 The best order depends on the supply window
 
-21:15–22:35 · 154 words · 6s visual holds
+21:18–22:38 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -348,7 +348,7 @@ There is a less obvious recommendation here. With an empty tank in a tight week,
 
 ## 20 Stop when a bird is detected
 
-22:35–24:05 · 163 words · 12s visual holds
+22:38–24:08 · 163 words · 12s visual holds
 
 ### Phase 1
 
@@ -364,7 +364,7 @@ Now wrap the decision function with a shield. If there is a detection, return st
 
 ## 21 iterate underneath all three
 
-24:05–24:47 · 81 words · 3s visual holds
+24:08–24:50 · 81 words · 3s visual holds
 
 ### Phase 1
 
@@ -374,7 +374,7 @@ Underneath all three examples is iterate. The state was a vector of turbine sett
 
 ## 22 Rainbow
 
-24:47–26:14 · 175 words · 3s visual holds
+24:50–26:17 · 175 words · 3s visual holds
 
 ### Phase 1
 
@@ -388,7 +388,7 @@ On a held-out benchmark of 200 theorems from our own corpus, Rainbow solved 171 
 
 ## 23 Plans for future Rainbow
 
-26:14–27:05 · 99 words · 4s visual holds
+26:17–27:08 · 99 words · 4s visual holds
 
 ### Phase 1
 
@@ -400,7 +400,7 @@ Second, proof visualization. We already have a Proof Explorer where we can follo
 
 ## 24 Where we use Rainbow now?
 
-27:05–28:09 · 125 words · 4s visual holds
+27:08–28:12 · 125 words · 4s visual holds
 
 ### Phase 1
 
@@ -410,7 +410,7 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 ## 25 Applied Higher-Order Functions
 
-28:09–28:35 · 47 words · 3s visual holds
+28:12–28:38 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -420,7 +420,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-28:35–28:47 · 18 words · 3s visual holds
+28:38–28:49 · 18 words · 3s visual holds
 
 ### Phase 1
 

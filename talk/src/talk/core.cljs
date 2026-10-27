@@ -1760,7 +1760,7 @@
                   [:p.caption "Average over demand: this week’s profit + 0.9 × V(next week, leftover stock)."]
                   [:p.aside (cond
                               (= frame 4) "max-key keeps the order: buy 3."
-                              (= frame 3) "max keeps the score. Repeat for all ten states."
+                              (= frame 3) "We use max to select the highest score for each of the ten states."
                               (zero? frame) "Ignoring the future: buy 2."
                               (= frame 2) "With better future estimates: buy 3."
                               :else "One update: buying 2 still looks better.")]
