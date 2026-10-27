@@ -1,6 +1,6 @@
 # Lambda World speaker script
 
-3,152 spoken words. Planning pace: 125 words/minute, plus 02:58 of pauses and visual holds. Speech and holds: 28:11; with 02:00 for questions: 30:11. This is an estimate, not an aloud rehearsal.
+3,220 spoken words. Planning pace: 125 words/minute, plus 03:01 of pauses and visual holds. Speech and holds: 28:47; with 02:00 for questions: 30:47. This is an estimate, not an aloud rehearsal.
 
 Speak the prose; square-bracketed stage cues in exports are not spoken. Long numerical traces have one continuous passage plus a final-state passage. No Clojure or OR prerequisite; explain notation at first use. Timing is a calculation, not an aloud rehearsal.
 
@@ -226,15 +226,21 @@ With the penalty, the chosen schedule stops this exposed turbine during busy hou
 
 ## 15 Buy hydrogen before the customers arrive
 
-13:01–15:06 · 236 words · 12s visual holds
+13:01–15:42 · 304 words · 15s visual holds
 
 ### Phase 1
+
+[Show the real port trial, then move to the illustrative station.]
+
+This is a hydrogen-powered terminal tractor at the Port of Algeciras. EVO began trials with Logístika 360 in April 2026. That gives us a practical question: how much hydrogen should a station buy before it knows how many customers will arrive? I’ll use a small model to explain the decision. The tank size, prices and demand probabilities that follow are illustrative; they are not data from the port.
+
+### Phase 2
 
 [Point to tank capacity, supplier table, then customer probabilities.]
 
 For decision-making, consider a hydrogen station. It has room for four units, and each customer truck takes one. The station buys from a supplier before it knows how many customers will arrive. Regular weeks offer up to three units at a price of two. Tight weeks offer only one unit, at a price of six. Those weeks alternate. The tank’s physical capacity stays four; the supplier’s available quantity changes.
 
-### Phase 2
+### Phase 3
 
 [Right. Follow the delivery into the tank.]
 
@@ -242,13 +248,13 @@ Customer arrivals are uncertain: forty percent of weeks have no trucks, fifteen 
 
 Here we buy one unit in a regular week, bringing our stock to two. The order is chosen before we see which customer outcome happens.
 
-### Phase 3
+### Phase 4
 
 [Right. Point to the turned-away truck.]
 
 A convoy arrives. We sell to two trucks and turn the third away. This is one possible outcome, not the demand we knew when choosing the order.
 
-### Phase 4
+### Phase 5
 
 [Right. Point first to reward, then next-state.]
 
@@ -256,7 +262,7 @@ We sell each unit for ten, so this outcome earns twenty minus the purchase cost 
 
 ## 16 Buy for this week—or the next?
 
-15:06–15:39 · 61 words · 3s visual holds
+15:42–16:14 · 61 words · 3s visual holds
 
 ### Phase 1
 
@@ -268,7 +274,7 @@ In a regular week with one unit already in stock, buying two covers the largest 
 
 ## 17 Future values change the order
 
-15:39–19:06 · 400 words · 15s visual holds
+16:14–19:41 · 400 words · 15s visual holds
 
 ### Phase 1
 
@@ -308,7 +314,7 @@ Best-order does this for every state and returns a map from state to order—a p
 
 ## 18 Hydrogen: iterate the value table
 
-19:06–20:39 · 166 words · 14s visual holds
+19:41–21:15 · 166 words · 14s visual holds
 
 ### Phase 1
 
@@ -330,7 +336,7 @@ The largest change is now below our tolerance. In the stopping lambda, percent-o
 
 ## 19 The best order depends on the supply window
 
-20:39–21:59 · 154 words · 6s visual holds
+21:15–22:35 · 154 words · 6s visual holds
 
 ### Phase 1
 
@@ -342,7 +348,7 @@ There is a less obvious recommendation here. With an empty tank in a tight week,
 
 ## 20 Stop when a bird is detected
 
-21:59–23:29 · 163 words · 12s visual holds
+22:35–24:05 · 163 words · 12s visual holds
 
 ### Phase 1
 
@@ -358,7 +364,7 @@ Now wrap the decision function with a shield. If there is a detection, return st
 
 ## 21 iterate underneath all three
 
-23:29–24:11 · 81 words · 3s visual holds
+24:05–24:47 · 81 words · 3s visual holds
 
 ### Phase 1
 
@@ -368,7 +374,7 @@ Underneath all three examples is iterate. The state was a vector of turbine sett
 
 ## 22 Rainbow
 
-24:11–25:38 · 175 words · 3s visual holds
+24:47–26:14 · 175 words · 3s visual holds
 
 ### Phase 1
 
@@ -382,7 +388,7 @@ On a held-out benchmark of 200 theorems from our own corpus, Rainbow solved 171 
 
 ## 23 Plans for future Rainbow
 
-25:38–26:30 · 99 words · 4s visual holds
+26:14–27:05 · 99 words · 4s visual holds
 
 ### Phase 1
 
@@ -394,7 +400,7 @@ Second, proof visualization. We already have a Proof Explorer where we can follo
 
 ## 24 Where we use Rainbow now?
 
-26:30–27:34 · 125 words · 4s visual holds
+27:05–28:09 · 125 words · 4s visual holds
 
 ### Phase 1
 
@@ -404,7 +410,7 @@ We are using this work on a model of an e-SAF plant in the Bay of Algeciras. e-S
 
 ## 25 Applied Higher-Order Functions
 
-27:34–27:59 · 47 words · 3s visual holds
+28:09–28:35 · 47 words · 3s visual holds
 
 ### Phase 1
 
@@ -414,7 +420,7 @@ I wrote Applied Higher-Order Functions about using higher-order functions in ope
 
 ## 26 Thank you
 
-27:59–28:11 · 18 words · 3s visual holds
+28:35–28:47 · 18 words · 3s visual holds
 
 ### Phase 1
 

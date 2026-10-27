@@ -1,7 +1,7 @@
 {
-  "spoken_words": 3152,
+  "spoken_words": 3220,
   "pace_wpm": 125,
-  "holds_seconds": 178,
+  "holds_seconds": 181,
   "questions_seconds": 120,
   "slides": [
     {
@@ -104,93 +104,93 @@
     },
     {
       "slide": 15,
-      "words": 236,
-      "hold_seconds": 12,
+      "words": 304,
+      "hold_seconds": 15,
       "start_seconds": 781,
-      "end_seconds": 906
+      "end_seconds": 942
     },
     {
       "slide": 16,
       "words": 61,
       "hold_seconds": 3,
-      "start_seconds": 906,
-      "end_seconds": 939
+      "start_seconds": 942,
+      "end_seconds": 974
     },
     {
       "slide": 17,
       "words": 400,
       "hold_seconds": 15,
-      "start_seconds": 939,
-      "end_seconds": 1146
+      "start_seconds": 974,
+      "end_seconds": 1181
     },
     {
       "slide": 18,
       "words": 166,
       "hold_seconds": 14,
-      "start_seconds": 1146,
-      "end_seconds": 1239
+      "start_seconds": 1181,
+      "end_seconds": 1275
     },
     {
       "slide": 19,
       "words": 154,
       "hold_seconds": 6,
-      "start_seconds": 1239,
-      "end_seconds": 1319
+      "start_seconds": 1275,
+      "end_seconds": 1355
     },
     {
       "slide": 20,
       "words": 163,
       "hold_seconds": 12,
-      "start_seconds": 1319,
-      "end_seconds": 1409
+      "start_seconds": 1355,
+      "end_seconds": 1445
     },
     {
       "slide": 21,
       "words": 81,
       "hold_seconds": 3,
-      "start_seconds": 1409,
-      "end_seconds": 1451
+      "start_seconds": 1445,
+      "end_seconds": 1487
     },
     {
       "slide": 22,
       "words": 175,
       "hold_seconds": 3,
-      "start_seconds": 1451,
-      "end_seconds": 1538
+      "start_seconds": 1487,
+      "end_seconds": 1574
     },
     {
       "slide": 23,
       "words": 99,
       "hold_seconds": 4,
-      "start_seconds": 1538,
-      "end_seconds": 1590
+      "start_seconds": 1574,
+      "end_seconds": 1625
     },
     {
       "slide": 24,
       "words": 125,
       "hold_seconds": 4,
-      "start_seconds": 1590,
-      "end_seconds": 1654
+      "start_seconds": 1625,
+      "end_seconds": 1689
     },
     {
       "slide": 25,
       "words": 47,
       "hold_seconds": 3,
-      "start_seconds": 1654,
-      "end_seconds": 1679
+      "start_seconds": 1689,
+      "end_seconds": 1715
     },
     {
       "slide": 26,
       "words": 18,
       "hold_seconds": 3,
-      "start_seconds": 1679,
-      "end_seconds": 1691
+      "start_seconds": 1715,
+      "end_seconds": 1727
     }
   ],
   "estimates_seconds_including_questions": {
-    "110": 2017,
-    "125": 1811,
-    "140": 1649
+    "110": 2057,
+    "125": 1847,
+    "140": 1681
   },
-  "script_sha256": "42cb36071b023a454f1ce89cc4f34f82948a5d7cada75812b248f9e1ae8b6c18"
+  "script_sha256": "86c625caf939a0b3e10af7269efa6c2be86b0c18f107a233fe2539f6f0ba8758"
 }

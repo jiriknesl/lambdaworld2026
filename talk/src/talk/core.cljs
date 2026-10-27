@@ -1670,37 +1670,50 @@
                  [:div#played-3d (scene plan t {:w 700 :h 500 :encounters? true})]]))
     :notes "Now time really is passing through a day. First reveal is full power; second is the risk-aware plan. When forecast activity produces visible birds, one follows the same scripted crossing of the most exposed turbine in both plans. Both flock and featured bird use floor(2.5 times hourly activity), so the small evening tail produces no visible birds or strikes. The numeric exposure index retains that tail. At the rotor, a moving turbine produces a red impact flash and a falling bird; a fully stopped turbine lets this illustrated bird continue. The setting is read from the displayed schedule at the current hour. This is an explanatory animation, not geometric blade collision physics, a fatality estimate, or proof that stopped turbines cannot harm birds. Partial curtailment is not treated as guaranteed safe. The optimizer still scores the existing exposure index; the animation does not change its objective or results. The red schedule rectangle tracks the same clock as the encounter."}
 
-   {:section "Example 2" :title "Buy hydrogen before the customers arrive" :steps 4
-    :render (fn [frame]
-              [:div.two.even
-               [:div (hydrogen-scene 1 1 3 (min frame 2))
-                [:p.aside (nth ["Start with 1 unit. Choose an order."
-                               "The tanker delivers before demand is known."
-                               "A convoy arrives: two served, one turned away."
-                               "This outcome earns 18: sell 2 × 10, buy 1 × 2."] frame)]
-                [:p.caption "The tank holds 4 units. Each customer truck needs 1."]]
-               [:div
-                (if (= frame 3)
-                  [:div (code 'weekly-profit {:size :small})
-                   (code 'next-state {:size :small})
-                   (code 'remaining-stock {:size :small})]
-                  [:div
-                   [:table.levels
-                    [:tr [:th "supply week"] [:th "buy price"] [:th "max purchase"]]
-                    [:tr [:td "regular"] [:td "2 / unit"] [:td "3 units"]]
-                    [:tr [:td "tight"] [:td "6 / unit"] [:td "1 unit"]]]
-                   [:p.caption "Regular → tight → regular … Known delivery cycle."]
-                   (when (pos? frame)
-                     [:div
-                   [:p.aside "Customers come in bursts."]
-                   [:table.levels
-                    [:tr [:th "trucks"] [:th "probability"]]
-                    (for [[d p] demand-probabilities]
-                      [:tr [:td d] [:td (str (fmt (* 100 p)) "%")]])]
-                   [:p.caption "No arrivals, a single truck, or a convoy."]])])
-                (when (>= frame 2)
-                  [:p.caption "Sell for 10; holding cost 1 per leftover unit/week. Future discount 0.9."])]])
-    :notes "The station buys hydrogen from a supplier and sells it to customer trucks. The tank always holds four units, while supplier capacity changes: regular weeks offer at most three units at price two, tight weeks at most one at price six. Weeks alternate predictably; this is a two-period model, not a general market price forecast. Customer demand is a discrete mixture: no arrivals with probability .4, one truck with .15, a three-truck convoy with .45. There is no demand of two in this teaching distribution. The two peaks represent quiet weeks and convoy arrivals, and the same distribution applies in both supply weeks. Mean demand is 1.5 but does not capture the convoy risk. Each week, observe phase and stock, choose a feasible order, receive it, serve uncertain customers and carry leftovers. No evaporation, backlog or fixed delivery fee is included. Walk through one regular-week outcome: stock one, order one, demand three, profit 20 minus 2 = 18. Last reveal shows the actual reward and state transition: leftover inventory plus the next supply phase. The optimization goal is expected discounted profit over repeated weeks, not simply serving every truck."}
+   {:section "Example 2" :title "Buy hydrogen before the customers arrive" :steps 5
+    :render (fn [phase]
+              (if (zero? phase)
+                [:div.port-intro
+                 [:div
+                  [:img {:src (n/embedded-port-photo)
+                         :alt "APBA article showing EVO’s hydrogen-powered terminal tractor carrying containers at the Port of Algeciras"
+                         :width 1932 :height 1216}]
+                  [:p.caption "Source: Port of Algeciras (APBA) · 30 April 2026 · innovacion.apba.es"]]
+                 [:div
+                  [:p [:strong "Hydrogen at the Port of Algeciras"]]
+                  [:p "EVO’s hydrogen-powered terminal tractor began trials with Logístika 360 on 28 April 2026."]
+                  [:p "How much hydrogen should a station buy before it knows demand?"]
+                  [:p.caption "Our station example uses illustrative numbers."]]]
+                (let [frame (dec phase)]
+                  [:div.two.even
+                   [:div (hydrogen-scene 1 1 3 (min frame 2))
+                    [:p.aside (nth ["Start with 1 unit. Choose an order."
+                                   "The tanker delivers before demand is known."
+                                   "A convoy arrives: two served, one turned away."
+                                   "This outcome earns 18: sell 2 × 10, buy 1 × 2."] frame)]
+                    [:p.caption "The tank holds 4 units. Each customer truck needs 1."]]
+                   [:div
+                    (if (= frame 3)
+                      [:div (code 'weekly-profit {:size :small})
+                       (code 'next-state {:size :small})
+                       (code 'remaining-stock {:size :small})]
+                      [:div
+                       [:table.levels
+                        [:tr [:th "supply week"] [:th "buy price"] [:th "max purchase"]]
+                        [:tr [:td "regular"] [:td "2 / unit"] [:td "3 units"]]
+                        [:tr [:td "tight"] [:td "6 / unit"] [:td "1 unit"]]]
+                       [:p.caption "Regular → tight → regular … Known delivery cycle."]
+                       (when (pos? frame)
+                         [:div
+                       [:p.aside "Customers come in bursts."]
+                       [:table.levels
+                        [:tr [:th "trucks"] [:th "probability"]]
+                        (for [[d p] demand-probabilities]
+                          [:tr [:td d] [:td (str (fmt (* 100 p)) "%")]])]
+                       [:p.caption "No arrivals, a single truck, or a convoy."]])])
+                    (when (>= frame 2)
+                      [:p.caption "Sell for 10; holding cost 1 per leftover unit/week. Future discount 0.9."])]])))
+    :notes "First reveal: the APBA announcement of 30 April 2026 confirms that EVO’s H2Tractor began real operating trials with Logístika 360 on 28 April. Source: https://innovacion.apba.es/el-puerto-de-algeciras-acoge-las-primeras-pruebas-en-entorno-real-del-vehiculo-h2tractor-de-evo/ . The image is Jiri’s supplied screenshot of that article, embedded for offline use. This verifies a terminal-tractor pilot, not an approved truck/station network or use of our algorithm by the port. The remaining four reveals are our illustrative model; no tank size, price or demand probability is attributed to APBA. The station buys hydrogen from a supplier and sells it to customer trucks. The tank always holds four units, while supplier capacity changes: regular weeks offer at most three units at price two, tight weeks at most one at price six. Weeks alternate predictably; this is a two-period model, not a general market price forecast. Customer demand is a discrete mixture: no arrivals with probability .4, one truck with .15, a three-truck convoy with .45. There is no demand of two in this teaching distribution. The two peaks represent quiet weeks and convoy arrivals, and the same distribution applies in both supply weeks. Mean demand is 1.5 but does not capture the convoy risk. Each week, observe phase and stock, choose a feasible order, receive it, serve uncertain customers and carry leftovers. No evaporation, backlog or fixed delivery fee is included. Walk through one regular-week outcome: stock one, order one, demand three, profit 20 minus 2 = 18. Last reveal shows the actual reward and state transition: leftover inventory plus the next supply phase. The optimization goal is expected discounted profit over repeated weeks, not simply serving every truck."}
 
    {:section "Example 2" :title "Buy for this week—or the next?"
     :render (fn [_]

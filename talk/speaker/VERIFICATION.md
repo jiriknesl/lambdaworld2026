@@ -606,3 +606,21 @@ the original editorial review; these later user-directed revisions are recorded 
 - Final `npm test`: 25 tests / 2,219 assertions, zero failures or errors; compile has
   zero warnings. The helper and deck are unchanged. Reaching the cap returns the partial
   trajectory; convergence must be distinguished with `settled?`.
+
+## 2026-10-27 — Algeciras hydrogen-vehicle trial opens Example 2
+
+- Slide 15 now begins with Jiri’s supplied APBA article screenshot, followed by its four
+  existing model reveals. Slide numbers are unchanged. Added the 28 April 2026 trial
+  start, EVO / Logístika 360 attribution and the 30 April APBA publication credit.
+- The screenshot is embedded in the release bundle, with no external image request.
+  This is a real terminal-tractor trial; the slide explicitly calls our station numbers
+  illustrative. It makes no claim that the port adopted our algorithm or network plan.
+- Updated the speech, presenter export, timing and offline speaker PDF: 26 slides,
+  49 cues, 3,220 words; estimated 28:47 with holds / 30:47 including questions.
+- Release compiled with zero warnings. Targeted offline browser checks cover all five
+  phases at 1920×1080 and 1024×768, the exact embedded image bytes, attribution,
+  illustrative-model label, presenter speech, refresh recovery and no external requests.
+  Screenshots inspected at both sizes; no overflow.
+- Existing static preview refreshed; tunnel configuration unchanged:
+  https://haphazard-sanction-pavestone.ngrok-free.dev/?v=algeciras-trial-20261027#s15
+- Public browser checks also pass at both sizes; served JavaScript matches the release.

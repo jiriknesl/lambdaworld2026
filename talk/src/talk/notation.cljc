@@ -89,6 +89,13 @@
          (str "data:image/webp;base64,"
               (.encodeToString (java.util.Base64/getEncoder) (.toByteArray out)))))
 
+     (defmacro embedded-port-photo []
+       (with-open [in (io/input-stream (io/resource "talk/algeciras-h2tractor.png"))
+                   out (java.io.ByteArrayOutputStream.)]
+         (io/copy in out)
+         (str "data:image/png;base64,"
+              (.encodeToString (java.util.Base64/getEncoder) (.toByteArray out)))))
+
      (defmacro checked-composition []
        (let [source (slurp (io/resource "talk/composition.edn"))
              receipt (edn/read-string

@@ -277,27 +277,34 @@
         {
           "from": 1,
           "to": 1,
-          "cue": "Point to tank capacity, supplier table, then customer probabilities.",
-          "speech": "For decision-making, consider a hydrogen station. It has room for four units, and each customer truck takes one. The station buys from a supplier before it knows how many customers will arrive. Regular weeks offer up to three units at a price of two. Tight weeks offer only one unit, at a price of six. Those weeks alternate. The tank’s physical capacity stays four; the supplier’s available quantity changes.",
+          "cue": "Show the real port trial, then move to the illustrative station.",
+          "speech": "This is a hydrogen-powered terminal tractor at the Port of Algeciras. EVO began trials with Logístika 360 in April 2026. That gives us a practical question: how much hydrogen should a station buy before it knows how many customers will arrive? I’ll use a small model to explain the decision. The tank size, prices and demand probabilities that follow are illustrative; they are not data from the port.",
           "hold_seconds": 3
         },
         {
           "from": 2,
           "to": 2,
-          "cue": "Right. Follow the delivery into the tank.",
-          "speech": "Customer arrivals are uncertain: forty percent of weeks have no trucks, fifteen percent have one, and forty-five percent have a convoy of three. The average is one and a half, but the full distribution matters. We use the same distribution each week, independently.\n\nHere we buy one unit in a regular week, bringing our stock to two. The order is chosen before we see which customer outcome happens.",
+          "cue": "Point to tank capacity, supplier table, then customer probabilities.",
+          "speech": "For decision-making, consider a hydrogen station. It has room for four units, and each customer truck takes one. The station buys from a supplier before it knows how many customers will arrive. Regular weeks offer up to three units at a price of two. Tight weeks offer only one unit, at a price of six. Those weeks alternate. The tank’s physical capacity stays four; the supplier’s available quantity changes.",
           "hold_seconds": 3
         },
         {
           "from": 3,
           "to": 3,
-          "cue": "Right. Point to the turned-away truck.",
-          "speech": "A convoy arrives. We sell to two trucks and turn the third away. This is one possible outcome, not the demand we knew when choosing the order.",
+          "cue": "Right. Follow the delivery into the tank.",
+          "speech": "Customer arrivals are uncertain: forty percent of weeks have no trucks, fifteen percent have one, and forty-five percent have a convoy of three. The average is one and a half, but the full distribution matters. We use the same distribution each week, independently.\n\nHere we buy one unit in a regular week, bringing our stock to two. The order is chosen before we see which customer outcome happens.",
           "hold_seconds": 3
         },
         {
           "from": 4,
           "to": 4,
+          "cue": "Right. Point to the turned-away truck.",
+          "speech": "A convoy arrives. We sell to two trucks and turn the third away. This is one possible outcome, not the demand we knew when choosing the order.",
+          "hold_seconds": 3
+        },
+        {
+          "from": 5,
+          "to": 5,
           "cue": "Right. Point first to reward, then next-state.",
           "speech": "We sell each unit for ten, so this outcome earns twenty minus the purchase cost of two: eighteen. Unsold units would cost one each to hold for the week. The next state contains leftover stock and the next supply window. Our objective is expected profit over repeated weeks, multiplying each following week’s contribution by another factor of point nine. This is a modelling preference for earlier returns, not a ten-percent hydrogen leak.",
           "hold_seconds": 3
