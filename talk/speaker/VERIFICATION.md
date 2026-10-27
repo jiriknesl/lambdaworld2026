@@ -593,3 +593,16 @@ the original editorial review; these later user-directed revisions are recorded 
 - Refreshed the existing six-file preview without changing tunnel configuration:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=rainbow-proof-20261027#s22
 - Public browser checks pass at both sizes; the served JavaScript matches the local release.
+
+## 2026-10-27 — Fixed-point execution and stopping boundaries
+
+- Reran the existing ClojureScript suite: 23 tests / 2,199 assertions passed, including
+  exact call counting for convergence after 12 updates with a 10,000-update cap.
+- Added boundary checks for an already-fixed start, zero/one permitted updates,
+  convergence at the last permitted update, and exhausting the cap without convergence.
+  Each checks the complete trajectory, exact step-call count and `settled?` verdict.
+- Added the sqrt(9) example starting at 1.0: initial guesses 1, 5, 3.4; converges to 3
+  within 1e-12; calls step once per returned transition and fewer than ten times.
+- Final `npm test`: 25 tests / 2,219 assertions, zero failures or errors; compile has
+  zero warnings. The helper and deck are unchanged. Reaching the cap returns the partial
+  trajectory; convergence must be distinguished with `settled?`.

@@ -44,6 +44,42 @@
       (is (= 12 @calls))
       (is (= (vec (range 13)) result)))))
 
+(deftest fixed-point-boundaries
+  (doseq [{:keys [label step converged? start cap expected calls settled?]}
+          [{:label "already at a fixed point"
+            :step identity :converged? = :start 3 :cap 1000
+            :expected [3 3] :calls 1 :settled? true}
+           {:label "zero updates allowed"
+            :step inc :converged? = :start 0 :cap 0
+            :expected [0] :calls 0 :settled? false}
+           {:label "one update allowed without convergence"
+            :step inc :converged? = :start 0 :cap 1
+            :expected [0 1] :calls 1 :settled? false}
+           {:label "convergence on the last allowed update"
+            :step #(min 4 (inc %)) :converged? = :start 0 :cap 5
+            :expected [0 1 2 3 4 4] :calls 5 :settled? true}
+           {:label "exhaust the cap without convergence"
+            :step inc :converged? = :start 0 :cap 5
+            :expected [0 1 2 3 4 5] :calls 5 :settled? false}]]
+    (testing label
+      (let [call-count (atom 0)
+            run (c/fixed-point (fn [x] (swap! call-count inc) (step x))
+                               converged? start :max-steps cap)]
+        (is (= expected run))
+        (is (= calls @call-count) "No work beyond the returned trajectory")
+        (is (= settled? (c/settled? converged? run)))))))
+
+(deftest fixed-point-square-root-nine
+  (let [calls (atom 0)
+        step (c/newton-sqrt 9)
+        run (c/fixed-point (fn [x] (swap! calls inc) (step x))
+                           c/close-enough? 1.0 :max-steps 10000)]
+    (is (= [1 5 3.4] (subvec run 0 3)))
+    (is (< (abs (- 3 (peek run))) 1e-12))
+    (is (c/settled? c/close-enough? run))
+    (is (= (dec (count run)) @calls))
+    (is (< @calls 10))))
+
 (deftest electricity-and-birds
   (let [off (zipmap c/slots (repeat 0))
         on (zipmap c/slots (repeat 1))
