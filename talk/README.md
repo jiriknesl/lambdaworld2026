@@ -39,6 +39,15 @@ curtailment; it is not a blade-collision simulation or a count of predicted fata
 optimization continues to use the same exposure index. `scripts/playback-smoke.cjs` checks
 both outcomes, impact timing and the synchronized schedule marker with a controlled clock.
 
+## Move to the presentation laptop
+
+Download [`lambda-world-current-offline.zip`](../artifacts/lambda-world-current-offline.zip),
+unzip the whole archive, then open `deck/index.html` in Chrome or Chromium. It includes the
+compiled deck, embedded fonts/photo, current speaker PDF and Markdown script, startup
+instructions and a SHA-256 manifest. Presenting requires no server, Node, JDK or network.
+The archive was packaged on 28 October from deck revision `02196b5` (26 slides, 49 cues).
+The older `lambda-world-rehearsal.zip` is not the current deck.
+
 ## Run
 
 Node and a JDK are needed to build. Presenting the release build needs only a browser.

@@ -649,3 +649,14 @@ the original editorial review; these later user-directed revisions are recorded 
 - Refreshed the existing public preview without changing tunnel configuration:
   https://haphazard-sanction-pavestone.ngrok-free.dev/?v=bellman-input-20261027#s17a3
 - Public checks also pass at both sizes; served JavaScript matches the release.
+
+## 2026-10-28 — Current offline laptop handoff
+
+- Confirmed GitHub main matched local deck revision `02196b5`, with a clean working tree.
+- Packaged `artifacts/lambda-world-current-offline.zip` (4.6 MB): compiled browser deck,
+  local embedded fonts/photo, current speaker PDF/Markdown, START-HERE instructions and
+  SHA-256 manifest. No dependency installation or server needed to present.
+- ZIP integrity and all seven asset hashes pass. Extracted to a separate temporary folder
+  and opened with browser networking disabled. All five Bellman reveals and matching
+  presenter speech pass at 1920×1080 and 1024×768; the Algeciras photo loads embedded,
+  the deck contains 26 slides, and fonts are ready. This replaces the old rehearsal ZIP.
